@@ -141,7 +141,7 @@ func read_query(read io.Reader) url.Values {
 
 type Header struct {
    Auth Auth // Authorization
-   Device Device // X-Dfe-Device-Id
+   Device Device // X-DFE-Device-ID
    Single bool
 }
 
