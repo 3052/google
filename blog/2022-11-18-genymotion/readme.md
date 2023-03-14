@@ -1,6 +1,4 @@
-# 2022-11-19
-
-## GenyMotion
+# GenyMotion
 
 Create Virtual device using Android version 6.0.0. Install Open GApps. Then
 click Restart now. If you have trouble at this point, you might need to End
