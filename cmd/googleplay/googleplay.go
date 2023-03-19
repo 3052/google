@@ -9,44 +9,36 @@ import (
    "time"
 )
 
-func (f flags) do_auth(dir string) error {
-   res, err := googleplay.New_Auth(f.email, f.password)
+func download(ref, name string) error {
+   // Client
+   clone := googleplay.Client.Clone()
+   clone.CheckRedirect = nil
+   // Request
+   req := http.New_Request()
+   err := req.Set_URL(ref)
+   if err != nil {
+      return err
+   }
+   // Response
+   res, err := clone.Do(req.Request)
    if err != nil {
       return err
    }
    defer res.Body.Close()
-   return res.Create(dir + "/auth.txt")
-}
-
-func do_device(dir, platform string) error {
-   res, err := googleplay.Phone.Checkin(platform)
+   file, err := os.Create(name)
    if err != nil {
       return err
    }
-   defer res.Body.Close()
-   fmt.Printf("Sleeping %v for server to process\n", googleplay.Sleep)
-   time.Sleep(googleplay.Sleep)
-   return res.Create(dir + "/" + platform + ".bin")
+   defer file.Close()
+   pro := http.Progress_Bytes(file, res.ContentLength)
+   if _, err := io.Copy(pro, res.Body); err != nil {
+      return err
+   }
+   return nil
 }
-
+   
 func (f flags) do_delivery(head *googleplay.Header) error {
-   download := func(ref, name string) error {
-      res, err := googleplay.Client.Redirect(nil).Get(ref)
-      if err != nil {
-         return err
-      }
-      defer res.Body.Close()
-      file, err := os.Create(name)
-      if err != nil {
-         return err
-      }
-      defer file.Close()
-      pro := http.Progress_Bytes(file, res.ContentLength)
-      if _, err := io.Copy(pro, res.Body); err != nil {
-         return err
-      }
-      return nil
-   }
+   
    del, err := head.Delivery(f.app, f.version)
    if err != nil {
       return err
@@ -107,4 +99,23 @@ func (f flags) do_details(head *googleplay.Header) ([]byte, error) {
       return nil, err
    }
    return detail.MarshalText()
+}
+func (f flags) do_auth(dir string) error {
+   res, err := googleplay.New_Auth(f.email, f.password)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   return res.Create(dir + "/auth.txt")
+}
+
+func do_device(dir, platform string) error {
+   res, err := googleplay.Phone.Checkin(platform)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   fmt.Printf("Sleeping %v for server to process\n", googleplay.Sleep)
+   time.Sleep(googleplay.Sleep)
+   return res.Create(dir + "/" + platform + ".bin")
 }
