@@ -27,7 +27,7 @@ func (a *Auth) Exchange() error {
    req.URL.Host = "android.googleapis.com"
    req.URL.Path = "/auth"
    req.URL.Scheme = "https"
-   res, err := Client.Do(req.Request)
+   res, err := Client.Do(req)
    if err != nil {
       return err
    }
@@ -133,7 +133,7 @@ func New_Auth(email, password string) (*Response, error) {
    req.URL.Path = "/auth"
    req.URL.Scheme = "https"
    // Response
-   res, err := clone.Do(req.Request)
+   res, err := clone.Do(req)
    if err != nil {
       return nil, err
    }

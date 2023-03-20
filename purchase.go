@@ -1,25 +1,21 @@
 package googleplay
 
 import (
-   "net/http"
-   "net/url"
+   "2a.pages.dev/rosso/http"
    "strings"
 )
 
 // Purchase app. Only needs to be done once per Google account.
 func (h Header) Purchase(app string) error {
-   body := make(url.Values)
-   body.Set("doc", app)
-   req, err := http.NewRequest(
-      "POST", "https://android.clients.google.com/fdfe/purchase",
-      strings.NewReader(body.Encode()),
-   )
-   if err != nil {
-      return err
-   }
+   req := http.New_Request()
+   req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+   req.Method = "POST"
+   req.Set_Body(strings.NewReader("doc=" + app))
+   req.URL.Host = "android.clients.google.com"
+   req.URL.Path = "/fdfe/purchase"
+   req.URL.Scheme = "https"
    h.Set_Auth(req.Header)
    h.Set_Device(req.Header)
-   req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
    res, err := Client.Do(req)
    if err != nil {
       return err

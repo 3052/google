@@ -9,18 +9,23 @@ import (
    "time"
 )
 
+func (f flags) do_details(head *googleplay.Header) ([]byte, error) {
+   detail, err := head.Details(f.app)
+   if err != nil {
+      return nil, err
+   }
+   return detail.MarshalText()
+}
+
 func download(ref, name string) error {
-   // Client
    clone := googleplay.Client.Clone()
    clone.CheckRedirect = nil
-   // Request
    req := http.New_Request()
    err := req.Set_URL(ref)
    if err != nil {
       return err
    }
-   // Response
-   res, err := clone.Do(req.Request)
+   res, err := clone.Do(req)
    if err != nil {
       return err
    }
@@ -36,9 +41,8 @@ func download(ref, name string) error {
    }
    return nil
 }
-   
+
 func (f flags) do_delivery(head *googleplay.Header) error {
-   
    del, err := head.Delivery(f.app, f.version)
    if err != nil {
       return err
@@ -93,13 +97,6 @@ func (f flags) do_header(dir, platform string) (*googleplay.Header, error) {
    return &head, nil
 }
 
-func (f flags) do_details(head *googleplay.Header) ([]byte, error) {
-   detail, err := head.Details(f.app)
-   if err != nil {
-      return nil, err
-   }
-   return detail.MarshalText()
-}
 func (f flags) do_auth(dir string) error {
    res, err := googleplay.New_Auth(f.email, f.password)
    if err != nil {

@@ -1,9 +1,9 @@
 package googleplay
 
 import (
+   "2a.pages.dev/rosso/http"
    "2a.pages.dev/rosso/protobuf"
    "bytes"
-   "net/http"
    "strconv"
    "time"
 )
@@ -87,7 +87,7 @@ var Phone = Config{
 
 // A Sleep is needed after this.
 func (c Config) Checkin(native_platform string) (*Response, error) {
-   req_body := protobuf.Message{
+   body := protobuf.Message{
       // Checkin$AndroidCheckinRequest
       4: protobuf.Message{ // checkin
          // Logs$AndroidCheckinProto
@@ -116,26 +116,25 @@ func (c Config) Checkin(native_platform string) (*Response, error) {
    }
    for _, library := range c.System_Shared_Library {
       // .deviceConfiguration.systemSharedLibrary
-      req_body.Get(18).Add_String(9, library)
+      body.Get(18).Add_String(9, library)
    }
    for _, extension := range c.GL_Extension {
       // .deviceConfiguration.glExtension
-      req_body.Get(18).Add_String(15, extension)
+      body.Get(18).Add_String(15, extension)
    }
    for _, name := range c.New_System_Available_Feature {
       // .deviceConfiguration.newSystemAvailableFeature
-      req_body.Get(18).Add(26, protobuf.Message{
+      body.Get(18).Add(26, protobuf.Message{
          1: protobuf.String(name),
       })
    }
-   req, err := http.NewRequest(
-      "POST", "https://android.googleapis.com/checkin",
-      bytes.NewReader(req_body.Marshal()),
-   )
-   if err != nil {
-      return nil, err
-   }
+   req := http.New_Request()
    req.Header.Set("Content-Type", "application/x-protobuffer")
+   req.Method = "POST"
+   req.Set_Body(bytes.NewReader(body.Marshal()))
+   req.URL.Host = "android.googleapis.com"
+   req.URL.Path = "/checkin"
+   req.URL.Scheme = "https"
    res, err := Client.Do(req)
    if err != nil {
       return nil, err

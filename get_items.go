@@ -1,14 +1,15 @@
 package googleplay
 
 import (
+   "2a.pages.dev/rosso/http"
    "2a.pages.dev/rosso/protobuf"
    "bytes"
    "encoding/base64"
-   "net/http"
    "os"
 )
 
 func (h Header) Get_Items(app string) (*Response, error) {
+   // Body
    body := protobuf.Message{
       2: protobuf.Message{
          1: protobuf.Message{
@@ -18,14 +19,7 @@ func (h Header) Get_Items(app string) (*Response, error) {
          },
       },
    }.Marshal()
-   req, err := http.NewRequest(
-      "POST", "https://play-fe.googleapis.com/fdfe/getItems",
-      bytes.NewReader(body),
-   )
-   if err != nil {
-      return nil, err
-   }
-   h.Set_Device(req.Header)
+   // Header
    field := protobuf.Message{
       // valid range 0xC0 - 0xFFFFFFFF
       3: protobuf.Bytes{0xFF, 0xFF, 0xFF, 0xFF},
@@ -33,7 +27,14 @@ func (h Header) Get_Items(app string) (*Response, error) {
       4: protobuf.Bytes{0xFF, 0xFF, 0xFF, 0xFF},
    }.Marshal()
    mask := base64.StdEncoding.EncodeToString(field)
+   req := http.New_Request()
    req.Header.Set("X-Dfe-Item-Field-Mask", mask)
+   req.Method = "POST"
+   req.Set_Body(bytes.NewReader(body))
+   req.URL.Host = "play-fe.googleapis.com"
+   req.URL.Path = "/fdfe/getItems"
+   req.URL.Scheme = "https"
+   h.Set_Device(req.Header)
    res, err := Client.Do(req)
    if err != nil {
       return nil, err

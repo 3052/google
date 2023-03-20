@@ -3,6 +3,7 @@ package main
 import (
    "2a.pages.dev/googleplay"
    "flag"
+   "fmt"
    "os"
 )
 
@@ -80,7 +81,7 @@ func main() {
             if err != nil {
                panic(err)
             }
-            os.Stdout.Write(detail)
+            fmt.Println(string(detail))
          }
       } else {
          flag.Usage()

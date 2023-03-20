@@ -1,13 +1,81 @@
 package googleplay
 
 import (
+   "2a.pages.dev/rosso/http"
    "2a.pages.dev/rosso/protobuf"
    "2a.pages.dev/rosso/strconv"
    "errors"
    "io"
-   "net/http"
-   "net/url"
 )
+
+func (d Details) MarshalText() ([]byte, error) {
+   var b []byte
+   b = append(b, "creator: "...)
+   if val, err := d.Creator(); err != nil {
+      return nil, err
+   } else {
+      b = append(b, val...)
+   }
+   b = append(b, "\nfile:"...)
+   for _, file := range d.File() {
+      if val, err := file.File_Type(); err != nil {
+         return nil, err
+      } else if val >= 1 {
+         b = append(b, " OBB"...)
+      } else {
+         b = append(b, " APK"...)
+      }
+   }
+   b = append(b, "\ninstallation size: "...)
+   if val, err := d.Installation_Size(); err != nil {
+      return nil, err
+   } else {
+      b = strconv.New_Number(val).Size(b)
+   }
+   b = append(b, "\nnum downloads: "...)
+   if val, err := d.Num_Downloads(); err != nil {
+      return nil, err
+   } else {
+      b = strconv.New_Number(val).Cardinal(b)
+   }
+   b = append(b, "\noffer: "...)
+   if val, err := d.Micros(); err != nil {
+      return nil, err
+   } else {
+      b = strconv.AppendUint(b, val, 10)
+   }
+   b = append(b, ' ')
+   if val, err := d.Currency_Code(); err != nil {
+      return nil, err
+   } else {
+      b = append(b, val...)
+   }
+   b = append(b, "\ntitle: "...)
+   if val, err := d.Title(); err != nil {
+      return nil, err
+   } else {
+      b = append(b, val...)
+   }
+   b = append(b, "\nupload date: "...)
+   if val, err := d.Upload_Date(); err != nil {
+      return nil, err
+   } else {
+      b = append(b, val...)
+   }
+   b = append(b, "\nversion: "...)
+   if val, err := d.Version(); err != nil {
+      return nil, err
+   } else {
+      b = append(b, val...)
+   }
+   b = append(b, "\nversion code: "...)
+   if val, err := d.Version_Code(); err != nil {
+      return nil, err
+   } else {
+      b = strconv.AppendUint(b, val, 10)
+   }
+   return b, nil
+}
 
 var err_device = errors.New("your device isn't compatible with this version")
 
@@ -23,75 +91,6 @@ func (d Details) Creator() (string, error) {
 // .offer.currencyCode
 func (d Details) Currency_Code() (string, error) {
    return d.Get(8).Get_String(2)
-}
-
-func (d Details) MarshalText() ([]byte, error) {
-   var b []byte
-   b = append(b, "Title: "...)
-   if val, err := d.Title(); err != nil {
-      return nil, err
-   } else {
-      b = append(b, val...)
-   }
-   b = append(b, "\nCreator: "...)
-   if val, err := d.Creator(); err != nil {
-      return nil, err
-   } else {
-      b = append(b, val...)
-   }
-   b = append(b, "\nUpload Date: "...)
-   if val, err := d.Upload_Date(); err != nil {
-      return nil, err
-   } else {
-      b = append(b, val...)
-   }
-   b = append(b, "\nVersion: "...)
-   if val, err := d.Version(); err != nil {
-      return nil, err
-   } else {
-      b = append(b, val...)
-   }
-   b = append(b, "\nVersion Code: "...)
-   if val, err := d.Version_Code(); err != nil {
-      return nil, err
-   } else {
-      b = strconv.AppendUint(b, val, 10)
-   }
-   b = append(b, "\nNum Downloads: "...)
-   if val, err := d.Num_Downloads(); err != nil {
-      return nil, err
-   } else {
-      b = strconv.New_Number(val).Cardinal(b)
-   }
-   b = append(b, "\nInstallation Size: "...)
-   if val, err := d.Installation_Size(); err != nil {
-      return nil, err
-   } else {
-      b = strconv.New_Number(val).Size(b)
-   }
-   b = append(b, "\nFile:"...)
-   for _, file := range d.File() {
-      if val, err := file.File_Type(); err != nil {
-         return nil, err
-      } else if val >= 1 {
-         b = append(b, " OBB"...)
-      } else {
-         b = append(b, " APK"...)
-      }
-   }
-   b = append(b, "\nOffer: "...)
-   if val, err := d.Micros(); err != nil {
-      return nil, err
-   } else {
-      b = strconv.AppendUint(b, val, 10)
-   }
-   b = append(b, ' ')
-   if val, err := d.Currency_Code(); err != nil {
-      return nil, err
-   } else {
-      b = append(b, val...)
-   }
-   return append(b, '\n'), nil
 }
 
 // .offer.micros
@@ -139,18 +138,16 @@ func (d Details) Num_Downloads() (uint64, error) {
 }
 
 func (h Header) Details(app string) (*Details, error) {
-   req, err := http.NewRequest(
-      "GET", "https://android.clients.google.com/fdfe/details", nil,
-   )
-   if err != nil {
-      return nil, err
-   }
+   req := http.New_Request()
+   req.URL.Host = "android.clients.google.com"
+   req.URL.Path = "/fdfe/details"
+   req.URL.RawQuery = "doc=" + app
+   req.URL.Scheme = "https"
    // half of the apps I test require User-Agent,
    // so just set it for all of them
    h.Set_Agent(req.Header)
    h.Set_Auth(req.Header)
    h.Set_Device(req.Header)
-   req.URL.RawQuery = "doc=" + url.QueryEscape(app)
    res, err := Client.Do(req)
    if err != nil {
       return nil, err

@@ -1,10 +1,10 @@
 package googleplay
 
 import (
+   "2a.pages.dev/rosso/http"
    "2a.pages.dev/rosso/protobuf"
    "errors"
    "io"
-   "net/http"
    "net/url"
    "strconv"
 )
@@ -42,19 +42,17 @@ func (f File) OBB(file_type uint64) string {
 }
 
 func (h Header) Delivery(app string, ver uint64) (*Delivery, error) {
-   req, err := http.NewRequest(
-      "GET", "https://play-fe.googleapis.com/fdfe/delivery", nil,
-   )
-   if err != nil {
-      return nil, err
-   }
-   h.Set_Agent(req.Header)
-   h.Set_Auth(req.Header) // needed for single APK
-   h.Set_Device(req.Header)
+   req := http.New_Request()
+   req.URL.Host = "play-fe.googleapis.com"
+   req.URL.Path = "/fdfe/delivery"
    req.URL.RawQuery = url.Values{
       "doc": {app},
       "vc": {strconv.FormatUint(ver, 10)},
    }.Encode()
+   req.URL.Scheme = "https"
+   h.Set_Agent(req.Header)
+   h.Set_Auth(req.Header) // needed for single APK
+   h.Set_Device(req.Header)
    res, err := Client.Do(req)
    if err != nil {
       return nil, err
