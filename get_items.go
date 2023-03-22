@@ -27,9 +27,8 @@ func (h Header) Get_Items(app string) (*Response, error) {
       4: protobuf.Bytes{0xFF, 0xFF, 0xFF, 0xFF},
    }.Marshal()
    mask := base64.StdEncoding.EncodeToString(field)
-   req := http.New_Request()
+   req := http.Post()
    req.Header.Set("X-Dfe-Item-Field-Mask", mask)
-   req.Method = "POST"
    req.Set_Body(bytes.NewReader(body))
    req.URL.Host = "play-fe.googleapis.com"
    req.URL.Path = "/fdfe/getItems"

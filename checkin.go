@@ -128,9 +128,8 @@ func (c Config) Checkin(native_platform string) (*Response, error) {
          1: protobuf.String(name),
       })
    }
-   req := http.New_Request()
+   req := http.Post()
    req.Header.Set("Content-Type", "application/x-protobuffer")
-   req.Method = "POST"
    req.Set_Body(bytes.NewReader(body.Marshal()))
    req.URL.Host = "android.googleapis.com"
    req.URL.Path = "/checkin"

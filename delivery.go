@@ -42,7 +42,7 @@ func (f File) OBB(file_type uint64) string {
 }
 
 func (h Header) Delivery(app string, ver uint64) (*Delivery, error) {
-   req := http.New_Request()
+   req := http.Get()
    req.URL.Host = "play-fe.googleapis.com"
    req.URL.Path = "/fdfe/delivery"
    req.URL.RawQuery = url.Values{

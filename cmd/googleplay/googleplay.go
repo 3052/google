@@ -20,7 +20,7 @@ func (f flags) do_details(head *googleplay.Header) ([]byte, error) {
 func download(ref, name string) error {
    clone := googleplay.Client.Clone()
    clone.CheckRedirect = nil
-   req := http.New_Request()
+   req := http.Get()
    err := req.Set_URL(ref)
    if err != nil {
       return err

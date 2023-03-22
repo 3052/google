@@ -12,6 +12,39 @@ import (
    "strings"
 )
 
+// You can also use host "android.clients.google.com", but it also uses
+// TLS fingerprinting.
+func New_Auth(email, password string) (*Response, error) {
+   // Client_Hello
+   hello, err := tls.Parse(tls.Android_API)
+   if err != nil {
+      return nil, err
+   }
+   // Client
+   clone := Client.Clone()
+   clone.Transport = hello.Transport()
+   // Request
+   body := url.Values{
+      "Email": {email},
+      "Passwd": {password},
+      "client_sig": {""},
+      // wikipedia.org/wiki/URL_encoding#Types_of_URI_characters
+      "droidguard_results": {"-"},
+   }.Encode()
+   req := http.Post()
+   req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+   req.Set_Body(strings.NewReader(body))
+   req.URL.Host = "android.googleapis.com"
+   req.URL.Path = "/auth"
+   req.URL.Scheme = "https"
+   // Response
+   res, err := clone.Do(req)
+   if err != nil {
+      return nil, err
+   }
+   return &Response{res}, nil
+}
+
 func (a *Auth) Exchange() error {
    // these values take from Android API 28
    body := url.Values{
@@ -20,9 +53,8 @@ func (a *Auth) Exchange() error {
       "client_sig": {"38918a453d07199354f8b19af05ec6562ced5788"},
       "service": {"oauth2:https://www.googleapis.com/auth/googleplay"},
    }.Encode()
-   req := http.New_Request()
+   req := http.Post()
    req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-   req.Method = "POST"
    req.Set_Body(strings.NewReader(body))
    req.URL.Host = "android.googleapis.com"
    req.URL.Path = "/auth"
@@ -106,40 +138,6 @@ func (h *Header) Open_Device(name string) error {
    }
    return nil
 }
-// You can also use host "android.clients.google.com", but it also uses
-// TLS fingerprinting.
-func New_Auth(email, password string) (*Response, error) {
-   // Client_Hello
-   hello := tls.New_Client_Hello()
-   if err := hello.UnmarshalText(tls.Android_API()); err != nil {
-      return nil, err
-   }
-   // Client
-   clone := Client.Clone()
-   clone.Transport = hello.Transport()
-   // Request
-   body := url.Values{
-      "Email": {email},
-      "Passwd": {password},
-      "client_sig": {""},
-      // wikipedia.org/wiki/URL_encoding#Types_of_URI_characters
-      "droidguard_results": {"-"},
-   }.Encode()
-   req := http.New_Request()
-   req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-   req.Method = "POST"
-   req.Set_Body(strings.NewReader(body))
-   req.URL.Host = "android.googleapis.com"
-   req.URL.Path = "/auth"
-   req.URL.Scheme = "https"
-   // Response
-   res, err := clone.Do(req)
-   if err != nil {
-      return nil, err
-   }
-   return &Response{res}, nil
-}
-
 var Client = http.Default_Client
 
 type Auth struct {

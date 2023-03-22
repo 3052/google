@@ -2,7 +2,7 @@ module 2a.pages.dev/googleplay
 
 go 1.19
 
-require 2a.pages.dev/rosso v1.2.0
+require 2a.pages.dev/rosso v1.2.2
 
 require (
 	github.com/andybalholm/brotli v1.0.5 // indirect

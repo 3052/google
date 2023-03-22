@@ -138,7 +138,7 @@ func (d Details) Num_Downloads() (uint64, error) {
 }
 
 func (h Header) Details(app string) (*Details, error) {
-   req := http.New_Request()
+   req := http.Get()
    req.URL.Host = "android.clients.google.com"
    req.URL.Path = "/fdfe/details"
    req.URL.RawQuery = "doc=" + app

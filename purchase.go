@@ -7,9 +7,8 @@ import (
 
 // Purchase app. Only needs to be done once per Google account.
 func (h Header) Purchase(app string) error {
-   req := http.New_Request()
+   req := http.Post()
    req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-   req.Method = "POST"
    req.Set_Body(strings.NewReader("doc=" + app))
    req.URL.Host = "android.clients.google.com"
    req.URL.Path = "/fdfe/purchase"
