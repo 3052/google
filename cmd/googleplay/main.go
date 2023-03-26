@@ -8,48 +8,37 @@ import (
 )
 
 type flags struct {
-   app string
    device bool
+   doc string
    email string
-   password string
+   googleplay.Client
+   passwd string
    platform int64
    purchase bool
    single bool
-   version uint64
-   verbose bool
+   vc uint64
 }
 
 func main() {
    var f flags
-   // a
-   flag.StringVar(&f.app, "a", "", "app")
-   // device
+   f.Client = googleplay.Default_Client
+   flag.StringVar(&f.doc, "d", "", "doc")
    flag.BoolVar(&f.device, "device", false, "create device")
-   // email
    flag.StringVar(&f.email, "email", "", "your email")
-   // p
+   flag.IntVar(&f.Log_Level, "log", f.Log_Level, "log level")
    flag.Int64Var(&f.platform, "p", 0, googleplay.Platforms.String())
-   // password
-   flag.StringVar(&f.password, "password", "", "your password")
-   // purchase
-   flag.BoolVar(&f.purchase, "purchase", false, "purchase app")
-   // s
+   flag.StringVar(&f.passwd, "passwd", "", "password")
+   flag.BoolVar(&f.purchase, "purchase", false, "purchase request")
    flag.BoolVar(&f.single, "s", false, "single APK")
-   // v
-   flag.Uint64Var(&f.version, "v", 0, "app version")
-   // verbose
-   flag.BoolVar(&f.verbose, "verbose", false, "verbose")
+   flag.Uint64Var(&f.vc, "v", 0, "version code")
    flag.Parse()
-   if f.verbose {
-      googleplay.Client.Log_Level = 2
-   }
    dir, err := os.UserHomeDir()
    if err != nil {
       panic(err)
    }
    dir += "/googleplay"
    os.Mkdir(dir, os.ModePerm)
-   if f.password != "" {
+   if f.passwd != "" {
       err := f.do_auth(dir)
       if err != nil {
          panic(err)
@@ -57,21 +46,21 @@ func main() {
    } else {
       platform := googleplay.Platforms[f.platform]
       if f.device {
-         err := do_device(dir, platform)
+         err := f.do_device(dir, platform)
          if err != nil {
             panic(err)
          }
-      } else if f.app != "" {
+      } else if f.doc != "" {
          head, err := f.do_header(dir, platform)
          if err != nil {
             panic(err)
          }
          if f.purchase {
-            err := head.Purchase(f.app)
+            err := f.Purchase(head, f.doc)
             if err != nil {
                panic(err)
             }
-         } else if f.version >= 1 {
+         } else if f.vc >= 1 {
             err := f.do_delivery(head)
             if err != nil {
                panic(err)

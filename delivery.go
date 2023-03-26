@@ -9,13 +9,9 @@ import (
    "strconv"
 )
 
-type File struct {
-   Package_Name string
-   Version_Code uint64
-}
-
 func (f File) APK(id string) string {
-   b := []byte(f.Package_Name)
+   var b []byte
+   b = append(b, f.Package_Name...)
    b = append(b, '-')
    if id != "" {
       b = append(b, id...)
@@ -40,20 +36,19 @@ func (f File) OBB(file_type uint64) string {
    b = append(b, ".obb"...)
    return string(b)
 }
-
-func (h Header) Delivery(app string, ver uint64) (*Delivery, error) {
+func (c Client) Delivery(h *Header, doc string, vc uint64) (*Delivery, error) {
    req := http.Get()
+   req.URL.Scheme = "https"
    req.URL.Host = "play-fe.googleapis.com"
    req.URL.Path = "/fdfe/delivery"
    req.URL.RawQuery = url.Values{
-      "doc": {app},
-      "vc": {strconv.FormatUint(ver, 10)},
+      "doc": {doc},
+      "vc": {strconv.FormatUint(vc, 10)},
    }.Encode()
-   req.URL.Scheme = "https"
    h.Set_Agent(req.Header)
    h.Set_Auth(req.Header) // needed for single APK
    h.Set_Device(req.Header)
-   res, err := Client.Do(req)
+   res, err := c.Do(req)
    if err != nil {
       return nil, err
    }
@@ -87,7 +82,6 @@ func (h Header) Delivery(app string, ver uint64) (*Delivery, error) {
    del.Message = delivery_response.Get(2)
    return &del, nil
 }
-
 // .downloadUrl
 func (d Delivery) Download_URL() (string, error) {
    return d.Get_String(3)
@@ -145,3 +139,9 @@ func (a App_File_Metadata) File_Type() (uint64, error) {
 func (a App_File_Metadata) Download_URL() (string, error) {
    return a.Get_String(4)
 }
+
+type File struct {
+   Package_Name string
+   Version_Code uint64
+}
+

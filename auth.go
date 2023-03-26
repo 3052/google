@@ -12,18 +12,16 @@ import (
    "strings"
 )
 
-func (h Header) Set_Device(head http.Header) error {
-   id, err := h.Device.ID()
-   if err != nil {
-      return err
-   }
-   head.Set("X-DFE-Device-ID", strconv.FormatUint(id, 16))
-   return nil
+type Client struct {
+   http.Client
 }
 
+var Default_Client = Client{http.Default_Client}
+
 func (h Header) Set_Agent(head http.Header) {
+   var b []byte
    // `sdk` is needed for `/fdfe/delivery`
-   b := []byte("Android-Finsky (sdk=")
+   b = append(b, "Android-Finsky (sdk="...)
    // valid range 0 - 0x7FFF_FFFF
    b = strconv.AppendInt(b, 9, 10)
    // com.android.vending
@@ -37,6 +35,15 @@ func (h Header) Set_Agent(head http.Header) {
    }
    b = append(b, ')')
    head.Set("User-Agent", string(b))
+}
+
+func (h Header) Set_Device(head http.Header) error {
+   id, err := h.Device.ID()
+   if err != nil {
+      return err
+   }
+   head.Set("X-DFE-Device-ID", strconv.FormatUint(id, 16))
+   return nil
 }
 
 func (h Header) Set_Auth(head http.Header) {
@@ -111,42 +118,39 @@ func (a Auth) Get_Token() string {
    return a.Get("Token")
 }
 
-var Client = http.Default_Client
-
 // You can also use host "android.clients.google.com", but it also uses
 // TLS fingerprinting.
-func New_Auth(email, password string) (*Response, error) {
+func (c Client) Auth(email, passwd string) (*Response, error) {
    // Client_Hello
    hello, err := tls.Parse(tls.Android_API)
    if err != nil {
       return nil, err
    }
    // Client
-   clone := Client.Clone()
-   clone.Transport = hello.Transport()
+   c.Transport = hello.Transport()
    // Request
    body := url.Values{
       "Email": {email},
-      "Passwd": {password},
+      "Passwd": {passwd},
       "client_sig": {""},
       // wikipedia.org/wiki/URL_encoding#Types_of_URI_characters
       "droidguard_results": {"-"},
    }.Encode()
    req := http.Post()
+   req.Body_String(body)
    req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-   req.Set_Body(strings.NewReader(body))
    req.URL.Host = "android.googleapis.com"
    req.URL.Path = "/auth"
    req.URL.Scheme = "https"
    // Response
-   res, err := clone.Do(req)
+   res, err := c.Do(req)
    if err != nil {
       return nil, err
    }
    return &Response{res}, nil
 }
 
-func (a *Auth) Exchange() error {
+func (c Client) Exchange(a *Auth) error {
    // these values take from Android API 28
    body := url.Values{
       "Token": {a.Get_Token()},
@@ -155,12 +159,12 @@ func (a *Auth) Exchange() error {
       "service": {"oauth2:https://www.googleapis.com/auth/googleplay"},
    }.Encode()
    req := http.Post()
+   req.Body_String(body)
    req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-   req.Set_Body(strings.NewReader(body))
    req.URL.Host = "android.googleapis.com"
    req.URL.Path = "/auth"
    req.URL.Scheme = "https"
-   res, err := Client.Do(req)
+   res, err := c.Do(req)
    if err != nil {
       return err
    }

@@ -3,11 +3,42 @@ package googleplay
 import (
    "2a.pages.dev/rosso/http"
    "2a.pages.dev/rosso/protobuf"
-   "bytes"
    "strconv"
    "time"
 )
 
+type Native_Platform map[int64]string
+
+var Platforms = Native_Platform{
+   // com.google.android.youtube
+   0: "x86",
+   // com.miui.weather2
+   1: "armeabi-v7a",
+   // com.kakaogames.twodin
+   2: "arm64-v8a",
+}
+
+func (n Native_Platform) String() string {
+   var b []byte
+   b = append(b, "native platform"...)
+   for key, val := range n {
+      b = append(b, '\n')
+      b = strconv.AppendInt(b, key, 10)
+      b = append(b, ": "...)
+      b = append(b, val...)
+   }
+   return string(b)
+}
+
+// Checkin$AndroidCheckinResponse
+type Device struct {
+   protobuf.Message
+}
+
+// AndroidId
+func (d Device) ID() (uint64, error) {
+   return d.Get_Fixed64(7)
+}
 const Sleep = 4 * time.Second
 
 // These can use default values, but they must all be included
@@ -86,7 +117,7 @@ var Phone = Config{
 }
 
 // A Sleep is needed after this.
-func (c Config) Checkin(native_platform string) (*Response, error) {
+func (c Client) Checkin(con Config, platform string) (*Response, error) {
    body := protobuf.Message{
       // Checkin$AndroidCheckinRequest
       4: protobuf.Message{ // checkin
@@ -103,72 +134,40 @@ func (c Config) Checkin(native_platform string) (*Response, error) {
       14: protobuf.Varint(3), // version
       18: protobuf.Message{ // deviceConfiguration
          // DeviceConfiguration
-         1: protobuf.Varint(c.Touch_Screen),
-         2: protobuf.Varint(c.Keyboard),
-         3: protobuf.Varint(c.Navigation),
-         4: protobuf.Varint(c.Screen_Layout),
-         5: protobuf.Varint(c.Has_Hard_Keyboard),
-         6: protobuf.Varint(c.Has_Five_Way_Navigation),
-         7: protobuf.Varint(c.Screen_Density),
-         8: protobuf.Varint(c.GL_ES_Version),
-         11: protobuf.String(native_platform),
+         1: protobuf.Varint(con.Touch_Screen),
+         2: protobuf.Varint(con.Keyboard),
+         3: protobuf.Varint(con.Navigation),
+         4: protobuf.Varint(con.Screen_Layout),
+         5: protobuf.Varint(con.Has_Hard_Keyboard),
+         6: protobuf.Varint(con.Has_Five_Way_Navigation),
+         7: protobuf.Varint(con.Screen_Density),
+         8: protobuf.Varint(con.GL_ES_Version),
+         11: protobuf.String(platform), // nativePlatform
       },
    }
-   for _, library := range c.System_Shared_Library {
+   for _, library := range con.System_Shared_Library {
       // .deviceConfiguration.systemSharedLibrary
       body.Get(18).Add_String(9, library)
    }
-   for _, extension := range c.GL_Extension {
+   for _, extension := range con.GL_Extension {
       // .deviceConfiguration.glExtension
       body.Get(18).Add_String(15, extension)
    }
-   for _, name := range c.New_System_Available_Feature {
+   for _, name := range con.New_System_Available_Feature {
       // .deviceConfiguration.newSystemAvailableFeature
       body.Get(18).Add(26, protobuf.Message{
          1: protobuf.String(name),
       })
    }
    req := http.Post()
+   req.Body_Bytes(body.Marshal())
    req.Header.Set("Content-Type", "application/x-protobuffer")
-   req.Set_Body(bytes.NewReader(body.Marshal()))
    req.URL.Host = "android.googleapis.com"
    req.URL.Path = "/checkin"
    req.URL.Scheme = "https"
-   res, err := Client.Do(req)
+   res, err := c.Do(req)
    if err != nil {
       return nil, err
    }
    return &Response{res}, nil
-}
-
-type Native_Platform map[int64]string
-
-var Platforms = Native_Platform{
-   // com.google.android.youtube
-   0: "x86",
-   // com.miui.weather2
-   1: "armeabi-v7a",
-   // com.kakaogames.twodin
-   2: "arm64-v8a",
-}
-
-func (n Native_Platform) String() string {
-   b := []byte("nativePlatform")
-   for key, val := range n {
-      b = append(b, '\n')
-      b = strconv.AppendInt(b, key, 10)
-      b = append(b, ": "...)
-      b = append(b, val...)
-   }
-   return string(b)
-}
-
-// Checkin$AndroidCheckinResponse
-type Device struct {
-   protobuf.Message
-}
-
-// AndroidId
-func (d Device) ID() (uint64, error) {
-   return d.Get_Fixed64(7)
 }

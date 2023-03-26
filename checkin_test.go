@@ -12,7 +12,7 @@ func checkin_create(id int64) error {
    if err != nil {
       return err
    }
-   res, err := Phone.Checkin(platform)
+   res, err := Default_Client.Checkin(Phone, platform)
    if err != nil {
       return err
    }

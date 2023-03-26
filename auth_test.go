@@ -11,7 +11,7 @@ func Test_Auth(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   res, err := New_Auth(email, password)
+   res, err := Default_Client.Auth(email, passwd)
    if err != nil {
       t.Fatal(err)
    }

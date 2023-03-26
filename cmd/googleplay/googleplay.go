@@ -9,23 +9,58 @@ import (
    "time"
 )
 
-func (f flags) do_details(head *googleplay.Header) ([]byte, error) {
-   detail, err := head.Details(f.app)
+func (f flags) do_header(dir, platform string) (*googleplay.Header, error) {
+   var head googleplay.Header
+   err := head.Open_Auth(dir + "/auth.txt")
+   if err != nil {
+      return nil, err
+   }
+   if err := f.Exchange(&head.Auth); err != nil {
+      return nil, err
+   }
+   if err := head.Open_Device(dir + "/" + platform + ".bin"); err != nil {
+      return nil, err
+   }
+   head.Single = f.single
+   return &head, nil
+}
+
+func (f flags) do_details(h *googleplay.Header) ([]byte, error) {
+   detail, err := f.Details(h, f.doc)
    if err != nil {
       return nil, err
    }
    return detail.MarshalText()
 }
 
-func download(ref, name string) error {
-   clone := googleplay.Client.Clone()
-   clone.CheckRedirect = nil
-   req := http.Get()
-   err := req.Set_URL(ref)
+func (f flags) do_device(dir, platform string) error {
+   res, err := f.Checkin(googleplay.Phone, platform)
    if err != nil {
       return err
    }
-   res, err := clone.Do(req)
+   defer res.Body.Close()
+   fmt.Printf("Sleeping %v for server to process\n", googleplay.Sleep)
+   time.Sleep(googleplay.Sleep)
+   return res.Create(dir + "/" + platform + ".bin")
+}
+
+func (f flags) do_auth(dir string) error {
+   res, err := f.Auth(f.email, f.passwd)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   return res.Create(dir + "/auth.txt")
+}
+
+func (f flags) download(ref, name string) error {
+   f.CheckRedirect = nil
+   req := http.Get()
+   err := req.URL_String(ref)
+   if err != nil {
+      return err
+   }
+   res, err := f.Do(req)
    if err != nil {
       return err
    }
@@ -42,13 +77,13 @@ func download(ref, name string) error {
    return nil
 }
 
-func (f flags) do_delivery(head *googleplay.Header) error {
-   del, err := head.Delivery(f.app, f.version)
+func (f flags) do_delivery(h *googleplay.Header) error {
+   deliver, err := f.Delivery(h, f.doc, f.vc)
    if err != nil {
       return err
    }
-   file := googleplay.File{f.app, f.version}
-   for _, split := range del.Split_Data() {
+   file := googleplay.File{f.doc, f.vc}
+   for _, split := range deliver.Split_Data() {
       ref, err := split.Download_URL()
       if err != nil {
          return err
@@ -57,11 +92,11 @@ func (f flags) do_delivery(head *googleplay.Header) error {
       if err != nil {
          return err
       }
-      if err := download(ref, file.APK(id)); err != nil {
+      if err := f.download(ref, file.APK(id)); err != nil {
          return err
       }
    }
-   for _, add := range del.Additional_File() {
+   for _, add := range deliver.Additional_File() {
       ref, err := add.Download_URL()
       if err != nil {
          return err
@@ -70,49 +105,14 @@ func (f flags) do_delivery(head *googleplay.Header) error {
       if err != nil {
          return err
       }
-      if err := download(ref, file.OBB(typ)); err != nil {
+      if err := f.download(ref, file.OBB(typ)); err != nil {
          return err
       }
    }
-   ref, err := del.Download_URL()
+   ref, err := deliver.Download_URL()
    if err != nil {
       return err
    }
-   return download(ref, file.APK(""))
+   return f.download(ref, file.APK(""))
 }
 
-func (f flags) do_header(dir, platform string) (*googleplay.Header, error) {
-   var head googleplay.Header
-   err := head.Open_Auth(dir + "/auth.txt")
-   if err != nil {
-      return nil, err
-   }
-   if err := head.Auth.Exchange(); err != nil {
-      return nil, err
-   }
-   if err := head.Open_Device(dir + "/" + platform + ".bin"); err != nil {
-      return nil, err
-   }
-   head.Single = f.single
-   return &head, nil
-}
-
-func (f flags) do_auth(dir string) error {
-   res, err := googleplay.New_Auth(f.email, f.password)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   return res.Create(dir + "/auth.txt")
-}
-
-func do_device(dir, platform string) error {
-   res, err := googleplay.Phone.Checkin(platform)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   fmt.Printf("Sleeping %v for server to process\n", googleplay.Sleep)
-   time.Sleep(googleplay.Sleep)
-   return res.Create(dir + "/" + platform + ".bin")
-}
