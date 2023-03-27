@@ -114,13 +114,14 @@ func (a Auth) Get_Token() string {
 
 // You can also use host "android.clients.google.com", but it also uses
 // TLS fingerprinting.
-func New_Auth(c http.Client, email, passwd string) (*Response, error) {
+func New_Auth(email, passwd string) (*Response, error) {
    // Client_Hello
    hello, err := tls.Parse(tls.Android_API)
    if err != nil {
       return nil, err
    }
-   c.Transport = hello.Transport()
+   client := http.Default_Client
+   client.Transport = hello.Transport()
    // Request
    body := url.Values{
       "Email": {email},
@@ -136,14 +137,14 @@ func New_Auth(c http.Client, email, passwd string) (*Response, error) {
    req.URL.Path = "/auth"
    req.URL.Scheme = "https"
    // Response
-   res, err := c.Do(req)
+   res, err := client.Do(req)
    if err != nil {
       return nil, err
    }
    return &Response{res}, nil
 }
 
-func (a *Auth) Exchange(c http.Client) error {
+func (a *Auth) Exchange() error {
    // these values take from Android API 28
    body := url.Values{
       "Token": {a.Get_Token()},
@@ -157,7 +158,7 @@ func (a *Auth) Exchange(c http.Client) error {
    req.URL.Host = "android.googleapis.com"
    req.URL.Path = "/auth"
    req.URL.Scheme = "https"
-   res, err := c.Do(req)
+   res, err := http.Default_Client.Do(req)
    if err != nil {
       return err
    }

@@ -9,8 +9,33 @@ import (
    "time"
 )
 
+func (f flags) download(ref, name string) error {
+   client := http.Default_Client
+   client.CheckRedirect = nil
+   req := http.Get()
+   err := req.URL_String(ref)
+   if err != nil {
+      return err
+   }
+   res, err := client.Do(req)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   file, err := os.Create(name)
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   pro := http.Progress_Bytes(file, res.ContentLength)
+   if _, err := io.Copy(pro, res.Body); err != nil {
+      return err
+   }
+   return nil
+}
+
 func (f flags) do_delivery(head *googleplay.Header) error {
-   deliver, err := head.Delivery(f.Client, f.doc, f.vc)
+   deliver, err := head.Delivery(f.doc, f.vc)
    if err != nil {
       return err
    }
@@ -54,7 +79,7 @@ func (f flags) do_header(dir, platform string) (*googleplay.Header, error) {
    if err != nil {
       return nil, err
    }
-   if err := head.Auth.Exchange(f.Client); err != nil {
+   if err := head.Auth.Exchange(); err != nil {
       return nil, err
    }
    if err := head.Open_Device(dir + "/" + platform + ".bin"); err != nil {
@@ -65,7 +90,7 @@ func (f flags) do_header(dir, platform string) (*googleplay.Header, error) {
 }
 
 func (f flags) do_details(head *googleplay.Header) ([]byte, error) {
-   detail, err := head.Details(f.Client, f.doc)
+   detail, err := head.Details(f.doc)
    if err != nil {
       return nil, err
    }
@@ -73,7 +98,7 @@ func (f flags) do_details(head *googleplay.Header) ([]byte, error) {
 }
 
 func (f flags) do_device(dir, platform string) error {
-   res, err := googleplay.Phone.Checkin(f.Client, platform)
+   res, err := googleplay.Phone.Checkin(platform)
    if err != nil {
       return err
    }
@@ -84,35 +109,11 @@ func (f flags) do_device(dir, platform string) error {
 }
 
 func (f flags) do_auth(dir string) error {
-   res, err := googleplay.New_Auth(f.Client, f.email, f.passwd)
+   res, err := googleplay.New_Auth(f.email, f.passwd)
    if err != nil {
       return err
    }
    defer res.Body.Close()
    return res.Create(dir + "/auth.txt")
-}
-
-func (f flags) download(ref, name string) error {
-   f.CheckRedirect = nil
-   req := http.Get()
-   err := req.URL_String(ref)
-   if err != nil {
-      return err
-   }
-   res, err := f.Do(req)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   file, err := os.Create(name)
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   pro := http.Progress_Bytes(file, res.ContentLength)
-   if _, err := io.Copy(pro, res.Body); err != nil {
-      return err
-   }
-   return nil
 }
 

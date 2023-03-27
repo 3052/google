@@ -12,7 +12,6 @@ type flags struct {
    device bool
    doc string
    email string
-   http.Client
    passwd string
    platform int64
    purchase bool
@@ -22,11 +21,13 @@ type flags struct {
 
 func main() {
    var f flags
-   f.Client = http.Default_Client
    flag.StringVar(&f.doc, "d", "", "doc")
    flag.BoolVar(&f.device, "device", false, "create device")
    flag.StringVar(&f.email, "email", "", "your email")
-   flag.IntVar(&f.Log_Level, "log", f.Log_Level, "log level")
+   flag.IntVar(
+      &http.Default_Client.Log_Level, "log",
+      http.Default_Client.Log_Level, "log level",
+   )
    flag.Int64Var(&f.platform, "p", 0, googleplay.Platforms.String())
    flag.StringVar(&f.passwd, "passwd", "", "password")
    flag.BoolVar(&f.purchase, "purchase", false, "purchase request")
@@ -57,7 +58,7 @@ func main() {
             panic(err)
          }
          if f.purchase {
-            err := head.Purchase(f.Client, f.doc)
+            err := head.Purchase(f.doc)
             if err != nil {
                panic(err)
             }

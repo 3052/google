@@ -166,7 +166,7 @@ func (d Details) Num_Downloads() (uint64, error) {
    return d.Get(13).Get(1).Get_Varint(70)
 }
 
-func (h Header) Details(c http.Client, doc string) (*Details, error) {
+func (h Header) Details(doc string) (*Details, error) {
    req := http.Get()
    req.URL.Scheme = "https"
    req.URL.Host = "android.clients.google.com"
@@ -177,7 +177,7 @@ func (h Header) Details(c http.Client, doc string) (*Details, error) {
    h.Set_Agent(req.Header)
    h.Set_Auth(req.Header)
    h.Set_Device(req.Header)
-   res, err := c.Do(req)
+   res, err := http.Default_Client.Do(req)
    if err != nil {
       return nil, err
    }

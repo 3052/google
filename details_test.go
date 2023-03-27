@@ -1,7 +1,6 @@
 package googleplay
 
 import (
-   "2a.pages.dev/rosso/http"
    "fmt"
    "os"
    "strconv"
@@ -16,11 +15,11 @@ func Test_Details(t *testing.T) {
    }
    var head Header
    head.Open_Auth(home + "/googleplay/auth.txt")
-   head.Auth.Exchange(http.Default_Client)
+   head.Auth.Exchange()
    for _, app := range apps {
       platform := Platforms[app.platform]
       head.Open_Device(home + "/googleplay/" + platform + ".bin")
-      d, err := head.Details(http.Default_Client, app.doc)
+      d, err := head.Details(app.doc)
       if err != nil {
          t.Fatal(err)
       }

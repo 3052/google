@@ -117,7 +117,7 @@ var Phone = Config{
 }
 
 // A Sleep is needed after this.
-func (con Config) Checkin(c http.Client, platform string) (*Response, error) {
+func (c Config) Checkin(platform string) (*Response, error) {
    body := protobuf.Message{
       // Checkin$AndroidCheckinRequest
       4: protobuf.Message{ // checkin
@@ -134,26 +134,26 @@ func (con Config) Checkin(c http.Client, platform string) (*Response, error) {
       14: protobuf.Varint(3), // version
       18: protobuf.Message{ // deviceConfiguration
          // DeviceConfiguration
-         1: protobuf.Varint(con.Touch_Screen),
-         2: protobuf.Varint(con.Keyboard),
-         3: protobuf.Varint(con.Navigation),
-         4: protobuf.Varint(con.Screen_Layout),
-         5: protobuf.Varint(con.Has_Hard_Keyboard),
-         6: protobuf.Varint(con.Has_Five_Way_Navigation),
-         7: protobuf.Varint(con.Screen_Density),
-         8: protobuf.Varint(con.GL_ES_Version),
+         1: protobuf.Varint(c.Touch_Screen),
+         2: protobuf.Varint(c.Keyboard),
+         3: protobuf.Varint(c.Navigation),
+         4: protobuf.Varint(c.Screen_Layout),
+         5: protobuf.Varint(c.Has_Hard_Keyboard),
+         6: protobuf.Varint(c.Has_Five_Way_Navigation),
+         7: protobuf.Varint(c.Screen_Density),
+         8: protobuf.Varint(c.GL_ES_Version),
          11: protobuf.String(platform), // nativePlatform
       },
    }
-   for _, library := range con.System_Shared_Library {
+   for _, library := range c.System_Shared_Library {
       // .deviceConfiguration.systemSharedLibrary
       body.Get(18).Add_String(9, library)
    }
-   for _, extension := range con.GL_Extension {
+   for _, extension := range c.GL_Extension {
       // .deviceConfiguration.glExtension
       body.Get(18).Add_String(15, extension)
    }
-   for _, name := range con.New_System_Available_Feature {
+   for _, name := range c.New_System_Available_Feature {
       // .deviceConfiguration.newSystemAvailableFeature
       body.Get(18).Add(26, protobuf.Message{
          1: protobuf.String(name),
@@ -165,7 +165,7 @@ func (con Config) Checkin(c http.Client, platform string) (*Response, error) {
    req.URL.Host = "android.googleapis.com"
    req.URL.Path = "/checkin"
    req.URL.Scheme = "https"
-   res, err := c.Do(req)
+   res, err := http.Default_Client.Do(req)
    if err != nil {
       return nil, err
    }

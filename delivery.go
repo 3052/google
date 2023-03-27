@@ -100,7 +100,7 @@ func (f File) OBB(file_type uint64) string {
    return string(b)
 }
 
-func (h Header) Delivery(c http.Client, doc string, vc uint64) (*Delivery, error) {
+func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
    req := http.Get()
    req.URL.Scheme = "https"
    req.URL.Host = "play-fe.googleapis.com"
@@ -112,7 +112,7 @@ func (h Header) Delivery(c http.Client, doc string, vc uint64) (*Delivery, error
    h.Set_Agent(req.Header)
    h.Set_Auth(req.Header) // needed for single APK
    h.Set_Device(req.Header)
-   res, err := c.Do(req)
+   res, err := http.Default_Client.Do(req)
    if err != nil {
       return nil, err
    }

@@ -3,7 +3,7 @@ package googleplay
 import "2a.pages.dev/rosso/http"
 
 // Purchase app. Only needs to be done once per Google account.
-func (h Header) Purchase(c http.Client, doc string) error {
+func (h Header) Purchase(doc string) error {
    req := http.Post()
    req.URL.Scheme = "https"
    req.URL.Host = "android.clients.google.com"
@@ -12,7 +12,7 @@ func (h Header) Purchase(c http.Client, doc string) error {
    h.Set_Auth(req.Header)
    h.Set_Device(req.Header)
    req.Body_String("doc=" + doc)
-   res, err := c.Do(req)
+   res, err := http.Default_Client.Do(req)
    if err != nil {
       return err
    }
