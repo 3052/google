@@ -1,6 +1,7 @@
 package googleplay
 
 import (
+   "2a.pages.dev/rosso/http"
    "os"
    "testing"
    "time"
@@ -11,7 +12,7 @@ func Test_Auth(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   res, err := Default_Client.Auth(email, passwd)
+   res, err := New_Auth(http.Default_Client, email, passwd)
    if err != nil {
       t.Fatal(err)
    }

@@ -12,12 +12,6 @@ import (
    "strings"
 )
 
-type Client struct {
-   http.Client
-}
-
-var Default_Client = Client{http.Default_Client}
-
 func (h Header) Set_Agent(head http.Header) {
    var b []byte
    // `sdk` is needed for `/fdfe/delivery`
@@ -120,13 +114,12 @@ func (a Auth) Get_Token() string {
 
 // You can also use host "android.clients.google.com", but it also uses
 // TLS fingerprinting.
-func (c Client) Auth(email, passwd string) (*Response, error) {
+func New_Auth(c http.Client, email, passwd string) (*Response, error) {
    // Client_Hello
    hello, err := tls.Parse(tls.Android_API)
    if err != nil {
       return nil, err
    }
-   // Client
    c.Transport = hello.Transport()
    // Request
    body := url.Values{
@@ -150,7 +143,7 @@ func (c Client) Auth(email, passwd string) (*Response, error) {
    return &Response{res}, nil
 }
 
-func (c Client) Exchange(a *Auth) error {
+func (a *Auth) Exchange(c http.Client) error {
    // these values take from Android API 28
    body := url.Values{
       "Token": {a.Get_Token()},

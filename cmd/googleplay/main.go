@@ -2,6 +2,7 @@ package main
 
 import (
    "2a.pages.dev/googleplay"
+   "2a.pages.dev/rosso/http"
    "flag"
    "fmt"
    "os"
@@ -11,7 +12,7 @@ type flags struct {
    device bool
    doc string
    email string
-   googleplay.Client
+   http.Client
    passwd string
    platform int64
    purchase bool
@@ -21,7 +22,7 @@ type flags struct {
 
 func main() {
    var f flags
-   f.Client = googleplay.Default_Client
+   f.Client = http.Default_Client
    flag.StringVar(&f.doc, "d", "", "doc")
    flag.BoolVar(&f.device, "device", false, "create device")
    flag.StringVar(&f.email, "email", "", "your email")
@@ -56,7 +57,7 @@ func main() {
             panic(err)
          }
          if f.purchase {
-            err := f.Purchase(head, f.doc)
+            err := head.Purchase(f.Client, f.doc)
             if err != nil {
                panic(err)
             }

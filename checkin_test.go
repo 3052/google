@@ -1,6 +1,7 @@
 package googleplay
 
 import (
+   "2a.pages.dev/rosso/http"
    "os"
    "testing"
    "time"
@@ -12,7 +13,7 @@ func checkin_create(id int64) error {
    if err != nil {
       return err
    }
-   res, err := Default_Client.Checkin(Phone, platform)
+   res, err := Phone.Checkin(http.Default_Client, platform)
    if err != nil {
       return err
    }

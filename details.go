@@ -8,37 +8,6 @@ import (
    "io"
 )
 
-func (c Client) Details(h *Header, doc string) (*Details, error) {
-   req := http.Get()
-   req.URL.Scheme = "https"
-   req.URL.Host = "android.clients.google.com"
-   req.URL.Path = "/fdfe/details"
-   req.URL.RawQuery = "doc=" + doc
-   // half of the apps I test require User-Agent,
-   // so just set it for all of them
-   h.Set_Agent(req.Header)
-   h.Set_Auth(req.Header)
-   h.Set_Device(req.Header)
-   res, err := c.Do(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   body, err := io.ReadAll(res.Body)
-   if err != nil {
-      return nil, err
-   }
-   // ResponseWrapper
-   response_wrapper, err := protobuf.Unmarshal(body)
-   if err != nil {
-      return nil, err
-   }
-   var det Details
-   // .payload.detailsResponse.docV2
-   det.Message = response_wrapper.Get(1).Get(2).Get(4)
-   return &det, nil
-}
-
 // .details.appDetails.installationSize
 func (d Details) Installation_Size() (uint64, error) {
    value, err := d.Get(13).Get(1).Get_Varint(9)
@@ -195,4 +164,35 @@ func (d Details) Version_Code() (uint64, error) {
 // .numDownloads
 func (d Details) Num_Downloads() (uint64, error) {
    return d.Get(13).Get(1).Get_Varint(70)
+}
+
+func (h Header) Details(c http.Client, doc string) (*Details, error) {
+   req := http.Get()
+   req.URL.Scheme = "https"
+   req.URL.Host = "android.clients.google.com"
+   req.URL.Path = "/fdfe/details"
+   req.URL.RawQuery = "doc=" + doc
+   // half of the apps I test require User-Agent,
+   // so just set it for all of them
+   h.Set_Agent(req.Header)
+   h.Set_Auth(req.Header)
+   h.Set_Device(req.Header)
+   res, err := c.Do(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   body, err := io.ReadAll(res.Body)
+   if err != nil {
+      return nil, err
+   }
+   // ResponseWrapper
+   response_wrapper, err := protobuf.Unmarshal(body)
+   if err != nil {
+      return nil, err
+   }
+   var det Details
+   // .payload.detailsResponse.docV2
+   det.Message = response_wrapper.Get(1).Get(2).Get(4)
+   return &det, nil
 }

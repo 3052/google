@@ -9,79 +9,6 @@ import (
    "strconv"
 )
 
-func (f File) APK(id string) string {
-   var b []byte
-   b = append(b, f.Package_Name...)
-   b = append(b, '-')
-   if id != "" {
-      b = append(b, id...)
-      b = append(b, '-')
-   }
-   b = strconv.AppendUint(b, f.Version_Code, 10)
-   b = append(b, ".apk"...)
-   return string(b)
-}
-
-func (f File) OBB(file_type uint64) string {
-   var b []byte
-   if file_type >= 1 {
-      b = append(b, "patch"...)
-   } else {
-      b = append(b, "main"...)
-   }
-   b = append(b, '.')
-   b = strconv.AppendUint(b, f.Version_Code, 10)
-   b = append(b, '.')
-   b = append(b, f.Package_Name...)
-   b = append(b, ".obb"...)
-   return string(b)
-}
-func (c Client) Delivery(h *Header, doc string, vc uint64) (*Delivery, error) {
-   req := http.Get()
-   req.URL.Scheme = "https"
-   req.URL.Host = "play-fe.googleapis.com"
-   req.URL.Path = "/fdfe/delivery"
-   req.URL.RawQuery = url.Values{
-      "doc": {doc},
-      "vc": {strconv.FormatUint(vc, 10)},
-   }.Encode()
-   h.Set_Agent(req.Header)
-   h.Set_Auth(req.Header) // needed for single APK
-   h.Set_Device(req.Header)
-   res, err := c.Do(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   body, err := io.ReadAll(res.Body)
-   if err != nil {
-      return nil, err
-   }
-   // ResponseWrapper
-   response_wrapper, err := protobuf.Unmarshal(body)
-   if err != nil {
-      return nil, err
-   }
-   // .payload.deliveryResponse
-   delivery_response := response_wrapper.Get(1).Get(21)
-   // .status
-   status, err := delivery_response.Get_Varint(1)
-   if err != nil {
-      return nil, err
-   }
-   switch status {
-   case 2:
-      return nil, errors.New("geo-blocking")
-   case 3:
-      return nil, errors.New("purchase required")
-   case 5:
-      return nil, errors.New("invalid version")
-   }
-   var del Delivery
-   // .appDeliveryData
-   del.Message = delivery_response.Get(2)
-   return &del, nil
-}
 // .downloadUrl
 func (d Delivery) Download_URL() (string, error) {
    return d.Get_String(3)
@@ -145,3 +72,77 @@ type File struct {
    Version_Code uint64
 }
 
+func (f File) APK(id string) string {
+   var b []byte
+   b = append(b, f.Package_Name...)
+   b = append(b, '-')
+   if id != "" {
+      b = append(b, id...)
+      b = append(b, '-')
+   }
+   b = strconv.AppendUint(b, f.Version_Code, 10)
+   b = append(b, ".apk"...)
+   return string(b)
+}
+
+func (f File) OBB(file_type uint64) string {
+   var b []byte
+   if file_type >= 1 {
+      b = append(b, "patch"...)
+   } else {
+      b = append(b, "main"...)
+   }
+   b = append(b, '.')
+   b = strconv.AppendUint(b, f.Version_Code, 10)
+   b = append(b, '.')
+   b = append(b, f.Package_Name...)
+   b = append(b, ".obb"...)
+   return string(b)
+}
+
+func (h Header) Delivery(c http.Client, doc string, vc uint64) (*Delivery, error) {
+   req := http.Get()
+   req.URL.Scheme = "https"
+   req.URL.Host = "play-fe.googleapis.com"
+   req.URL.Path = "/fdfe/delivery"
+   req.URL.RawQuery = url.Values{
+      "doc": {doc},
+      "vc": {strconv.FormatUint(vc, 10)},
+   }.Encode()
+   h.Set_Agent(req.Header)
+   h.Set_Auth(req.Header) // needed for single APK
+   h.Set_Device(req.Header)
+   res, err := c.Do(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   body, err := io.ReadAll(res.Body)
+   if err != nil {
+      return nil, err
+   }
+   // ResponseWrapper
+   response_wrapper, err := protobuf.Unmarshal(body)
+   if err != nil {
+      return nil, err
+   }
+   // .payload.deliveryResponse
+   delivery_response := response_wrapper.Get(1).Get(21)
+   // .status
+   status, err := delivery_response.Get_Varint(1)
+   if err != nil {
+      return nil, err
+   }
+   switch status {
+   case 2:
+      return nil, errors.New("geo-blocking")
+   case 3:
+      return nil, errors.New("purchase required")
+   case 5:
+      return nil, errors.New("invalid version")
+   }
+   var del Delivery
+   // .appDeliveryData
+   del.Message = delivery_response.Get(2)
+   return &del, nil
+}

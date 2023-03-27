@@ -117,7 +117,7 @@ var Phone = Config{
 }
 
 // A Sleep is needed after this.
-func (c Client) Checkin(con Config, platform string) (*Response, error) {
+func (con Config) Checkin(c http.Client, platform string) (*Response, error) {
    body := protobuf.Message{
       // Checkin$AndroidCheckinRequest
       4: protobuf.Message{ // checkin
