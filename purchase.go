@@ -4,7 +4,8 @@ import "2a.pages.dev/rosso/http"
 
 // Purchase app. Only needs to be done once per Google account.
 func (h Header) Purchase(doc string) error {
-   req := http.Post_Text("doc=" + doc)
+   req := http.Post()
+   req.Body_String("doc=" + doc)
    req.URL.Scheme = "https"
    req.URL.Host = "android.clients.google.com"
    req.URL.Path = "/fdfe/purchase"

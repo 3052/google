@@ -12,6 +12,28 @@ import (
    "strings"
 )
 
+func (a *Auth) Exchange() error {
+   // these values take from Android API 28
+   body := url.Values{
+      "Token": {a.Get_Token()},
+      "app": {"com.android.vending"},
+      "client_sig": {"38918a453d07199354f8b19af05ec6562ced5788"},
+      "service": {"oauth2:https://www.googleapis.com/auth/googleplay"},
+   }.Encode()
+   req := http.Post()
+   req.Body_String(body)
+   req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+   req.URL.Host = "android.googleapis.com"
+   req.URL.Path = "/auth"
+   req.URL.Scheme = "https"
+   res, err := http.Default_Client.Do(req)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   a.Values = read_query(res.Body)
+   return nil
+}
 func (h Header) Set_Agent(head http.Header) {
    var b []byte
    // `sdk` is needed for `/fdfe/delivery`
@@ -129,12 +151,12 @@ func New_Auth(email, passwd string) (*Response, error) {
       // wikipedia.org/wiki/URL_encoding#Types_of_URI_characters
       "droidguard_results": {"-"},
    }.Encode()
-   req := http.Post_Text(body)
+   req := http.Post()
+   req.Body_String(body)
    req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
    req.URL.Host = "android.googleapis.com"
    req.URL.Path = "/auth"
    req.URL.Scheme = "https"
-   // Response
    res, err := client.Do(req)
    if err != nil {
       return nil, err
@@ -142,24 +164,3 @@ func New_Auth(email, passwd string) (*Response, error) {
    return &Response{res}, nil
 }
 
-func (a *Auth) Exchange() error {
-   // these values take from Android API 28
-   body := url.Values{
-      "Token": {a.Get_Token()},
-      "app": {"com.android.vending"},
-      "client_sig": {"38918a453d07199354f8b19af05ec6562ced5788"},
-      "service": {"oauth2:https://www.googleapis.com/auth/googleplay"},
-   }.Encode()
-   req := http.Post_Text(body)
-   req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-   req.URL.Host = "android.googleapis.com"
-   req.URL.Path = "/auth"
-   req.URL.Scheme = "https"
-   res, err := http.Default_Client.Do(req)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   a.Values = read_query(res.Body)
-   return nil
-}
