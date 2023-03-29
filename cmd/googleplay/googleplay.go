@@ -12,8 +12,7 @@ import (
 func (f flags) download(ref, name string) error {
    client := http.Default_Client
    client.CheckRedirect = nil
-   req := http.Get()
-   err := req.URL_String(ref)
+   req, err := http.Get_URL(ref)
    if err != nil {
       return err
    }

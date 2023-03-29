@@ -122,7 +122,6 @@ func New_Auth(email, passwd string) (*Response, error) {
    }
    client := http.Default_Client
    client.Transport = hello.Transport()
-   // Request
    body := url.Values{
       "Email": {email},
       "Passwd": {passwd},
@@ -130,8 +129,7 @@ func New_Auth(email, passwd string) (*Response, error) {
       // wikipedia.org/wiki/URL_encoding#Types_of_URI_characters
       "droidguard_results": {"-"},
    }.Encode()
-   req := http.Post()
-   req.Body_String(body)
+   req := http.Post_Text(body)
    req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
    req.URL.Host = "android.googleapis.com"
    req.URL.Path = "/auth"
@@ -152,8 +150,7 @@ func (a *Auth) Exchange() error {
       "client_sig": {"38918a453d07199354f8b19af05ec6562ced5788"},
       "service": {"oauth2:https://www.googleapis.com/auth/googleplay"},
    }.Encode()
-   req := http.Post()
-   req.Body_String(body)
+   req := http.Post_Text(body)
    req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
    req.URL.Host = "android.googleapis.com"
    req.URL.Path = "/auth"
