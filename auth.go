@@ -34,6 +34,7 @@ func (a *Auth) Exchange() error {
    a.Values = read_query(res.Body)
    return nil
 }
+
 func (h Header) Set_Agent(head http.Header) {
    var b []byte
    // `sdk` is needed for `/fdfe/delivery`
