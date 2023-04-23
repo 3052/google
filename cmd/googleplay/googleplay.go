@@ -6,8 +6,40 @@ import (
    "fmt"
    "io"
    "os"
+   "strings"
    "time"
 )
+
+func (f flags) do_auth(dir string) error {
+   if f.file != "" {
+      raw, err := os.ReadFile(f.file)
+      if err != nil {
+         return err
+      }
+      f.passwd = strings.TrimSpace(string(raw))
+   }
+   res, err := googleplay.New_Auth(f.email, f.passwd)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   return res.Create(dir + "/auth.txt")
+}
+
+func mkdir() (string, error) {
+   dir, err := os.UserHomeDir()
+   if err != nil {
+      return "", err
+   }
+   dir += "/googleplay"
+   if _, err := os.Stat(dir); err != nil {
+      err := os.Mkdir(dir, os.ModePerm)
+      if err != nil {
+         return "", err
+      }
+   }
+   return dir, nil
+}
 
 func (f flags) download(ref, name string) error {
    client := http.Default_Client
@@ -102,13 +134,3 @@ func (f flags) do_device(dir, platform string) error {
    time.Sleep(googleplay.Sleep)
    return res.Create(dir + "/" + platform + ".bin")
 }
-
-func (f flags) do_auth(dir string) error {
-   res, err := googleplay.New_Auth(f.email, f.passwd)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   return res.Create(dir + "/auth.txt")
-}
-

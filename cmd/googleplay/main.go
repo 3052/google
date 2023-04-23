@@ -5,13 +5,13 @@ import (
    "2a.pages.dev/rosso/http"
    "flag"
    "fmt"
-   "os"
 )
 
 type flags struct {
    device bool
    doc string
    email string
+   file string
    passwd string
    platform int64
    purchase bool
@@ -24,6 +24,7 @@ func main() {
    flag.StringVar(&f.doc, "d", "", "doc")
    flag.BoolVar(&f.device, "device", false, "create device")
    flag.StringVar(&f.email, "email", "", "your email")
+   flag.StringVar(&f.file, "f", "", "passwd file")
    flag.IntVar(
       &http.Default_Client.Log_Level, "log",
       http.Default_Client.Log_Level, "log level",
@@ -34,13 +35,11 @@ func main() {
    flag.BoolVar(&f.single, "s", false, "single APK")
    flag.Uint64Var(&f.vc, "v", 0, "version code")
    flag.Parse()
-   dir, err := os.UserHomeDir()
+   dir, err := mkdir()
    if err != nil {
       panic(err)
    }
-   dir += "/googleplay"
-   os.Mkdir(dir, os.ModePerm)
-   if f.passwd != "" {
+   if f.passwd != "" || f.file != "" {
       err := f.do_auth(dir)
       if err != nil {
          panic(err)

@@ -126,8 +126,6 @@ var Phone = Config{
       // com.google.android.youtube
       "android.hardware.touchscreen",
       "android.hardware.wifi",
-      // com.illumix.fnafar
-      "android.hardware.sensor.gyroscope",
       // com.madhead.tos.zh
       "android.hardware.sensor.accelerometer",
       // com.miHoYo.GenshinImpact
