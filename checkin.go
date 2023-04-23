@@ -138,6 +138,8 @@ var Phone = Config{
       "android.hardware.screen.portrait",
       // com.supercell.brawlstars
       "android.hardware.touchscreen.multitouch",
+      // com.mediocre.smashhit
+      "android.hardware.touchscreen.multitouch.distinct",
       // com.sygic.aura
       "android.hardware.location.network",
       // com.xiaomi.smarthome
@@ -165,6 +167,8 @@ var Phone = Config{
       "GL_OES_compressed_ETC1_RGB8_texture",
       // com.kakaogames.twodin
       "GL_KHR_texture_compression_astc_ldr",
+      // com.sega.sonic4ep2thd
+      "GL_EXT_texture_compression_s3tc",
    },
    // com.axis.drawingdesk.v3
    // valid range 0x3_0001 - 0x7FFF_FFFF
