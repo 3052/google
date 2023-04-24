@@ -24,7 +24,7 @@ func main() {
    flag.StringVar(&f.doc, "d", "", "doc")
    flag.BoolVar(&f.device, "device", false, "create device")
    flag.StringVar(&f.email, "email", "", "your email")
-   flag.StringVar(&f.file, "f", "", "passwd file")
+   flag.StringVar(&f.file, "f", "", "password file")
    flag.IntVar(
       &http.Default_Client.Log_Level, "log",
       http.Default_Client.Log_Level, "log level",
