@@ -62,6 +62,7 @@ func (c Config) Checkin(platform string) (*Response, error) {
    }
    return &Response{res}, nil
 }
+
 type Native_Platform map[int64]string
 
 var Platforms = Native_Platform{
