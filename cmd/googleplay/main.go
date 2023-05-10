@@ -5,6 +5,7 @@ import (
    "2a.pages.dev/rosso/http"
    "flag"
    "fmt"
+   "os"
 )
 
 type flags struct {
@@ -35,10 +36,11 @@ func main() {
    flag.BoolVar(&f.single, "s", false, "single APK")
    flag.Uint64Var(&f.vc, "v", 0, "version code")
    flag.Parse()
-   dir, err := mkdir()
+   dir, err := os.UserHomeDir()
    if err != nil {
       panic(err)
    }
+   dir += "/Documents"
    if f.passwd != "" || f.file != "" {
       err := f.do_auth(dir)
       if err != nil {

@@ -10,6 +10,22 @@ import (
    "time"
 )
 
+func (f flags) do_header(dir, platform string) (*googleplay.Header, error) {
+   var head googleplay.Header
+   err := head.Open_Auth(dir + "/googleplay.txt")
+   if err != nil {
+      return nil, err
+   }
+   if err := head.Auth.Exchange(); err != nil {
+      return nil, err
+   }
+   if err := head.Open_Device(dir + "/" + platform + ".bin"); err != nil {
+      return nil, err
+   }
+   head.Single = f.single
+   return &head, nil
+}
+
 func (f flags) do_auth(dir string) error {
    if f.file != "" {
       raw, err := os.ReadFile(f.file)
@@ -23,22 +39,7 @@ func (f flags) do_auth(dir string) error {
       return err
    }
    defer res.Body.Close()
-   return res.Create(dir + "/auth.txt")
-}
-
-func mkdir() (string, error) {
-   dir, err := os.UserHomeDir()
-   if err != nil {
-      return "", err
-   }
-   dir += "/googleplay"
-   if _, err := os.Stat(dir); err != nil {
-      err := os.Mkdir(dir, os.ModePerm)
-      if err != nil {
-         return "", err
-      }
-   }
-   return dir, nil
+   return res.Create(dir + "/googleplay.txt")
 }
 
 func (f flags) download(ref, name string) error {
@@ -98,22 +99,6 @@ func (f flags) do_delivery(head *googleplay.Header) error {
       return err
    }
    return f.download(ref, file.APK(""))
-}
-
-func (f flags) do_header(dir, platform string) (*googleplay.Header, error) {
-   var head googleplay.Header
-   err := head.Open_Auth(dir + "/auth.txt")
-   if err != nil {
-      return nil, err
-   }
-   if err := head.Auth.Exchange(); err != nil {
-      return nil, err
-   }
-   if err := head.Open_Device(dir + "/" + platform + ".bin"); err != nil {
-      return nil, err
-   }
-   head.Single = f.single
-   return &head, nil
 }
 
 func (f flags) do_details(head *googleplay.Header) ([]byte, error) {
