@@ -12,6 +12,16 @@ import (
    "strings"
 )
 
+func (h *Header) Open_Auth(name string) error {
+   file, err := os.Open(name)
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   h.Auth.Values = read_query(file)
+   return nil
+}
+
 // You can also use host "android.clients.google.com", but it also uses
 // TLS fingerprinting.
 func New_Auth(email, passwd string) (*Response, error) {
@@ -112,16 +122,6 @@ func (h Header) Set_Device(head http.Header) error {
 
 func (h Header) Set_Auth(head http.Header) {
    head.Set("Authorization", "Bearer " + h.Auth.Get_Auth())
-}
-
-func (h *Header) Open_Auth(name string) error {
-   file, err := os.Open(name)
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   h.Auth.Values = read_query(file)
-   return nil
 }
 
 func (h *Header) Open_Device(name string) error {

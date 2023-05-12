@@ -18,7 +18,7 @@ func checkin_create(id int64) error {
    }
    defer res.Body.Close()
    platform += ".bin"
-   if err := res.Create(home + "/googleplay/" + platform); err != nil {
+   if err := res.Create(home + "/Documents/" + platform); err != nil {
       return err
    }
    time.Sleep(Sleep)

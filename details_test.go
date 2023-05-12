@@ -38,11 +38,11 @@ func Test_Details(t *testing.T) {
       t.Fatal(err)
    }
    var head Header
-   head.Open_Auth(home + "/googleplay/auth.txt")
+   head.Open_Auth(home + "/Documents/googleplay.txt")
    head.Auth.Exchange()
    for _, app := range apps {
       platform := Platforms[app.platform]
-      head.Open_Device(home + "/googleplay/" + platform + ".bin")
+      head.Open_Device(home + "/Documents/" + platform + ".bin")
       d, err := head.Details(app.doc)
       if err != nil {
          t.Fatal(err)
