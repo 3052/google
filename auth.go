@@ -11,6 +11,47 @@ import (
    "strings"
 )
 
+type Response struct {
+   *http.Response
+}
+
+// You can also use host "android.clients.google.com", but it also uses
+// TLS fingerprinting.
+func New_Auth(email, passwd string) (*Response, error) {
+   client := http.Default_Client
+   hello, err := tls.Parse(tls.Android_API)
+   if err != nil {
+      return nil, err
+   }
+   client.Transport = hello.Transport()
+   body := url.Values{
+      "Email": {email},
+      "Passwd": {passwd},
+      "client_sig": {""},
+      // wikipedia.org/wiki/URL_encoding#Types_of_URI_characters
+      "droidguard_results": {"-"},
+   }.Encode()
+   req := http.Post()
+   req.Body_String(body)
+   req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+   req.URL.Host = "android.googleapis.com"
+   req.URL.Path = "/auth"
+   req.URL.Scheme = "https"
+   res, err := client.Do(req)
+   if err != nil {
+      return nil, err
+   }
+   return &Response{res}, nil
+}
+
+func (r Response) Write_File(name string) error {
+   data, err := io.ReadAll(r.Body)
+   if err != nil {
+      return err
+   }
+   return os.WriteFile(name, data, os.ModePerm)
+}
+
 type Header struct {
    Auth Auth // Authorization
    Device Device // X-DFE-Device-ID
@@ -49,36 +90,8 @@ func (h Header) Set_Auth(head http.Header) {
    head.Set("Authorization", "Bearer " + h.Auth.Get_Auth())
 }
 
-func (h *Header) Open_Device(name string) error {
-   data, err := os.ReadFile(name)
-   if err != nil {
-      return err
-   }
-   h.Device.Message, err = protobuf.Unmarshal(data)
-   if err != nil {
-      return err
-   }
-   return nil
-}
-
 type Auth struct {
    url.Values
-}
-
-type Response struct {
-   *http.Response
-}
-
-func (r Response) Create(name string) error {
-   file, err := os.Create(name)
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   if _, err := file.ReadFrom(r.Body); err != nil {
-      return err
-   }
-   return nil
 }
 
 func (a Auth) Get_Auth() string {
@@ -87,34 +100,6 @@ func (a Auth) Get_Auth() string {
 
 func (a Auth) Get_Token() string {
    return a.Get("Token")
-}
-// You can also use host "android.clients.google.com", but it also uses
-// TLS fingerprinting.
-func New_Auth(email, passwd string) (*Response, error) {
-   client := http.Default_Client
-   hello, err := tls.Parse(tls.Android_API)
-   if err != nil {
-      return nil, err
-   }
-   client.Transport = hello.Transport()
-   body := url.Values{
-      "Email": {email},
-      "Passwd": {passwd},
-      "client_sig": {""},
-      // wikipedia.org/wiki/URL_encoding#Types_of_URI_characters
-      "droidguard_results": {"-"},
-   }.Encode()
-   req := http.Post()
-   req.Body_String(body)
-   req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-   req.URL.Host = "android.googleapis.com"
-   req.URL.Path = "/auth"
-   req.URL.Scheme = "https"
-   res, err := client.Do(req)
-   if err != nil {
-      return nil, err
-   }
-   return &Response{res}, nil
 }
 
 // github.com/golang/go/blob/go1.20.4/src/net/url/url.go
@@ -167,7 +152,19 @@ func (a *Auth) Exchange() error {
    return nil
 }
 
-func (h *Header) Open_Auth(name string) error {
+func (h *Header) Read_Device(name string) error {
+   data, err := os.ReadFile(name)
+   if err != nil {
+      return err
+   }
+   h.Device.Message, err = protobuf.Unmarshal(data)
+   if err != nil {
+      return err
+   }
+   return nil
+}
+
+func (h *Header) Read_Auth(name string) error {
    data, err := os.ReadFile(name)
    if err != nil {
       return err
@@ -178,10 +175,3 @@ func (h *Header) Open_Auth(name string) error {
    }
    return nil
 }
-
-
-
-
-
-
-

@@ -1,22 +1,20 @@
 package googleplay
 
 import (
+   "2a.pages.dev/rosso/http"
    "encoding/json"
    "os"
+   "strings"
    "testing"
    "time"
 )
 
-func credential(name string) (map[string]string, error) {
+func sign_in(name string) ([]string, error) {
    data, err := os.ReadFile(name)
    if err != nil {
       return nil, err
    }
-   var cred map[string]string
-   if err := json.Unmarshal(data, &cred); err != nil {
-      return nil, err
-   }
-   return cred, nil
+   return strings.Split(string(data), "\n"), nil
 }
 
 func Test_Auth(t *testing.T) {
@@ -24,16 +22,17 @@ func Test_Auth(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   cred, err := credential(home + "/Document/gmail.json")
+   account, err := sign_in(home + "/Documents/gmail.txt")
    if err != nil {
       t.Fatal(err)
    }
-   res, err := New_Auth(cred["username"], cred["password"])
+   http.Default_Client.Log_Level = 2
+   res, err := New_Auth(account[0], account[1])
    if err != nil {
       t.Fatal(err)
    }
    defer res.Body.Close()
-   if err := res.Create(home + "/Documents/googleplay.txt"); err != nil {
+   if err := res.Write_File(home + "/Documents/googleplay.txt"); err != nil {
       t.Fatal(err)
    }
 }
@@ -44,7 +43,7 @@ func Test_Header(t *testing.T) {
       t.Fatal(err)
    }
    var head Header
-   head.Open_Auth(home + "/Documents/googleplay.txt")
+   head.Read_Auth(home + "/Documents/googleplay.txt")
    for i := 0; i < 9; i++ {
       if head.Auth.Get_Auth() == "" {
          t.Fatalf("%+v", head)

@@ -12,8 +12,8 @@ func Test_Delivery(t *testing.T) {
       t.Fatal(err)
    }
    var head Header
-   head.Open_Auth(home + "/Documents/googleplay.txt")
-   head.Open_Device(home + "/Documents/x86.bin")
+   head.Read_Auth(home + "/Documents/googleplay.txt")
+   head.Read_Device(home + "/Documents/x86.bin")
    deliver, err := head.Delivery("com.google.android.youtube", 1524221376)
    if err != nil {
       t.Fatal(err)

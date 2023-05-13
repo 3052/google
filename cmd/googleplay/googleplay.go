@@ -12,14 +12,14 @@ import (
 
 func (f flags) do_header(dir, platform string) (*googleplay.Header, error) {
    var head googleplay.Header
-   err := head.Open_Auth(dir + "/googleplay.txt")
+   err := head.Read_Auth(dir + "/googleplay.txt")
    if err != nil {
       return nil, err
    }
    if err := head.Auth.Exchange(); err != nil {
       return nil, err
    }
-   if err := head.Open_Device(dir + "/" + platform + ".bin"); err != nil {
+   if err := head.Read_Device(dir + "/" + platform + ".bin"); err != nil {
       return nil, err
    }
    head.Single = f.single
@@ -39,7 +39,7 @@ func (f flags) do_auth(dir string) error {
       return err
    }
    defer res.Body.Close()
-   return res.Create(dir + "/googleplay.txt")
+   return res.Write_File(dir + "/googleplay.txt")
 }
 
 func (f flags) download(ref, name string) error {
@@ -117,5 +117,5 @@ func (f flags) do_device(dir, platform string) error {
    defer res.Body.Close()
    fmt.Printf("Sleeping %v for server to process\n", googleplay.Sleep)
    time.Sleep(googleplay.Sleep)
-   return res.Create(dir + "/" + platform + ".bin")
+   return res.Write_File(dir + "/" + platform + ".bin")
 }
