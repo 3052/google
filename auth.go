@@ -28,15 +28,15 @@ func New_Auth(email, passwd string) (*Response, error) {
       "Email": {email},
       "Passwd": {passwd},
       "client_sig": {""},
-      // wikipedia.org/wiki/URL_encoding#Types_of_URI_characters
       "droidguard_results": {"-"},
    }.Encode()
-   req := http.Post()
+   req := http.Post(&url.URL{
+      Scheme: "https",
+      Host: "android.googleapis.com",
+      Path: "/auth",
+   })
    req.Body_String(body)
    req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-   req.URL.Host = "android.googleapis.com"
-   req.URL.Path = "/auth"
-   req.URL.Scheme = "https"
    res, err := client.Do(req)
    if err != nil {
       return nil, err
@@ -130,12 +130,13 @@ func (a *Auth) Exchange() error {
       "client_sig": {"38918a453d07199354f8b19af05ec6562ced5788"},
       "service": {"oauth2:https://www.googleapis.com/auth/googleplay"},
    }.Encode()
-   req := http.Post()
-   req.Body_String(body)
+   req := http.Post(&url.URL{
+      Scheme: "https",
+      Host: "android.googleapis.com",
+      Path: "/auth",
+   })
    req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-   req.URL.Host = "android.googleapis.com"
-   req.URL.Path = "/auth"
-   req.URL.Scheme = "https"
+   req.Body_String(body)
    res, err := http.Default_Client.Do(req)
    if err != nil {
       return err

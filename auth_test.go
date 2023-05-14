@@ -1,8 +1,6 @@
 package googleplay
 
 import (
-   "2a.pages.dev/rosso/http"
-   "encoding/json"
    "os"
    "strings"
    "testing"
@@ -26,7 +24,6 @@ func Test_Auth(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   http.Default_Client.Log_Level = 2
    res, err := New_Auth(account[0], account[1])
    if err != nil {
       t.Fatal(err)

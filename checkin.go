@@ -3,6 +3,7 @@ package googleplay
 import (
    "2a.pages.dev/rosso/http"
    "2a.pages.dev/rosso/protobuf"
+   "net/url"
    "strconv"
    "time"
 )
@@ -50,12 +51,13 @@ func (c Config) Checkin(platform string) (*Response, error) {
          1: protobuf.String(name),
       })
    }
-   req := http.Post()
-   req.Body_Bytes(body.Marshal())
+   req := http.Post(&url.URL{
+      Scheme: "https",
+      Host: "android.googleapis.com",
+      Path: "/checkin",
+   })
    req.Header.Set("Content-Type", "application/x-protobuffer")
-   req.URL.Host = "android.googleapis.com"
-   req.URL.Path = "/checkin"
-   req.URL.Scheme = "https"
+   req.Body_Bytes(body.Marshal())
    res, err := http.Default_Client.Do(req)
    if err != nil {
       return nil, err
