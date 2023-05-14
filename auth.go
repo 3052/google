@@ -49,7 +49,7 @@ func (r Response) Write_File(name string) error {
    if err != nil {
       return err
    }
-   return os.WriteFile(name, data, os.ModePerm)
+   return os.WriteFile(name, data, 0666)
 }
 
 type Header struct {
