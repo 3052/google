@@ -1,5 +1,5 @@
-2a.pages.dev/rosso v1.5.3 h1:TI0n1TbQISeVCckEkBcjR4bmH8CjJCdH5pWA2RI/TTc=
-2a.pages.dev/rosso v1.5.3/go.mod h1:0brYsk6T12KaGCOq03MRIsYubQI+ZZgsn+nhpMYG+D4=
+2a.pages.dev/rosso v1.5.4 h1:7zj5tIo2Xbs+aRTqyWZHZjJjLEgK/DQZY2ulNxc41Jo=
+2a.pages.dev/rosso v1.5.4/go.mod h1:0brYsk6T12KaGCOq03MRIsYubQI+ZZgsn+nhpMYG+D4=
 github.com/andybalholm/brotli v1.0.5 h1:8uQZIdzKmjc/iuPu7O2ioW48L81FgatrcpfFmiq/cCs=
 github.com/andybalholm/brotli v1.0.5/go.mod h1:fO7iG3H7G2nSZ7m0zPUDn85XEX2GTukHGRSepvi9Eig=
 github.com/gaukas/godicttls v0.0.3 h1:YNDIf0d9adcxOijiLrEzpfZGAkNwLRzPaG6OjU7EITk=

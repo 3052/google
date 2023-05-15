@@ -7,7 +7,7 @@ import (
    "time"
 )
 
-func sign_in(name string) ([]string, error) {
+func user_info(name string) ([]string, error) {
    data, err := os.ReadFile(name)
    if err != nil {
       return nil, err
@@ -20,11 +20,11 @@ func Test_Auth(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   account, err := sign_in(home + "/Documents/gmail.txt")
+   user, err := user_info(home + "/Documents/gmail.txt")
    if err != nil {
       t.Fatal(err)
    }
-   res, err := New_Auth(account[0], account[1])
+   res, err := New_Auth(user[0], user[1])
    if err != nil {
       t.Fatal(err)
    }
