@@ -3,7 +3,7 @@ package googleplay
 import (
    "2a.pages.dev/rosso/http"
    "2a.pages.dev/rosso/protobuf"
-   "2a.pages.dev/rosso/tls"
+   "2a.pages.dev/tls"
    "io"
    "net/url"
    "os"
@@ -18,25 +18,23 @@ type Response struct {
 // You can also use host "android.clients.google.com", but it also uses
 // TLS fingerprinting.
 func New_Auth(email, passwd string) (*Response, error) {
-   client := http.Default_Client
-   hello, err := tls.Parse(tls.Android_API)
-   if err != nil {
-      return nil, err
-   }
-   client.Transport = hello.Transport()
-   body := url.Values{
-      "Email": {email},
-      "Passwd": {passwd},
-      "client_sig": {""},
-      "droidguard_results": {"-"},
-   }.Encode()
    req := http.Post(&url.URL{
       Scheme: "https",
       Host: "android.googleapis.com",
       Path: "/auth",
    })
-   req.Body_String(body)
    req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+   {
+      s := url.Values{
+         "Email": {email},
+         "Passwd": {passwd},
+         "client_sig": {""},
+         "droidguard_results": {"-"},
+      }.Encode()
+      req.Body_String(s)
+   }
+   client := http.Default_Client
+   client.Transport = &tls.Transport{Spec: tls.Android_API_26}
    res, err := client.Do(req)
    if err != nil {
       return nil, err
