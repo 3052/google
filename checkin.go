@@ -171,4 +171,3 @@ var Phone = Config{
    // valid range 0x3_0001 - 0x7FFF_FFFF
    GL_ES_Version: 0xF_FFFF,
 }
-
