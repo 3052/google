@@ -93,7 +93,7 @@ func (d Details) MarshalText() ([]byte, error) {
    } else {
       b = strconv.New_Number(val).Size(b)
    }
-   b = append(b, "\nnum downloads: "...)
+   b = append(b, "\ndownloads: "...)
    if val, err := d.Num_Downloads(); err != nil {
       return nil, err
    } else {

@@ -51,13 +51,13 @@ Get app details:
 > googleplay -d com.google.android.youtube
 creator: Google LLC
 file: APK APK APK APK
-installation size: 48.47 megabyte
-num downloads: 13.67 billion
+installation size: 49.53 megabyte
+downloads: 14.05 billion
 offer: 0 USD
 title: YouTube
-upload date: Mar 20, 2023
-version: 18.11.35
-version code: 1536679360
+upload date: May 19, 2023
+version: 18.20.34
+version code: 1537856960
 ~~~
 
 Purchase app. Only needs to be done once per Google account:
@@ -71,7 +71,7 @@ provided by the previous details command. If APK is split, all pieces will be
 downloaded:
 
 ~~~
-googleplay -d com.google.android.youtube -v 1536679360
+googleplay -d com.google.android.youtube -v 1537856960
 ~~~
 
 ## Contact
