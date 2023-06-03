@@ -3,7 +3,7 @@ module 2a.pages.dev/googleplay
 go 1.19
 
 require (
-	2a.pages.dev/rosso v1.6.3
+	2a.pages.dev/rosso v1.6.5
 	2a.pages.dev/tls v1.4.7
 )
 
