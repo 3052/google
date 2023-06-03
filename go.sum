@@ -1,9 +1,13 @@
-2a.pages.dev/rosso v1.5.4 h1:7zj5tIo2Xbs+aRTqyWZHZjJjLEgK/DQZY2ulNxc41Jo=
-2a.pages.dev/rosso v1.5.4/go.mod h1:0brYsk6T12KaGCOq03MRIsYubQI+ZZgsn+nhpMYG+D4=
-2a.pages.dev/tls v1.4.4 h1:u1ljz8HTEdriCjtK44vqHoKMK0gDD9X/upW94bMUgqA=
-2a.pages.dev/tls v1.4.4/go.mod h1:9EtF9/sJs+JJwZk8qKyAZH+qqRzVV1PtUScwsnB2Vuw=
+2a.pages.dev/rosso v1.6.3 h1:3UefMriysTtLekY1TKCyJWn4XIZNsSTYxI2VThMmXz4=
+2a.pages.dev/rosso v1.6.3/go.mod h1:QGaV12X4JI4ev+uEoGy+NlmaRQiGOEGXOLMryKJWM08=
+2a.pages.dev/tls v1.4.7 h1:nV6C0141EHbw+gGqmPqkOKbh0aYe8yGJBvG/vjXO59U=
+2a.pages.dev/tls v1.4.7/go.mod h1:1I4GTxaYueSmAjTY/hCuK4mjcBSal1rCZMo0KMg/bR8=
 github.com/golang/protobuf v1.5.0/go.mod h1:FsONVRAS9T7sI+LIUmWTfcYkHO4aIWwzhcaSAoJOfIk=
 github.com/google/go-cmp v0.5.5/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
+golang.org/x/crypto v0.9.0 h1:LF6fAI+IutBocDJ2OT0Q1g8plpYljMZ4+lty+dsqw3g=
+golang.org/x/crypto v0.9.0/go.mod h1:yrmDGqONDYtNj3tH8X9dzUun2m2lzPa9ngI6/RUPGR0=
+golang.org/x/sys v0.8.0 h1:EBmGv8NaZBZTWvrbjNoL6HVt+IVy3QDQpJs7VRIw3tU=
+golang.org/x/sys v0.8.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
 google.golang.org/protobuf v1.26.0-rc.1/go.mod h1:jlhhOSvTdKEhbULTjvd4ARK9grFBp09yW+WbY/TyQbw=
 google.golang.org/protobuf v1.30.0 h1:kPPoIgf3TsEvrm0PFe15JQ+570QVxYzEvvHqChK+cng=

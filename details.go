@@ -4,10 +4,79 @@ import (
    "2a.pages.dev/rosso/http"
    "2a.pages.dev/rosso/protobuf"
    "2a.pages.dev/rosso/strconv"
-   "errors"
+   "fmt"
    "io"
    "net/url"
 )
+
+func (d Details) MarshalText() ([]byte, error) {
+   var b []byte
+   b = append(b, "creator: "...)
+   if v, err := d.Creator(); err != nil {
+      return nil, err
+   } else {
+      b = append(b, v...)
+   }
+   b = append(b, "\nfile:"...)
+   for _, file := range d.File() {
+      if v, err := file.File_Type(); err != nil {
+         return nil, err
+      } else if v >= 1 {
+         b = append(b, " OBB"...)
+      } else {
+         b = append(b, " APK"...)
+      }
+   }
+   b = append(b, "\ninstallation size: "...)
+   if v, err := d.Installation_Size(); err != nil {
+      return nil, err
+   } else {
+      b = fmt.Append(b, strconv.Size(v))
+   }
+   b = append(b, "\ndownloads: "...)
+   if v, err := d.Num_Downloads(); err != nil {
+      return nil, err
+   } else {
+      b = fmt.Append(b, strconv.Cardinal(v))
+   }
+   b = append(b, "\noffer: "...)
+   if v, err := d.Micros(); err != nil {
+      return nil, err
+   } else {
+      b = fmt.Append(b, v)
+   }
+   b = append(b, ' ')
+   if v, err := d.Currency_Code(); err != nil {
+      return nil, err
+   } else {
+      b = append(b, v...)
+   }
+   b = append(b, "\ntitle: "...)
+   if v, err := d.Title(); err != nil {
+      return nil, err
+   } else {
+      b = append(b, v...)
+   }
+   b = append(b, "\nupload date: "...)
+   if v, err := d.Upload_Date(); err != nil {
+      return nil, err
+   } else {
+      b = append(b, v...)
+   }
+   b = append(b, "\nversion: "...)
+   if v, err := d.Version(); err != nil {
+      return nil, err
+   } else {
+      b = append(b, v...)
+   }
+   b = append(b, "\nversion code: "...)
+   if v, err := d.Version_Code(); err != nil {
+      return nil, err
+   } else {
+      b = fmt.Append(b, v)
+   }
+   return b, nil
+}
 
 func (h Header) Details(doc string) (*Details, error) {
    req := http.Get(&url.URL{
@@ -69,76 +138,7 @@ func (f File_Metadata) File_Type() (uint64, error) {
    return f.Get_Varint(1)
 }
 
-func (d Details) MarshalText() ([]byte, error) {
-   var b []byte
-   b = append(b, "creator: "...)
-   if val, err := d.Creator(); err != nil {
-      return nil, err
-   } else {
-      b = append(b, val...)
-   }
-   b = append(b, "\nfile:"...)
-   for _, file := range d.File() {
-      if val, err := file.File_Type(); err != nil {
-         return nil, err
-      } else if val >= 1 {
-         b = append(b, " OBB"...)
-      } else {
-         b = append(b, " APK"...)
-      }
-   }
-   b = append(b, "\ninstallation size: "...)
-   if val, err := d.Installation_Size(); err != nil {
-      return nil, err
-   } else {
-      b = strconv.New_Number(val).Size(b)
-   }
-   b = append(b, "\ndownloads: "...)
-   if val, err := d.Num_Downloads(); err != nil {
-      return nil, err
-   } else {
-      b = strconv.New_Number(val).Cardinal(b)
-   }
-   b = append(b, "\noffer: "...)
-   if val, err := d.Micros(); err != nil {
-      return nil, err
-   } else {
-      b = strconv.AppendUint(b, val, 10)
-   }
-   b = append(b, ' ')
-   if val, err := d.Currency_Code(); err != nil {
-      return nil, err
-   } else {
-      b = append(b, val...)
-   }
-   b = append(b, "\ntitle: "...)
-   if val, err := d.Title(); err != nil {
-      return nil, err
-   } else {
-      b = append(b, val...)
-   }
-   b = append(b, "\nupload date: "...)
-   if val, err := d.Upload_Date(); err != nil {
-      return nil, err
-   } else {
-      b = append(b, val...)
-   }
-   b = append(b, "\nversion: "...)
-   if val, err := d.Version(); err != nil {
-      return nil, err
-   } else {
-      b = append(b, val...)
-   }
-   b = append(b, "\nversion code: "...)
-   if val, err := d.Version_Code(); err != nil {
-      return nil, err
-   } else {
-      b = strconv.AppendUint(b, val, 10)
-   }
-   return b, nil
-}
-
-var err_device = errors.New("your device isn't compatible with this version")
+var err_device = fmt.Errorf("your device isn't compatible with this version")
 
 type Details struct {
    protobuf.Message
