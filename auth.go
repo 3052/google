@@ -140,11 +140,11 @@ func (a *Auth) Exchange() error {
       return err
    }
    defer res.Body.Close()
-   data, err := io.ReadAll(res.Body)
+   text, err := io.ReadAll(res.Body)
    if err != nil {
       return err
    }
-   a.Values, err = parse_query(string(data))
+   a.Values, err = parse_query(string(text))
    if err != nil {
       return err
    }
@@ -164,11 +164,11 @@ func (h *Header) Read_Device(name string) error {
 }
 
 func (h *Header) Read_Auth(name string) error {
-   data, err := os.ReadFile(name)
+   text, err := os.ReadFile(name)
    if err != nil {
       return err
    }
-   h.Auth.Values, err = parse_query(string(data))
+   h.Auth.Values, err = parse_query(string(text))
    if err != nil {
       return err
    }
