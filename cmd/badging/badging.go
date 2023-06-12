@@ -19,11 +19,11 @@ func main() {
    if f.name != "" {
       cmd := exec.Command("aapt", "dump", "badging", f.name)
       cmd.Stderr = os.Stderr
-      data, err := cmd.Output()
+      text, err := cmd.Output()
       if err != nil {
          panic(err)
       }
-      lines := strings.FieldsFunc(string(data), func(r rune) bool {
+      lines := strings.FieldsFunc(string(text), func(r rune) bool {
          return r == '\n'
       })
       for _, line := range lines {
