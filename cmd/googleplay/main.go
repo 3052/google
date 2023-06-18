@@ -40,7 +40,8 @@ func main() {
    if err != nil {
       panic(err)
    }
-   dir += "/Documents"
+   dir += "/2a.pages.dev"
+   os.Mkdir(dir, os.ModePerm)
    if f.passwd != "" || f.file != "" {
       err := f.do_auth(dir)
       if err != nil {
