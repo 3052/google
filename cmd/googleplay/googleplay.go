@@ -12,7 +12,7 @@ import (
 
 func (f flags) do_header(dir, platform string) (*googleplay.Header, error) {
    var head googleplay.Header
-   err := head.Read_Auth(dir + "/googleplay.txt")
+   err := head.Read_Auth(dir + "/auth.txt")
    if err != nil {
       return nil, err
    }
@@ -39,7 +39,7 @@ func (f flags) do_auth(dir string) error {
       return err
    }
    defer res.Body.Close()
-   return res.Write_File(dir + "/googleplay.txt")
+   return res.Write_File(dir + "/auth.txt")
 }
 
 func (f flags) download(ref, name string) error {

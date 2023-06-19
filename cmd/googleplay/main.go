@@ -40,8 +40,10 @@ func main() {
    if err != nil {
       panic(err)
    }
-   dir += "/2a.pages.dev"
-   os.Mkdir(dir, os.ModePerm)
+   dir += "/2a/googleplay"
+   if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+      panic(err)
+   }
    if f.passwd != "" || f.file != "" {
       err := f.do_auth(dir)
       if err != nil {
