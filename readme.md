@@ -87,7 +87,7 @@ googleplay -d com.google.android.youtube -v 1537856960
    Discord
    </dt>
    <dd>
-   srpen6#6983
+   srpen6
    </dd>
    <dd>
    https://discord.com/invite/WWq6rFb8Rf
