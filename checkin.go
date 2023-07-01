@@ -56,7 +56,7 @@ func (c Config) Checkin(platform string) (*Response, error) {
       Host: "android.googleapis.com",
       Path: "/checkin",
    })
-   req.Header.Set("Content-Type", "application/x-protobuffer")
+   req.Header.Set("Content-Type", "application/x-protobuf")
    req.Body_Bytes(body.Marshal())
    res, err := http.Default_Client.Do(req)
    if err != nil {
