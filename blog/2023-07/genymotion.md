@@ -1,8 +1,8 @@
 # GenyMotion
 
-Create Virtual device using Android version 6.0.0. Install Open GApps. Then
-click Restart now. If you have trouble at this point, you might need to End
-task:
+Create Virtual device using Android version 6.0.0 (API 23). Install Open GApps.
+Then click Restart now. If you have trouble at this point, you might need to
+End task:
 
 ~~~
 C:\Program Files\Genymobile\Genymotion\tools\adb.exe
