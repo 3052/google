@@ -10,27 +10,28 @@ import (
 )
 
 var apps = []app_type{
-   {"2023-06-15",2,295924,"com.kakaogames.twodin"},
-   {"2023-06-02",1,524826,"com.app.xt"},
-   {"2023-04-12",0,5083467,"com.amctve.amcfullepisodes"},
-   {"2023-06-14",1,15386744,"com.madhead.tos.zh"},
-   {"2023-06-18",1,17146720,"com.axis.drawingdesk.v3"},
-   {"2023-03-23",0,22080563,"kr.sira.metal"},
-   {"2023-05-15",1,47920365,"com.xiaomi.smarthome"},
-   {"2023-05-12",2,80187885,"com.miHoYo.GenshinImpact"},
-   {"2023-06-22",1,83263469,"com.binance.dev"},
-   {"2023-05-25",0,89650576,"com.clearchannel.iheartradio.controller"},
-   {"2023-06-07",1,89823699,"com.sygic.aura"},
-   {"2023-06-15",0,124259171,"org.thoughtcrime.securesms"},
-   {"2023-05-08",0,142129205,"br.com.rodrigokolb.realdrum"},
-   {"2023-05-10",0,187860132,"app.source.getcontact"},
-   {"2023-05-29",1,326475842,"com.supercell.brawlstars"},
-   {"2023-02-20",0,341682282,"org.videolan.vlc"},
-   {"2023-06-20",0,655061044,"com.google.android.apps.walletnfcrel"},
-   {"2023-06-13",0,895249472,"com.pinterest"},
-   {"2023-02-01",1,1513248093,"com.miui.weather2"},
-   {"2023-06-22",0,4890507365,"com.instagram.android"},
-   {"2023-06-16",0,14207300870,"com.google.android.youtube"},
+   {"2023-02-01",1,1519802840,"com.miui.weather2"},
+   {"2023-02-20",0,342652288,"org.videolan.vlc"},
+   {"2023-03-23",0,22129580,"kr.sira.metal"},
+   {"2023-04-12",0,5085578,"com.amctve.amcfullepisodes"},
+   {"2023-05-08",0,142364173,"br.com.rodrigokolb.realdrum"},
+   {"2023-05-10",0,189095178,"app.source.getcontact"},
+   {"2023-05-12",2,80820762,"com.miHoYo.GenshinImpact"},
+   {"2023-05-25",0,89735370,"com.clearchannel.iheartradio.controller"},
+   {"2023-06-15",1,48170136,"com.xiaomi.smarthome"},
+   {"2023-06-15",2,296264,"com.kakaogames.twodin"},
+   {"2023-06-20",0,659843093,"com.google.android.apps.walletnfcrel"},
+   {"2023-06-21",1,15395664,"com.madhead.tos.zh"},
+   {"2023-06-22",1,83822542,"com.binance.dev"},
+   {"2023-06-23",1,89867479,"com.sygic.aura"},
+   {"2023-06-26",0,124636422,"org.thoughtcrime.securesms"},
+   {"2023-06-26",0,14257009198,"com.google.android.youtube"},
+   {"2023-06-26",0,33784619,"com.cabify.rider"},
+   {"2023-06-26",0,4906291283,"com.instagram.android"},
+   {"2023-06-27",0,898584734,"com.pinterest"},
+   {"2023-06-29",1,526676,"com.app.xt"},
+   {"2023-06-30",1,327293582,"com.supercell.brawlstars"},
+   {"2023-07-01",1,17597951,"com.axis.drawingdesk.v3"},
 }
 
 func Test_Details(t *testing.T) {
@@ -38,15 +39,14 @@ func Test_Details(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   home += "/2a/googleplay"
+   home += "/2a/googleplay/"
    var head Header
-   if err := head.Read_Auth(home + "/auth.txt"); err != nil {
+   if err := head.Read_Auth(home + "auth.txt"); err != nil {
       t.Fatal(err)
    }
    head.Auth.Exchange()
-   for _, app := range apps {
-      platform := Platforms[app.platform]
-      err := head.Read_Device(home + "/" + platform + ".bin")
+   for i, app := range apps {
+      err := head.Read_Device(home + Platforms[app.platform] + ".bin")
       if err != nil {
          t.Fatal(err)
       }
@@ -78,14 +78,14 @@ func Test_Details(t *testing.T) {
          if err != nil {
             t.Fatal(err)
          }
-         app.date = d.String()
+         apps[i].date = d.String()
       }
       {
          d, err := d.Num_Downloads()
          if err != nil {
             t.Fatal(err)
          }
-         app.downloads = d
+         apps[i].downloads = d
       }
       time.Sleep(99 * time.Millisecond)
    }
