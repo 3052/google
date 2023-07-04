@@ -1,18 +1,22 @@
 package googleplay
 
 import (
+   "encoding/json"
    "os"
-   "strings"
    "testing"
    "time"
 )
 
-func user_info(name string) ([]string, error) {
-   text, err := os.ReadFile(name)
+func user(name string) (map[string]string, error) {
+   b, err := os.ReadFile(name)
    if err != nil {
       return nil, err
    }
-   return strings.Split(string(text), "\n"), nil
+   var m map[string]string
+   if err := json.Unmarshal(b, &m); err != nil {
+      return nil, err
+   }
+   return m, nil
 }
 
 func Test_Auth(t *testing.T) {
@@ -20,11 +24,11 @@ func Test_Auth(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   user, err := user_info(home + "/2a/gmail.txt")
+   u, err := user(home + "/2a/gmail.txt")
    if err != nil {
       t.Fatal(err)
    }
-   res, err := New_Auth(user[0], user[1])
+   res, err := New_Auth(u["username"], u["password"])
    if err != nil {
       t.Fatal(err)
    }
