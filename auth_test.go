@@ -7,7 +7,7 @@ import (
    "time"
 )
 
-func user(name string) (map[string]string, error) {
+func user_info(name string) (map[string]string, error) {
    b, err := os.ReadFile(name)
    if err != nil {
       return nil, err
@@ -24,7 +24,7 @@ func Test_Auth(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   u, err := user(home + "/2a/gmail.txt")
+   u, err := user_info(home + "/2a/gmail.json")
    if err != nil {
       t.Fatal(err)
    }
