@@ -40,7 +40,7 @@ func main() {
    if err != nil {
       panic(err)
    }
-   dir += "/2a/googleplay"
+   dir += "/googleplay"
    if err := os.MkdirAll(dir, os.ModePerm); err != nil {
       panic(err)
    }
