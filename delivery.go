@@ -1,9 +1,9 @@
-package play
+package google_play
 
 import (
-   "2a.pages.dev/rosso/http"
    "fmt"
    "io"
+   "net/http"
    "net/url"
    "protobuf.pages.dev"
 )

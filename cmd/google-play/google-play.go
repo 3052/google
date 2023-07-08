@@ -1,10 +1,10 @@
 package main
 
 import (
-   "2a.pages.dev/rosso/http"
    "fmt"
    "google-play.pages.dev"
    "io"
+   "net/http"
    "os"
    "strings"
    "time"

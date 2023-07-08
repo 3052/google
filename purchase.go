@@ -1,7 +1,7 @@
-package play
+package google_play
 
 import (
-   "2a.pages.dev/rosso/http"
+   "net/http"
    "net/url"
 )
 

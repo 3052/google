@@ -1,4 +1,4 @@
-package play
+package google_play
 
 import (
    "fmt"

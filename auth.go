@@ -1,4 +1,4 @@
-package play
+package google_play
 
 import (
    "2a.pages.dev/tls"
@@ -11,6 +11,60 @@ import (
    "strings"
 )
 
+func (a *Auth) Exchange() error {
+   // these values take from Android API 28
+   body := url.Values{
+      "Token": {a.Get_Token()},
+      "app": {"com.android.vending"},
+      "client_sig": {"38918a453d07199354f8b19af05ec6562ced5788"},
+      "service": {"oauth2:https://www.googleapis.com/auth/googleplay"},
+   }.Encode()
+   req := http.Post(&url.URL{
+      Scheme: "https",
+      Host: "android.googleapis.com",
+      Path: "/auth",
+   })
+   req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+   req.Body_String(body)
+   res, err := http.Default_Client.Do(req)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   text, err := io.ReadAll(res.Body)
+   if err != nil {
+      return err
+   }
+   a.Values, err = parse_query(string(text))
+   if err != nil {
+      return err
+   }
+   return nil
+}
+
+func (h *Header) Read_Device(name string) error {
+   data, err := os.ReadFile(name)
+   if err != nil {
+      return err
+   }
+   h.Device.Message, err = protobuf.Unmarshal(data)
+   if err != nil {
+      return err
+   }
+   return nil
+}
+
+func (h *Header) Read_Auth(name string) error {
+   text, err := os.ReadFile(name)
+   if err != nil {
+      return err
+   }
+   h.Auth.Values, err = parse_query(string(text))
+   if err != nil {
+      return err
+   }
+   return nil
+}
 type Response struct {
    *http.Response
 }
@@ -18,22 +72,20 @@ type Response struct {
 // You can also use host "android.clients.google.com", but it also uses
 // TLS fingerprinting.
 func New_Auth(email, passwd string) (*Response, error) {
-   req := http.Post(&url.URL{
-      Scheme: "https",
-      Host: "android.googleapis.com",
-      Path: "/auth",
-   })
-   req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-   {
-      s := url.Values{
-         "Email": {email},
-         "Passwd": {passwd},
-         "client_sig": {""},
-         "droidguard_results": {"-"},
-      }.Encode()
-      req.Body_String(s)
+   body := url.Values{
+      "Email": {email},
+      "Passwd": {passwd},
+      "client_sig": {""},
+      "droidguard_results": {"-"},
+   }.Encode()
+   req, err := http.NewRequest(
+      "POST", "https://android.googleapis.com/auth", strings.NewReader(body),
+   )
+   if err != nil {
+      return nil, err
    }
-   client := http.Default_Client
+   req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+   client := http.DefaultClient
    client.Transport = &tls.Transport{Spec: tls.Android_API_26}
    res, err := client.Do(req)
    if err != nil {
@@ -120,57 +172,3 @@ func parse_query(query string) (url.Values, error) {
    return m, nil
 }
 
-func (a *Auth) Exchange() error {
-   // these values take from Android API 28
-   body := url.Values{
-      "Token": {a.Get_Token()},
-      "app": {"com.android.vending"},
-      "client_sig": {"38918a453d07199354f8b19af05ec6562ced5788"},
-      "service": {"oauth2:https://www.googleapis.com/auth/googleplay"},
-   }.Encode()
-   req := http.Post(&url.URL{
-      Scheme: "https",
-      Host: "android.googleapis.com",
-      Path: "/auth",
-   })
-   req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-   req.Body_String(body)
-   res, err := http.Default_Client.Do(req)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   text, err := io.ReadAll(res.Body)
-   if err != nil {
-      return err
-   }
-   a.Values, err = parse_query(string(text))
-   if err != nil {
-      return err
-   }
-   return nil
-}
-
-func (h *Header) Read_Device(name string) error {
-   data, err := os.ReadFile(name)
-   if err != nil {
-      return err
-   }
-   h.Device.Message, err = protobuf.Unmarshal(data)
-   if err != nil {
-      return err
-   }
-   return nil
-}
-
-func (h *Header) Read_Auth(name string) error {
-   text, err := os.ReadFile(name)
-   if err != nil {
-      return err
-   }
-   h.Auth.Values, err = parse_query(string(text))
-   if err != nil {
-      return err
-   }
-   return nil
-}
