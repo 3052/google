@@ -1,11 +1,11 @@
-package googleplay
+package play
 
 import (
    "2a.pages.dev/rosso/http"
-   "2a.pages.dev/rosso/protobuf"
    "fmt"
    "io"
    "net/url"
+   "protobuf.pages.dev"
 )
 
 func (f File) OBB(file_type uint64) string {

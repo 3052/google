@@ -1,9 +1,9 @@
-package googleplay
+package play
 
 import (
    "2a.pages.dev/rosso/http"
-   "2a.pages.dev/rosso/protobuf"
    "net/url"
+   "protobuf.pages.dev"
    "strconv"
    "time"
 )

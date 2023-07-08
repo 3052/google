@@ -1,12 +1,12 @@
-package googleplay
+package play
 
 import (
-   "2a.pages.dev/rosso/http"
-   "2a.pages.dev/rosso/protobuf"
    "2a.pages.dev/tls"
    "io"
+   "net/http"
    "net/url"
    "os"
+   "protobuf.pages.dev"
    "strconv"
    "strings"
 )

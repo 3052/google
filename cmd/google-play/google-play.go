@@ -1,17 +1,17 @@
 package main
 
 import (
-   "2a.pages.dev/googleplay"
    "2a.pages.dev/rosso/http"
    "fmt"
+   "google-play.pages.dev"
    "io"
    "os"
    "strings"
    "time"
 )
 
-func (f flags) do_header(dir, platform string) (*googleplay.Header, error) {
-   var head googleplay.Header
+func (f flags) do_header(dir, platform string) (*play.Header, error) {
+   var head play.Header
    err := head.Read_Auth(dir + "/auth.txt")
    if err != nil {
       return nil, err
@@ -34,7 +34,7 @@ func (f flags) do_auth(dir string) error {
       }
       f.passwd = strings.TrimSpace(string(raw))
    }
-   res, err := googleplay.New_Auth(f.email, f.passwd)
+   res, err := play.New_Auth(f.email, f.passwd)
    if err != nil {
       return err
    }
@@ -62,12 +62,12 @@ func (f flags) download(ref, name string) error {
    return nil
 }
 
-func (f flags) do_delivery(head *googleplay.Header) error {
+func (f flags) do_delivery(head *play.Header) error {
    deliver, err := head.Delivery(f.doc, f.vc)
    if err != nil {
       return err
    }
-   file := googleplay.File{f.doc, f.vc}
+   file := play.File{f.doc, f.vc}
    for _, split := range deliver.Split_Data() {
       ref, err := split.Download_URL()
       if err != nil {
@@ -101,7 +101,7 @@ func (f flags) do_delivery(head *googleplay.Header) error {
    return f.download(ref, file.APK(""))
 }
 
-func (f flags) do_details(head *googleplay.Header) ([]byte, error) {
+func (f flags) do_details(head *play.Header) ([]byte, error) {
    detail, err := head.Details(f.doc)
    if err != nil {
       return nil, err
@@ -110,12 +110,12 @@ func (f flags) do_details(head *googleplay.Header) ([]byte, error) {
 }
 
 func (f flags) do_device(dir, platform string) error {
-   res, err := googleplay.Phone.Checkin(platform)
+   res, err := play.Phone.Checkin(platform)
    if err != nil {
       return err
    }
    defer res.Body.Close()
-   fmt.Printf("Sleeping %v for server to process\n", googleplay.Sleep)
-   time.Sleep(googleplay.Sleep)
+   fmt.Printf("Sleeping %v for server to process\n", play.Sleep)
+   time.Sleep(play.Sleep)
    return res.Write_File(dir + "/" + platform + ".bin")
 }

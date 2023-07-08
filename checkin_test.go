@@ -1,4 +1,4 @@
-package googleplay
+package play
 
 import (
    "os"
@@ -32,7 +32,7 @@ func checkin_create(id int64) error {
    if err != nil {
       return err
    }
-   home += "/2a/googleplay/"
+   home += "/google-play/"
    res, err := Phone.Checkin(Platforms[id])
    if err != nil {
       return err

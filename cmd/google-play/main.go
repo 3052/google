@@ -1,9 +1,9 @@
 package main
 
 import (
-   "2a.pages.dev/googleplay"
    "2a.pages.dev/rosso/http"
    "flag"
+   "google-play.pages.dev"
    "fmt"
    "os"
 )
@@ -30,7 +30,7 @@ func main() {
       &http.Default_Client.Log_Level, "log",
       http.Default_Client.Log_Level, "log level",
    )
-   flag.Int64Var(&f.platform, "p", 0, googleplay.Platforms.String())
+   flag.Int64Var(&f.platform, "p", 0, play.Platforms.String())
    flag.StringVar(&f.passwd, "passwd", "", "password")
    flag.BoolVar(&f.purchase, "purchase", false, "purchase request")
    flag.BoolVar(&f.single, "s", false, "single APK")
@@ -40,7 +40,7 @@ func main() {
    if err != nil {
       panic(err)
    }
-   dir += "/googleplay"
+   dir += "/google-play"
    if err := os.MkdirAll(dir, os.ModePerm); err != nil {
       panic(err)
    }
@@ -50,7 +50,7 @@ func main() {
          panic(err)
       }
    } else {
-      platform := googleplay.Platforms[f.platform]
+      platform := play.Platforms[f.platform]
       if f.device {
          err := f.do_device(dir, platform)
          if err != nil {

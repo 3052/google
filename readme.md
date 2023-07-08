@@ -1,4 +1,4 @@
-# GooglePlay
+# Google Play
 
 > I’m not really sure what the point of this video is, but I guess just be
 > generous. Be kind to people, because you never know how much they might need
@@ -10,12 +10,11 @@ Download APK from Google Play or send API requests
 
 ## How to install?
 
-This module works with Windows, macOS or Linux. Builds here [1]. If you want to
-manually build, download Go [2] and extract archive. Then download GooglePlay
-Zip and extract archive. Then navigate to:
+This module works with Windows, macOS or Linux. Download Go [1] and extract
+archive. Then download Google Play Zip and extract archive. Then navigate to:
 
 ~~~
-googleplay-main/cmd/googleplay
+google-play-main/cmd/google-play
 ~~~
 
 and enter:
@@ -24,8 +23,7 @@ and enter:
 go build
 ~~~
 
-1. https://beta.gobuilds.org/2a.pages.dev/googleplay
-2. https://go.dev/dl
+1. https://go.dev/dl
 
 ## Tool examples
 
@@ -36,19 +34,19 @@ Play Store at least once before, using a physical or virtual Android device.
 Create a file containing token (`aas_et`) for future requests:
 
 ~~~
-googleplay -email EMAIL -passwd PASSWORD
+google-play -email EMAIL -passwd PASSWORD
 ~~~
 
 Create a file containing `X-DFE-Device-ID` (GSF ID) for future requests:
 
 ~~~
-googleplay -device
+google-play -device
 ~~~
 
 Get app details:
 
 ~~~
-> googleplay -d com.google.android.youtube
+> google-play -d com.google.android.youtube
 creator: Google LLC
 file: APK APK APK APK
 installation size: 49.53 megabyte
@@ -63,7 +61,7 @@ version code: 1537856960
 Purchase app. Only needs to be done once per Google account:
 
 ~~~
-googleplay -d com.google.android.youtube -purchase
+google-play -d com.google.android.youtube -purchase
 ~~~
 
 Download APK. You need to specify any valid version code. The latest code is
@@ -71,7 +69,7 @@ provided by the previous details command. If APK is split, all pieces will be
 downloaded:
 
 ~~~
-googleplay -d com.google.android.youtube -v 1537856960
+google-play -d com.google.android.youtube -v 1537856960
 ~~~
 
 ## Contact
