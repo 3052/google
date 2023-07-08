@@ -8,34 +8,6 @@ import (
    "protobuf.pages.dev"
 )
 
-func (f File) OBB(file_type uint64) string {
-   var b []byte
-   if file_type >= 1 {
-      b = append(b, "patch"...)
-   } else {
-      b = append(b, "main"...)
-   }
-   b = append(b, '.')
-   b = fmt.Append(b, f.Version_Code)
-   b = append(b, '.')
-   b = append(b, f.Package_Name...)
-   b = append(b, ".obb"...)
-   return string(b)
-}
-
-func (f File) APK(id string) string {
-   var b []byte
-   b = append(b, f.Package_Name...)
-   b = append(b, '-')
-   if id != "" {
-      b = append(b, id...)
-      b = append(b, '-')
-   }
-   b = fmt.Append(b, f.Version_Code)
-   b = append(b, ".apk"...)
-   return string(b)
-}
-
 func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
    req := http.Get(&url.URL{
       Scheme: "https",
@@ -143,3 +115,31 @@ type File struct {
    Package_Name string
    Version_Code uint64
 }
+func (f File) OBB(file_type uint64) string {
+   var b []byte
+   if file_type >= 1 {
+      b = append(b, "patch"...)
+   } else {
+      b = append(b, "main"...)
+   }
+   b = append(b, '.')
+   b = fmt.Append(b, f.Version_Code)
+   b = append(b, '.')
+   b = append(b, f.Package_Name...)
+   b = append(b, ".obb"...)
+   return string(b)
+}
+
+func (f File) APK(id string) string {
+   var b []byte
+   b = append(b, f.Package_Name...)
+   b = append(b, '-')
+   if id != "" {
+      b = append(b, id...)
+      b = append(b, '-')
+   }
+   b = fmt.Append(b, f.Version_Code)
+   b = append(b, ".apk"...)
+   return string(b)
+}
+

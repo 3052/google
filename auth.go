@@ -1,7 +1,7 @@
 package google_play
 
 import (
-   "2a.pages.dev/tls"
+   "crypto-tls.pages.dev"
    "io"
    "net/http"
    "net/url"
@@ -19,14 +19,14 @@ func (a *Auth) Exchange() error {
       "client_sig": {"38918a453d07199354f8b19af05ec6562ced5788"},
       "service": {"oauth2:https://www.googleapis.com/auth/googleplay"},
    }.Encode()
-   req := http.Post(&url.URL{
-      Scheme: "https",
-      Host: "android.googleapis.com",
-      Path: "/auth",
-   })
+   req, err := http.NewRequest(
+      "POST", "https://android.googleapis.com/auth", strings.NewReader(body),
+   )
+   if err != nil {
+      return err
+   }
    req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-   req.Body_String(body)
-   res, err := http.Default_Client.Do(req)
+   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return err
    }

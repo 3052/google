@@ -5,6 +5,12 @@ import (
    "net/url"
 )
 
+var client = http.Client{
+   CheckRedirect: func(*http.Request, []*http.Request) error {
+      return http.ErrUseLastResponse
+   },
+}
+
 // Purchase app. Only needs to be done once per Google account.
 func (h Header) Purchase(doc string) error {
    req := http.Post(&url.URL{

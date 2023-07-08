@@ -1,12 +1,12 @@
 package google_play
 
 import (
-   "2a.pages.dev/rosso/strconv"
    "fmt"
    "io"
    "net/http"
    "net/url"
    "protobuf.pages.dev"
+   "strconv.pages.dev"
 )
 
 func (d Details) MarshalText() ([]byte, error) {

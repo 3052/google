@@ -1,7 +1,5 @@
-2a.pages.dev/rosso v1.9.1 h1:5U8cToiujs4vyP2N8BCes8Q423cYMwalJjccGb7vntQ=
-2a.pages.dev/rosso v1.9.1/go.mod h1:OqKNXFG/y1aGeB3V6NAmKohYXmZttk74UqSv2U7vLD8=
-2a.pages.dev/tls v1.5.0 h1:adhcOPxmgsooExUCJUbR2gMop4JNOCMQlj0IzAeqLkU=
-2a.pages.dev/tls v1.5.0/go.mod h1:UY6KDzNjm4EobFtzHPeYb2FPWaq0TSLkTj5/EGkzijg=
+crypto-tls.pages.dev v1.5.1 h1:n7mhJ+6+T1/5kEv4yb5uvHSOOna7BpI9DsIFu+PuDOA=
+crypto-tls.pages.dev v1.5.1/go.mod h1:PioE4ZlZbEGVJNvRQcyoCJUKvK+rk+bxSonzxX0r3nk=
 github.com/golang/protobuf v1.5.0/go.mod h1:FsONVRAS9T7sI+LIUmWTfcYkHO4aIWwzhcaSAoJOfIk=
 github.com/google/go-cmp v0.5.5/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 golang.org/x/crypto v0.11.0 h1:6Ewdq3tDic1mg5xRO4milcWCfMVQhI4NkqWWvqejpuA=
@@ -14,3 +12,5 @@ google.golang.org/protobuf v1.31.0 h1:g0LDEJHgrBl9N9r17Ru3sqWhkIx2NB67okBHPwC7hs
 google.golang.org/protobuf v1.31.0/go.mod h1:HV8QOd/L58Z+nl8r43ehVNZIU/HEI6OcFqwMG9pJV4I=
 protobuf.pages.dev v1.0.0 h1:jd5RrpNPCVlEHR3b6TYwXqTMaQ+z6hBZRZ/cA3bOmmE=
 protobuf.pages.dev v1.0.0/go.mod h1:PCmhqgYVOEzeuTOY+soeCe5JnC7rrA8lUXDO44JL/iI=
+strconv.pages.dev v1.0.1 h1:InyOOz32x1JBpG3CQ1jxnf33xoAnf+gyXhKdO3Ux8JA=
+strconv.pages.dev v1.0.1/go.mod h1:RFfIjuiR3gYjppQbs5cO32y5jV9/qjVHoPTNy0Pt/MI=

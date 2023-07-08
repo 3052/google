@@ -3,9 +3,9 @@ module google-play.pages.dev
 go 1.20
 
 require (
-	2a.pages.dev/rosso v1.9.1
-	2a.pages.dev/tls v1.5.0
+	crypto-tls.pages.dev v1.5.1
 	protobuf.pages.dev v1.0.0
+	strconv.pages.dev v1.0.1
 )
 
 require (
