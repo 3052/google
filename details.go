@@ -4,93 +4,23 @@ import (
    "fmt"
    "io"
    "net/http"
-   "net/url"
    "protobuf.pages.dev"
    "strconv.pages.dev"
 )
 
-func (d Details) MarshalText() ([]byte, error) {
-   var b []byte
-   b = append(b, "creator: "...)
-   if v, err := d.Creator(); err != nil {
-      return nil, err
-   } else {
-      b = append(b, v...)
-   }
-   b = append(b, "\nfile:"...)
-   for _, file := range d.File() {
-      if v, err := file.File_Type(); err != nil {
-         return nil, err
-      } else if v >= 1 {
-         b = append(b, " OBB"...)
-      } else {
-         b = append(b, " APK"...)
-      }
-   }
-   b = append(b, "\ninstallation size: "...)
-   if v, err := d.Installation_Size(); err != nil {
-      return nil, err
-   } else {
-      b = fmt.Append(b, strconv.Size(v))
-   }
-   b = append(b, "\ndownloads: "...)
-   if v, err := d.Num_Downloads(); err != nil {
-      return nil, err
-   } else {
-      b = fmt.Append(b, strconv.Cardinal(v))
-   }
-   b = append(b, "\noffer: "...)
-   if v, err := d.Micros(); err != nil {
-      return nil, err
-   } else {
-      b = fmt.Append(b, v)
-   }
-   b = append(b, ' ')
-   if v, err := d.Currency_Code(); err != nil {
-      return nil, err
-   } else {
-      b = append(b, v...)
-   }
-   b = append(b, "\ntitle: "...)
-   if v, err := d.Title(); err != nil {
-      return nil, err
-   } else {
-      b = append(b, v...)
-   }
-   b = append(b, "\nupload date: "...)
-   if v, err := d.Upload_Date(); err != nil {
-      return nil, err
-   } else {
-      b = append(b, v...)
-   }
-   b = append(b, "\nversion: "...)
-   if v, err := d.Version(); err != nil {
-      return nil, err
-   } else {
-      b = append(b, v...)
-   }
-   b = append(b, "\nversion code: "...)
-   if v, err := d.Version_Code(); err != nil {
-      return nil, err
-   } else {
-      b = fmt.Append(b, v)
-   }
-   return b, nil
-}
-
 func (h Header) Details(doc string) (*Details, error) {
-   req := http.Get(&url.URL{
-      Scheme: "https",
-      Host: "android.clients.google.com",
-      Path: "/fdfe/details",
-      RawQuery: "doc=" + doc,
-   })
+   req, err := http.NewRequest(
+      "GET", "https://android.clients.google.com/fdfe/details?doc=" + doc, nil,
+   )
+   if err != nil {
+      return nil, err
+   }
    // half of the apps I test require User-Agent,
    // so just set it for all of them
    h.Set_Agent(req.Header)
    h.Set_Auth(req.Header)
    h.Set_Device(req.Header)
-   res, err := http.Default_Client.Do(req)
+   res, err := client.Do(req)
    if err != nil {
       return nil, err
    }
@@ -197,5 +127,74 @@ func (d Details) Version_Code() (uint64, error) {
 // .numDownloads
 func (d Details) Num_Downloads() (uint64, error) {
    return d.Get(13).Get(1).Get_Varint(70)
+}
+
+func (d Details) MarshalText() ([]byte, error) {
+   var b []byte
+   b = append(b, "creator: "...)
+   if v, err := d.Creator(); err != nil {
+      return nil, err
+   } else {
+      b = append(b, v...)
+   }
+   b = append(b, "\nfile:"...)
+   for _, file := range d.File() {
+      if v, err := file.File_Type(); err != nil {
+         return nil, err
+      } else if v >= 1 {
+         b = append(b, " OBB"...)
+      } else {
+         b = append(b, " APK"...)
+      }
+   }
+   b = append(b, "\ninstallation size: "...)
+   if v, err := d.Installation_Size(); err != nil {
+      return nil, err
+   } else {
+      b = fmt.Append(b, strconv.Size(v))
+   }
+   b = append(b, "\ndownloads: "...)
+   if v, err := d.Num_Downloads(); err != nil {
+      return nil, err
+   } else {
+      b = fmt.Append(b, strconv.Cardinal(v))
+   }
+   b = append(b, "\noffer: "...)
+   if v, err := d.Micros(); err != nil {
+      return nil, err
+   } else {
+      b = fmt.Append(b, v)
+   }
+   b = append(b, ' ')
+   if v, err := d.Currency_Code(); err != nil {
+      return nil, err
+   } else {
+      b = append(b, v...)
+   }
+   b = append(b, "\ntitle: "...)
+   if v, err := d.Title(); err != nil {
+      return nil, err
+   } else {
+      b = append(b, v...)
+   }
+   b = append(b, "\nupload date: "...)
+   if v, err := d.Upload_Date(); err != nil {
+      return nil, err
+   } else {
+      b = append(b, v...)
+   }
+   b = append(b, "\nversion: "...)
+   if v, err := d.Version(); err != nil {
+      return nil, err
+   } else {
+      b = append(b, v...)
+   }
+   b = append(b, "\nversion code: "...)
+   if v, err := d.Version_Code(); err != nil {
+      return nil, err
+   } else {
+      b = fmt.Append(b, v)
+   }
+   return b, nil
 }
 

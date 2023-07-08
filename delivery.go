@@ -1,24 +1,29 @@
 package google_play
 
 import (
-   "fmt"
+   "errors"
    "io"
    "net/http"
    "net/url"
    "protobuf.pages.dev"
+   "strconv"
 )
 
 func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
-   req := http.Get(&url.URL{
-      Scheme: "https",
-      Host: "play-fe.googleapis.com",
-      Path: "/fdfe/delivery",
-      RawQuery: fmt.Sprint("doc=", doc, "&vc=", vc),
-   })
+   req, err := http.NewRequest(
+      "GET", "https://play-fe.googleapis.com/fdfe/delivery", nil,
+   )
+   if err != nil {
+      return nil, err
+   }
+   req.URL.RawQuery = url.Values{
+      "doc": {doc},
+      "vc": {strconv.FormatUint(vc, 10)},
+   }.Encode()
    h.Set_Agent(req.Header)
    h.Set_Auth(req.Header) // needed for single APK
    h.Set_Device(req.Header)
-   res, err := http.Default_Client.Do(req)
+   res, err := client.Do(req)
    if err != nil {
       return nil, err
    }
@@ -41,11 +46,11 @@ func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
    }
    switch status {
    case 2:
-      return nil, fmt.Errorf("geo-blocking")
+      return nil, errors.New("geo-blocking")
    case 3:
-      return nil, fmt.Errorf("purchase required")
+      return nil, errors.New("purchase required")
    case 5:
-      return nil, fmt.Errorf("invalid version")
+      return nil, errors.New("invalid version")
    }
    var del Delivery
    // .appDeliveryData
@@ -115,6 +120,7 @@ type File struct {
    Package_Name string
    Version_Code uint64
 }
+
 func (f File) OBB(file_type uint64) string {
    var b []byte
    if file_type >= 1 {
@@ -123,7 +129,7 @@ func (f File) OBB(file_type uint64) string {
       b = append(b, "main"...)
    }
    b = append(b, '.')
-   b = fmt.Append(b, f.Version_Code)
+   b = strconv.AppendUint(b, f.Version_Code, 10)
    b = append(b, '.')
    b = append(b, f.Package_Name...)
    b = append(b, ".obb"...)
@@ -138,8 +144,7 @@ func (f File) APK(id string) string {
       b = append(b, id...)
       b = append(b, '-')
    }
-   b = fmt.Append(b, f.Version_Code)
+   b = strconv.AppendUint(b, f.Version_Code, 10)
    b = append(b, ".apk"...)
    return string(b)
 }
-

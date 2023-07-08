@@ -19,14 +19,11 @@ func (a *Auth) Exchange() error {
       "client_sig": {"38918a453d07199354f8b19af05ec6562ced5788"},
       "service": {"oauth2:https://www.googleapis.com/auth/googleplay"},
    }.Encode()
-   req, err := http.NewRequest(
-      "POST", "https://android.googleapis.com/auth", strings.NewReader(body),
+   res, err := client.Post(
+      "https://android.googleapis.com/auth",
+      "application/x-www-form-urlencoded",
+      strings.NewReader(body),
    )
-   if err != nil {
-      return err
-   }
-   req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-   res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
       return err
    }

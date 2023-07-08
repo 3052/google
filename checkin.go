@@ -2,8 +2,6 @@ package google_play
 
 import (
    "bytes"
-   "net/http"
-   "net/url"
    "protobuf.pages.dev"
    "strconv"
    "time"
