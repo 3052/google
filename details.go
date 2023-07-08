@@ -109,6 +109,7 @@ func (h Header) Details(doc string) (*Details, error) {
    det.Message = response_wrapper.Get(1).Get(2).Get(4)
    return &det, nil
 }
+
 // .details.appDetails.installationSize
 func (d Details) Installation_Size() (uint64, error) {
    value, err := d.Get(13).Get(1).Get_Varint(9)
