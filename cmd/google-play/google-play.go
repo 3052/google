@@ -3,15 +3,31 @@ package main
 import (
    "fmt"
    "google-play.pages.dev"
-   "io"
    "net/http"
    "os"
    "strings"
    "time"
 )
 
-func (f flags) do_header(dir, platform string) (*play.Header, error) {
-   var head play.Header
+func (f flags) download(ref, name string) error {
+   res, err := http.Get(ref)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   file, err := os.Create(name)
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   if _, err := file.ReadFrom(res.Body); err != nil {
+      return err
+   }
+   return nil
+}
+
+func (f flags) do_header(dir, platform string) (*google_play.Header, error) {
+   var head google_play.Header
    err := head.Read_Auth(dir + "/auth.txt")
    if err != nil {
       return nil, err
@@ -34,7 +50,7 @@ func (f flags) do_auth(dir string) error {
       }
       f.passwd = strings.TrimSpace(string(raw))
    }
-   res, err := play.New_Auth(f.email, f.passwd)
+   res, err := google_play.New_Auth(f.email, f.passwd)
    if err != nil {
       return err
    }
@@ -42,32 +58,12 @@ func (f flags) do_auth(dir string) error {
    return res.Write_File(dir + "/auth.txt")
 }
 
-func (f flags) download(ref, name string) error {
-   client := http.Default_Client
-   client.CheckRedirect = nil
-   res, err := client.Get(ref)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   file, err := os.Create(name)
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   pro := http.Progress_Bytes(file, res.ContentLength)
-   if _, err := io.Copy(pro, res.Body); err != nil {
-      return err
-   }
-   return nil
-}
-
-func (f flags) do_delivery(head *play.Header) error {
+func (f flags) do_delivery(head *google_play.Header) error {
    deliver, err := head.Delivery(f.doc, f.vc)
    if err != nil {
       return err
    }
-   file := play.File{f.doc, f.vc}
+   file := google_play.File{f.doc, f.vc}
    for _, split := range deliver.Split_Data() {
       ref, err := split.Download_URL()
       if err != nil {
@@ -101,7 +97,7 @@ func (f flags) do_delivery(head *play.Header) error {
    return f.download(ref, file.APK(""))
 }
 
-func (f flags) do_details(head *play.Header) ([]byte, error) {
+func (f flags) do_details(head *google_play.Header) ([]byte, error) {
    detail, err := head.Details(f.doc)
    if err != nil {
       return nil, err
@@ -110,12 +106,12 @@ func (f flags) do_details(head *play.Header) ([]byte, error) {
 }
 
 func (f flags) do_device(dir, platform string) error {
-   res, err := play.Phone.Checkin(platform)
+   res, err := google_play.Phone.Checkin(platform)
    if err != nil {
       return err
    }
    defer res.Body.Close()
-   fmt.Printf("Sleeping %v for server to process\n", play.Sleep)
-   time.Sleep(play.Sleep)
+   fmt.Printf("Sleeping %v for server to process\n", google_play.Sleep)
+   time.Sleep(google_play.Sleep)
    return res.Write_File(dir + "/" + platform + ".bin")
 }

@@ -4,7 +4,6 @@ import (
    "flag"
    "google-play.pages.dev"
    "fmt"
-   "net/http"
    "os"
 )
 
@@ -26,11 +25,7 @@ func main() {
    flag.BoolVar(&f.device, "device", false, "create device")
    flag.StringVar(&f.email, "email", "", "your email")
    flag.StringVar(&f.file, "f", "", "password file")
-   flag.IntVar(
-      &http.Default_Client.Log_Level, "log",
-      http.Default_Client.Log_Level, "log level",
-   )
-   flag.Int64Var(&f.platform, "p", 0, play.Platforms.String())
+   flag.Int64Var(&f.platform, "p", 0, google_play.Platforms.String())
    flag.StringVar(&f.passwd, "passwd", "", "password")
    flag.BoolVar(&f.purchase, "purchase", false, "purchase request")
    flag.BoolVar(&f.single, "s", false, "single APK")
@@ -50,7 +45,7 @@ func main() {
          panic(err)
       }
    } else {
-      platform := play.Platforms[f.platform]
+      platform := google_play.Platforms[f.platform]
       if f.device {
          err := f.do_device(dir, platform)
          if err != nil {
