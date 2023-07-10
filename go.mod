@@ -1,11 +1,11 @@
-module google-play.pages.dev
+module 154.pages.dev/google-play
 
 go 1.20
 
 require (
-	crypto-tls.pages.dev v1.5.1
-	protobuf.pages.dev v1.0.0
-	strconv.pages.dev v1.0.1
+	154.pages.dev/encoding v1.9.4
+	154.pages.dev/strconv v1.0.2
+	154.pages.dev/tls v1.5.2
 )
 
 require (

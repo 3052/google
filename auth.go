@@ -1,12 +1,12 @@
 package google_play
 
 import (
-   "crypto-tls.pages.dev"
+   "154.pages.dev/encoding/protobuf"
+   "154.pages.dev/tls"
    "io"
    "net/http"
    "net/url"
    "os"
-   "protobuf.pages.dev"
    "strconv"
    "strings"
 )

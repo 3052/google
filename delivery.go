@@ -1,11 +1,11 @@
 package google_play
 
 import (
+   "154.pages.dev/encoding/protobuf"
    "errors"
    "io"
    "net/http"
    "net/url"
-   "protobuf.pages.dev"
    "strconv"
 )
 

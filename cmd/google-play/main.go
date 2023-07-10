@@ -1,8 +1,8 @@
 package main
 
 import (
+   "154.pages.dev/google-play"
    "flag"
-   "google-play.pages.dev"
    "fmt"
    "os"
 )

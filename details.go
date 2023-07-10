@@ -1,11 +1,11 @@
 package google_play
 
 import (
+   "154.pages.dev/encoding/protobuf"
+   "154.pages.dev/strconv"
    "fmt"
    "io"
    "net/http"
-   "protobuf.pages.dev"
-   "strconv.pages.dev"
 )
 
 func (h Header) Details(doc string) (*Details, error) {

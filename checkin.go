@@ -1,8 +1,8 @@
 package google_play
 
 import (
+   "154.pages.dev/encoding/protobuf"
    "bytes"
-   "protobuf.pages.dev"
    "strconv"
    "time"
 )

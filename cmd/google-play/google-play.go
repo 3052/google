@@ -1,8 +1,8 @@
 package main
 
 import (
+   "154.pages.dev/google-play"
    "fmt"
-   "google-play.pages.dev"
    "net/http"
    "os"
    "strings"
