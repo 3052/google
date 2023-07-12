@@ -1,4 +1,4 @@
-module 154.pages.dev/google-play
+module 154.pages.dev/google
 
 go 1.20
 

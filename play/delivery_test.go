@@ -1,4 +1,4 @@
-package google_play
+package play
 
 import (
    "fmt"
@@ -12,8 +12,8 @@ func Test_Delivery(t *testing.T) {
       t.Fatal(err)
    }
    var head Header
-   head.Read_Auth(home + "/google-play/auth.txt")
-   head.Read_Device(home + "/google-play/x86.bin")
+   head.Read_Auth(home + "/google/play/auth.txt")
+   head.Read_Device(home + "/google/play/x86.bin")
    deliver, err := head.Delivery("com.google.android.youtube", 1524221376)
    if err != nil {
       t.Fatal(err)

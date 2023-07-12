@@ -1,4 +1,4 @@
-package google_play
+package play
 
 import (
    "encoding/json"
@@ -33,7 +33,7 @@ func Test_Auth(t *testing.T) {
       t.Fatal(err)
    }
    defer res.Body.Close()
-   if err := res.Write_File(home + "/google-play/auth.txt"); err != nil {
+   if err := res.Write_File(home + "/google/play/auth.txt"); err != nil {
       t.Fatal(err)
    }
 }
@@ -44,7 +44,7 @@ func Test_Header(t *testing.T) {
       t.Fatal(err)
    }
    var head Header
-   head.Read_Auth(home + "/google-play/auth.txt")
+   head.Read_Auth(home + "/google/play/auth.txt")
    for i := 0; i < 9; i++ {
       if head.Auth.Get_Auth() == "" {
          t.Fatalf("%+v", head)

@@ -1,4 +1,4 @@
-package google_play
+package play
 
 import (
    "fmt"
@@ -39,7 +39,7 @@ func Test_Details(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   home += "/google-play/"
+   home += "/google/play/"
    var head Header
    if err := head.Read_Auth(home + "auth.txt"); err != nil {
       t.Fatal(err)

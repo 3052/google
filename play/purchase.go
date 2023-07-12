@@ -1,4 +1,4 @@
-package google_play
+package play
 
 import (
    "net/http"

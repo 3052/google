@@ -1,4 +1,4 @@
-package google_play
+package play
 
 import (
    "154.pages.dev/encoding/protobuf"

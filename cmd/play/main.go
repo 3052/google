@@ -1,7 +1,7 @@
 package main
 
 import (
-   "154.pages.dev/google-play"
+   "154.pages.dev/google/play"
    "flag"
    "fmt"
    "os"
@@ -25,7 +25,7 @@ func main() {
    flag.BoolVar(&f.device, "device", false, "create device")
    flag.StringVar(&f.email, "email", "", "your email")
    flag.StringVar(&f.file, "f", "", "password file")
-   flag.Int64Var(&f.platform, "p", 0, google_play.Platforms.String())
+   flag.Int64Var(&f.platform, "p", 0, play.Platforms.String())
    flag.StringVar(&f.passwd, "passwd", "", "password")
    flag.BoolVar(&f.purchase, "purchase", false, "purchase request")
    flag.BoolVar(&f.single, "s", false, "single APK")
@@ -35,7 +35,7 @@ func main() {
    if err != nil {
       panic(err)
    }
-   dir += "/google-play"
+   dir += "/google/play"
    if err := os.MkdirAll(dir, os.ModePerm); err != nil {
       panic(err)
    }
@@ -45,7 +45,7 @@ func main() {
          panic(err)
       }
    } else {
-      platform := google_play.Platforms[f.platform]
+      platform := play.Platforms[f.platform]
       if f.device {
          err := f.do_device(dir, platform)
          if err != nil {
