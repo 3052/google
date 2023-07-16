@@ -11,6 +11,38 @@ import (
    "strings"
 )
 
+func (r Response) Write_File(name string) error {
+   data, err := io.ReadAll(r.Body)
+   if err != nil {
+      return err
+   }
+   return os.WriteFile(name, data, 0666)
+}
+
+func (h *Header) Read_Device(name string) error {
+   data, err := os.ReadFile(name)
+   if err != nil {
+      return err
+   }
+   h.Device.Message, err = protobuf.Unmarshal(data)
+   if err != nil {
+      return err
+   }
+   return nil
+}
+
+func (h *Header) Read_Auth(name string) error {
+   text, err := os.ReadFile(name)
+   if err != nil {
+      return err
+   }
+   h.Auth.Values, err = parse_query(string(text))
+   if err != nil {
+      return err
+   }
+   return nil
+}
+
 func (a *Auth) Exchange() error {
    // these values take from Android API 28
    body := url.Values{
@@ -39,29 +71,6 @@ func (a *Auth) Exchange() error {
    return nil
 }
 
-func (h *Header) Read_Device(name string) error {
-   data, err := os.ReadFile(name)
-   if err != nil {
-      return err
-   }
-   h.Device.Message, err = protobuf.Unmarshal(data)
-   if err != nil {
-      return err
-   }
-   return nil
-}
-
-func (h *Header) Read_Auth(name string) error {
-   text, err := os.ReadFile(name)
-   if err != nil {
-      return err
-   }
-   h.Auth.Values, err = parse_query(string(text))
-   if err != nil {
-      return err
-   }
-   return nil
-}
 type Response struct {
    *http.Response
 }
@@ -89,14 +98,6 @@ func New_Auth(email, passwd string) (*Response, error) {
       return nil, err
    }
    return &Response{res}, nil
-}
-
-func (r Response) Write_File(name string) error {
-   data, err := io.ReadAll(r.Body)
-   if err != nil {
-      return err
-   }
-   return os.WriteFile(name, data, 0666)
 }
 
 type Header struct {
@@ -168,4 +169,3 @@ func parse_query(query string) (url.Values, error) {
    }
    return m, nil
 }
-
