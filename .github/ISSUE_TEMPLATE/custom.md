@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-DO NOT POST AN ISSUE, UNLESS YOU ARE READY TO MAKE A DONATION. Donations can be made here:
+For bugs, feel free to post an issue. For feature requests, DO NOT POST AN ISSUE, UNLESS YOU ARE READY TO MAKE A DONATION. Donations can be made here:
 
 https://paypal.com/donate?hosted_button_id=UEJBQQTU3VYDY
 
