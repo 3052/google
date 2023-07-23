@@ -54,6 +54,7 @@ type Config struct {
    System_Shared_Library []string
    Touch_Screen uint64
 }
+
 var Phone = Config{
    New_System_Available_Feature: []string{
       // app.source.getcontact
