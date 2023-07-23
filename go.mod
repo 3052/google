@@ -3,9 +3,9 @@ module 154.pages.dev/google
 go 1.20
 
 require (
-	154.pages.dev/encoding v1.9.4
+	154.pages.dev/encoding v1.9.5
 	154.pages.dev/strconv v1.0.2
-	154.pages.dev/tls v1.5.2
+	154.pages.dev/tls v1.5.3
 )
 
 require (

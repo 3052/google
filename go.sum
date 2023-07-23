@@ -1,9 +1,9 @@
-154.pages.dev/encoding v1.9.4 h1:o+WMCE19TcBAkrexfihpLKi3moeAvdXB2ydv6QsFckg=
-154.pages.dev/encoding v1.9.4/go.mod h1:L/VuQ0Vb663NSsptCg+3QK5LTGgyL7ImAkbgNRRtKjc=
+154.pages.dev/encoding v1.9.5 h1:Dv+KjM8bENG8JlB93ZL+QFbczoA1b0zqyBbLpi4X0Rs=
+154.pages.dev/encoding v1.9.5/go.mod h1:L/VuQ0Vb663NSsptCg+3QK5LTGgyL7ImAkbgNRRtKjc=
 154.pages.dev/strconv v1.0.2 h1:OrPh+18VwSXFUK2QoYcZWY+t7Dn+gHHQCJDGTs0JqgY=
 154.pages.dev/strconv v1.0.2/go.mod h1:HPQpZS7s8hlNlF5X2DNlT3qft3mN4rluNJW+GjbTf9I=
-154.pages.dev/tls v1.5.2 h1:yF1VJDYA5sDjA/FwJrULQUIHFbZ1MrY8UoLmU4BiG2A=
-154.pages.dev/tls v1.5.2/go.mod h1:nrhaj/Jn3k0KWqMlbQMzFquHL+A+cdQLfxen78L+EFM=
+154.pages.dev/tls v1.5.3 h1:hEBaeLaU9VIOonUpJZs2DokzOfDy8ZSrcpf60PoEX4I=
+154.pages.dev/tls v1.5.3/go.mod h1:nrhaj/Jn3k0KWqMlbQMzFquHL+A+cdQLfxen78L+EFM=
 github.com/golang/protobuf v1.5.0/go.mod h1:FsONVRAS9T7sI+LIUmWTfcYkHO4aIWwzhcaSAoJOfIk=
 github.com/google/go-cmp v0.5.5/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 golang.org/x/crypto v0.11.0 h1:6Ewdq3tDic1mg5xRO4milcWCfMVQhI4NkqWWvqejpuA=
