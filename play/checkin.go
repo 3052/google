@@ -38,6 +38,7 @@ type Device struct {
 func (d Device) ID() (uint64, error) {
    return d.Get_Fixed64(7)
 }
+
 const Sleep = 4 * time.Second
 
 // These can use default values, but they must all be included
@@ -114,4 +115,3 @@ var Phone = Config{
    // valid range 0x3_0001 - 0x7FFF_FFFF
    GL_ES_Version: 0xF_FFFF,
 }
-
