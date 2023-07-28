@@ -6,6 +6,11 @@ import (
    "time"
 )
 
+// androidId
+func (d Device) ID() (int, uint64) {
+   return d.m.Uint64(7)
+}
+
 type Native_Platform map[int64]string
 
 var Platforms = Native_Platform{
@@ -20,23 +25,18 @@ var Platforms = Native_Platform{
 func (n Native_Platform) String() string {
    var b []byte
    b = append(b, "native platform"...)
-   for key, val := range n {
+   for key, value := range n {
       b = append(b, '\n')
       b = strconv.AppendInt(b, key, 10)
       b = append(b, ": "...)
-      b = append(b, val...)
+      b = append(b, value...)
    }
    return string(b)
 }
 
 // Checkin$AndroidCheckinResponse
 type Device struct {
-   protobuf.Message
-}
-
-// AndroidId
-func (d Device) ID() (uint64, error) {
-   return d.Get_Fixed64(7)
+   m protobuf.Message
 }
 
 const Sleep = 4 * time.Second

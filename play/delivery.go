@@ -9,111 +9,65 @@ import (
    "strconv"
 )
 
-func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
-   req, err := http.NewRequest(
-      "GET", "https://play-fe.googleapis.com/fdfe/delivery", nil,
-   )
-   if err != nil {
-      return nil, err
-   }
-   req.URL.RawQuery = url.Values{
-      "doc": {doc},
-      "vc": {strconv.FormatUint(vc, 10)},
-   }.Encode()
-   h.Set_Agent(req.Header)
-   h.Set_Auth(req.Header) // needed for single APK
-   h.Set_Device(req.Header)
-   res, err := client.Do(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   body, err := io.ReadAll(res.Body)
-   if err != nil {
-      return nil, err
-   }
-   // ResponseWrapper
-   response_wrapper, err := protobuf.Unmarshal(body)
-   if err != nil {
-      return nil, err
-   }
-   // .payload.deliveryResponse
-   delivery_response := response_wrapper.Get(1).Get(21)
-   // .status
-   status, err := delivery_response.Get_Varint(1)
-   if err != nil {
-      return nil, err
-   }
-   switch status {
-   case 2:
-      return nil, errors.New("geo-blocking")
-   case 3:
-      return nil, errors.New("purchase required")
-   case 5:
-      return nil, errors.New("invalid version")
-   }
-   var del Delivery
-   // .appDeliveryData
-   del.Message = delivery_response.Get(2)
-   return &del, nil
+// downloadUrl
+func (a App_File_Metadata) Download_URL() (int, []byte) {
+   return a.m.Bytes(4)
 }
 
-// .downloadUrl
-func (d Delivery) Download_URL() (string, error) {
-   return d.Get_String(3)
+// fileType
+func (a App_File_Metadata) File_Type() (int, uint64) {
+   return a.m.Uvarint(1)
 }
 
-func (d Delivery) Split_Data() []Split_Data {
-   var splits []Split_Data
-   // .splitDeliveryData
-   for _, split := range d.Get_Messages(15) {
-      splits = append(splits, Split_Data{split})
-   }
-   return splits
+// downloadUrl
+func (s Split_Data) Download_URL() (int, []byte) {
+   return s.m.Bytes(5)
 }
 
-// AndroidAppDeliveryData
-type Delivery struct {
-   protobuf.Message
+// id
+func (s Split_Data) ID() (int, []byte) {
+   return s.m.Bytes(1)
 }
 
 func (d Delivery) Additional_File() []App_File_Metadata {
    var files []App_File_Metadata
-   // .additionalFile
-   for _, file := range d.Get_Messages(4) {
+   for {
+      // additionalFile
+      i, file := d.m.Message(4)
+      if i == -1 {
+         return files
+      }
       files = append(files, App_File_Metadata{file})
+      d.m = d.m[i+1:]
    }
-   return files
+}
+
+func (d Delivery) Split_Data() []Split_Data {
+   var splits []Split_Data
+   for {
+      // splitDeliveryData
+      i, split := d.m.Message(15)
+      if i == -1 {
+         return splits
+      }
+      splits = append(splits, Split_Data{split})
+      d.m = d.m[i+1:]
+   }
+}
+
+// AndroidAppDeliveryData
+type Delivery struct {
+   m protobuf.Message
 }
 
 // SplitDeliveryData
 type Split_Data struct {
-   protobuf.Message
-}
-
-// .id
-func (s Split_Data) ID() (string, error) {
-   return s.Get_String(1)
-}
-
-// .downloadUrl
-func (s Split_Data) Download_URL() (string, error) {
-   return s.Get_String(5)
+   m protobuf.Message
 }
 
 // AppFileMetadata
 type App_File_Metadata struct {
-   protobuf.Message
-}
-
-// .fileType
-func (a App_File_Metadata) File_Type() (uint64, error) {
-   return a.Get_Varint(1)
-}
-
-// .downloadUrl
-func (a App_File_Metadata) Download_URL() (string, error) {
-   return a.Get_String(4)
+   m protobuf.Message
 }
 
 type File struct {
@@ -147,4 +101,54 @@ func (f File) APK(id string) string {
    b = strconv.AppendUint(b, f.Version_Code, 10)
    b = append(b, ".apk"...)
    return string(b)
+}
+// downloadUrl
+func (d Delivery) Download_URL() (int, []byte) {
+   return d.m.Bytes(3)
+}
+
+func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
+   req, err := http.NewRequest(
+      "GET", "https://play-fe.googleapis.com/fdfe/delivery", nil,
+   )
+   if err != nil {
+      return nil, err
+   }
+   req.URL.RawQuery = url.Values{
+      "doc": {doc},
+      "vc": {strconv.FormatUint(vc, 10)},
+   }.Encode()
+   h.Set_Agent(req.Header)
+   h.Set_Auth(req.Header) // needed for single APK
+   h.Set_Device(req.Header)
+   res, err := client.Do(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   body, err := io.ReadAll(res.Body)
+   if err != nil {
+      return nil, err
+   }
+   // ResponseWrapper
+   mes, err := protobuf.Unmarshal(body)
+   if err != nil {
+      return nil, err
+   }
+   // payload
+   _, mes = mes.Message(1)
+   // deliveryResponse
+   _, mes = mes.Message(21)
+   // status
+   switch _, status := mes.Uvarint(1); status {
+   case 2:
+      return nil, errors.New("geo-blocking")
+   case 3:
+      return nil, errors.New("purchase required")
+   case 5:
+      return nil, errors.New("invalid version")
+   }
+   // appDeliveryData
+   _, mes = mes.Message(2)
+   return &Delivery{mes}, nil
 }

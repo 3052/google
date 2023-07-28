@@ -15,49 +15,57 @@ import (
 func (c Config) Checkin(platform string) (*Response, error) {
    body := protobuf.Message{
       // Checkin$AndroidCheckinRequest
-      4: protobuf.Message{ // checkin
+      protobuf.Number(4).Prefix( // checkin
          // Logs$AndroidCheckinProto
-         1: protobuf.Message{ // build
+         protobuf.Number(1).Prefix( // build
             // Logs$AndroidBuildProto
             // multiple APK valid range 14 - 0x7FFF_FFFF
             // single APK valid range 14 - 28
-            10: protobuf.Varint(28), // sdkVersion
-         },
-         18: protobuf.Varint(1), // voiceCapable
-      },
+            protobuf.Number(10).Varint(28), // sdkVersion
+         ),
+         protobuf.Number(18).Varint(1), // voiceCapable
+      ),
       // valid range 2 - 3
-      14: protobuf.Varint(3), // version
-      18: protobuf.Message{ // deviceConfiguration
+      protobuf.Number(14).Varint(3), // version
+      protobuf.Number(18).Prefix( // deviceConfiguration
          // DeviceConfiguration
-         1: protobuf.Varint(c.Touch_Screen),
-         2: protobuf.Varint(c.Keyboard),
-         3: protobuf.Varint(c.Navigation),
-         4: protobuf.Varint(c.Screen_Layout),
-         5: protobuf.Varint(c.Has_Hard_Keyboard),
-         6: protobuf.Varint(c.Has_Five_Way_Navigation),
-         7: protobuf.Varint(c.Screen_Density),
-         8: protobuf.Varint(c.GL_ES_Version),
-         11: protobuf.String(platform), // nativePlatform
-      },
-   }
-   for _, library := range c.System_Shared_Library {
-      // .deviceConfiguration.systemSharedLibrary
-      body.Get(18).Add_String(9, library)
-   }
-   for _, extension := range c.GL_Extension {
-      // .deviceConfiguration.glExtension
-      body.Get(18).Add_String(15, extension)
-   }
-   for _, name := range c.New_System_Available_Feature {
-      // .deviceConfiguration.newSystemAvailableFeature
-      body.Get(18).Add(26, protobuf.Message{
-         1: protobuf.String(name),
-      })
+         protobuf.Number(1).Uvarint(c.Touch_Screen),
+         protobuf.Number(2).Uvarint(c.Keyboard),
+         protobuf.Number(3).Uvarint(c.Navigation),
+         protobuf.Number(4).Uvarint(c.Screen_Layout),
+         protobuf.Number(5).Uvarint(c.Has_Hard_Keyboard),
+         protobuf.Number(6).Uvarint(c.Has_Five_Way_Navigation),
+         protobuf.Number(7).Uvarint(c.Screen_Density),
+         protobuf.Number(8).Uvarint(c.GL_ES_Version),
+         func() (m protobuf.Message) {
+            for _, library := range c.System_Shared_Library {
+               // systemSharedLibrary
+               m = append(m, protobuf.Number(9).String(library))
+            }
+            return
+         }(),
+         protobuf.Number(11).String(platform), // nativePlatform
+         func() (m protobuf.Message) {
+            for _, extension := range c.GL_Extension {
+               // glExtension
+               m = append(m, protobuf.Number(15).String(extension))
+            }
+            return
+         }(),
+         func() (m protobuf.Message) {
+            for _, name := range c.New_System_Available_Feature {
+               // newSystemAvailableFeature
+               m = append(m, protobuf.Number(26).Prefix(
+                  protobuf.Number(1).String(name),
+               ))
+            }
+            return
+         }(),
+      ),
    }
    res, err := client.Post(
-      "https://android.googleapis.com/checkin",
-      "application/x-protobuffer",
-      bytes.NewReader(body.Marshal()),
+      "https://android.googleapis.com/checkin", "application/x-protobuffer",
+      bytes.NewReader(body.Append(nil)),
    )
    if err != nil {
       return nil, err

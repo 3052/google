@@ -15,7 +15,7 @@ func (h *Header) Read_Device(name string) error {
    if err != nil {
       return err
    }
-   h.Device.Message, err = protobuf.Unmarshal(data)
+   h.Device.m, err = protobuf.Unmarshal(data)
    if err != nil {
       return err
    }
@@ -87,13 +87,10 @@ func (h Header) Set_Agent(head http.Header) {
    head.Set("User-Agent", string(b))
 }
 
-func (h Header) Set_Device(head http.Header) error {
-   id, err := h.Device.ID()
-   if err != nil {
-      return err
-   }
+func (h Header) Set_Device(head http.Header) int {
+   index, id := h.Device.ID()
    head.Set("X-DFE-Device-ID", strconv.FormatUint(id, 16))
-   return nil
+   return index
 }
 
 func (h Header) Set_Auth(head http.Header) {
