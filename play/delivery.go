@@ -9,6 +9,32 @@ import (
    "strconv"
 )
 
+func (f File) APK(id []byte) []byte {
+   var b []byte
+   b = append(b, f.Package_Name...)
+   b = append(b, '-')
+   if id != nil {
+      b = append(b, id...)
+      b = append(b, '-')
+   }
+   b = strconv.AppendUint(b, f.Version_Code, 10)
+   return append(b, ".apk"...)
+}
+
+func (f File) OBB(file_type uint64) []byte {
+   var b []byte
+   if file_type >= 1 {
+      b = append(b, "patch"...)
+   } else {
+      b = append(b, "main"...)
+   }
+   b = append(b, '.')
+   b = strconv.AppendUint(b, f.Version_Code, 10)
+   b = append(b, '.')
+   b = append(b, f.Package_Name...)
+   return append(b, ".obb"...)
+}
+
 // downloadUrl
 func (a App_File_Metadata) Download_URL() (int, []byte) {
    return a.m.Bytes(4)
@@ -75,33 +101,6 @@ type File struct {
    Version_Code uint64
 }
 
-func (f File) OBB(file_type uint64) string {
-   var b []byte
-   if file_type >= 1 {
-      b = append(b, "patch"...)
-   } else {
-      b = append(b, "main"...)
-   }
-   b = append(b, '.')
-   b = strconv.AppendUint(b, f.Version_Code, 10)
-   b = append(b, '.')
-   b = append(b, f.Package_Name...)
-   b = append(b, ".obb"...)
-   return string(b)
-}
-
-func (f File) APK(id string) string {
-   var b []byte
-   b = append(b, f.Package_Name...)
-   b = append(b, '-')
-   if id != "" {
-      b = append(b, id...)
-      b = append(b, '-')
-   }
-   b = strconv.AppendUint(b, f.Version_Code, 10)
-   b = append(b, ".apk"...)
-   return string(b)
-}
 // downloadUrl
 func (d Delivery) Download_URL() (int, []byte) {
    return d.m.Bytes(3)
@@ -152,3 +151,4 @@ func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
    _, mes = mes.Message(2)
    return &Delivery{mes}, nil
 }
+

@@ -9,13 +9,13 @@ import (
    "time"
 )
 
-func (f flags) download(ref, name string) error {
-   res, err := http.Get(ref)
+func (f flags) download(ref, name []byte) error {
+   res, err := http.Get(string(ref))
    if err != nil {
       return err
    }
    defer res.Body.Close()
-   file, err := os.Create(name)
+   file, err := os.Create(string(name))
    if err != nil {
       return err
    }
@@ -65,36 +65,21 @@ func (f flags) do_delivery(head *play.Header) error {
    }
    file := play.File{f.doc, f.vc}
    for _, split := range deliver.Split_Data() {
-      ref, err := split.Download_URL()
-      if err != nil {
-         return err
-      }
-      id, err := split.ID()
-      if err != nil {
-         return err
-      }
+      _, ref := split.Download_URL()
+      _, id := split.ID()
       if err := f.download(ref, file.APK(id)); err != nil {
          return err
       }
    }
    for _, add := range deliver.Additional_File() {
-      ref, err := add.Download_URL()
-      if err != nil {
-         return err
-      }
-      typ, err := add.File_Type()
-      if err != nil {
-         return err
-      }
+      _, ref := add.Download_URL()
+      _, typ := add.File_Type()
       if err := f.download(ref, file.OBB(typ)); err != nil {
          return err
       }
    }
-   ref, err := deliver.Download_URL()
-   if err != nil {
-      return err
-   }
-   return f.download(ref, file.APK(""))
+   _, ref := deliver.Download_URL()
+   return f.download(ref, file.APK(nil))
 }
 
 func (f flags) do_details(head *play.Header) ([]byte, error) {
