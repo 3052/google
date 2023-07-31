@@ -7,39 +7,6 @@ import (
    "time"
 )
 
-// androidId
-func (d Device) ID() (uint64, error) {
-   return d.m.Fixed64(7)
-}
-
-type Native_Platform map[int64]string
-
-var Platforms = Native_Platform{
-   // com.google.android.youtube
-   0: "x86",
-   // com.miui.weather2
-   1: "armeabi-v7a",
-   // com.kakaogames.twodin
-   2: "arm64-v8a",
-}
-
-func (n Native_Platform) String() string {
-   var b []byte
-   b = append(b, "native platform"...)
-   for key, value := range n {
-      b = append(b, '\n')
-      b = strconv.AppendInt(b, key, 10)
-      b = append(b, ": "...)
-      b = append(b, value...)
-   }
-   return string(b)
-}
-
-// Checkin$AndroidCheckinResponse
-type Device struct {
-   m protobuf.Message
-}
-
 const Sleep = 4 * time.Second
 
 // These can use default values, but they must all be included
@@ -116,6 +83,7 @@ var Phone = Config{
    // valid range 0x3_0001 - 0x7FFF_FFFF
    GL_ES_Version: 0xF_FFFF,
 }
+
 // A Sleep is needed after this.
 func (c Config) Checkin(platform string) (*Response, error) {
    body := protobuf.Message{
@@ -178,3 +146,35 @@ func (c Config) Checkin(platform string) (*Response, error) {
    return &Response{res}, nil
 }
 
+// Checkin$AndroidCheckinResponse
+type Device struct {
+   m protobuf.Message
+}
+
+// androidId
+func (d Device) ID() (uint64, error) {
+   return d.m.Fixed64(7)
+}
+
+type Native_Platform map[int64]string
+
+var Platforms = Native_Platform{
+   // com.google.android.youtube
+   0: "x86",
+   // com.miui.weather2
+   1: "armeabi-v7a",
+   // com.kakaogames.twodin
+   2: "arm64-v8a",
+}
+
+func (n Native_Platform) String() string {
+   var b []byte
+   b = append(b, "native platform"...)
+   for key, value := range n {
+      b = append(b, '\n')
+      b = strconv.AppendInt(b, key, 10)
+      b = append(b, ": "...)
+      b = append(b, value...)
+   }
+   return string(b)
+}

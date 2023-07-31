@@ -11,31 +11,6 @@ import (
    "strings"
 )
 
-func (h Header) Set_Device(head http.Header) error {
-   id, err  := h.Device.ID()
-   if err != nil {
-      return err
-   }
-   head.Set("X-DFE-Device-ID", strconv.FormatUint(id, 16))
-   return nil
-}
-
-func (h Header) Set_Auth(head http.Header) {
-   head.Set("Authorization", "Bearer " + h.Auth.Get_Auth())
-}
-
-type Auth struct {
-   url.Values
-}
-
-func (a Auth) Get_Auth() string {
-   return a.Get("Auth")
-}
-
-func (a Auth) Get_Token() string {
-   return a.Get("Token")
-}
-
 // github.com/golang/go/blob/go1.20.4/src/net/url/url.go
 func parse_query(query string) (url.Values, error) {
    m := make(url.Values)
@@ -55,6 +30,11 @@ func parse_query(query string) (url.Values, error) {
    }
    return m, nil
 }
+
+type Auth struct {
+   url.Values
+}
+
 // You can also use host "android.clients.google.com", but it also uses
 // TLS fingerprinting.
 func New_Auth(email, passwd string) (*Response, error) {
@@ -78,30 +58,6 @@ func New_Auth(email, passwd string) (*Response, error) {
       return nil, err
    }
    return &Response{res}, nil
-}
-
-func (h *Header) Read_Device(name string) error {
-   data, err := os.ReadFile(name)
-   if err != nil {
-      return err
-   }
-   h.Device.m, err = protobuf.Unmarshal(data)
-   if err != nil {
-      return err
-   }
-   return nil
-}
-
-func (h *Header) Read_Auth(name string) error {
-   text, err := os.ReadFile(name)
-   if err != nil {
-      return err
-   }
-   h.Auth.Values, err = parse_query(string(text))
-   if err != nil {
-      return err
-   }
-   return nil
 }
 
 func (a *Auth) Exchange() error {
@@ -132,10 +88,42 @@ func (a *Auth) Exchange() error {
    return nil
 }
 
+func (a Auth) Get_Auth() string {
+   return a.Get("Auth")
+}
+
+func (a Auth) Get_Token() string {
+   return a.Get("Token")
+}
+
 type Header struct {
    Auth Auth // Authorization
    Device Device // X-DFE-Device-ID
    Single bool
+}
+
+func (h *Header) Read_Auth(name string) error {
+   text, err := os.ReadFile(name)
+   if err != nil {
+      return err
+   }
+   h.Auth.Values, err = parse_query(string(text))
+   if err != nil {
+      return err
+   }
+   return nil
+}
+
+func (h *Header) Read_Device(name string) error {
+   data, err := os.ReadFile(name)
+   if err != nil {
+      return err
+   }
+   h.Device.m, err = protobuf.Unmarshal(data)
+   if err != nil {
+      return err
+   }
+   return nil
 }
 
 func (h Header) Set_Agent(head http.Header) {
@@ -157,3 +145,15 @@ func (h Header) Set_Agent(head http.Header) {
    head.Set("User-Agent", string(b))
 }
 
+func (h Header) Set_Auth(head http.Header) {
+   head.Set("Authorization", "Bearer " + h.Auth.Get_Auth())
+}
+
+func (h Header) Set_Device(head http.Header) error {
+   id, err  := h.Device.ID()
+   if err != nil {
+      return err
+   }
+   head.Set("X-DFE-Device-ID", strconv.FormatUint(id, 16))
+   return nil
+}

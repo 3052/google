@@ -29,14 +29,23 @@ func (f flags) do_delivery(head *play.Header) error {
       }
    }
    for _, add := range deliver.Additional_File() {
-      _, ref := add.Download_URL()
-      _, typ := add.File_Type()
+      ref, err := add.Download_URL()
+      if err != nil {
+         return err
+      }
+      typ, err := add.File_Type()
+      if err != nil {
+         return err
+      }
       if err := f.download(ref, file.OBB(typ)); err != nil {
          return err
       }
    }
-   _, ref := deliver.Download_URL()
-   return f.download(ref, file.APK(nil))
+   ref, err := deliver.Download_URL()
+   if err != nil {
+      return err
+   }
+   return f.download(ref, file.APK(""))
 }
 
 func (f flags) do_details(head *play.Header) ([]byte, error) {
