@@ -9,6 +9,33 @@ import (
    "strconv"
 )
 
+func (f File) APK(id string) string {
+   var b []byte
+   b = append(b, f.Package_Name...)
+   b = append(b, '-')
+   if id != nil {
+      b = append(b, id...)
+      b = append(b, '-')
+   }
+   b = strconv.AppendUint(b, f.Version_Code, 10)
+   b = append(b, ".apk"...)
+   return string(b)
+}
+
+func (f File) OBB(file_type uint64) []byte {
+   var b []byte
+   if file_type >= 1 {
+      b = append(b, "patch"...)
+   } else {
+      b = append(b, "main"...)
+   }
+   b = append(b, '.')
+   b = strconv.AppendUint(b, f.Version_Code, 10)
+   b = append(b, '.')
+   b = append(b, f.Package_Name...)
+   return append(b, ".obb"...)
+}
+
 func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
    req, err := http.NewRequest(
       "GET", "https://play-fe.googleapis.com/fdfe/delivery", nil,
@@ -53,32 +80,6 @@ func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
    // appDeliveryData
    mes, _ = mes.Message(2)
    return &Delivery{mes}, nil
-}
-
-func (f File) APK(id []byte) []byte {
-   var b []byte
-   b = append(b, f.Package_Name...)
-   b = append(b, '-')
-   if id != nil {
-      b = append(b, id...)
-      b = append(b, '-')
-   }
-   b = strconv.AppendUint(b, f.Version_Code, 10)
-   return append(b, ".apk"...)
-}
-
-func (f File) OBB(file_type uint64) []byte {
-   var b []byte
-   if file_type >= 1 {
-      b = append(b, "patch"...)
-   } else {
-      b = append(b, "main"...)
-   }
-   b = append(b, '.')
-   b = strconv.AppendUint(b, f.Version_Code, 10)
-   b = append(b, '.')
-   b = append(b, f.Package_Name...)
-   return append(b, ".obb"...)
 }
 
 // downloadUrl

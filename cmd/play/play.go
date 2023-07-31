@@ -9,13 +9,62 @@ import (
    "time"
 )
 
-func (f flags) download(ref, name []byte) error {
-   res, err := http.Get(string(ref))
+func (f flags) do_delivery(head *play.Header) error {
+   deliver, err := head.Delivery(f.doc, f.vc)
+   if err != nil {
+      return err
+   }
+   file := play.File{f.doc, f.vc}
+   for _, split := range deliver.Split_Data() {
+      ref, err := split.Download_URL()
+      if err != nil {
+         return err
+      }
+      id, err := split.ID()
+      if err != nil {
+         return err
+      }
+      if err := f.download(ref, file.APK(id)); err != nil {
+         return err
+      }
+   }
+   for _, add := range deliver.Additional_File() {
+      _, ref := add.Download_URL()
+      _, typ := add.File_Type()
+      if err := f.download(ref, file.OBB(typ)); err != nil {
+         return err
+      }
+   }
+   _, ref := deliver.Download_URL()
+   return f.download(ref, file.APK(nil))
+}
+
+func (f flags) do_details(head *play.Header) ([]byte, error) {
+   detail, err := head.Details(f.doc)
+   if err != nil {
+      return nil, err
+   }
+   return detail.MarshalText()
+}
+
+func (f flags) do_device(dir, platform string) error {
+   res, err := play.Phone.Checkin(platform)
    if err != nil {
       return err
    }
    defer res.Body.Close()
-   file, err := os.Create(string(name))
+   fmt.Printf("Sleeping %v for server to process\n", play.Sleep)
+   time.Sleep(play.Sleep)
+   return res.Write_File(dir + "/" + platform + ".bin")
+}
+
+func (f flags) download(ref, name string) error {
+   res, err := http.Get(ref)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   file, err := os.Create(name)
    if err != nil {
       return err
    }
@@ -58,45 +107,3 @@ func (f flags) do_auth(dir string) error {
    return res.Write_File(dir + "/auth.txt")
 }
 
-func (f flags) do_delivery(head *play.Header) error {
-   deliver, err := head.Delivery(f.doc, f.vc)
-   if err != nil {
-      return err
-   }
-   file := play.File{f.doc, f.vc}
-   for _, split := range deliver.Split_Data() {
-      _, ref := split.Download_URL()
-      _, id := split.ID()
-      if err := f.download(ref, file.APK(id)); err != nil {
-         return err
-      }
-   }
-   for _, add := range deliver.Additional_File() {
-      _, ref := add.Download_URL()
-      _, typ := add.File_Type()
-      if err := f.download(ref, file.OBB(typ)); err != nil {
-         return err
-      }
-   }
-   _, ref := deliver.Download_URL()
-   return f.download(ref, file.APK(nil))
-}
-
-func (f flags) do_details(head *play.Header) ([]byte, error) {
-   detail, err := head.Details(f.doc)
-   if err != nil {
-      return nil, err
-   }
-   return detail.MarshalText()
-}
-
-func (f flags) do_device(dir, platform string) error {
-   res, err := play.Phone.Checkin(platform)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   fmt.Printf("Sleeping %v for server to process\n", play.Sleep)
-   time.Sleep(play.Sleep)
-   return res.Write_File(dir + "/" + platform + ".bin")
-}

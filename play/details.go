@@ -8,28 +8,11 @@ import (
    "net/http"
 )
 
-func (d Details) Version() (int, []byte) {
+func (d Details) Num_Downloads() (uint64, error) {
    // details
-   _, d.m = d.m.Message(13)
+   d.m, _ = d.m.Message(13)
    // appDetails
-   _, d.m = d.m.Message(1)
-   // versionString
-   return d.m.Bytes(4)
-}
-
-func (d Details) Version_Code() (int, uint64) {
-   // details
-   _, d.m = d.m.Message(13)
-   // appDetails
-   _, d.m = d.m.Message(1)
-   return d.m.Varint(3)
-}
-
-func (d Details) Num_Downloads() (int, uint64) {
-   // details
-   _, d.m = d.m.Message(13)
-   // appDetails
-   _, d.m = d.m.Message(1)
+   d.m, _ = d.m.Message(1)
    // I dont know the name of field 70, but the similar field 13 is called
    // numDownloads
    return d.m.Varint(70)
@@ -183,5 +166,22 @@ func (d Details) Upload_Date() (string, error) {
    // appDetails
    d.m, _ = d.m.Message(1)
    return d.m.String(16)
+}
+
+func (d Details) Version() (string, error) {
+   // details
+   d.m, _ = d.m.Message(13)
+   // appDetails
+   d.m, _ = d.m.Message(1)
+   // versionString
+   return d.m.String(4)
+}
+
+func (d Details) Version_Code() (uint64, error) {
+   // details
+   d.m, _ = d.m.Message(13)
+   // appDetails
+   d.m, _ = d.m.Message(1)
+   return d.m.Varint(3)
 }
 
