@@ -9,63 +9,13 @@ import (
    "strconv"
 )
 
-func (f File) APK(id []byte) []byte {
-   var b []byte
-   b = append(b, f.Package_Name...)
-   b = append(b, '-')
-   if id != nil {
-      b = append(b, id...)
-      b = append(b, '-')
-   }
-   b = strconv.AppendUint(b, f.Version_Code, 10)
-   return append(b, ".apk"...)
-}
-
-func (f File) OBB(file_type uint64) []byte {
-   var b []byte
-   if file_type >= 1 {
-      b = append(b, "patch"...)
-   } else {
-      b = append(b, "main"...)
-   }
-   b = append(b, '.')
-   b = strconv.AppendUint(b, f.Version_Code, 10)
-   b = append(b, '.')
-   b = append(b, f.Package_Name...)
-   return append(b, ".obb"...)
-}
-
-// downloadUrl
-func (a App_File_Metadata) Download_URL() (int, []byte) {
-   return a.m.Bytes(4)
-}
-
-// fileType
-func (a App_File_Metadata) File_Type() (int, uint64) {
-   return a.m.Uvarint(1)
-}
-
-// downloadUrl
-func (s Split_Data) Download_URL() (int, []byte) {
-   return s.m.Bytes(5)
-}
-
-// id
-func (s Split_Data) ID() (int, []byte) {
-   return s.m.Bytes(1)
-}
-
 func (d Delivery) Additional_File() []App_File_Metadata {
    var files []App_File_Metadata
-   for {
-      // additionalFile
-      i, file := d.m.Message(4)
-      if i == -1 {
-         return files
-      }
+   // additionalFile
+   d.m.Messages(4, func(file protobuf.Message) {
       files = append(files, App_File_Metadata{file})
-      d.m = d.m[i+1:]
-   }
+   })
+   return files
 }
 
 func (d Delivery) Split_Data() []Split_Data {
@@ -150,5 +100,51 @@ func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
    // appDeliveryData
    _, mes = mes.Message(2)
    return &Delivery{mes}, nil
+}
+
+func (f File) APK(id []byte) []byte {
+   var b []byte
+   b = append(b, f.Package_Name...)
+   b = append(b, '-')
+   if id != nil {
+      b = append(b, id...)
+      b = append(b, '-')
+   }
+   b = strconv.AppendUint(b, f.Version_Code, 10)
+   return append(b, ".apk"...)
+}
+
+func (f File) OBB(file_type uint64) []byte {
+   var b []byte
+   if file_type >= 1 {
+      b = append(b, "patch"...)
+   } else {
+      b = append(b, "main"...)
+   }
+   b = append(b, '.')
+   b = strconv.AppendUint(b, f.Version_Code, 10)
+   b = append(b, '.')
+   b = append(b, f.Package_Name...)
+   return append(b, ".obb"...)
+}
+
+// downloadUrl
+func (a App_File_Metadata) Download_URL() (string, error) {
+   return a.m.String(4)
+}
+
+// fileType
+func (a App_File_Metadata) File_Type() (uint64, error) {
+   return a.m.Varint(1)
+}
+
+// downloadUrl
+func (s Split_Data) Download_URL() (string, error) {
+   return s.m.String(5)
+}
+
+// id
+func (s Split_Data) ID() (string, error) {
+   return s.m.String(1)
 }
 

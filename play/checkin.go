@@ -8,8 +8,8 @@ import (
 )
 
 // androidId
-func (d Device) ID() (int, uint64) {
-   return d.m.Uint64(7)
+func (d Device) ID() (uint64, error) {
+   return d.m.Fixed64(7)
 }
 
 type Native_Platform map[int64]string
