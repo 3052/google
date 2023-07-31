@@ -8,59 +8,6 @@ import (
    "net/http"
 )
 
-func (d Details) Creator() (int, []byte) {
-   return d.m.Bytes(6)
-}
-
-func (d Details) MarshalText() ([]byte, error) {
-   var b []byte
-   b = append(b, "creator: "...)
-   if i, v := d.Creator(); i >= 0 {
-      b = append(b, v...)
-   }
-   b = append(b, "\nfile:"...)
-   for _, file := range d.File() {
-      if _, v := file.File_Type(); v >= 1 {
-         b = append(b, " OBB"...)
-      } else {
-         b = append(b, " APK"...)
-      }
-   }
-   b = append(b, "\ninstallation size: "...)
-   if i, v := d.Installation_Size(); i >= 0 {
-      b = fmt.Append(b, strconv.Size(v))
-   }
-   b = append(b, "\ndownloads: "...)
-   if i, v := d.Num_Downloads(); i >= 0 {
-      b = fmt.Append(b, strconv.Cardinal(v))
-   }
-   b = append(b, "\noffer: "...)
-   if i, v := d.Micros(); i >= 0 {
-      b = fmt.Append(b, v)
-   }
-   b = append(b, ' ')
-   if i, v := d.Currency_Code(); i >= 0 {
-      b = append(b, v...)
-   }
-   b = append(b, "\ntitle: "...)
-   if i, v := d.Title(); i >= 0 {
-      b = append(b, v...)
-   }
-   b = append(b, "\nupload date: "...)
-   if i, v := d.Upload_Date(); i >= 0 {
-      b = append(b, v...)
-   }
-   b = append(b, "\nversion: "...)
-   if i, v := d.Version(); i >= 0 {
-      b = append(b, v...)
-   }
-   b = append(b, "\nversion code: "...)
-   if i, v := d.Version_Code(); i >= 0 {
-      b = fmt.Append(b, v)
-   }
-   return b, nil
-}
-
 func (d Details) Currency_Code() (int, []byte) {
    // offer
    _, d.m = d.m.Message(8)
@@ -187,5 +134,58 @@ func (d Details) Num_Downloads() (int, uint64) {
    // I dont know the name of field 70, but the similar field 13 is called
    // numDownloads
    return d.m.Uvarint(70)
+}
+
+func (d Details) Creator() (string, error) {
+   return d.m.String(6)
+}
+
+func (d Details) MarshalText() ([]byte, error) {
+   var b []byte
+   b = append(b, "creator: "...)
+   if v, err := d.Creator(); err == nil {
+      b = append(b, v...)
+   }
+   b = append(b, "\nfile:"...)
+   for _, file := range d.File() {
+      if v, _ := file.File_Type(); v >= 1 {
+         b = append(b, " OBB"...)
+      } else {
+         b = append(b, " APK"...)
+      }
+   }
+   b = append(b, "\ninstallation size: "...)
+   if v, err := d.Installation_Size(); err == nil {
+      b = fmt.Append(b, strconv.Size(v))
+   }
+   b = append(b, "\ndownloads: "...)
+   if v, err := d.Num_Downloads(); err == nil {
+      b = fmt.Append(b, strconv.Cardinal(v))
+   }
+   b = append(b, "\noffer: "...)
+   if v, err := d.Micros(); err == nil {
+      b = fmt.Append(b, v)
+   }
+   b = append(b, ' ')
+   if v, err := d.Currency_Code(); err == nil {
+      b = append(b, v...)
+   }
+   b = append(b, "\ntitle: "...)
+   if v, err := d.Title(); err == nil {
+      b = append(b, v...)
+   }
+   b = append(b, "\nupload date: "...)
+   if v, err := d.Upload_Date(); err == nil {
+      b = append(b, v...)
+   }
+   b = append(b, "\nversion: "...)
+   if v, err := d.Version(); err == nil {
+      b = append(b, v...)
+   }
+   b = append(b, "\nversion code: "...)
+   if v, err := d.Version_Code(); err == nil {
+      b = fmt.Append(b, v)
+   }
+   return b, nil
 }
 

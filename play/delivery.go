@@ -9,53 +9,6 @@ import (
    "strconv"
 )
 
-func (d Delivery) Additional_File() []App_File_Metadata {
-   var files []App_File_Metadata
-   // additionalFile
-   d.m.Messages(4, func(file protobuf.Message) {
-      files = append(files, App_File_Metadata{file})
-   })
-   return files
-}
-
-func (d Delivery) Split_Data() []Split_Data {
-   var splits []Split_Data
-   for {
-      // splitDeliveryData
-      i, split := d.m.Message(15)
-      if i == -1 {
-         return splits
-      }
-      splits = append(splits, Split_Data{split})
-      d.m = d.m[i+1:]
-   }
-}
-
-// AndroidAppDeliveryData
-type Delivery struct {
-   m protobuf.Message
-}
-
-// SplitDeliveryData
-type Split_Data struct {
-   m protobuf.Message
-}
-
-// AppFileMetadata
-type App_File_Metadata struct {
-   m protobuf.Message
-}
-
-type File struct {
-   Package_Name string
-   Version_Code uint64
-}
-
-// downloadUrl
-func (d Delivery) Download_URL() (int, []byte) {
-   return d.m.Bytes(3)
-}
-
 func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
    req, err := http.NewRequest(
       "GET", "https://play-fe.googleapis.com/fdfe/delivery", nil,
@@ -85,11 +38,11 @@ func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
       return nil, err
    }
    // payload
-   _, mes = mes.Message(1)
+   mes, _ = mes.Message(1)
    // deliveryResponse
-   _, mes = mes.Message(21)
+   mes, _ = mes.Message(21)
    // status
-   switch _, status := mes.Uvarint(1); status {
+   switch status, _ := mes.Varint(1); status {
    case 2:
       return nil, errors.New("geo-blocking")
    case 3:
@@ -98,7 +51,7 @@ func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
       return nil, errors.New("invalid version")
    }
    // appDeliveryData
-   _, mes = mes.Message(2)
+   mes, _ = mes.Message(2)
    return &Delivery{mes}, nil
 }
 
@@ -146,5 +99,48 @@ func (s Split_Data) Download_URL() (string, error) {
 // id
 func (s Split_Data) ID() (string, error) {
    return s.m.String(1)
+}
+
+func (d Delivery) Additional_File() []App_File_Metadata {
+   var files []App_File_Metadata
+   // additionalFile
+   d.m.Messages(4, func(file protobuf.Message) {
+      files = append(files, App_File_Metadata{file})
+   })
+   return files
+}
+
+func (d Delivery) Split_Data() []Split_Data {
+   var splits []Split_Data
+   // splitDeliveryData
+   d.m.Messages(15, func(split protobuf.Message) {
+      splits = append(splits, Split_Data{split})
+   })
+   return splits
+}
+
+// AndroidAppDeliveryData
+type Delivery struct {
+   m protobuf.Message
+}
+
+// SplitDeliveryData
+type Split_Data struct {
+   m protobuf.Message
+}
+
+// AppFileMetadata
+type App_File_Metadata struct {
+   m protobuf.Message
+}
+
+type File struct {
+   Package_Name string
+   Version_Code uint64
+}
+
+// downloadUrl
+func (d Delivery) Download_URL() (string, error) {
+   return d.m.String(3)
 }
 
