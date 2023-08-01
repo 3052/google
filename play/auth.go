@@ -11,30 +11,6 @@ import (
    "strings"
 )
 
-// github.com/golang/go/blob/go1.20.4/src/net/url/url.go
-func parse_query(query string) (url.Values, error) {
-   m := make(url.Values)
-   for query != "" {
-      var key string
-      key, query, _ = strings.Cut(query, "\n")
-      key, value, _ := strings.Cut(key, "=")
-      key, err := url.QueryUnescape(key)
-      if err != nil {
-         return nil, err
-      }
-      value, err = url.QueryUnescape(value)
-      if err != nil {
-         return nil, err
-      }
-      m[key] = append(m[key], value)
-   }
-   return m, nil
-}
-
-type Auth struct {
-   url.Values
-}
-
 // You can also use host "android.clients.google.com", but it also uses
 // TLS fingerprinting.
 func New_Auth(email, passwd string) (*Response, error) {
@@ -58,6 +34,30 @@ func New_Auth(email, passwd string) (*Response, error) {
       return nil, err
    }
    return &Response{res}, nil
+}
+
+// github.com/golang/go/blob/go1.20.4/src/net/url/url.go
+func parse_query(query string) (url.Values, error) {
+   m := make(url.Values)
+   for query != "" {
+      var key string
+      key, query, _ = strings.Cut(query, "\n")
+      key, value, _ := strings.Cut(key, "=")
+      key, err := url.QueryUnescape(key)
+      if err != nil {
+         return nil, err
+      }
+      value, err = url.QueryUnescape(value)
+      if err != nil {
+         return nil, err
+      }
+      m[key] = append(m[key], value)
+   }
+   return m, nil
+}
+
+type Auth struct {
+   url.Values
 }
 
 func (a *Auth) Exchange() error {
