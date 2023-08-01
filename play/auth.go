@@ -11,25 +11,46 @@ import (
    "strings"
 )
 
+func (a *Auth) Exchange() error {
+   // these values take from Android API 28
+   res, err := http.PostForm(
+      "https://android.googleapis.com/auth",
+      url.Values{
+         "Token": {a.Get_Token()},
+         "app": {"com.android.vending"},
+         "client_sig": {"38918a453d07199354f8b19af05ec6562ced5788"},
+         "service": {"oauth2:https://www.googleapis.com/auth/googleplay"},
+      },
+   )
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   text, err := io.ReadAll(res.Body)
+   if err != nil {
+      return err
+   }
+   a.Values, err = parse_query(string(text))
+   if err != nil {
+      return err
+   }
+   return nil
+}
+
 // You can also use host "android.clients.google.com", but it also uses
 // TLS fingerprinting.
 func New_Auth(email, passwd string) (*Response, error) {
-   body := url.Values{
-      "Email": {email},
-      "Passwd": {passwd},
-      "client_sig": {""},
-      "droidguard_results": {"-"},
-   }.Encode()
-   req, err := http.NewRequest(
-      "POST", "https://android.googleapis.com/auth", strings.NewReader(body),
-   )
-   if err != nil {
-      return nil, err
-   }
-   req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
    client := http.DefaultClient
    client.Transport = &tls.Transport{Spec: tls.Android_API_26}
-   res, err := client.Do(req)
+   res, err := client.PostForm(
+      "https://android.googleapis.com/auth",
+      url.Values{
+         "Email": {email},
+         "Passwd": {passwd},
+         "client_sig": {""},
+         "droidguard_results": {"-"},
+      },
+   )
    if err != nil {
       return nil, err
    }
@@ -58,34 +79,6 @@ func parse_query(query string) (url.Values, error) {
 
 type Auth struct {
    url.Values
-}
-
-func (a *Auth) Exchange() error {
-   // these values take from Android API 28
-   body := url.Values{
-      "Token": {a.Get_Token()},
-      "app": {"com.android.vending"},
-      "client_sig": {"38918a453d07199354f8b19af05ec6562ced5788"},
-      "service": {"oauth2:https://www.googleapis.com/auth/googleplay"},
-   }.Encode()
-   res, err := client.Post(
-      "https://android.googleapis.com/auth",
-      "application/x-www-form-urlencoded",
-      strings.NewReader(body),
-   )
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   text, err := io.ReadAll(res.Body)
-   if err != nil {
-      return err
-   }
-   a.Values, err = parse_query(string(text))
-   if err != nil {
-      return err
-   }
-   return nil
 }
 
 func (a Auth) Get_Auth() string {

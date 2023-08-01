@@ -37,9 +37,3 @@ func (h Header) Purchase(doc string) error {
    }
    return res.Body.Close()
 }
-
-var client = http.Client{
-   CheckRedirect: func(*http.Request, []*http.Request) error {
-      return http.ErrUseLastResponse
-   },
-}
