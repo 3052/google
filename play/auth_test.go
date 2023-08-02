@@ -7,18 +7,6 @@ import (
    "time"
 )
 
-func user_info(name string) (map[string]string, error) {
-   b, err := os.ReadFile(name)
-   if err != nil {
-      return nil, err
-   }
-   var m map[string]string
-   if err := json.Unmarshal(b, &m); err != nil {
-      return nil, err
-   }
-   return m, nil
-}
-
 func Test_Auth(t *testing.T) {
    home, err := os.UserHomeDir()
    if err != nil {
@@ -36,6 +24,18 @@ func Test_Auth(t *testing.T) {
    if err := res.Write_File(home + "/google/play/auth.txt"); err != nil {
       t.Fatal(err)
    }
+}
+
+func user_info(name string) (map[string]string, error) {
+   b, err := os.ReadFile(name)
+   if err != nil {
+      return nil, err
+   }
+   var m map[string]string
+   if err := json.Unmarshal(b, &m); err != nil {
+      return nil, err
+   }
+   return m, nil
 }
 
 func Test_Header(t *testing.T) {

@@ -11,6 +11,82 @@ import (
    "strings"
 )
 
+type Auth struct {
+   v url.Values
+}
+
+type auth map[string]string
+
+// godocs.io/flag#Value
+func (a auth) String() string {
+   var buf strings.Builder
+   for k, v := range a {
+      if buf.Len() >= 1 {
+         buf.WriteByte('\n')
+      }
+      buf.WriteString(url.QueryEscape(k))
+      buf.WriteByte('=')
+      buf.WriteString(url.QueryEscape(v))
+   }
+   return buf.String()
+}
+
+// godocs.io/flag#Value
+func (a auth) Set(query string) (err error) {
+   for query != "" {
+      var key string
+      key, query, _ = strings.Cut(query, "\n")
+      if key == "" {
+         continue
+      }
+      key, value, _ := strings.Cut(key, "=")
+      key, err1 := url.QueryUnescape(key)
+      if err1 != nil {
+         if err == nil {
+            err = err1
+         }
+         continue
+      }
+      value, err1 = url.QueryUnescape(value)
+      if err1 != nil {
+         if err == nil {
+            err = err1
+         }
+         continue
+      }
+      a[key] = value
+   }
+   return err
+}
+
+// cs.opensource.google/go/go/+/refs/tags/go1.20.7:src/net/url/url.go
+func parse_query(m url.Values, query string) (err error) {
+   for query != "" {
+      var key string
+      key, query, _ = strings.Cut(query, "\n")
+      if key == "" {
+         continue
+      }
+      key, value, _ := strings.Cut(key, "=")
+      key, err1 := url.QueryUnescape(key)
+      if err1 != nil {
+         if err == nil {
+            err = err1
+         }
+         continue
+      }
+      value, err1 = url.QueryUnescape(value)
+      if err1 != nil {
+         if err == nil {
+            err = err1
+         }
+         continue
+      }
+      m[key] = append(m[key], value)
+   }
+   return err
+}
+
 // You can also use host "android.clients.google.com", but it also uses
 // TLS fingerprinting.
 func New_Auth(email, passwd string) (*Response, error) {
@@ -29,6 +105,14 @@ func New_Auth(email, passwd string) (*Response, error) {
       return nil, err
    }
    return &Response{res}, nil
+}
+
+func (h *Header) Read_Auth(name string) error {
+   text, err := os.ReadFile(name)
+   if err != nil {
+      return err
+   }
+   return parse_query(h.Auth.v, string(text))
 }
 
 func (a *Auth) Exchange() error {
@@ -50,61 +134,21 @@ func (a *Auth) Exchange() error {
    if err != nil {
       return err
    }
-   a.Values, err = parse_query(string(text))
-   if err != nil {
-      return err
-   }
-   return nil
-}
-
-// github.com/golang/go/blob/go1.20.4/src/net/url/url.go
-func parse_query(query string) (url.Values, error) {
-   m := make(url.Values)
-   for query != "" {
-      var key string
-      key, query, _ = strings.Cut(query, "\n")
-      key, value, _ := strings.Cut(key, "=")
-      key, err := url.QueryUnescape(key)
-      if err != nil {
-         return nil, err
-      }
-      value, err = url.QueryUnescape(value)
-      if err != nil {
-         return nil, err
-      }
-      m[key] = append(m[key], value)
-   }
-   return m, nil
-}
-
-type Auth struct {
-   url.Values
+   return parse_query(a.v, string(text))
 }
 
 func (a Auth) Get_Auth() string {
-   return a.Get("Auth")
+   return a.v.Get("Auth")
 }
 
 func (a Auth) Get_Token() string {
-   return a.Get("Token")
+   return a.v.Get("Token")
 }
 
 type Header struct {
    Auth Auth // Authorization
    Device Device // X-DFE-Device-ID
    Single bool
-}
-
-func (h *Header) Read_Auth(name string) error {
-   text, err := os.ReadFile(name)
-   if err != nil {
-      return err
-   }
-   h.Auth.Values, err = parse_query(string(text))
-   if err != nil {
-      return err
-   }
-   return nil
 }
 
 func (h *Header) Read_Device(name string) error {

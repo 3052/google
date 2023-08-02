@@ -49,8 +49,6 @@ type File_Metadata struct {
    m protobuf.Message
 }
 
-var err_device = fmt.Errorf("your device isn't compatible with this version")
-
 type Details struct {
    m protobuf.Message
 }
