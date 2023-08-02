@@ -8,6 +8,88 @@ import (
    "net/http"
 )
 
+func (h Header) Details(doc string) (*Details, error) {
+   req, err := http.NewRequest(
+      "GET", "https://android.clients.google.com/fdfe/details?doc=" + doc, nil,
+   )
+   if err != nil {
+      return nil, err
+   }
+   // half of the apps I test require User-Agent,
+   // so just set it for all of them
+   h.Set_Agent(req.Header)
+   h.Set_Auth(req.Header)
+   h.Set_Device(req.Header)
+   res, err := client.Do(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   body, err := io.ReadAll(res.Body)
+   if err != nil {
+      return nil, err
+   }
+   // ResponseWrapper
+   mes, err := protobuf.Unmarshal(body)
+   if err != nil {
+      return nil, err
+   }
+   // payload
+   mes, _ = mes.Message(1)
+   // detailsResponse
+   mes, _ = mes.Message(2)
+   // docV2
+   mes, _ = mes.Message(4)
+   return &Details{mes}, nil
+}
+
+// FileMetadata
+// This is similar to AppFileMetadata, but notably field 4 is different.
+type File_Metadata struct {
+   m protobuf.Message
+}
+
+var err_device = fmt.Errorf("your device isn't compatible with this version")
+
+type Details struct {
+   m protobuf.Message
+}
+
+func (d Details) Micros() (uint64, error) {
+   // offer
+   d.m, _ = d.m.Message(8)
+   return d.m.Varint(1)
+}
+
+func (d Details) Title() (string, error) {
+   return d.m.String(5)
+}
+
+func (d Details) Upload_Date() (string, error) {
+   // details
+   d.m, _ = d.m.Message(13)
+   // appDetails
+   d.m, _ = d.m.Message(1)
+   return d.m.String(16)
+}
+
+func (d Details) Version() (string, error) {
+   // details
+   d.m, _ = d.m.Message(13)
+   // appDetails
+   d.m, _ = d.m.Message(1)
+   // versionString
+   return d.m.String(4)
+}
+
+func (d Details) Version_Code() (uint64, error) {
+   // details
+   d.m, _ = d.m.Message(13)
+   // appDetails
+   d.m, _ = d.m.Message(1)
+   return d.m.Varint(3)
+}
+
 func (d Details) Num_Downloads() (uint64, error) {
    // details
    d.m, _ = d.m.Message(13)
@@ -101,87 +183,5 @@ func (d Details) Installation_Size() (uint64, error) {
    d.m, _ = d.m.Message(1)
    // installationSize
    return d.m.Varint(9)
-}
-
-func (h Header) Details(doc string) (*Details, error) {
-   req, err := http.NewRequest(
-      "GET", "https://android.clients.google.com/fdfe/details?doc=" + doc, nil,
-   )
-   if err != nil {
-      return nil, err
-   }
-   // half of the apps I test require User-Agent,
-   // so just set it for all of them
-   h.Set_Agent(req.Header)
-   h.Set_Auth(req.Header)
-   h.Set_Device(req.Header)
-   res, err := client.Do(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   body, err := io.ReadAll(res.Body)
-   if err != nil {
-      return nil, err
-   }
-   // ResponseWrapper
-   mes, err := protobuf.Unmarshal(body)
-   if err != nil {
-      return nil, err
-   }
-   // payload
-   mes, _ = mes.Message(1)
-   // detailsResponse
-   mes, _ = mes.Message(2)
-   // docV2
-   mes, _ = mes.Message(4)
-   return &Details{mes}, nil
-}
-
-// FileMetadata
-// This is similar to AppFileMetadata, but notably field 4 is different.
-type File_Metadata struct {
-   m protobuf.Message
-}
-
-var err_device = fmt.Errorf("your device isn't compatible with this version")
-
-type Details struct {
-   m protobuf.Message
-}
-
-func (d Details) Micros() (uint64, error) {
-   // offer
-   d.m, _ = d.m.Message(8)
-   return d.m.Varint(1)
-}
-
-func (d Details) Title() (string, error) {
-   return d.m.String(5)
-}
-
-func (d Details) Upload_Date() (string, error) {
-   // details
-   d.m, _ = d.m.Message(13)
-   // appDetails
-   d.m, _ = d.m.Message(1)
-   return d.m.String(16)
-}
-
-func (d Details) Version() (string, error) {
-   // details
-   d.m, _ = d.m.Message(13)
-   // appDetails
-   d.m, _ = d.m.Message(1)
-   // versionString
-   return d.m.String(4)
-}
-
-func (d Details) Version_Code() (uint64, error) {
-   // details
-   d.m, _ = d.m.Message(13)
-   // appDetails
-   d.m, _ = d.m.Message(1)
-   return d.m.Varint(3)
 }
 

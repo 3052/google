@@ -3,6 +3,7 @@ package play
 import (
    "154.pages.dev/encoding/protobuf"
    "bytes"
+   "net/http"
    "strconv"
    "time"
 )
@@ -59,7 +60,7 @@ func (c Config) Checkin(platform string) (*Response, error) {
          }(),
       ),
    }
-   res, err := client.Post(
+   res, err := http.Post(
       "https://android.googleapis.com/checkin", "application/x-protobuffer",
       bytes.NewReader(body.Append(nil)),
    )
