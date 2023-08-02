@@ -9,6 +9,37 @@ import (
    "strconv"
 )
 
+// downloadUrl
+func (s Split_Data) Download_URL() (string, error) {
+   ref, err := s.m.String(5)
+   if err != nil {
+      return "", err
+   }
+   res, err := http.Head(ref)
+   if err != nil {
+      return "", err
+   }
+   return res.Header.Get("Location"), nil
+}
+
+// downloadUrl
+func (d Delivery) Download_URL() (string, error) {
+   ref, err := d.m.String(3)
+   if err != nil {
+      return "", err
+   }
+   res, err := http.Head(ref)
+   if err != nil {
+      return "", err
+   }
+   return res.Header.Get("Location"), nil
+}
+
+// downloadUrl
+func (a App_File_Metadata) Download_URL() (string, error) {
+   return a.m.String(4)
+}
+
 func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
    req, err := http.NewRequest(
       "GET", "https://play-fe.googleapis.com/fdfe/delivery", nil,
@@ -55,19 +86,9 @@ func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
    return &Delivery{mes}, nil
 }
 
-// downloadUrl
-func (a App_File_Metadata) Download_URL() (string, error) {
-   return a.m.String(4)
-}
-
 // fileType
 func (a App_File_Metadata) File_Type() (uint64, error) {
    return a.m.Varint(1)
-}
-
-// downloadUrl
-func (s Split_Data) Download_URL() (string, error) {
-   return s.m.String(5)
 }
 
 // id
@@ -113,11 +134,6 @@ type File struct {
    Version_Code uint64
 }
 
-// downloadUrl
-func (d Delivery) Download_URL() (string, error) {
-   return d.m.String(3)
-}
-
 func (f File) OBB(file_type uint64) string {
    var b []byte
    if file_type >= 1 {
@@ -145,4 +161,3 @@ func (f File) APK(id string) string {
    b = append(b, ".apk"...)
    return string(b)
 }
-

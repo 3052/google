@@ -2,6 +2,7 @@ package main
 
 import (
    "154.pages.dev/google/play"
+   "154.pages.dev/http/option"
    "flag"
    "fmt"
    "os"
@@ -39,6 +40,8 @@ func main() {
    if err := os.MkdirAll(dir, os.ModePerm); err != nil {
       panic(err)
    }
+   option.No_Location()
+   option.Verbose()
    if f.passwd != "" || f.file != "" {
       err := f.do_auth(dir)
       if err != nil {

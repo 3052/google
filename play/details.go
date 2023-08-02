@@ -20,7 +20,7 @@ func (h Header) Details(doc string) (*Details, error) {
    h.Set_Agent(req.Header)
    h.Set_Auth(req.Header)
    h.Set_Device(req.Header)
-   res, err := client.Do(req)
+   res, err := http.DefaultClient.Do(req)
    if err != nil {
       return nil, err
    }

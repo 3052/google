@@ -11,6 +11,26 @@ import (
    "strings"
 )
 
+// You can also use host "android.clients.google.com", but it also uses
+// TLS fingerprinting.
+func New_Auth(email, passwd string) (*Response, error) {
+   client := *http.DefaultClient
+   client.Transport = &tls.Transport{Spec: tls.Android_API_26}
+   res, err := client.PostForm(
+      "https://android.googleapis.com/auth",
+      url.Values{
+         "Email": {email},
+         "Passwd": {passwd},
+         "client_sig": {""},
+         "droidguard_results": {"-"},
+      },
+   )
+   if err != nil {
+      return nil, err
+   }
+   return &Response{res}, nil
+}
+
 func (a *Auth) Exchange() error {
    // these values take from Android API 28
    res, err := http.PostForm(
@@ -35,26 +55,6 @@ func (a *Auth) Exchange() error {
       return err
    }
    return nil
-}
-
-// You can also use host "android.clients.google.com", but it also uses
-// TLS fingerprinting.
-func New_Auth(email, passwd string) (*Response, error) {
-   client := http.DefaultClient
-   client.Transport = &tls.Transport{Spec: tls.Android_API_26}
-   res, err := client.PostForm(
-      "https://android.googleapis.com/auth",
-      url.Values{
-         "Email": {email},
-         "Passwd": {passwd},
-         "client_sig": {""},
-         "droidguard_results": {"-"},
-      },
-   )
-   if err != nil {
-      return nil, err
-   }
-   return &Response{res}, nil
 }
 
 // github.com/golang/go/blob/go1.20.4/src/net/url/url.go

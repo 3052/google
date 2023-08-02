@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	154.pages.dev/encoding v1.10.5
+	154.pages.dev/http v1.0.7
 	154.pages.dev/strconv v1.0.3
 	154.pages.dev/tls v1.5.3
 )
