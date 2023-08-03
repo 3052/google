@@ -66,7 +66,6 @@ adb reboot
 
 After reboot, you should then be able to start Google Play Store as normal.
 
-
 ## Android 7 (API 24)
 
 ~~~
