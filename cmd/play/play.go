@@ -9,6 +9,38 @@ import (
    "time"
 )
 
+func (f flags) do_header(dir, platform string) (*play.Header, error) {
+   var head play.Header
+   err := head.Read_Auth(dir + "/auth.txt")
+   if err != nil {
+      return nil, err
+   }
+   if err := head.Auth.Exchange(); err != nil {
+      return nil, err
+   }
+   if err := head.Read_Device(dir + "/" + platform + ".bin"); err != nil {
+      return nil, err
+   }
+   head.Single = f.single
+   return &head, nil
+}
+
+func (f flags) do_auth(dir string) error {
+   if f.file != "" {
+      raw, err := os.ReadFile(f.file)
+      if err != nil {
+         return err
+      }
+      f.passwd = strings.TrimSpace(string(raw))
+   }
+   res, err := play.New_Auth(f.email, f.passwd)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   return res.Write_File(dir + "/auth.txt")
+}
+
 func (f flags) do_delivery(head *play.Header) error {
    deliver, err := head.Delivery(f.doc, f.vc)
    if err != nil {
@@ -82,37 +114,5 @@ func (f flags) download(ref, name string) error {
       return err
    }
    return nil
-}
-
-func (f flags) do_header(dir, platform string) (*play.Header, error) {
-   var head play.Header
-   err := head.Read_Auth(dir + "/auth.txt")
-   if err != nil {
-      return nil, err
-   }
-   if err := head.Auth.Exchange(); err != nil {
-      return nil, err
-   }
-   if err := head.Read_Device(dir + "/" + platform + ".bin"); err != nil {
-      return nil, err
-   }
-   head.Single = f.single
-   return &head, nil
-}
-
-func (f flags) do_auth(dir string) error {
-   if f.file != "" {
-      raw, err := os.ReadFile(f.file)
-      if err != nil {
-         return err
-      }
-      f.passwd = strings.TrimSpace(string(raw))
-   }
-   res, err := play.New_Auth(f.email, f.passwd)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   return res.Write_File(dir + "/auth.txt")
 }
 
