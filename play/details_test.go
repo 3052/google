@@ -9,31 +9,6 @@ import (
    "time"
 )
 
-var apps = []app_type{
-   {"2023-02-01",1,1519802840,"com.miui.weather2"},
-   {"2023-02-20",0,342652288,"org.videolan.vlc"},
-   {"2023-03-23",0,22129580,"kr.sira.metal"},
-   {"2023-04-12",0,5085578,"com.amctve.amcfullepisodes"},
-   {"2023-05-08",0,142364173,"br.com.rodrigokolb.realdrum"},
-   {"2023-05-10",0,189095178,"app.source.getcontact"},
-   {"2023-05-12",2,80820762,"com.miHoYo.GenshinImpact"},
-   {"2023-05-25",0,89735370,"com.clearchannel.iheartradio.controller"},
-   {"2023-06-15",1,48170136,"com.xiaomi.smarthome"},
-   {"2023-06-15",2,296264,"com.kakaogames.twodin"},
-   {"2023-06-20",0,659843093,"com.google.android.apps.walletnfcrel"},
-   {"2023-06-21",1,15395664,"com.madhead.tos.zh"},
-   {"2023-06-22",1,83822542,"com.binance.dev"},
-   {"2023-06-23",1,89867479,"com.sygic.aura"},
-   {"2023-06-26",0,124636422,"org.thoughtcrime.securesms"},
-   {"2023-06-26",0,14257009198,"com.google.android.youtube"},
-   {"2023-06-26",0,33784619,"com.cabify.rider"},
-   {"2023-06-26",0,4906291283,"com.instagram.android"},
-   {"2023-06-27",0,898584734,"com.pinterest"},
-   {"2023-06-29",1,526676,"com.app.xt"},
-   {"2023-06-30",1,327293582,"com.supercell.brawlstars"},
-   {"2023-07-01",1,17597951,"com.axis.drawingdesk.v3"},
-}
-
 func Test_Details(t *testing.T) {
    home, err := os.UserHomeDir()
    if err != nil {
@@ -117,3 +92,28 @@ func (a app_type) String() string {
    b = append(b, '}')
    return string(b)
 }
+var apps = []app_type{
+   {"2023-02-01",1,1519802840,"com.miui.weather2"},
+   {"2023-02-20",0,342652288,"org.videolan.vlc"},
+   {"2023-03-23",0,22129580,"kr.sira.metal"},
+   {"2023-04-12",0,5085578,"com.amctve.amcfullepisodes"},
+   {"2023-05-08",0,142364173,"br.com.rodrigokolb.realdrum"},
+   {"2023-05-10",0,189095178,"app.source.getcontact"},
+   {"2023-05-12",2,80820762,"com.miHoYo.GenshinImpact"},
+   {"2023-05-25",0,89735370,"com.clearchannel.iheartradio.controller"},
+   {"2023-06-15",1,48170136,"com.xiaomi.smarthome"},
+   {"2023-06-15",2,296264,"com.kakaogames.twodin"},
+   {"2023-06-20",0,659843093,"com.google.android.apps.walletnfcrel"},
+   {"2023-06-21",1,15395664,"com.madhead.tos.zh"},
+   {"2023-06-22",1,83822542,"com.binance.dev"},
+   {"2023-06-23",1,89867479,"com.sygic.aura"},
+   {"2023-06-26",0,124636422,"org.thoughtcrime.securesms"},
+   {"2023-06-26",0,14257009198,"com.google.android.youtube"},
+   {"2023-06-26",0,33784619,"com.cabify.rider"},
+   {"2023-06-26",0,4906291283,"com.instagram.android"},
+   {"2023-06-27",0,898584734,"com.pinterest"},
+   {"2023-06-29",1,526676,"com.app.xt"},
+   {"2023-06-30",1,327293582,"com.supercell.brawlstars"},
+   {"2023-07-01",1,17597951,"com.axis.drawingdesk.v3"},
+}
+

@@ -17,12 +17,18 @@ func (f flags) do_auth(dir string) error {
       }
       f.passwd = strings.TrimSpace(string(raw))
    }
-   res, err := play.New_Auth(f.email, f.passwd)
+   auth, err := play.New_Auth(f.email, f.passwd)
    if err != nil {
       return err
    }
-   defer res.Body.Close()
-   return res.Write_File(dir + "/auth.txt")
+   {
+      b, err := auth.MarshalText()
+      if err != nil {
+         return err
+      }
+      os.WriteFile(dir + "/auth.txt", b, 0666)
+   }
+   return nil
 }
 
 func (f flags) do_delivery(head *play.Header) error {

@@ -7,8 +7,6 @@ import (
    "strings"
 )
 
-type Auth map[string]string
-
 // cs.opensource.google/go/go/+/refs/tags/go1.20.7:src/net/url/url.go
 func (a Auth) MarshalText() ([]byte, error) {
    var b bytes.Buffer
@@ -22,6 +20,26 @@ func (a Auth) MarshalText() ([]byte, error) {
    }
    return b.Bytes(), nil
 }
+
+// Checkin$AndroidCheckinResponse
+type Device struct {
+   m protobuf.Message
+}
+
+func (d Device) MarshalBinary() ([]byte, error) {
+   return d.m.Append(nil), nil
+}
+
+func (d *Device) UnmarshalBinary(data []byte) error {
+   var err error
+   d.m, err = protobuf.Consume(data)
+   if err != nil {
+      return err
+   }
+   return nil
+}
+
+type Auth map[string]string
 
 // cs.opensource.google/go/go/+/refs/tags/go1.20.7:src/net/url/url.go
 func (a Auth) UnmarshalText(text []byte) error {
@@ -40,24 +58,6 @@ func (a Auth) UnmarshalText(text []byte) error {
          return err
       }
       a[key] = value
-   }
-   return nil
-}
-
-// Checkin$AndroidCheckinResponse
-type Device struct {
-   m protobuf.Message
-}
-
-func (d Device) MarshalBinary() ([]byte, error) {
-   return d.m.Append(nil), nil
-}
-
-func (d *Device) UnmarshalBinary(data []byte) error {
-   var err error
-   d.m, err = protobuf.Consume(data)
-   if err != nil {
-      return err
    }
    return nil
 }
