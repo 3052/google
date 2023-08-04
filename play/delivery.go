@@ -64,7 +64,7 @@ func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
       return nil, err
    }
    // ResponseWrapper
-   mes, err := protobuf.Unmarshal(body)
+   mes, err := protobuf.Consume(body)
    if err != nil {
       return nil, err
    }

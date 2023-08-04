@@ -5,6 +5,11 @@ import (
    "strconv"
 )
 
+// androidId
+func (d Device) ID() (uint64, error) {
+   return d.m.Fixed64(7)
+}
+
 type Header struct {
    Auth Auth // Authorization
    Device Device // X-DFE-Device-ID

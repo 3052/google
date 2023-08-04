@@ -30,7 +30,7 @@ func (h Header) Details(doc string) (*Details, error) {
       return nil, err
    }
    // ResponseWrapper
-   mes, err := protobuf.Unmarshal(body)
+   mes, err := protobuf.Consume(body)
    if err != nil {
       return nil, err
    }

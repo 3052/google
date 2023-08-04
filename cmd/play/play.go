@@ -11,12 +11,24 @@ import (
 
 func (f flags) do_header(dir, platform string) (*play.Header, error) {
    var head play.Header
-   err := head.Read_Auth(dir + "/auth.txt")
+   head.Auth = make(play.Auth)
+   {
+      b, err := os.ReadFile(dir + "/auth.txt")
+      if err != nil {
+         return nil, err
+      }
+      head.Auth.Set(string(b))
+   }
+   err := head.Auth.Exchange()
    if err != nil {
       return nil, err
    }
-   if err := head.Auth.Exchange(); err != nil {
-      return nil, err
+   {
+      b, err := os.ReadFile(dir + "/" + platform + ".bin")
+      if err != nil {
+         return nil, err
+      }
+      head.Device.UnmarshalBinary(b)
    }
    if err := head.Read_Device(dir + "/" + platform + ".bin"); err != nil {
       return nil, err
