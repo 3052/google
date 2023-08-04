@@ -9,34 +9,6 @@ import (
    "time"
 )
 
-func (f flags) do_header(dir, platform string) (*play.Header, error) {
-   var head play.Header
-   head.Auth = make(play.Auth)
-   {
-      b, err := os.ReadFile(dir + "/auth.txt")
-      if err != nil {
-         return nil, err
-      }
-      head.Auth.Set(string(b))
-   }
-   err := head.Auth.Exchange()
-   if err != nil {
-      return nil, err
-   }
-   {
-      b, err := os.ReadFile(dir + "/" + platform + ".bin")
-      if err != nil {
-         return nil, err
-      }
-      head.Device.UnmarshalBinary(b)
-   }
-   if err := head.Read_Device(dir + "/" + platform + ".bin"); err != nil {
-      return nil, err
-   }
-   head.Single = f.single
-   return &head, nil
-}
-
 func (f flags) do_auth(dir string) error {
    if f.file != "" {
       raw, err := os.ReadFile(f.file)
@@ -126,5 +98,30 @@ func (f flags) download(ref, name string) error {
       return err
    }
    return nil
+}
+
+func (f flags) do_header(dir, platform string) (*play.Header, error) {
+   var head play.Header
+   head.Auth = make(play.Auth)
+   {
+      b, err := os.ReadFile(dir + "/auth.txt")
+      if err != nil {
+         return nil, err
+      }
+      head.Auth.UnmarshalText(b)
+   }
+   err := head.Auth.Exchange()
+   if err != nil {
+      return nil, err
+   }
+   {
+      b, err := os.ReadFile(dir + "/" + platform + ".bin")
+      if err != nil {
+         return nil, err
+      }
+      head.Device.UnmarshalBinary(b)
+   }
+   head.Single = f.single
+   return &head, nil
 }
 

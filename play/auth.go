@@ -7,6 +7,28 @@ import (
    "net/url"
 )
 
+func (a Auth) Exchange() error {
+   // these values take from Android API 28
+   res, err := http.PostForm(
+      "https://android.googleapis.com/auth",
+      url.Values{
+         "Token": {a.Token()},
+         "app": {"com.android.vending"},
+         "client_sig": {"38918a453d07199354f8b19af05ec6562ced5788"},
+         "service": {"oauth2:https://www.googleapis.com/auth/googleplay"},
+      },
+   )
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   text, err := io.ReadAll(res.Body)
+   if err != nil {
+      return err
+   }
+   return a.UnmarshalText(text)
+}
+
 func (a Auth) Auth() string {
    return a["Auth"]
 }
@@ -38,30 +60,8 @@ func New_Auth(email, passwd string) (Auth, error) {
       return nil, err
    }
    a := make(Auth)
-   if err := a.Set(string(text)); err != nil {
+   if err := a.UnmarshalText(text); err != nil {
       return nil, err
    }
    return a, nil
-}
-
-func (a Auth) Exchange() error {
-   // these values take from Android API 28
-   res, err := http.PostForm(
-      "https://android.googleapis.com/auth",
-      url.Values{
-         "Token": {a.Token()},
-         "app": {"com.android.vending"},
-         "client_sig": {"38918a453d07199354f8b19af05ec6562ced5788"},
-         "service": {"oauth2:https://www.googleapis.com/auth/googleplay"},
-      },
-   )
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   text, err := io.ReadAll(res.Body)
-   if err != nil {
-      return err
-   }
-   return a.Set(string(text))
 }
