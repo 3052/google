@@ -41,7 +41,7 @@ func (d *Device) UnmarshalBinary(data []byte) error {
 
 type Auth map[string]string
 
-// cs.opensource.google/go/go/+/refs/tags/go1.20.7:src/net/url/url.go
+// github.com/golang/go/wiki/CodeReviewComments#receiver-type
 func (a Auth) UnmarshalText(text []byte) error {
    query := string(text)
    for query != "" {

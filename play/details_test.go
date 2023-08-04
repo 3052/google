@@ -14,16 +14,24 @@ func Test_Details(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   home += "/google/play/"
+   home += "/google/play"
    var head Header
-   if err := head.Read_Auth(home + "auth.txt"); err != nil {
-      t.Fatal(err)
+   head.Auth = make(Auth)
+   {
+      b, err := os.ReadFile(home + "/auth.txt")
+      if err != nil {
+         t.Fatal(err)
+      }
+      head.Auth.UnmarshalText(b)
    }
    head.Auth.Exchange()
    for i, app := range apps {
-      err := head.Read_Device(home + Platforms[app.platform] + ".bin")
-      if err != nil {
-         t.Fatal(err)
+      {
+         b, err := os.ReadFile(home + "/" + Platforms[app.platform] + ".bin")
+         if err != nil {
+            t.Fatal(err)
+         }
+         head.Device.UnmarshalBinary(b)
       }
       d, err := head.Details(app.doc)
       if err != nil {
