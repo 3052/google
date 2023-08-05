@@ -65,33 +65,3 @@ adb reboot
 ~~~
 
 After reboot, you should then be able to start Google Play Store as normal.
-
-## Android 7 (API 24)
-
-~~~
-POST /auth HTTP/1.1
-app: com.google.android.gms
-Accept-Encoding: identity
-User-Agent: GoogleAuth/1.4 (generic_x86 NYC); gzip
-content-type: application/x-www-form-urlencoded
-Host: android.clients.google.com
-Connection: Keep-Alive
-device: 334c6b6d7...
-
-ACCESS_TOKEN=1&
-add_account=1&
-callerPkg=com.google.android.gms&
-callerSig=38918a453d07199354f8b19af05ec6562ced5788&
-device_country=us&
-droidguard_results=CgZpPLGFa67SEFsAAHdU9h5a1xWSAFpFJRNTS5M9AC4R4ZGh9VMLBADDJ6...&
-get_accountid=1&
-google_play_services_version=11743470&
-lang=en_US&
-sdk_version=24&
-service=ac2dm&
-Email=s...&
-androidId=334c6b6d7...&
-Token=oauth2_4%2F0AZEOvhXAiPawRBUX5jeC46vJV3QSZfmr9lQ6RdCLdhdywbHLUGKFd71-eVm-...
-~~~
-
-## Android 6 (API 23)
