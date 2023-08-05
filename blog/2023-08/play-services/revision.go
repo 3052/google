@@ -10,8 +10,8 @@ import (
 const (
    target = "android"
    abi = "x86"
-   api_level = 24
-   revision = 8
+   api_level = 23
+   revision = 10
 )
 
 func main() {

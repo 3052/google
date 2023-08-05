@@ -1,9 +1,5 @@
 # google play services
 
-~~~
-adb shell dumpsys package com.google.android.gms | Select-String version
-~~~
-
 with Google Play versions, we cannot install system certificate:
 
 ~~~
@@ -18,49 +14,68 @@ them here:
 C:\Users\Steven\AppData\Local\Android\Sdk\system-images
 ~~~
 
-so, the oldest one we can get from Android Studio is:
+## Android Studio, API Level 23, android
+
+Pixel 3a XL. since we are loading Google Play ourself, we can just use the
+current revision of the system image. should only need these:
 
 ~~~
-versionCode=10298470 minSdk=23 targetSdk=23
-versionName=10.2.98 (470-146496160)
+GoogleServicesFramework.apk
+Phonesky.apk
+PrebuiltGmsCore.apk
 ~~~
 
-https://opengapps.org
-
-I selected this option:
-
-Platform | Android | Variant
----------|---------|--------
-x86      | 6       | pico
-
-Without Google APIs
-
-Using the method above with Google APIs image, you still get some apps such as
-YouTube. If you want to install different version of one of these apps, use
-this method. On "System Image" screen, I selected this option:
-
-API Level | ABI | Target
-----------|-----|----------
-24        | x86 | Android 7
-
-but newer APIs should work as well. You need these files from the Zip archive:
+Now, start the device:
 
 ~~~
-Core\gmscore-x86.tar.lz
-Core\vending-x86.tar.lz
+emulator -list-avds
+emulator -avd Pixel_3a_XL_API_23 -writable-system
 ~~~
 
-Then extract these from the above files:
+Install like this:
 
 ~~~
-gmscore-x86\nodpi\priv-app\PrebuiltGmsCore\PrebuiltGmsCore.apk
-vending-x86\nodpi\priv-app\Phonesky\Phonesky.apk
+adb root
+adb remount
+adb push Phonesky.apk /system/priv-app
+adb reboot
 ~~~
 
-Use the same method above to install the APKs. After reboot, you should then be
-able to install YouTube or whatever app. Note that unlike above, you dont
-actually need to run the Google Play setup or even start the Google Play app at
-the end.
+After reboot, you should then be able to start Google Play Store as normal.
+
+## Android Studio, API Level 23, `google_apis_playstore`
+
+this Go program fails:
+
+~~~go
+package main
+
+import (
+   "fmt"
+   "net/http"
+   "time"
+)
+
+func main() {
+   req, err := http.NewRequest("HEAD", "http://dl.google.com", nil)
+   if err != nil {
+      panic(err)
+   }
+   for r := 0; r <= 40; r++ {
+      req.URL.Path = "/android/repository/sys-img/google_apis_playstore"
+      req.URL.Path += fmt.Sprintf("/x86-23_r%02v.zip", r)
+      res, err := http.DefaultClient.Do(req)
+      if err != nil {
+         panic(err)
+      }
+      fmt.Println(res.Status, req.URL)
+      if res.StatusCode == http.StatusOK {
+         break
+      }
+      time.Sleep(time.Second)
+   }
+}
+~~~
 
 ## Android Studio, API Level 24, `google_apis_playstore`
 
@@ -99,92 +114,54 @@ androidId=368c8cc73...&
 Token=oauth2_4%2F0Adeu5BUR-6sqF749vq0-EklJ6wSilERD49fSDT1N2n-MOc0h6AGra14vLMh...&
 ~~~
 
-## Android Studio, API Level 23, `google_apis_playstore`
-
-this Go program fails:
-
-~~~go
-package main
-
-import (
-   "fmt"
-   "net/http"
-   "time"
-)
-
-func main() {
-   req, err := http.NewRequest("HEAD", "http://dl.google.com", nil)
-   if err != nil {
-      panic(err)
-   }
-   for r := 0; r <= 40; r++ {
-      req.URL.Path = "/android/repository/sys-img/google_apis_playstore"
-      req.URL.Path += fmt.Sprintf("/x86-23_r%02v.zip", r)
-      res, err := http.DefaultClient.Do(req)
-      if err != nil {
-         panic(err)
-      }
-      fmt.Println(res.Status, req.URL)
-      if res.StatusCode == http.StatusOK {
-         break
-      }
-      time.Sleep(time.Second)
-   }
-}
-~~~
-
-## Android Studio, API Level 24, `google_apis`
-
-Pixel 3a XL
-
-<http://dl.google.com/android/repository/sys-img/google_apis/x86-24_r07.zip>
+## BiTGApps
 
 ~~~
-versionCode=9452470 minSdk=23 targetSdk=23
-versionName=9.4.52 (470-127739847)
+name='com.google.android.gms'
+versionCode='17455017'
+versionName='17.4.55 (040306-248795830)'
 ~~~
 
-## Android Studio, API Level 24, android
-
-Pixel 3a XL
-
-<http://dl.google.com/android/repository/sys-img/android/x86-24_r07.zip>
+## MindTheGapps
 
 ~~~
-Unable to find package: com.google.android.gms
+name='com.google.android.gms'
+versionCode='11976970'
+versionName='11.9.76 (970-184349000)'
 ~~~
 
-## Android Studio, API Level 23, `google_apis`
-
-Pixel 3a XL
-
-<http://dl.google.com/android/repository/sys-img/google_apis/x86-23_r16.zip>
-
-## Android Studio, API Level 22, `google_apis`
-
-Pixel 3a XL
-
-<http://dl.google.com/android/repository/sys-img/google_apis/x86-22_r09.zip>
-
-## Android Studio, API Level 21, `google_apis`
-
-Pixel 3a XL
-
-<http://dl.google.com/android/repository/sys-img/google_apis/x86-21_r15.zip>
-
-## Android Studio, API Level 19, `google_apis`
-
-Pixel 3a XL
-
-<http://dl.google.com/android/repository/sys-img/google_apis/x86-19_r23.zip>
+## NikGApps
 
 ~~~
-versionCode=9452030 targetSdk=23
-versionName=9.4.52 (030-127739847)
+name='com.google.android.gms'
+versionCode='19528039'
+versionName='19.5.28 (100408-273329419)'
 ~~~
 
-## Android Studio, API Level 18, `google_apis`
+## Open GApps
 
-Pixel 3a XL
+https://sourceforge.net/projects/opengapps/files/x86
 
-<http://dl.google.com/android/repository/sys-img/google_apis/x86-18_r05.zip>
+~~~
+Core\gmscore-x86.tar.lz
+~~~
+
+then:
+
+~~~
+gmscore-x86\nodpi\priv-app\PrebuiltGmsCore\PrebuiltGmsCore.apk
+~~~
+
+result:
+
+~~~
+versionCode='18382005'
+versionName='18.3.82 (000700-260264002)'
+~~~
+
+<https://sourceforge.net/projects/opengapps/files/x86_64>
+
+~~~
+versionCode='19831014'
+versionName='19.8.31 (020800-284611645)'
+~~~
