@@ -14,36 +14,7 @@ them here:
 C:\Users\Steven\AppData\Local\Android\Sdk\system-images
 ~~~
 
-## Android Studio, API Level 23, android
-
-Pixel 3a XL. since we are loading Google Play ourself, we can just use the
-current revision of the system image. should only need these:
-
-~~~
-GoogleServicesFramework.apk
-Phonesky.apk
-PrebuiltGmsCore.apk
-~~~
-
-Now, start the device:
-
-~~~
-emulator -list-avds
-emulator -avd Pixel_3a_XL_API_23 -writable-system
-~~~
-
-Install like this:
-
-~~~
-adb root
-adb remount
-adb push Phonesky.apk /system/priv-app
-adb reboot
-~~~
-
-After reboot, you should then be able to start Google Play Store as normal.
-
-## Android Studio, API Level 23, `google_apis_playstore`
+## Android Studio, API Level 23, `google_apis_playstore` image
 
 this Go program fails:
 
@@ -77,7 +48,7 @@ func main() {
 }
 ~~~
 
-## Android Studio, API Level 24, `google_apis_playstore`
+## Android Studio, API Level 24, `google_apis_playstore` image
 
 Pixel 2
 
@@ -122,6 +93,15 @@ versionCode='17455017'
 versionName='17.4.55 (040306-248795830)'
 ~~~
 
+## FlameGApps
+
+~~~
+name='com.google.android.gms'
+versionName='21.26.20 (100400-387585197)'
+~~~
+
+https://github.com/flamegapps/flamegapps/issues/11
+
 ## MindTheGapps
 
 ~~~
@@ -165,3 +145,5 @@ versionName='18.3.82 (000700-260264002)'
 versionCode='19831014'
 versionName='19.8.31 (020800-284611645)'
 ~~~
+
+https://github.com/opengapps/opengapps/issues/982

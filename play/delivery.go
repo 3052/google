@@ -10,8 +10,8 @@ import (
 )
 
 // downloadUrl
-func (s Split_Data) Download_URL() (string, error) {
-   ref, err := s.m.String(5)
+func (d Delivery) Download_URL() (string, error) {
+   ref, err := d.m.String(3)
    if err != nil {
       return "", err
    }
@@ -23,8 +23,8 @@ func (s Split_Data) Download_URL() (string, error) {
 }
 
 // downloadUrl
-func (d Delivery) Download_URL() (string, error) {
-   ref, err := d.m.String(3)
+func (s Split_Data) Download_URL() (string, error) {
+   ref, err := s.m.String(5)
    if err != nil {
       return "", err
    }
@@ -72,17 +72,20 @@ func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
    mes, _ = mes.Message(1)
    // deliveryResponse
    mes, _ = mes.Message(21)
-   // status
-   switch status, _ := mes.Varint(1); status {
-   case 2:
-      return nil, errors.New("geo-blocking")
+   status, err := mes.Varint(1)
+   if err != nil {
+      return nil, err
+   }
+   switch status {
    case 3:
       return nil, errors.New("purchase required")
    case 5:
       return nil, errors.New("invalid version")
    }
-   // appDeliveryData
-   mes, _ = mes.Message(2)
+   mes, err = mes.Message(2)
+   if err != nil {
+      return nil, errors.New("appDeliveryData not found")
+   }
    return &Delivery{mes}, nil
 }
 
