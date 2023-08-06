@@ -34,8 +34,10 @@ func (h Header) Details(doc string) (*Details, error) {
    if err != nil {
       return nil, err
    }
-   // payload
-   mes, _ = mes.Message(1)
+   mes, err = mes.Message(1)
+   if err != nil {
+      return nil, fmt.Errorf("payload not found")
+   }
    // detailsResponse
    mes, _ = mes.Message(2)
    // docV2

@@ -1,4 +1,4 @@
-# google play services
+# google play image
 
 with Google Play versions, we cannot install system certificate:
 
