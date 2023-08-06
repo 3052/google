@@ -1,4 +1,4 @@
-# google play services 10
+# sdk version 24
 
 with Google Play versions, we cannot install system certificate:
 
@@ -31,12 +31,11 @@ result:
 
 ~~~
 POST /auth HTTP/1.1
+Host: android.clients.google.com
 app: com.google.android.gms
 Accept-Encoding: identity
 User-Agent: GoogleAuth/1.4 (generic_x86 NYC); gzip
-content-length: 10581
 content-type: application/x-www-form-urlencoded
-Host: android.clients.google.com
 Connection: Keep-Alive
 device: 368c8cc73...
 

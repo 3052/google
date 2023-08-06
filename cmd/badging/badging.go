@@ -31,6 +31,7 @@ func main() {
          strings.HasPrefix(line, "  uses-feature:") ||
          strings.HasPrefix(line, "  uses-gl-es:") ||
          strings.HasPrefix(line, "native-code:") ||
+         strings.HasPrefix(line, "package:") ||
          strings.HasPrefix(line, "supports-gl-texture:") ||
          strings.HasPrefix(line, "uses-library:") {
             fmt.Println(line)
