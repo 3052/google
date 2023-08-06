@@ -1,4 +1,4 @@
-# Android image
+# Android 7
 
 https://opengapps.org
 
@@ -7,17 +7,14 @@ https://opengapps.org
 3. pico
 
 ~~~
+Core\vending-x86.tar.lz
+vending-x86\nodpi\priv-app\Phonesky\Phonesky.apk
+
 Core\gmscore-x86.tar.lz
 gmscore-x86\nodpi\priv-app\PrebuiltGmsCore\PrebuiltGmsCore.apk
 
 Core\gsfcore-all.tar.lz
 gsfcore-all\nodpi\priv-app\GoogleServicesFramework\GoogleServicesFramework.apk
-
-Core\gsflogin-all.tar.lz
-gsflogin-all\nodpi\priv-app\GoogleLoginService\GoogleLoginService.apk
-
-Core\vending-x86.tar.lz
-vending-x86\nodpi\priv-app\Phonesky\Phonesky.apk
 ~~~
 
 1. Android Studio
@@ -45,8 +42,3 @@ adb reboot
 ~~~
 
 After reboot, start Google Play Store and try to pull details for an app.
-results:
-
-Android image | open gapps | result
---------------|------------|-------
-7             | 7          | pass

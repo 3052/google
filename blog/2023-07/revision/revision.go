@@ -11,7 +11,7 @@ const (
    target = "google_apis_playstore"
    abi = "x86"
    api_level = 24
-   revision = 19
+   revision = 12
 )
 
 func main() {
