@@ -50,5 +50,5 @@ sdk_version=24&
 service=ac2dm&
 Email=s...&
 androidId=368c8cc73...&
-Token=oauth2_4%2F0Adeu5BUR-6sqF749vq0-EklJ6wSilERD49fSDT1N2n-MOc0h6AGra14vLMh...&
+Token=oauth2_4%2F0Adeu5BUR-6sqF749vq0-EklJ6wSilERD49fSDT1N2n-MOc0h6AGra14vLMh...
 ~~~

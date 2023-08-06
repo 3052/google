@@ -2,37 +2,43 @@
 
 ## Android Studio, `google_apis` image
 
-<http://dl.google.com/android/repository/sys-img/google_apis/x86-24_r07.zip>
+1. <http://dl.google.com/android/repository/sys-img/google_apis_playstore/x86-24_r19.zip>
+2. <http://dl.google.com/android/repository/sys-img/google_apis_playstore/x86-24_r12.zip>
 
 ~~~
-versionCode=9452470 minSdk=23 targetSdk=23
-versionName=9.4.52 (470-127739847)
+x86\system.img\priv-app\Phonesky\Phonesky.apk
 ~~~
 
-https://opengapps.org
-
-1. x86
-2. Android 7
-3. pico
+newest and oldest have same version:
 
 ~~~
-Core\vending-x86.tar.lz
-vending-x86\nodpi\priv-app\Phonesky\Phonesky.apk
-
-Core\gmscore-x86.tar.lz
-gmscore-x86\nodpi\priv-app\PrebuiltGmsCore\PrebuiltGmsCore.apk
-
-Core\gsfcore-all.tar.lz
-gsfcore-all\nodpi\priv-app\GoogleServicesFramework\GoogleServicesFramework.apk
+name='com.android.vending'
+versionCode='80671500'
+versionName='6.7.15.E-all [0] 2987020'
 ~~~
 
 1. Android Studio
 2. Pixel 3a XL
 3. API Level 24
-4. Android 7 image
+4. Android 7 Google APIs image
 
-since we are loading Google Play ourself, we can just use the current revision
-of the system image. Now, start the device:
+swap image for this:
+
+<http://dl.google.com/android/repository/sys-img/google_apis/x86-24_r09.zip>
+
+~~~
+x86\system.img\priv-app\PrebuiltGmsCore\PrebuiltGmsCore.apk
+~~~
+
+check version:
+
+~~~
+name='com.google.android.gms'
+versionCode='9877470'
+versionName='9.8.77 (470-135396225)'
+~~~
+
+some older revisions are available, but they are buggy. start the device:
 
 ~~~
 emulator -list-avds
@@ -44,13 +50,88 @@ Install like this:
 ~~~
 adb root
 adb remount
-adb push GoogleServicesFramework.apk /system/priv-app
 adb push Phonesky.apk /system/priv-app
-adb push PrebuiltGmsCore.apk /system/priv-app
 adb reboot
 ~~~
 
-After reboot, start Google Play Store and try to pull details for an app.
+on reboot you get message Google Play Store has stopped. click Close app. then
+start Play Store. you get message Google Play Store has stopped. then:
+
+13.3.16 and below fail:
+
+~~~
+> play -d com.android.vending -v 81331600
+POST https://android.googleapis.com/auth
+GET https://play-fe.googleapis.com/fdfe/delivery?doc=com.android.vending&vc=81331600
+panic: appDeliveryData not found
+~~~
+
+13.3.17 and above pass:
+
+~~~
+> play -d com.android.vending -v 81331700
+POST https://android.googleapis.com/auth
+GET https://play-fe.googleapis.com/fdfe/delivery?doc=com.android.vending&vc=81331700
+HEAD https://play.googleapis.com/download/by-token/download?token=AOTCm0T0llLW...
+~~~
+
+start the device:
+
+~~~
+emulator -avd Pixel_3a_XL_API_24 -writable-system
+~~~
+
+Install like this:
+
+~~~
+adb root
+adb remount
+adb push com.android.vending-81331700.apk /system/priv-app/Phonesky.apk
+adb reboot
+~~~
+
+start Play Store. enter Email and click Next. Enter password and click Next.
+click I agree. under Automatically back up device data, move slider to left.
+click NEXT. under Apps, click an app. under Google Play Store has stopped,
+click Open app again. under Apps, click an app. under Google Play Store keeps
+stopping, click Close app. then:
+
+https://opengapps.org
+
+1. x86
+2. Android 7
+3. pico
+
+~~~
+Core\vending-x86.tar.lz\vending-x86\nodpi\priv-app\Phonesky\Phonesky.apk
+~~~
+
+check version:
+
+~~~
+name='com.android.vending'
+versionCode='83032110'
+versionName='30.3.21-21 [0] [PR] 445437866'
+~~~
+
+start the device:
+
+~~~
+emulator -avd Pixel_3a_XL_API_24 -writable-system
+~~~
+
+Install like this:
+
+~~~
+adb root
+adb remount
+adb push Phonesky.apk /system/priv-app
+adb reboot
+~~~
+
+start Play Store. then click Sign in. enter Email and click Next. Enter
+password and click Next. click I agree. under Automatically back up device
+data, move slider to left. click NEXT. under Apps, click an app.
 
 ## Android Studio, `google_apis_playstore` image
 
