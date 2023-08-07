@@ -1,14 +1,17 @@
-# SDK version 20
+# SDK version 19
 
 1. Android Studio
 2. Pixel 3a XL
-3. API Level 20
-
-4. Android 5 Google APIs image
+3. API Level 19
+4. Android 4.4 Google APIs image
 
 swap image for this:
 
-<http://dl.google.com/android/repository/sys-img/google_apis/x86-21_r20.zip>
+newest:
+<http://dl.google.com/android/repository/sys-img/google_apis/x86-19_r40.zip>
+
+oldest:
+<http://dl.google.com/android/repository/sys-img/google_apis/x86-19_r23.zip>
 
 older versions are available, but they are buggy. then:
 
