@@ -1,7 +1,5 @@
 # SDK version 24
 
-## Android Studio, `google_apis` image
-
 1. Android Studio
 2. Pixel 3a XL
 3. API Level 24

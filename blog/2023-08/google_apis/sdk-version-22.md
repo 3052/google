@@ -1,8 +1,9 @@
-# SDK version 23
+# SDK version 22
 
 1. Android Studio
 2. Pixel 3a XL
-3. API Level 23
+3. API Level 22
+
 4. Android 6 Google APIs image
 
 swap image for this:
@@ -54,33 +55,4 @@ https://docs.mitmproxy.org/stable/overview-features#blocklist
 
 ~~~
 adb reboot
-~~~
-
-start Play Store. click Sign in. enter Email and click Next. Enter password and
-click Next. if app closes for update, start again. click Sign in. enter Email and
-click Next. Enter password and click Next. click I agree. Under Use basic device
-backup, move slider to left. click ACCEPT. under Apps, click an app. result:
-
-~~~
-POST /auth HTTP/1.1
-Host: android.clients.google.com
-app: com.google.android.gms
-Accept-Encoding: identity
-User-Agent: GoogleAuth/1.4 (generic_x86 MASTER); gzip
-content-type: application/x-www-form-urlencoded
-Connection: Keep-Alive
-device: 33388cc46...
-
-ACCESS_TOKEN=1&
-add_account=1&
-device_country=us&
-droidguard_results=CgZit9r5tB7SEFsAAHdU9h5a1xWSAFpFJRNTS5M9AC4R4ZGh9VMLBADDJ6...&
-google_play_services_version=10298470&
-is_dev_key_gmscore=1&
-lang=en_US&
-sdk_version=23&
-service=ac2dm&
-Email=s...&
-androidId=33388cc46...&
-Token=oauth2_4%2F0Adeu5BXOWxFJ6YohsZUbjetKUiwQJbYHx7cDQDJcGdRVG65a6CNCN43q_ro1...
 ~~~
