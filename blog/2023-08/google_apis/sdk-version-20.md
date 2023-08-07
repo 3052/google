@@ -1,8 +1,9 @@
-# SDK version 21
+# SDK version 20
 
 1. Android Studio
 2. Pixel 3a XL
-3. API Level 21
+3. API Level 20
+
 4. Android 5 Google APIs image
 
 swap image for this:
@@ -60,34 +61,4 @@ https://docs.mitmproxy.org/stable/overview-features#blocklist
 
 ~~~
 adb reboot
-~~~
-
-install system certificate. start Play Store. click Sign in. enter Email and
-click Next. Enter password and click Next. if app closes for update, start
-again. click Sign in. enter Email and click Next. Enter password and click
-Next. click I agree. Under Use basic device backup, move slider to left. click
-ACCEPT. under Apps, click an app. result:
-
-~~~
-POST /auth HTTP/1.1
-Host: android.clients.google.com
-Accept-Encoding: identity
-Connection: Keep-Alive
-User-Agent: GoogleAuth/1.4 (generic_x86 LSY66K); gzip
-app: com.google.android.gms
-content-type: application/x-www-form-urlencoded
-device: 3760dcd91...
-
-ACCESS_TOKEN=1&
-add_account=1&
-device_country=us&
-droidguard_results=CgYXdhUgp-PSEFsAAHdU9h5a1xWSAFpFJRNTS5M9AC4R4ZGh9VMLBADDJ6...&
-google_play_services_version=11055270&
-is_dev_key_gmscore=1&
-lang=en_US&
-sdk_version=21&
-service=ac2dm&
-Email=s...&
-androidId=3760dcd91...&
-Token=oauth2_4%2F0Adeu5BVnTdwNdQyQ97hA6iZKM3KitofkyAKOb3yucDZ0JxPCvMJ3c7y-lmHr...
 ~~~
