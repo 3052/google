@@ -10,8 +10,8 @@ import (
 const (
    target = "google_apis"
    abi = "x86"
-   api_level = 19
-   revision = 40
+   api_level = 18
+   revision = 6
 )
 
 func main() {

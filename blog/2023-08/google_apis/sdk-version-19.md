@@ -7,13 +7,9 @@
 
 swap image for this:
 
-newest:
-<http://dl.google.com/android/repository/sys-img/google_apis/x86-19_r40.zip>
-
-oldest:
 <http://dl.google.com/android/repository/sys-img/google_apis/x86-19_r23.zip>
 
-older versions are available, but they are buggy. then:
+then:
 
 ~~~
 play -d com.android.vending -v 82011800
@@ -32,7 +28,7 @@ the `google_apis_playstore` image, but it is buggy as well. start the device:
 
 ~~~
 emulator -list-avds
-emulator -avd Pixel_3a_XL_API_21 -writable-system
+emulator -avd Pixel_3a_XL_API_19 -writable-system
 ~~~
 
 Install like this:
@@ -49,19 +45,33 @@ then:
 mitmproxy
 ~~~
 
-then set proxy. we need to block these:
-
-https://play.googleapis.com/download/by-token/download
-
-Press `O` to enter options. Move to `block_list` and press Enter. Then press
-`a` to add a new entry. Press Esc when finished, then `q`.
-
-~~~
-/~u download.by.token.download/444
-~~~
-
-https://docs.mitmproxy.org/stable/overview-features#blocklist
+then set proxy. then install user certificate. then:
 
 ~~~
 adb reboot
+~~~
+
+result:
+
+~~~
+POST /auth HTTP/1.1
+Host: android.clients.google.com
+Accept-Encoding: identity
+Connection: Keep-Alive
+User-Agent: GoogleAuth/1.4 (generic_x86 KK); gzip
+app: com.google.android.gms
+content-type: application/x-www-form-urlencoded
+device: 34f9d97b2...
+
+add_account=1&
+device_country=us&
+droidguard_results=CgaWaC1JPYPSEFsAAHdU9h5a1xWSAFpFJRNTS5M9AC4R4ZGh9VMLBADDJ6...&
+google_play_services_version=9452030&
+is_dev_key_gmscore=1&
+lang=en_US&
+sdk_version=19&
+service=ac2dm&
+Email=s...%40gmail.com&
+androidId=34f9d97b2...&
+EncryptedPasswd=AFcb4KSL0GoATrz51O2Jt_BS5Uq8T2y7eDIj7YLxoIuYthoGAgWj9jCdm5fDIr...
 ~~~
