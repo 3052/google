@@ -60,11 +60,11 @@ backup, move slider to left. click ACCEPT. under Apps, click an app. result:
 ~~~
 POST /auth HTTP/1.1
 Host: android.clients.google.com
-app: com.google.android.gms
 Accept-Encoding: identity
-User-Agent: GoogleAuth/1.4 (generic_x86 NYC); gzip
-content-type: application/x-www-form-urlencoded
 Connection: Keep-Alive
+User-Agent: GoogleAuth/1.4 (generic_x86 NYC); gzip
+app: com.google.android.gms
+content-type: application/x-www-form-urlencoded
 device: 385228348...
 
 ACCESS_TOKEN=1&

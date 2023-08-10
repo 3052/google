@@ -44,3 +44,11 @@ install system certificate. then:
 ~~~
 mitmproxy
 ~~~
+
+OK I finally got Frida working with version 15.1.11 and Frida tools 11.0.0, but
+still not capturing any requests, so not sure what voodoo the app is using.
+
+OK I made a little progress by changing MITM Proxy `tls_version_client_min` to
+UNBOUNDED. this allowed to capture Android browser HTTPS requests, but Play
+Store still getting blocked. I tried logcat, but not really sure what I am
+looking for.
