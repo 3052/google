@@ -72,4 +72,29 @@ androidId=3760dcd91...&
 Token=oauth2_4%2F0Adeu5BVnTdwNdQyQ97hA6iZKM3KitofkyAKOb3yucDZ0JxPCvMJ3c7y-lmHr...
 ~~~
 
-<https://github.com/equ1n0x93/GooglePlayApi/blob/master/google_importer_api.py>
+- <https://github.com/equ1n0x93/GooglePlayApi/blob/master/google_importer_api.py>
+- https://github.com/lyrgard/ffbeDataExporter/blob/master/src/ffbeSync/ffbeSync.js
+
+1. call login
+   1. call `_get_google_signign`
+      - call `_get_embedded_info`
+         1. request `https://accounts.google.com/embedded/setup/android?source=com.android.settings&xoauth_display_name=Android%20Phone&canSk=1&lang=en&langCountry=en_us&hl=en-US&cc=us`
+         2. call `_get_embedded_token`
+   2. call `_get_google_token`
+
+this is it:
+
+https://accounts.google.com/embedded/setup/android
+
+we need to block this:
+
+<https://accounts.google.com/_/signin/speedbump/embeddedsigninconsent>
+
+Press `O` to enter options. Move to `block_list` and press Enter. Then press
+`a` to add a new entry. Press Esc when finished, then `q`.
+
+~~~
+/~u embeddedsigninconsent/444
+~~~
+
+https://docs.mitmproxy.org/stable/overview-features#blocklist
