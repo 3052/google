@@ -85,16 +85,3 @@ Token=oauth2_4%2F0Adeu5BVnTdwNdQyQ97hA6iZKM3KitofkyAKOb3yucDZ0JxPCvMJ3c7y-lmHr..
 this is it:
 
 https://accounts.google.com/embedded/setup/android
-
-we need to block this:
-
-<https://accounts.google.com/_/signin/speedbump/embeddedsigninconsent>
-
-Press `O` to enter options. Move to `block_list` and press Enter. Then press
-`a` to add a new entry. Press Esc when finished, then `q`.
-
-~~~
-/~u embeddedsigninconsent/444
-~~~
-
-https://docs.mitmproxy.org/stable/overview-features#blocklist
