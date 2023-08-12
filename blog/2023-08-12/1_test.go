@@ -6,12 +6,12 @@ import (
    "testing"
 )
 
-func Test_Info(t *testing.T) {
+func Test_Embedded_Setup(t *testing.T) {
    option.No_Location()
    option.Verbose()
-   s, _, err := get_embedded_info()
+   setup, err := new_embedded_setup()
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Println(s)
+   fmt.Printf("%+v\n", setup)
 }
