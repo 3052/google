@@ -8,6 +8,28 @@ import (
    "net/http"
 )
 
+func (d Details) File() []File_Metadata {
+   // details
+   d.m, _ = d.m.Message(13)
+   // appDetails
+   d.m, _ = d.m.Message(1)
+   var files []File_Metadata
+   d.m.Messages(17, func(file protobuf.Message) error {
+      files = append(files, File_Metadata{file})
+      return nil
+   })
+   return files
+}
+
+func (d Details) Installation_Size() (uint64, error) {
+   // details
+   d.m, _ = d.m.Message(13)
+   // appDetails
+   d.m, _ = d.m.Message(1)
+   // installationSize
+   return d.m.Varint(9)
+}
+
 func (h Header) Details(doc string) (*Details, error) {
    req, err := http.NewRequest(
       "GET", "https://android.clients.google.com/fdfe/details?doc=" + doc, nil,
@@ -163,25 +185,3 @@ func (d Details) Currency_Code() (string, error) {
 func (f File_Metadata) File_Type() (uint64, error) {
    return f.m.Varint(1)
 }
-
-func (d Details) File() []File_Metadata {
-   // details
-   d.m, _ = d.m.Message(13)
-   // appDetails
-   d.m, _ = d.m.Message(1)
-   var files []File_Metadata
-   d.m.Messages(17, func(file protobuf.Message) {
-      files = append(files, File_Metadata{file})
-   })
-   return files
-}
-
-func (d Details) Installation_Size() (uint64, error) {
-   // details
-   d.m, _ = d.m.Message(13)
-   // appDetails
-   d.m, _ = d.m.Message(1)
-   // installationSize
-   return d.m.Varint(9)
-}
-

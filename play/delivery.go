@@ -9,20 +9,12 @@ import (
    "strconv"
 )
 
-func (d Delivery) Additional_File() []App_File_Metadata {
-   var files []App_File_Metadata
-   // additionalFile
-   d.m.Messages(4, func(file protobuf.Message) {
-      files = append(files, App_File_Metadata{file})
-   })
-   return files
-}
-
 func (d Delivery) Split_Data() []Split_Data {
    var splits []Split_Data
    // splitDeliveryData
-   d.m.Messages(15, func(split protobuf.Message) {
+   d.m.Messages(15, func(split protobuf.Message) error {
       splits = append(splits, Split_Data{split})
+      return nil
    })
    return splits
 }
@@ -162,4 +154,13 @@ func (a App_File_Metadata) File_Type() (uint64, error) {
 // id
 func (s Split_Data) ID() (string, error) {
    return s.m.String(1)
+}
+func (d Delivery) Additional_File() []App_File_Metadata {
+   var files []App_File_Metadata
+   // additionalFile
+   d.m.Messages(4, func(file protobuf.Message) error {
+      files = append(files, App_File_Metadata{file})
+      return nil
+   })
+   return files
 }
