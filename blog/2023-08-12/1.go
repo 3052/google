@@ -18,8 +18,8 @@ func new_embedded_setup() (*embedded_setup, error) {
    if err != nil {
       return nil, err
    }
-   _, after := xml.Cut(text, []byte("</div>"), []byte(`<div id="view_container"`))
-   if err := xml.Unmarshal(after, &e.view_container); err != nil {
+   _, text = xml.Cut(text, []byte("</div>"), []byte(`<div id="view_container"`))
+   if err := xml.Unmarshal(text, &e.view_container); err != nil {
       return nil, err
    }
    return &e, nil
