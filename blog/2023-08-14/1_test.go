@@ -13,5 +13,7 @@ func Test_Embedded_Setup(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", setup)
+   fmt.Println(host_gaps(setup.cookies))
+   fmt.Println()
+   fmt.Println(setup.identifier())
 }
