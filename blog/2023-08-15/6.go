@@ -9,7 +9,7 @@ import (
    "strings"
 )
 
-func six() {
+func Consent() {
    var req http.Request
    req.Header = make(http.Header)
    req.Method = "POST"

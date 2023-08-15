@@ -7,7 +7,7 @@ import (
 )
 
 // the response for this is good for at least 4 years
-func static_JS() ([]byte, error) {
+func Static_JS() ([]byte, error) {
    req, err := http.NewRequest("GET", "https://ssl.gstatic.com", nil)
    if err != nil {
       return nil, err

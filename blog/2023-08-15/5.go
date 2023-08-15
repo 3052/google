@@ -7,7 +7,7 @@ import (
    "os"
 )
 
-func five() {
+func Password() {
    var req http.Request
    req.Header = make(http.Header)
    req.Method = "POST"

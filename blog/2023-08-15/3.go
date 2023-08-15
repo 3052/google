@@ -16,8 +16,14 @@ func (e embedded_setup) eligible() (eligible, error) {
    if err != nil {
       return nil, err
    }
-   req.AddCookie(host_gaps(e.cookies))
    req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+   {
+      c, err := host_gaps(e.cookies)
+      if err != nil {
+         return nil, err
+      }
+      req.AddCookie(c)
+   }
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return nil, err

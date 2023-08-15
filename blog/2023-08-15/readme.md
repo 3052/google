@@ -15,3 +15,7 @@ Press `O` to enter options. Move to `block_list` and press Enter. Then press
 ~~~
 
 https://docs.mitmproxy.org/stable/overview-features#blocklist
+
+implementation:
+
+<https://github.com/Aruelius/Google_login/blob/master/google_login.py>

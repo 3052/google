@@ -8,13 +8,13 @@ import (
    "strings"
 )
 
-func host_gaps(cookies []*http.Cookie) *http.Cookie {
+func host_gaps(cookies []*http.Cookie) (*http.Cookie, error) {
    for _, cookie := range cookies {
       if cookie.Name == "__Host-GAPS" {
-         return cookie
+         return cookie, nil
       }
    }
-   return nil
+   return nil, http.ErrNoCookie
 }
 
 type embedded_setup struct {
@@ -50,6 +50,6 @@ func new_embedded_setup() (*embedded_setup, error) {
    return &e, nil
 }
 
-func (e embedded_setup) identifier() string {
+func (e embedded_setup) user_hash() string {
    return e.initial_setup_data[13].(string)
 }
