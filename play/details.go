@@ -14,9 +14,8 @@ func (d Details) File() []File_Metadata {
    // appDetails
    d.m, _ = d.m.Message(1)
    var files []File_Metadata
-   d.m.Messages(17, func(file protobuf.Message) error {
+   d.m.Messages(17, func(file protobuf.Message) {
       files = append(files, File_Metadata{file})
-      return nil
    })
    return files
 }

@@ -6,6 +6,22 @@ import (
    "net/http"
 )
 
+func host_gaps(cookies []*http.Cookie) *http.Cookie {
+   for _, cookie := range cookies {
+      if cookie.Name == "__Host-GAPS" {
+         return cookie
+      }
+   }
+   return nil
+}
+
+type embedded_setup struct {
+   cookies []*http.Cookie
+   view_container struct {
+      Initial_Setup_Data string `xml:"data-initial-setup-data,attr"`
+   } 
+}
+
 func new_embedded_setup() (*embedded_setup, error) {
    res, err := http.Get("https://accounts.google.com/EmbeddedSetup")
    if err != nil {
@@ -23,20 +39,4 @@ func new_embedded_setup() (*embedded_setup, error) {
       return nil, err
    }
    return &e, nil
-}
-
-type embedded_setup struct {
-   cookies []*http.Cookie
-   view_container struct {
-      Initial_Setup_Data string `xml:"data-initial-setup-data,attr"`
-   } 
-}
-
-func (e embedded_setup) host_gaps() *http.Cookie {
-   for _, cookie := range e.cookies {
-      if cookie.Name == "__Host-GAPS" {
-         return cookie
-      }
-   }
-   return nil
 }

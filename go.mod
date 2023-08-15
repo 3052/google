@@ -3,7 +3,7 @@ module 154.pages.dev/google
 go 1.20
 
 require (
-	154.pages.dev/encoding v1.11.0
+	154.pages.dev/encoding v1.11.2
 	154.pages.dev/http v1.0.7
 	154.pages.dev/strconv v1.0.3
 	154.pages.dev/tls v1.5.3

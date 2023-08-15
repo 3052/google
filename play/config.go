@@ -8,56 +8,45 @@ import (
 
 // A Sleep is needed after this.
 func (c Config) Checkin(platform string) (*Response, error) {
-   body := protobuf.Message{
-      // checkin
-      protobuf.Number(4).Prefix(
-         // build
-         protobuf.Number(1).Prefix(
-            // sdkVersion
-            // single APK valid range 14 - 28
-            // multiple APK valid range 14 - 0x7FFF_FFFF
-            protobuf.Number(10).Varint(28),
-         ),
-         // voiceCapable
-         protobuf.Number(18).Varint(1),
-      ),
-      // version
-      // valid range 2 - 3
-      protobuf.Number(14).Varint(3),
-      // deviceConfiguration
-      protobuf.Number(18).Prefix(func() []protobuf.Field {
-         m := []protobuf.Field{
-            protobuf.Number(1).Varint(c.Touch_Screen),
-            protobuf.Number(2).Varint(c.Keyboard),
-            protobuf.Number(3).Varint(c.Navigation),
-            protobuf.Number(4).Varint(c.Screen_Layout),
-            protobuf.Number(5).Varint(c.Has_Hard_Keyboard),
-            protobuf.Number(6).Varint(c.Has_Five_Way_Navigation),
-            protobuf.Number(7).Varint(c.Screen_Density),
-            protobuf.Number(8).Varint(c.GL_ES_Version),
-         }
-         for _, library := range c.System_Shared_Library {
-            // systemSharedLibrary
-            m = append(m, protobuf.Number(9).String(library))
-         }
-         // nativePlatform
-         m = append(m, protobuf.Number(11).String(platform))
-         for _, extension := range c.GL_Extension {
-            // glExtension
-            m = append(m, protobuf.Number(15).String(extension))
-         }
-         for _, name := range c.New_System_Available_Feature {
-            // newSystemAvailableFeature
-            m = append(m, protobuf.Number(26).Prefix(
-               protobuf.Number(1).String(name),
-            ))
-         }
-         return m
-      }()...),
-   }
+   var m protobuf.Message
+   m.Add(4, func(m *protobuf.Message) { // checkin
+      m.Add(1, func(m *protobuf.Message) { // build
+         // int sdkVersion_
+         // single APK valid range 14 - 28
+         // multiple APK valid range 14 - 0x7FFF_FFFF
+         m.Add_Varint(10, 28)
+      })
+      m.Add_Varint(18, 1) // voiceCapable?
+   })
+   // int version
+   // valid range 2 - 3
+   m.Add_Varint(14, 3)
+   m.Add(18, func(m *protobuf.Message) { // deviceConfiguration
+      m.Add_Varint(1, c.Touch_Screen)
+      m.Add_Varint(2, c.Keyboard)
+      m.Add_Varint(3, c.Navigation)
+      m.Add_Varint(4, c.Screen_Layout)
+      m.Add_Bool(5, c.Has_Hard_Keyboard)
+      m.Add_Bool(6, c.Has_Five_Way_Navigation)
+      m.Add_Varint(7, c.Screen_Density)
+      m.Add_Varint(8, c.GL_ES_Version)
+      for _, library := range c.System_Shared_Library {
+         m.Add_String(9, library)
+      }
+      m.Add_String(11, platform)
+      for _, extension := range c.GL_Extension {
+         m.Add_String(15, extension)
+      }
+      // you cannot swap the next two lines:
+      for _, name := range c.System_Available_Feature {
+         m.Add(26, func(m *protobuf.Message) {
+            m.Add_String(1, name)
+         })
+      }
+   })
    res, err := http.Post(
       "https://android.googleapis.com/checkin", "application/x-protobuffer",
-      bytes.NewReader(body.Append(nil)),
+      bytes.NewReader(m.Append(nil)),
    )
    if err != nil {
       return nil, err
@@ -69,19 +58,19 @@ func (c Config) Checkin(platform string) (*Response, error) {
 type Config struct {
    GL_ES_Version uint64
    GL_Extension []string
-   Has_Five_Way_Navigation uint64
-   Has_Hard_Keyboard uint64
+   Has_Five_Way_Navigation bool
+   Has_Hard_Keyboard bool
    Keyboard uint64
    Navigation uint64
-   New_System_Available_Feature []string
    Screen_Density uint64
    Screen_Layout uint64
+   System_Available_Feature []string
    System_Shared_Library []string
    Touch_Screen uint64
 }
 
 var Phone = Config{
-   New_System_Available_Feature: []string{
+   System_Available_Feature: []string{
       // app.source.getcontact
       "android.hardware.location.gps",
       // br.com.rodrigokolb.realdrum
