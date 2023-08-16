@@ -14,11 +14,7 @@ func Test_Password(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   sign, err := setup.signup()
-   if err != nil {
-      t.Fatal(err)
-   }
-   account, err := setup.account_lookup(sign)
+   account, err := setup.account_lookup()
    if err != nil {
       t.Fatal(err)
    }

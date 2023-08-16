@@ -12,7 +12,7 @@ type account_lookup struct {
    host_gaps *http.Cookie
 }
 
-func (e embedded_setup) account_lookup(s *signup) (*account_lookup, error) {
+func (e embedded_setup) account_lookup() (*account_lookup, error) {
    body, err := func() (url.Values, error) {
       f_req, err := json.MarshalIndent([]any{
          "srpen6",
@@ -47,7 +47,7 @@ func (e embedded_setup) account_lookup(s *signup) (*account_lookup, error) {
    if err != nil {
       return nil, err
    }
-   req.AddCookie(s.host_gaps)
+   req.AddCookie(e.host_gaps)
    req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
    req.Header.Set("Google-Accounts-Xsrf", "1")
    res, err := http.DefaultClient.Do(req)
