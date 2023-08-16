@@ -3,29 +3,37 @@ package play
 import (
    "encoding/json"
    "net/http"
+   "net/http/httputil"
    "net/url"
    "strings"
 )
 
-func (es embedded_setup) account_lookup(e eligible) (*http.Response, error) {
+type account_lookup struct {
+   host_gaps *http.Cookie
+}
+
+func (e embedded_setup) account_lookup(s *signup) (*account_lookup, error) {
    body, err := func() (url.Values, error) {
-      f_req, err := json.Marshal([]any{
+      f_req, err := json.MarshalIndent([]any{
          "srpen6",
-         es.user_hash(),
+         e.user_hash(),
          []any{},
          nil,
          "US",
          nil,
          nil,
          2,
-         false,
-         true,
-      })
+         1,
+         1,
+         []any{},
+         "srpen6",
+      }, "", " ")
       if err != nil {
          return nil, err
       }
+      println(string(f_req))
       v := make(url.Values)
-      v.Set("bgRequest", `["identifier"]`)
+      v.Set("bgRequest", `["identifier",""]`)
       v.Set("f.req", string(f_req))
       return v, nil
    }()
@@ -39,14 +47,25 @@ func (es embedded_setup) account_lookup(e eligible) (*http.Response, error) {
    if err != nil {
       return nil, err
    }
+   req.AddCookie(s.host_gaps)
    req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
    req.Header.Set("Google-Accounts-Xsrf", "1")
+   res, err := http.DefaultClient.Do(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
    {
-      c, err := host_gaps(e)
+      b, err := httputil.DumpResponse(res, true)
       if err != nil {
          return nil, err
       }
-      req.AddCookie(c)
+      println(string(b))
    }
-   return http.DefaultClient.Do(req)
+   var lookup account_lookup
+   lookup.host_gaps, err = host_gaps(res)
+   if err != nil {
+      return nil, err
+   }
+   return &lookup, nil
 }
