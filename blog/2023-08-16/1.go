@@ -8,6 +8,13 @@ import (
    "strings"
 )
 
+type embedded_setup struct {
+   // this is needed for /_/lookup/accountlookup:
+   host_gaps *http.Cookie
+   // this is needed for /_/lookup/accountlookup:
+   initial_setup_data []any
+}
+
 func host_gaps(res *http.Response) (*http.Cookie, error) {
    for _, cookie := range res.Cookies() {
       if cookie.Name == "__Host-GAPS" {
@@ -48,11 +55,4 @@ func new_embedded_setup() (*embedded_setup, error) {
       return nil, err
    }
    return &e, nil
-}
-
-type embedded_setup struct {
-   // this is needed for /_/lookup/accountlookup:
-   initial_setup_data []any
-   // this is needed for /_/kids/signup/eligible:
-   host_gaps *http.Cookie
 }

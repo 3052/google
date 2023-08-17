@@ -1,13 +1,11 @@
-package main
+package play
 
 import (
    "net/http"
-   "net/http/httputil"
    "net/url"
-   "os"
 )
 
-func main() {
+func signin() (*http.Response, error) {
    var req http.Request
    req.Header = make(http.Header)
    req.Method = "POST"
@@ -16,20 +14,15 @@ func main() {
    req.URL.Path = "/_/signin/challenge"
    req.URL.Scheme = "https"
    req.Header["Google-Accounts-Xsrf"] = []string{"1"}
+   val := make(url.Values)
+   // this comes from the response headers of:
+   // /_/lookup/accountlookup
    req.Header["Cookie"] = []string{
       "__Host-GAPS=1:hqi4p3rL9a-3VlQCy8zCdGcaYKJxEw:JJxXj84I5yVpyCIR",
    }
-   val := make(url.Values)
+   // this comes from the response body of:
+   // /_/lookup/accountlookup
    val["TL"] = []string{"AGEVcSSB93ykkpaW6TycsDaEsjZrKjpjebUf7-59-LaHXk06a5fzHEkmZtlvrma3"}
    req.URL.RawQuery = val.Encode()
-   res, err := new(http.Transport).RoundTrip(&req)
-   if err != nil {
-      panic(err)
-   }
-   defer res.Body.Close()
-   res_body, err := httputil.DumpResponse(res, true)
-   if err != nil {
-      panic(err)
-   }
-   os.Stdout.Write(res_body)
+   return http.DefaultClient.Do(&req)
 }
