@@ -3,25 +3,31 @@ package play
 import (
    "154.pages.dev/http/option"
    "fmt"
+   "net/http/httputil"
    "testing"
-   "time"
 )
 
-func Test_Account_Lookup(t *testing.T) {
+func Test_Signin(t *testing.T) {
    option.No_Location()
    option.Trace()
    setup, err := new_embedded_setup()
    if err != nil {
       t.Fatal(err)
    }
-   for range [9]struct{}{} {
-      account, err := setup.account_lookup()
+   account, err := setup.account_lookup()
+   if err != nil {
+      t.Fatal(err)
+   }
+   res, err := account.signin()
+   if err != nil {
+      t.Fatal(err)
+   }
+   defer res.Body.Close()
+   {
+      b, err := httputil.DumpResponse(res, true)
       if err != nil {
          t.Fatal(err)
       }
-      fmt.Println(account.host_gaps)
-      fmt.Println()
-      fmt.Println(account.TL())
-      time.Sleep(time.Second)
+      fmt.Println(string(b))
    }
 }

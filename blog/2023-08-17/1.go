@@ -3,30 +3,11 @@ package play
 import (
    "154.pages.dev/encoding/xml"
    "encoding/json"
+   "errors"
    "io"
    "net/http"
    "strings"
 )
-
-type embedded_setup struct {
-   // this is needed for /_/lookup/accountlookup:
-   host_gaps *http.Cookie
-   // this is needed for /_/lookup/accountlookup:
-   initial_setup_data []any
-}
-
-func host_gaps(res *http.Response) (*http.Cookie, error) {
-   for _, cookie := range res.Cookies() {
-      if cookie.Name == "__Host-GAPS" {
-         return cookie, nil
-      }
-   }
-   return nil, http.ErrNoCookie
-}
-
-func (e embedded_setup) user_hash() string {
-   return e.initial_setup_data[13].(string)
-}
 
 func new_embedded_setup() (*embedded_setup, error) {
    res, err := http.Get("https://accounts.google.com/EmbeddedSetup")
@@ -34,6 +15,9 @@ func new_embedded_setup() (*embedded_setup, error) {
       return nil, err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errors.New(res.Status)
+   }
    var e embedded_setup
    text, err := io.ReadAll(res.Body)
    if err != nil {
@@ -55,4 +39,24 @@ func new_embedded_setup() (*embedded_setup, error) {
       return nil, err
    }
    return &e, nil
+}
+
+type embedded_setup struct {
+   // this is needed for /_/lookup/accountlookup:
+   host_gaps *http.Cookie
+   // this is needed for /_/lookup/accountlookup:
+   initial_setup_data []any
+}
+
+func host_gaps(res *http.Response) (*http.Cookie, error) {
+   for _, cookie := range res.Cookies() {
+      if cookie.Name == "__Host-GAPS" {
+         return cookie, nil
+      }
+   }
+   return nil, http.ErrNoCookie
+}
+
+func (e embedded_setup) user_hash() string {
+   return e.initial_setup_data[13].(string)
 }

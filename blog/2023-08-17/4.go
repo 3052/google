@@ -1,20 +1,29 @@
 package play
 
-import "net/http"
+import (
+   "io"
+   "net/http"
+   "strings"
+)
 
-func (a account_lookup) signin() (*http.Response, error) {
-   req, err := http.NewRequest(
-      "POST", "https://accounts.google.com/_/signin/challenge", nil,
-   )
+// the response for this is good for at least 4 years
+func Static_JS() ([]byte, error) {
+   req, err := http.NewRequest("GET", "https://ssl.gstatic.com", nil)
    if err != nil {
       return nil, err
    }
-   TL, err := a.TL()
+   req.URL.Path = "/accounts/static/_/js/" + strings.Join([]string{
+      // this comes from response body of /EmbeddedSetup:
+      "k=gaia.gaiafe_glif.en.DL5rcs6IWg4.O",
+      // this comes from response body of /EmbeddedSetup:
+      "am=AgAABvAJEsEf_H8NyEEAAAAAAAAgAAAQAjXiXhoqSAE",
+      // this comes from response body of /EmbeddedSetup:
+      "rs=ABkqax1GxYdmsoXxFit_qF1awcl_spmjcg",
+   }, "/")
+   res, err := http.DefaultClient.Do(req)
    if err != nil {
       return nil, err
    }
-   req.URL.RawQuery = "TL=" + TL
-   req.AddCookie(a.host_gaps)
-   req.Header.Set("Google-Accounts-Xsrf", "1")
-   return http.DefaultClient.Do(req)
+   defer res.Body.Close()
+   return io.ReadAll(res.Body)
 }
