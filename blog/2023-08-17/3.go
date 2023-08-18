@@ -5,9 +5,26 @@ import (
    "encoding/json"
    "io"
    "net/http"
+   "net/http/httputil"
    "net/url"
    "strings"
 )
+
+type account_lookup struct {
+   // this is needed for /_/signin/challenge:
+   host_gaps *http.Cookie
+   // this is needed for /_/signin/challenge:
+   body []byte
+}
+
+func (a account_lookup) TL() (string, error) {
+   a.body = bytes.TrimPrefix(a.body, []byte(")]}'"))
+   var body []any
+   if err := json.Unmarshal(a.body, &body); err != nil {
+      return "", err
+   }
+   return body[0].([]any)[2].(string), nil
+}
 
 func (e embedded_setup) account_lookup() (*account_lookup, error) {
    body, err := func() (url.Values, error) {
@@ -51,6 +68,13 @@ func (e embedded_setup) account_lookup() (*account_lookup, error) {
       return nil, err
    }
    defer res.Body.Close()
+   {
+      b, err := httputil.DumpResponse(res, true)
+      if err != nil {
+         return nil, err
+      }
+      println(string(b))
+   }
    var lookup account_lookup
    lookup.host_gaps, err = host_gaps(res)
    if err != nil {
@@ -61,20 +85,4 @@ func (e embedded_setup) account_lookup() (*account_lookup, error) {
       return nil, err
    }
    return &lookup, nil
-}
-
-type account_lookup struct {
-   // this is needed for /_/signin/challenge:
-   host_gaps *http.Cookie
-   // this is needed for /_/signin/challenge:
-   body []byte
-}
-
-func (a account_lookup) TL() (string, error) {
-   a.body = bytes.TrimPrefix(a.body, []byte(")]}'"))
-   var body []any
-   if err := json.Unmarshal(a.body, &body); err != nil {
-      return "", err
-   }
-   return body[0].([]any)[2].(string), nil
 }
