@@ -31,6 +31,7 @@ func (e embedded_setup) account_lookup(email string) (*account_lookup, error) {
       }
       v := make(url.Values)
       v.Set("f.req", string(f_req))
+      // THE SECOND STRING CANNOT BE EMPTY, WE ARE FUCKED.
       v.Set("bgRequest", `["identifier",""]`)
       return v, nil
    }()

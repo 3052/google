@@ -72,16 +72,17 @@ androidId=3760dcd91...&
 Token=oauth2_4%2F0Adeu5BVnTdwNdQyQ97hA6iZKM3KitofkyAKOb3yucDZ0JxPCvMJ3c7y-lmHr...
 ~~~
 
-- <https://github.com/equ1n0x93/GooglePlayApi/blob/master/google_importer_api.py>
-- https://github.com/lyrgard/ffbeDataExporter/blob/master/src/ffbeSync/ffbeSync.js
-
-1. call login
-   1. call `_get_google_signign`
-      - call `_get_embedded_info`
-         1. request `https://accounts.google.com/embedded/setup/android?source=com.android.settings&xoauth_display_name=Android%20Phone&canSk=1&lang=en&langCountry=en_us&hl=en-US&cc=us`
-         2. call `_get_embedded_token`
-   2. call `_get_google_token`
-
 this is it:
 
-https://accounts.google.com/embedded/setup/android
+- https://accounts.google.com/EmbeddedSetup
+- https://accounts.google.com/embedded/setup/android
+
+issues:
+
+- <https://github.com/Aruelius/Google_login/issues/3>
+- <https://github.com/ikp4success/bypass_google_bot_guard/issues/5>
+- https://gist.github.com/Ruin0x11/a32c4ba33d386b51797a3719ad2c14e4
+- https://github.com/409232112/JavaBlock/issues/5
+- https://github.com/BitTheByte/YouTubeShop/issues/14
+- https://github.com/equ1n0x93/GooglePlayApi/issues/2
+- https://github.com/raiyan088/public/issues/1
