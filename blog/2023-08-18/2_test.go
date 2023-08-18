@@ -15,7 +15,7 @@ func Test_Account_Lookup(t *testing.T) {
       t.Fatal(err)
    }
    for range [9]struct{}{} {
-      account, err := setup.account_lookup()
+      account, err := setup.account_lookup("srpen6@gmail.com")
       if err != nil {
          t.Fatal(err)
       }

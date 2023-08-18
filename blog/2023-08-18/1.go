@@ -3,7 +3,6 @@ package play
 import (
    "154.pages.dev/encoding/xml"
    "encoding/json"
-   "errors"
    "io"
    "net/http"
    "strings"
@@ -15,9 +14,7 @@ func new_embedded_setup() (*embedded_setup, error) {
       return nil, err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
+   println(res.Status)
    var e embedded_setup
    text, err := io.ReadAll(res.Body)
    if err != nil {

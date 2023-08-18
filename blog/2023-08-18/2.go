@@ -10,26 +10,10 @@ import (
    "strings"
 )
 
-type account_lookup struct {
-   // this is needed for /_/signin/challenge:
-   host_gaps *http.Cookie
-   // this is needed for /_/signin/challenge:
-   body []byte
-}
-
-func (a account_lookup) TL() (string, error) {
-   a.body = bytes.TrimPrefix(a.body, []byte(")]}'"))
-   var body []any
-   if err := json.Unmarshal(a.body, &body); err != nil {
-      return "", err
-   }
-   return body[0].([]any)[2].(string), nil
-}
-
-func (e embedded_setup) account_lookup() (*account_lookup, error) {
+func (e embedded_setup) account_lookup(email string) (*account_lookup, error) {
    body, err := func() (url.Values, error) {
-      f_req, err := json.MarshalIndent([]any{
-         "srpen6",
+      f_req, err := json.Marshal([]any{
+         "",
          e.user_hash(),
          []any{},
          nil,
@@ -40,14 +24,14 @@ func (e embedded_setup) account_lookup() (*account_lookup, error) {
          1,
          1,
          []any{},
-         "srpen6",
-      }, "", " ")
+         email,
+      })
       if err != nil {
          return nil, err
       }
       v := make(url.Values)
-      v.Set("bgRequest", `["identifier",""]`)
       v.Set("f.req", string(f_req))
+      v.Set("bgRequest", `["identifier",""]`)
       return v, nil
    }()
    if err != nil {
@@ -85,4 +69,20 @@ func (e embedded_setup) account_lookup() (*account_lookup, error) {
       return nil, err
    }
    return &lookup, nil
+}
+
+type account_lookup struct {
+   // this is needed for /_/signin/challenge:
+   host_gaps *http.Cookie
+   // this is needed for /_/signin/challenge:
+   body []byte
+}
+
+func (a account_lookup) TL() (string, error) {
+   a.body = bytes.TrimPrefix(a.body, []byte(")]}'"))
+   var body []any
+   if err := json.Unmarshal(a.body, &body); err != nil {
+      return "", err
+   }
+   return body[0].([]any)[2].(string), nil
 }
