@@ -17,6 +17,7 @@ type flags struct {
    platform int64
    purchase bool
    single bool
+   trace bool
    vc uint64
 }
 
@@ -30,6 +31,7 @@ func main() {
    flag.StringVar(&f.passwd, "passwd", "", "password")
    flag.BoolVar(&f.purchase, "purchase", false, "purchase request")
    flag.BoolVar(&f.single, "s", false, "single APK")
+   flag.BoolVar(&f.trace, "t", false, "trace")
    flag.Uint64Var(&f.vc, "v", 0, "version code")
    flag.Parse()
    dir, err := os.UserHomeDir()
@@ -41,7 +43,11 @@ func main() {
       panic(err)
    }
    option.No_Location()
-   option.Verbose()
+   if f.trace {
+      option.Trace()
+   } else {
+      option.Verbose()
+   }
    if f.passwd != "" || f.file != "" {
       err := f.do_auth(dir)
       if err != nil {
