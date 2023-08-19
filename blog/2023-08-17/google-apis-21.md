@@ -5,10 +5,6 @@
 3. API Level 21
 4. Android 5 Google APIs image
 
-
-https://dl.google.com/android/repository/sys-img/android/x86-21_r05.zip
-
-
 this is the oldest:
 
 <http://dl.google.com/android/repository/sys-img/google_apis/x86-21_r15.zip>
