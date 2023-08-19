@@ -1,6 +1,8 @@
-# Android image API 23
+# Android image API 22
 
-Android 6
+Android 5.1
+
+---------------------------------------------------------------------------------
 
 ## device GenyMotion, GApps GenyMotion
 
