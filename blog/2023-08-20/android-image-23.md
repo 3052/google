@@ -2,16 +2,38 @@
 
 Android 6
 
-## Visual Studio Emulator for Android
+## device Android Studio, GApps Android Studio
 
-> We recommend you use Google’s emulator when you can, as it offers access to the
-> latest Android OS images and Google Play services.
+with Google APIs image API 23:
 
-https://visualstudio.microsoft.com/vs/msft-android-emulator
+~~~
+adb pull /system/app/PlayGames
+adb pull /system/priv-app/GoogleLoginService
+adb pull /system/priv-app/GoogleServicesFramework
+adb pull /system/priv-app/PrebuiltGmsCore
+~~~
 
-## device GenyMotion, GApps GenyMotion
+then with Android image API 23:
 
-click Open GAPPS
+~~~
+emulator -avd Pixel_2_API_23 -writable-system
+~~~
+
+then:
+
+~~~
+adb remount
+
+adb push GoogleLoginService /system/priv-app
+adb push GoogleServicesFramework /system/priv-app
+adb push PlayGames /system/app
+adb push PrebuiltGmsCore /system/priv-app
+adb reboot
+~~~
+
+then you get this:
+
+> Unfortunately, Google Play services has stopped.
 
 ## device Android Studio, GApps GenyMotion
 
@@ -109,36 +131,3 @@ adb push Phonesky.apk /system/priv-app
 adb push PrebuiltGmsCore.apk /system/priv-app
 adb reboot
 ~~~
-
-## device Android Studio, GApps Android Studio
-
-with Google APIs image API 23:
-
-~~~
-adb pull /system/app/PlayGames
-adb pull /system/priv-app/GoogleLoginService
-adb pull /system/priv-app/GoogleServicesFramework
-adb pull /system/priv-app/PrebuiltGmsCore
-~~~
-
-then with Android image API 23:
-
-~~~
-emulator -avd Pixel_2_API_23 -writable-system
-~~~
-
-then:
-
-~~~
-adb remount
-
-adb push GoogleLoginService /system/priv-app
-adb push GoogleServicesFramework /system/priv-app
-adb push PlayGames /system/app
-adb push PrebuiltGmsCore /system/priv-app
-adb reboot
-~~~
-
-then you get this:
-
-> Unfortunately, Google Play services has stopped.

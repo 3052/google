@@ -4,10 +4,6 @@ Android 5.1
 
 <https://wikipedia.org/wiki/Android_Lollipop>
 
-## device GenyMotion, GApps GenyMotion
-
-click Open GAPPS
-
 ## device Android Studio, GApps GenyMotion
 
 https://opengapps.org
