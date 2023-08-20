@@ -2,6 +2,7 @@ package main
 
 import (
    "154.pages.dev/google/play"
+   "154.pages.dev/http/option"
    "fmt"
    "net/http"
    "os"
@@ -9,24 +10,20 @@ import (
    "time"
 )
 
-func (f flags) do_auth(dir string) error {
-   if f.file != "" {
-      raw, err := os.ReadFile(f.file)
-      if err != nil {
-         return err
-      }
-      f.passwd = strings.TrimSpace(string(raw))
-   }
-   auth, err := play.New_Auth(f.email, f.passwd)
+func (f flags) download(ref, name string) error {
+   res, err := http.Get(ref)
    if err != nil {
       return err
    }
-   {
-      b, err := auth.MarshalText()
-      if err != nil {
-         return err
-      }
-      os.WriteFile(dir + "/auth.txt", b, 0666)
+   defer res.Body.Close()
+   file, err := os.Create(name)
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   pro := option.Progress_Length(res.ContentLength)
+   if _, err := file.ReadFrom(pro.Reader(res)); err != nil {
+      return err
    }
    return nil
 }
@@ -37,6 +34,7 @@ func (f flags) do_delivery(head *play.Header) error {
       return err
    }
    file := play.File{f.doc, f.vc}
+   option.Location()
    for _, split := range deliver.Split_Data() {
       ref, err := split.Download_URL()
       if err != nil {
@@ -70,6 +68,28 @@ func (f flags) do_delivery(head *play.Header) error {
    return f.download(ref, file.APK(""))
 }
 
+func (f flags) do_auth(dir string) error {
+   if f.file != "" {
+      raw, err := os.ReadFile(f.file)
+      if err != nil {
+         return err
+      }
+      f.passwd = strings.TrimSpace(string(raw))
+   }
+   auth, err := play.New_Auth(f.email, f.passwd)
+   if err != nil {
+      return err
+   }
+   {
+      b, err := auth.MarshalText()
+      if err != nil {
+         return err
+      }
+      os.WriteFile(dir + "/auth.txt", b, 0666)
+   }
+   return nil
+}
+
 func (f flags) do_details(head *play.Header) ([]byte, error) {
    detail, err := head.Details(f.doc)
    if err != nil {
@@ -87,23 +107,6 @@ func (f flags) do_device(dir, platform string) error {
    fmt.Printf("Sleeping %v for server to process\n", play.Sleep)
    time.Sleep(play.Sleep)
    return res.Write_File(dir + "/" + platform + ".bin")
-}
-
-func (f flags) download(ref, name string) error {
-   res, err := http.Get(ref)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   file, err := os.Create(name)
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   if _, err := file.ReadFrom(res.Body); err != nil {
-      return err
-   }
-   return nil
 }
 
 func (f flags) do_header(dir, platform string) (*play.Header, error) {

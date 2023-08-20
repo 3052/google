@@ -4,7 +4,7 @@ Android 5.1
 
 <https://wikipedia.org/wiki/Android_Lollipop>
 
-## device Android Studio, GApps GenyMotion
+## device Android Studio, Open GApps
 
 https://opengapps.org
 
@@ -28,7 +28,7 @@ vending-x86\nodpi\priv-app\Phonesky
 then:
 
 ~~~
-emulator -avd Pixel_2_API_22 -writable-system
+emulator -avd Pixel_3a_XL_API_22 -writable-system
 ~~~
 
 then:

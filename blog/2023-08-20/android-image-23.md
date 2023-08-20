@@ -2,7 +2,7 @@
 
 Android 6
 
-## device Android Studio, GApps Android Studio
+## device Android Studio, Android Studio GApps
 
 with Google APIs image API 23:
 
@@ -16,7 +16,7 @@ adb pull /system/priv-app/PrebuiltGmsCore
 then with Android image API 23:
 
 ~~~
-emulator -avd Pixel_2_API_23 -writable-system
+emulator -avd Pixel_3a_XL_API_23 -writable-system
 ~~~
 
 then:
@@ -35,7 +35,7 @@ then you get this:
 
 > Unfortunately, Google Play services has stopped.
 
-## device Android Studio, GApps GenyMotion
+## device Android Studio, Open GApps
 
 https://opengapps.org
 
@@ -92,7 +92,7 @@ adb: error: failed to copy 'PrebuiltGmsCore.apk' to
 then:
 
 ~~~
-emulator -avd Pixel_2_API_23 -writable-system
+emulator -avd Pixel_3a_XL_API_23 -writable-system
 ~~~
 
 then:

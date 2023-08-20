@@ -76,32 +76,6 @@ func (f File) APK(id string) string {
 }
 
 // downloadUrl
-func (d Delivery) Download_URL() (string, error) {
-   ref, err := d.m.String(3)
-   if err != nil {
-      return "", err
-   }
-   res, err := http.Head(ref)
-   if err != nil {
-      return "", err
-   }
-   return res.Header.Get("Location"), nil
-}
-
-// downloadUrl
-func (s Split_Data) Download_URL() (string, error) {
-   ref, err := s.m.String(5)
-   if err != nil {
-      return "", err
-   }
-   res, err := http.Head(ref)
-   if err != nil {
-      return "", err
-   }
-   return res.Header.Get("Location"), nil
-}
-
-// downloadUrl
 func (a App_File_Metadata) Download_URL() (string, error) {
    return a.m.String(4)
 }
@@ -163,4 +137,14 @@ func (a App_File_Metadata) File_Type() (uint64, error) {
 // id
 func (s Split_Data) ID() (string, error) {
    return s.m.String(1)
+}
+
+// downloadUrl
+func (d Delivery) Download_URL() (string, error) {
+   return d.m.String(3)
+}
+
+// downloadUrl
+func (s Split_Data) Download_URL() (string, error) {
+   return s.m.String(5)
 }

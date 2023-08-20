@@ -4,7 +4,37 @@ Android 5
 
 <https://wikipedia.org/wiki/Android_Lollipop>
 
-## device Android Studio, GApps GenyMotion
+here is Open GApps version:
+
+~~~
+package: name='com.android.vending' versionCode='83032110'
+versionName='30.3.21-21 [0] [PR] 445437866' platformBuildVersionName='Tiramisu'
+~~~
+
+we can download like this:
+
+~~~
+play -s -d com.android.vending -v 83032110
+~~~
+
+and install:
+
+~~~
+adb remount
+
+adb push GoogleServicesFramework /system/priv-app
+adb push PrebuiltGmsCore /system/priv-app
+adb push com.android.vending-83032110.apk /system/priv-app
+adb reboot
+~~~
+
+what about older version:
+
+~~~
+play -s -d com.android.vending -v 82992410
+~~~
+
+## device Android Studio, Open GApps
 
 https://opengapps.org
 
@@ -28,23 +58,6 @@ vending-x86\nodpi\priv-app\Phonesky
 then:
 
 ~~~
-emulator -avd Pixel_2_API_21 -writable-system
-~~~
-
-then:
-
-~~~
-adb remount
-
-adb push GoogleServicesFramework /system/priv-app
-adb push Phonesky /system/priv-app
-adb push PrebuiltGmsCore /system/priv-app
-adb reboot
-~~~
-
-then:
-
-~~~
 mitmproxy
 ~~~
 
@@ -60,3 +73,22 @@ Press `O` to enter options. Move to `block_list` and press Enter. Then press
 ~~~
 
 https://docs.mitmproxy.org/stable/overview-features#blocklist
+
+then:
+
+~~~
+emulator -avd Pixel_3a_XL_API_21 -writable-system
+~~~
+
+then:
+
+~~~
+adb remount
+
+adb push GoogleServicesFramework /system/priv-app
+adb push Phonesky /system/priv-app
+adb push PrebuiltGmsCore /system/priv-app
+adb reboot
+~~~
+
+then enable proxy, then install system certificate.
