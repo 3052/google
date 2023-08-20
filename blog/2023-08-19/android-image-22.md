@@ -2,7 +2,14 @@
 
 Android 5.1
 
----------------------------------------------------------------------------------
+<https://wikipedia.org/wiki/Android_Lollipop>
+
+## Visual Studio Emulator for Android
+
+> We recommend you use Google’s emulator when you can, as it offers access to the
+> latest Android OS images and Google Play services.
+
+https://visualstudio.microsoft.com/vs/msft-android-emulator
 
 ## device GenyMotion, GApps GenyMotion
 
@@ -13,31 +20,17 @@ click Open GAPPS
 https://opengapps.org
 
 ~~~
-open_gapps-x86-6.0-pico-20220503.zip\Core\gmscore-x86.tar.lz\gmscore-x86.tar\
+open_gapps-x86-5.1-pico-20220503.zip\Core\gmscore-x86.tar.lz\gmscore-x86.tar\
    gmscore-x86\nodpi\priv-app\PrebuiltGmsCore\PrebuiltGmsCore.apk
-open_gapps-x86-6.0-pico-20220503.zip\Core\gsfcore-all.tar.lz\gsfcore-all.tar\
+open_gapps-x86-5.1-pico-20220503.zip\Core\gsfcore-all.tar.lz\gsfcore-all.tar\
    gsfcore-all\nodpi\priv-app\GoogleServicesFramework\GoogleServicesFramework.apk
-open_gapps-x86-6.0-pico-20220503.zip\Core\vending-x86.tar.lz\vending-x86.tar\
+open_gapps-x86-5.1-pico-20220503.zip\Core\gsflogin-all.tar.lz\gsflogin-all.tar\
+   gsflogin-all\nodpi\priv-app\GoogleLoginService\GoogleLoginService.apk
+open_gapps-x86-5.1-pico-20220503.zip\Core\vending-x86.tar.lz\vending-x86.tar\
    vending-x86\nodpi\priv-app\Phonesky\Phonesky.apk
 ~~~
 
-drag to home screen to install:
-
-~~~
-GoogleServicesFramework.apk
-~~~
-
-then:
-
-~~~
-PrebuiltGmsCore.apk
-~~~
-
-then you get this:
-
-> Unfortunately, Google Play services has stopped.
-
-from the Google APIs image API 23, we find this:
+from the Google APIs image API 22, we find this:
 
 ~~~
 > adb ls /system/priv-app
@@ -47,33 +40,7 @@ from the Google APIs image API 23, we find this:
 then:
 
 ~~~
-> adb push PrebuiltGmsCore.apk /system/priv-app
-adb: error: failed to copy 'PrebuiltGmsCore.apk' to
-'/system/priv-app/PrebuiltGmsCore.apk': remote Read-only file system
-~~~
-
-then:
-
-~~~
-> adb remount
-remount succeeded
-> adb push PrebuiltGmsCore.apk /system/priv-app
-adb: error: failed to copy 'PrebuiltGmsCore.apk' to
-'/system/priv-app/PrebuiltGmsCore.apk': remote Read-only file system
-~~~
-
-then:
-
-~~~
-emulator -avd Pixel_3a_XL_API_23 -writable-system
-~~~
-
-then:
-
-~~~
-> adb push PrebuiltGmsCore.apk /system/priv-app
-adb: error: failed to copy 'PrebuiltGmsCore.apk' to
-'/system/priv-app/PrebuiltGmsCore.apk': remote Read-only file system
+emulator -avd Pixel_2_API_22 -writable-system
 ~~~
 
 then:
@@ -81,51 +48,9 @@ then:
 ~~~
 adb remount
 
-adb push Phonesky.apk /system/priv-app
-adb push PrebuiltGmsCore.apk /system/priv-app
-adb reboot
-~~~
-
-then:
-
-> Couldn't sign in
->
-> There was a problem communicating with Google servers.
->
-> Try again later.
-
-then:
-
-~~~
-adb remount
-
+adb push GoogleLoginService.apk /system/priv-app
 adb push GoogleServicesFramework.apk /system/priv-app
 adb push Phonesky.apk /system/priv-app
-adb push PrebuiltGmsCore.apk /system/priv-app
-adb reboot
-~~~
-
-## device Android Studio, GApps Android Studio
-
-with Google APIs image API 23:
-
-~~~
-adb pull /system/priv-app/GoogleServicesFramework/GoogleServicesFramework.apk
-adb pull /system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk
-~~~
-
-then with Android image API 23:
-
-~~~
-emulator -avd Pixel_3a_XL_API_23 -writable-system
-~~~
-
-then:
-
-~~~
-adb remount
-
-adb push GoogleServicesFramework.apk /system/priv-app
 adb push PrebuiltGmsCore.apk /system/priv-app
 adb reboot
 ~~~

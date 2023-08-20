@@ -63,7 +63,7 @@ adb: error: failed to copy 'PrebuiltGmsCore.apk' to
 then:
 
 ~~~
-emulator -avd Pixel_3a_XL_API_23 -writable-system
+emulator -avd Pixel_2_API_23 -writable-system
 ~~~
 
 then:
@@ -115,7 +115,7 @@ adb pull /system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk
 then with Android image API 23:
 
 ~~~
-emulator -avd Pixel_3a_XL_API_23 -writable-system
+emulator -avd Pixel_2_API_23 -writable-system
 ~~~
 
 then:
