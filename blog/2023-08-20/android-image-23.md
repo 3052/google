@@ -2,6 +2,13 @@
 
 Android 6
 
+## Visual Studio Emulator for Android
+
+> We recommend you use Google’s emulator when you can, as it offers access to the
+> latest Android OS images and Google Play services.
+
+https://visualstudio.microsoft.com/vs/msft-android-emulator
+
 ## device GenyMotion, GApps GenyMotion
 
 click Open GAPPS
@@ -108,8 +115,10 @@ adb reboot
 with Google APIs image API 23:
 
 ~~~
-adb pull /system/priv-app/GoogleServicesFramework/GoogleServicesFramework.apk
-adb pull /system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk
+adb pull /system/app/PlayGames
+adb pull /system/priv-app/GoogleLoginService
+adb pull /system/priv-app/GoogleServicesFramework
+adb pull /system/priv-app/PrebuiltGmsCore
 ~~~
 
 then with Android image API 23:
@@ -123,8 +132,10 @@ then:
 ~~~
 adb remount
 
-adb push GoogleServicesFramework.apk /system/priv-app
-adb push PrebuiltGmsCore.apk /system/priv-app
+adb push GoogleLoginService /system/priv-app
+adb push GoogleServicesFramework /system/priv-app
+adb push PlayGames /system/app
+adb push PrebuiltGmsCore /system/priv-app
 adb reboot
 ~~~
 
