@@ -11,27 +11,42 @@ package: name='com.android.vending' versionCode='83032110'
 versionName='30.3.21-21 [0] [PR] 445437866' platformBuildVersionName='Tiramisu'
 ~~~
 
-we can download like this:
+version 10 works:
+
+http://apkmirror.com/apk/google-inc/google-play-store/google-play-store-10-8-50-release
+
+earlier versions fail:
+
+> Unfortunately, Google Play services has stopped.
+
+here is Open GApps version:
 
 ~~~
-play -s -d com.android.vending -v 83032110
+package: name='com.google.android.gms' versionCode='214857013'
+versionName='21.48.57 (020700-424705839)' platformBuildVersionName='Tiramisu'
 ~~~
 
-and install:
+version 20 works:
+
+~~~
+play -d com.google.android.gms -v 205066013
+~~~
+
+earlier versions fail:
+
+~~~
+play -d com.google.android.gms -v 19866005 
+~~~
+
+> Unfortunately, Google Play services has stopped.
 
 ~~~
 adb remount
 
 adb push GoogleServicesFramework /system/priv-app
-adb push PrebuiltGmsCore /system/priv-app
-adb push com.android.vending-83032110.apk /system/priv-app
+adb push com.android.vending_10.8.50.apk /system/priv-app
+adb push com.google.android.gms-205066013.apk /system/priv-app
 adb reboot
-~~~
-
-what about older version:
-
-~~~
-play -s -d com.android.vending -v 82992410
 ~~~
 
 ## device Android Studio, Open GApps
