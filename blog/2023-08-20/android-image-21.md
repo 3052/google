@@ -107,3 +107,8 @@ adb reboot
 ~~~
 
 then enable proxy, then install system certificate.
+
+OK might have hit a brick wall. it seems the `/_/lookup/accountlookup` request
+is protected by a value `bgRequest`, which is Google bot-guard protection. 
+
+https://github.com/simon-weber/gpsoauth/issues/56
