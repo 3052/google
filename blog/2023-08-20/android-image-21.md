@@ -1,5 +1,20 @@
 # Android image API 21
 
+~~~
+POST https://accounts.google.com/_/signin/speedbump/embeddedsigninconsent
+
+HTTP/2.0 200 
+set-cookie: oauth_token=oauth2_4/0Adeu5BU-HYh0pC1OU2Efj0l6safyYPiUbx9HrHmU87-d...
+~~~
+
+API 25:
+
+https://accounts.google.com/embedded/setup/v2/android
+
+API 21-24:
+
+https://accounts.google.com/embedded/setup/android
+
 Android 5
 
 <https://wikipedia.org/wiki/Android_Lollipop>
