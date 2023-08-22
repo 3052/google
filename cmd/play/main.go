@@ -10,30 +10,30 @@ import (
 )
 
 type flags struct {
+   code string
    device bool
    doc string
    platform int64
    purchase bool
    single bool
-   code string
    trace bool
    vc uint64
 }
 
 func main() {
    var f flags
+   {
+      var b strings.Builder
+      b.WriteString("oauth_token from ")
+      b.WriteString("accounts.google.com/embedded/setup/android")
+      flag.StringVar(&f.code, "c", "", b.String())
+   }
    flag.StringVar(&f.doc, "d", "", "doc")
    flag.BoolVar(&f.device, "device", false, "create device")
    flag.Int64Var(&f.platform, "p", 0, play.Platforms.String())
    flag.BoolVar(&f.purchase, "purchase", false, "purchase request")
    flag.BoolVar(&f.single, "s", false, "single APK")
-   {
-      var b strings.Builder
-      b.WriteString("oauth_token from ")
-      b.WriteString("accounts.google.com/embedded/setup/android")
-      flag.StringVar(&f.code, "t", "", b.String())
-   }
-   flag.BoolVar(&f.trace, "trace", false, "print full HTTP requests")
+   flag.BoolVar(&f.trace, "t", false, "print full HTTP requests")
    flag.Uint64Var(&f.vc, "v", 0, "version code")
    flag.Parse()
    dir, err := os.UserHomeDir()

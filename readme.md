@@ -39,7 +39,7 @@ for 10 minutes:
 then exchange authorization code for refresh token (`aas_et`):
 
 ~~~
-play -t oauth2_4/0Adeu5B...
+play -c oauth2_4/0Adeu5B...
 ~~~
 
 Create a file containing `X-DFE-Device-ID` (GSF ID) for future requests:
