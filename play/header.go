@@ -11,7 +11,7 @@ func (d Device) ID() (uint64, error) {
 }
 
 type Header struct {
-   Auth Auth // Authorization
+   Auth Access_Token // Authorization
    Device Device // X-DFE-Device-ID
    Single bool
 }

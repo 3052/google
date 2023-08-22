@@ -6,6 +6,24 @@ import (
    "net/http"
 )
 
+// Checkin$AndroidCheckinResponse
+type Device struct {
+   m protobuf.Message
+}
+
+func (d Device) MarshalBinary() ([]byte, error) {
+   return d.m.Append(nil), nil
+}
+
+func (d *Device) UnmarshalBinary(data []byte) error {
+   var err error
+   d.m, err = protobuf.Consume(data)
+   if err != nil {
+      return err
+   }
+   return nil
+}
+
 // A Sleep is needed after this.
 func (c Config) Checkin(platform string) (*Response, error) {
    var m protobuf.Message

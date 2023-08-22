@@ -1,22 +1,19 @@
 package play
 
 import (
-   "encoding/json"
    "os"
    "testing"
    "time"
 )
+
+const code = "oauth2_4/0Adeu5BVtOS_6vKpJRrBcF7xoa5V-J8XfKlMG3J1JbIj5bcaEb5IOX..."
 
 func Test_Auth(t *testing.T) {
    home, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
    }
-   u, err := user_info(home + "/gmail.json")
-   if err != nil {
-      t.Fatal(err)
-   }
-   a, err := New_Auth(u["username"], u["password"])
+   a, err := New_Auth(code)
    if err != nil {
       t.Fatal(err)
    }
@@ -29,17 +26,6 @@ func Test_Auth(t *testing.T) {
    }
 }
 
-func user_info(name string) (map[string]string, error) {
-   b, err := os.ReadFile(name)
-   if err != nil {
-      return nil, err
-   }
-   var m map[string]string
-   if err := json.Unmarshal(b, &m); err != nil {
-      return nil, err
-   }
-   return m, nil
-}
 func Test_Header(t *testing.T) {
    home, err := os.UserHomeDir()
    if err != nil {

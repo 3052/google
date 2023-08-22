@@ -31,8 +31,8 @@ visit this page and sign in:
 
 https://accounts.google.com/embedded/setup/android
 
-then get authorization code (`oauth_token`) from the browser. should be valid
-for 10 minutes:
+then get authorization code (`oauth_token`) cookie from the browser. should be
+valid for 10 minutes:
 
 <https://firefox-source-docs.mozilla.org/devtools-user/storage_inspector>
 
