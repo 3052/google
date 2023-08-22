@@ -7,28 +7,6 @@ import (
    "time"
 )
 
-func Test_Header(t *testing.T) {
-   home, err := os.UserHomeDir()
-   if err != nil {
-      t.Fatal(err)
-   }
-   var head Header
-   head.Auth = make(Auth)
-   {
-      b, err := os.ReadFile(home + "/google/play/auth.txt")
-      if err != nil {
-         t.Fatal(err)
-      }
-      head.Auth.UnmarshalText(b)
-   }
-   for i := 0; i < 9; i++ {
-      if head.Auth.Auth() == "" {
-         t.Fatalf("%+v", head)
-      }
-      time.Sleep(time.Second)
-   }
-}
-
 func Test_Auth(t *testing.T) {
    home, err := os.UserHomeDir()
    if err != nil {
@@ -62,3 +40,25 @@ func user_info(name string) (map[string]string, error) {
    }
    return m, nil
 }
+func Test_Header(t *testing.T) {
+   home, err := os.UserHomeDir()
+   if err != nil {
+      t.Fatal(err)
+   }
+   var head Header
+   head.Auth = make(Auth)
+   {
+      b, err := os.ReadFile(home + "/google/play/auth.txt")
+      if err != nil {
+         t.Fatal(err)
+      }
+      head.Auth.UnmarshalText(b)
+   }
+   for i := 0; i < 9; i++ {
+      if head.Auth.Auth() == "" {
+         t.Fatalf("%+v", head)
+      }
+      time.Sleep(time.Second)
+   }
+}
+

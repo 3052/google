@@ -6,17 +6,16 @@ import (
    "flag"
    "fmt"
    "os"
+   "strings"
 )
 
 type flags struct {
    device bool
    doc string
-   email string
-   file string
-   passwd string
    platform int64
    purchase bool
    single bool
+   token string
    trace bool
    vc uint64
 }
@@ -25,13 +24,16 @@ func main() {
    var f flags
    flag.StringVar(&f.doc, "d", "", "doc")
    flag.BoolVar(&f.device, "device", false, "create device")
-   flag.StringVar(&f.email, "email", "", "your email")
-   flag.StringVar(&f.file, "f", "", "password file")
    flag.Int64Var(&f.platform, "p", 0, play.Platforms.String())
-   flag.StringVar(&f.passwd, "passwd", "", "password")
    flag.BoolVar(&f.purchase, "purchase", false, "purchase request")
    flag.BoolVar(&f.single, "s", false, "single APK")
-   flag.BoolVar(&f.trace, "t", false, "trace")
+   {
+      var b strings.Builder
+      b.WriteString("oauth2 token from ")
+      b.WriteString("accounts.google.com/embedded/setup/android")
+      flag.StringVar(&f.token, "t", "", b.String())
+   }
+   flag.BoolVar(&f.trace, "trace", false, "print full HTTP requests")
    flag.Uint64Var(&f.vc, "v", 0, "version code")
    flag.Parse()
    dir, err := os.UserHomeDir()
@@ -48,7 +50,7 @@ func main() {
    } else {
       option.Verbose()
    }
-   if f.passwd != "" || f.file != "" {
+   if f.token != "" {
       err := f.do_auth(dir)
       if err != nil {
          panic(err)

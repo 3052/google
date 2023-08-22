@@ -1,24 +1,23 @@
 package play
 
 import (
-   "154.pages.dev/tls"
    "io"
    "net/http"
    "net/url"
 )
 
-// You can also use host "android.clients.google.com", but it also uses
-// TLS fingerprinting.
-func New_Auth(email, passwd string) (Auth, error) {
-   client := *http.DefaultClient
-   client.Transport = &tls.Transport{Spec: tls.Android_API_26}
-   res, err := client.PostForm(
+// accounts.google.com/embedded/setup/android
+// the token itself looks like this:
+// 4/0Adeu5B...
+// but it should be supplied here with the prefix:
+// oauth2_4/0Adeu5B...
+func New_Auth(token string) (Auth, error) {
+   res, err := http.PostForm(
       "https://android.googleapis.com/auth",
       url.Values{
-         "Email": {email},
-         "Passwd": {passwd},
-         "client_sig": {""},
-         "droidguard_results": {"-"},
+         "ACCESS_TOKEN": {"1"},
+         "Token": {token},
+         "service": {"ac2dm"},
       },
    )
    if err != nil {

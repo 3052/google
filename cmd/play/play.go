@@ -6,9 +6,23 @@ import (
    "fmt"
    "net/http"
    "os"
-   "strings"
    "time"
 )
+
+func (f flags) do_auth(dir string) error {
+   auth, err := play.New_Auth(f.token)
+   if err != nil {
+      return err
+   }
+   {
+      b, err := auth.MarshalText()
+      if err != nil {
+         return err
+      }
+      os.WriteFile(dir + "/auth.txt", b, 0666)
+   }
+   return nil
+}
 
 func (f flags) download(ref, name string) error {
    res, err := http.Get(ref)
@@ -66,28 +80,6 @@ func (f flags) do_delivery(head *play.Header) error {
       return err
    }
    return f.download(ref, file.APK(""))
-}
-
-func (f flags) do_auth(dir string) error {
-   if f.file != "" {
-      raw, err := os.ReadFile(f.file)
-      if err != nil {
-         return err
-      }
-      f.passwd = strings.TrimSpace(string(raw))
-   }
-   auth, err := play.New_Auth(f.email, f.passwd)
-   if err != nil {
-      return err
-   }
-   {
-      b, err := auth.MarshalText()
-      if err != nil {
-         return err
-      }
-      os.WriteFile(dir + "/auth.txt", b, 0666)
-   }
-   return nil
 }
 
 func (f flags) do_details(head *play.Header) ([]byte, error) {
