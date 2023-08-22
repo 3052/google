@@ -15,7 +15,7 @@ type flags struct {
    platform int64
    purchase bool
    single bool
-   token string
+   code string
    trace bool
    vc uint64
 }
@@ -29,9 +29,9 @@ func main() {
    flag.BoolVar(&f.single, "s", false, "single APK")
    {
       var b strings.Builder
-      b.WriteString("oauth2 token from ")
+      b.WriteString("oauth_token from ")
       b.WriteString("accounts.google.com/embedded/setup/android")
-      flag.StringVar(&f.token, "t", "", b.String())
+      flag.StringVar(&f.code, "t", "", b.String())
    }
    flag.BoolVar(&f.trace, "trace", false, "print full HTTP requests")
    flag.Uint64Var(&f.vc, "v", 0, "version code")
@@ -50,7 +50,7 @@ func main() {
    } else {
       option.Verbose()
    }
-   if f.token != "" {
+   if f.code != "" {
       err := f.do_auth(dir)
       if err != nil {
          panic(err)

@@ -4,17 +4,6 @@ Android 5
 
 <https://wikipedia.org/wiki/Android_Lollipop>
 
-## API 25
-
-https://accounts.google.com/embedded/setup/v2/android
-
-~~~
-POST https://accounts.google.com/v3/signin/_/AccountsSignInUi/data/batchexecute
-
-HTTP/2.0 200 
-set-cookie: oauth_token=oauth2_4/0Adeu5BWsij5isuKrwrWacToFEQS0CsAvZYGzlO-_S97o...
-~~~
-
 ## API 21-24
 
 https://accounts.google.com/embedded/setup/android

@@ -27,14 +27,19 @@ go build
 
 ## Tool examples
 
-Before trying to Sign in, make sure your location is correct, to avoid
-geo-blocking. You can test by logging into your Google account with a web
-browser. Also, make sure the Google account you are using has logged into the
-Play Store at least once before, using a physical or virtual Android device.
-Create a file containing token (`aas_et`) for future requests:
+visit this page and sign in:
+
+https://accounts.google.com/embedded/setup/android
+
+then get authorization code (`oauth_token`) from the browser. should be valid
+for 10 minutes:
+
+<https://firefox-source-docs.mozilla.org/devtools-user/storage_inspector>
+
+then exchange authorization code for refresh token (`aas_et`):
 
 ~~~
-play -email EMAIL -passwd PASSWORD
+play -t oauth2_4/0Adeu5B...
 ~~~
 
 Create a file containing `X-DFE-Device-ID` (GSF ID) for future requests:
@@ -71,6 +76,13 @@ downloaded:
 ~~~
 play -d com.google.android.youtube -v 1537856960
 ~~~
+
+## Why cant I login with email and password?
+
+Up to Android API 19, the login is protected with TLS fingerprinting, which is
+difficult but possible to bypass. Since API 21, Google uses bot-guard via
+JavaScript to protect the login. I do not know how to reverse that, and I did
+not find any implementations online.
 
 ## Contact
 

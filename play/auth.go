@@ -7,16 +7,16 @@ import (
 )
 
 // accounts.google.com/embedded/setup/android
-// the token itself looks like this:
+// the authorization code (oauth_token) looks like this:
 // 4/0Adeu5B...
 // but it should be supplied here with the prefix:
 // oauth2_4/0Adeu5B...
-func New_Auth(token string) (Auth, error) {
+func New_Auth(code string) (Auth, error) {
    res, err := http.PostForm(
       "https://android.googleapis.com/auth",
       url.Values{
          "ACCESS_TOKEN": {"1"},
-         "Token": {token},
+         "Token": {code},
          "service": {"ac2dm"},
       },
    )

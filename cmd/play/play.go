@@ -10,7 +10,7 @@ import (
 )
 
 func (f flags) do_auth(dir string) error {
-   auth, err := play.New_Auth(f.token)
+   auth, err := play.New_Auth(f.code)
    if err != nil {
       return err
    }
