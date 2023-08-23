@@ -8,16 +8,8 @@ import (
    "net/http"
 )
 
-func (d Details) File() []File_Metadata {
-   // details
-   d.m, _ = d.m.Message(13)
-   // appDetails
-   d.m, _ = d.m.Message(1)
-   var files []File_Metadata
-   d.m.Messages(17, func(file protobuf.Message) {
-      files = append(files, File_Metadata{file})
-   })
-   return files
+type Details struct {
+   m protobuf.Message
 }
 
 func (d Details) Installation_Size() (uint64, error) {
@@ -29,50 +21,9 @@ func (d Details) Installation_Size() (uint64, error) {
    return d.m.Varint(9)
 }
 
-func (h Header) Details(doc string) (*Details, error) {
-   req, err := http.NewRequest(
-      "GET", "https://android.clients.google.com/fdfe/details?doc=" + doc, nil,
-   )
-   if err != nil {
-      return nil, err
-   }
-   // half of the apps I test require User-Agent,
-   // so just set it for all of them
-   h.Set_Agent(req.Header)
-   h.Set_Auth(req.Header)
-   h.Set_Device(req.Header)
-   res, err := http.DefaultClient.Do(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   body, err := io.ReadAll(res.Body)
-   if err != nil {
-      return nil, err
-   }
-   // ResponseWrapper
-   mes, err := protobuf.Consume(body)
-   if err != nil {
-      return nil, err
-   }
-   mes, err = mes.Message(1)
-   if err != nil {
-      return nil, fmt.Errorf("payload not found")
-   }
-   // detailsResponse
-   mes, _ = mes.Message(2)
-   // docV2
-   mes, _ = mes.Message(4)
-   return &Details{mes}, nil
-}
-
 // FileMetadata
 // This is similar to AppFileMetadata, but notably field 4 is different.
 type File_Metadata struct {
-   m protobuf.Message
-}
-
-type Details struct {
    m protobuf.Message
 }
 
@@ -125,6 +76,76 @@ func (d Details) Creator() (string, error) {
    return d.m.String(6)
 }
 
+func (d Details) Currency_Code() (string, error) {
+   // offer
+   d.m, _ = d.m.Message(8)
+   return d.m.String(2)
+}
+
+// fileType
+func (f File_Metadata) File_Type() (uint64, error) {
+   return f.m.Varint(1)
+}
+
+func (h Header) Set_Auth(head http.Header) {
+   head.Set("Authorization", "Bearer " + h.Auth.auth())
+}
+
+type Header struct {
+   Auth Access_Token // Authorization
+   Device Device // X-DFE-Device-ID
+   Single bool
+}
+
+func (d Details) File() []File_Metadata {
+   // details
+   d.m, _ = d.m.Message(13)
+   // appDetails
+   d.m, _ = d.m.Message(1)
+   var files []File_Metadata
+   d.m.Messages(17, func(file protobuf.Message) {
+      files = append(files, File_Metadata{file})
+   })
+   return files
+}
+
+func (h Header) Details(doc string) (*Details, error) {
+   req, err := http.NewRequest(
+      "GET", "https://android.clients.google.com/fdfe/details?doc=" + doc, nil,
+   )
+   if err != nil {
+      return nil, err
+   }
+   // half of the apps I test require User-Agent,
+   // so just set it for all of them
+   h.Set_Agent(req.Header)
+   h.Set_Auth(req.Header)
+   h.Set_Device(req.Header)
+   res, err := http.DefaultClient.Do(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   body, err := io.ReadAll(res.Body)
+   if err != nil {
+      return nil, err
+   }
+   // ResponseWrapper
+   mes, err := protobuf.Consume(body)
+   if err != nil {
+      return nil, err
+   }
+   mes, err = mes.Message(1)
+   if err != nil {
+      return nil, fmt.Errorf("payload not found")
+   }
+   // detailsResponse
+   mes, _ = mes.Message(2)
+   // docV2
+   mes, _ = mes.Message(4)
+   return &Details{mes}, nil
+}
+
 func (d Details) MarshalText() ([]byte, error) {
    var b []byte
    b = append(b, "creator: "...)
@@ -174,13 +195,30 @@ func (d Details) MarshalText() ([]byte, error) {
    return b, nil
 }
 
-func (d Details) Currency_Code() (string, error) {
-   // offer
-   d.m, _ = d.m.Message(8)
-   return d.m.String(2)
+func (h Header) Set_Device(head http.Header) error {
+   id, err  := h.Device.ID()
+   if err != nil {
+      return err
+   }
+   head.Set("X-DFE-Device-ID", fmt.Sprintf("%x", id))
+   return nil
 }
 
-// fileType
-func (f File_Metadata) File_Type() (uint64, error) {
-   return f.m.Varint(1)
+func (h Header) Set_Agent(head http.Header) {
+   var b []byte
+   // `sdk` is needed for `/fdfe/delivery`
+   b = append(b, "Android-Finsky (sdk="...)
+   // valid range 0 - 0x7FFF_FFFF
+   b = fmt.Append(b, 9)
+   // com.android.vending
+   b = append(b, ",versionCode="...)
+   if h.Single {
+      // valid range 8032_0000 - 8091_9999
+      b = fmt.Append(b, 8091_9999)
+   } else {
+      // valid range 8092_0000 - 0x7FFF_FFFF
+      b = fmt.Append(b, 9999_9999)
+   }
+   b = append(b, ')')
+   head.Set("User-Agent", string(b))
 }

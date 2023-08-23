@@ -131,35 +131,22 @@ func (c Config) Checkin(platform string) (Raw_Device, error) {
    return io.ReadAll(res.Body)
 }
 
-type Raw_Device []byte
-
 // Checkin$AndroidCheckinResponse
 type Device struct {
    m protobuf.Message
 }
 
 func New_Device(r Raw_Device) (*Device, error) {
-   var dev Device
-   if err := dev.UnmarshalBinary(r); err != nil {
+   m, err := protobuf.Consume(r)
+   if err != nil {
       return nil, err
    }
-   return &dev, nil
-}
-
-func (d Device) MarshalBinary() ([]byte, error) {
-   return d.m.Append(nil), nil
-}
-
-func (d *Device) UnmarshalBinary(data []byte) error {
-   var err error
-   d.m, err = protobuf.Consume(data)
-   if err != nil {
-      return err
-   }
-   return nil
+   return &Device{m}, nil
 }
 
 // androidId
 func (d Device) ID() (uint64, error) {
    return d.m.Fixed64(7)
 }
+
+type Raw_Device []byte
