@@ -6,26 +6,6 @@ import (
    "time"
 )
 
-const code = "oauth2_4/0Adeu5BVtOS_6vKpJRrBcF7xoa5V-J8XfKlMG3J1JbIj5bcaEb5IOX..."
-
-func Test_Auth(t *testing.T) {
-   home, err := os.UserHomeDir()
-   if err != nil {
-      t.Fatal(err)
-   }
-   a, err := New_Auth(code)
-   if err != nil {
-      t.Fatal(err)
-   }
-   {
-      b, err := a.MarshalText()
-      if err != nil {
-         t.Fatal(err)
-      }
-      os.WriteFile(home + "/google/play/auth.txt", b, 0666)
-   }
-}
-
 func Test_Header(t *testing.T) {
    home, err := os.UserHomeDir()
    if err != nil {
@@ -48,3 +28,16 @@ func Test_Header(t *testing.T) {
    }
 }
 
+const code = "oauth2_4/0Adeu5BVtOS_6vKpJRrBcF7xoa5V-J8XfKlMG3J1JbIj5bcaEb5IOX..."
+
+func Test_Auth(t *testing.T) {
+   home, err := os.UserHomeDir()
+   if err != nil {
+      t.Fatal(err)
+   }
+   text, err := New_Raw_Token(code)
+   if err != nil {
+      t.Fatal(err)
+   }
+   os.WriteFile(home + "/google/play/auth.txt", text, 0666)
+}

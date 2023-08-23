@@ -87,16 +87,6 @@ func (f File_Metadata) File_Type() (uint64, error) {
    return f.m.Varint(1)
 }
 
-func (h Header) Set_Auth(head http.Header) {
-   head.Set("Authorization", "Bearer " + h.Auth.auth())
-}
-
-type Header struct {
-   Auth Access_Token // Authorization
-   Device Device // X-DFE-Device-ID
-   Single bool
-}
-
 func (d Details) File() []File_Metadata {
    // details
    d.m, _ = d.m.Message(13)
@@ -107,43 +97,6 @@ func (d Details) File() []File_Metadata {
       files = append(files, File_Metadata{file})
    })
    return files
-}
-
-func (h Header) Details(doc string) (*Details, error) {
-   req, err := http.NewRequest(
-      "GET", "https://android.clients.google.com/fdfe/details?doc=" + doc, nil,
-   )
-   if err != nil {
-      return nil, err
-   }
-   // half of the apps I test require User-Agent,
-   // so just set it for all of them
-   h.Set_Agent(req.Header)
-   h.Set_Auth(req.Header)
-   h.Set_Device(req.Header)
-   res, err := http.DefaultClient.Do(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   body, err := io.ReadAll(res.Body)
-   if err != nil {
-      return nil, err
-   }
-   // ResponseWrapper
-   mes, err := protobuf.Consume(body)
-   if err != nil {
-      return nil, err
-   }
-   mes, err = mes.Message(1)
-   if err != nil {
-      return nil, fmt.Errorf("payload not found")
-   }
-   // detailsResponse
-   mes, _ = mes.Message(2)
-   // docV2
-   mes, _ = mes.Message(4)
-   return &Details{mes}, nil
 }
 
 func (d Details) MarshalText() ([]byte, error) {
@@ -195,30 +148,70 @@ func (d Details) MarshalText() ([]byte, error) {
    return b, nil
 }
 
-func (h Header) Set_Device(head http.Header) error {
-   id, err  := h.Device.ID()
-   if err != nil {
-      return err
-   }
-   head.Set("X-DFE-Device-ID", fmt.Sprintf("%x", id))
-   return nil
+type Header struct {
+   h http.Header
 }
 
-func (h Header) Set_Agent(head http.Header) {
-   var b []byte
-   // `sdk` is needed for `/fdfe/delivery`
-   b = append(b, "Android-Finsky (sdk="...)
-   // valid range 0 - 0x7FFF_FFFF
-   b = fmt.Append(b, 9)
-   // com.android.vending
-   b = append(b, ",versionCode="...)
-   if h.Single {
-      // valid range 8032_0000 - 8091_9999
-      b = fmt.Append(b, 8091_9999)
-   } else {
-      // valid range 8092_0000 - 0x7FFF_FFFF
-      b = fmt.Append(b, 9999_9999)
+func (a Access_Token) Header(d *Device, single bool) (*Header, error) {
+   h := make(http.Header)
+   h.Set("Authorization", "Bearer " + a.auth())
+   {
+      var b []byte
+      // `sdk` is needed for `/fdfe/delivery`
+      b = append(b, "Android-Finsky (sdk="...)
+      // valid range 0 - 0x7FFF_FFFF
+      b = fmt.Append(b, 9)
+      // com.android.vending
+      b = append(b, ",versionCode="...)
+      if single {
+         // valid range 8032_0000 - 8091_9999
+         b = fmt.Append(b, 8091_9999)
+      } else {
+         // valid range 8092_0000 - 0x7FFF_FFFF
+         b = fmt.Append(b, 9999_9999)
+      }
+      b = append(b, ')')
+      h.Set("User-Agent", string(b))
    }
-   b = append(b, ')')
-   head.Set("User-Agent", string(b))
+   {
+      id, err := d.ID()
+      if err != nil {
+         return nil, err
+      }
+      h.Set("X-DFE-Device-ID", fmt.Sprintf("%x", id))
+   }
+   return &Header{h}, nil
+}
+
+func (h Header) Details(doc string) (*Details, error) {
+   req, err := http.NewRequest(
+      "GET", "https://android.clients.google.com/fdfe/details?doc=" + doc, nil,
+   )
+   if err != nil {
+      return nil, err
+   }
+   req.Header = h.h
+   res, err := http.DefaultClient.Do(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   data, err := io.ReadAll(res.Body)
+   if err != nil {
+      return nil, err
+   }
+   // ResponseWrapper
+   mes, err := protobuf.Consume(data)
+   if err != nil {
+      return nil, err
+   }
+   mes, err = mes.Message(1)
+   if err != nil {
+      return nil, fmt.Errorf("payload not found")
+   }
+   // detailsResponse
+   mes, _ = mes.Message(2)
+   // docV2
+   mes, _ = mes.Message(4)
+   return &Details{mes}, nil
 }

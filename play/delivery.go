@@ -80,6 +80,26 @@ func (a App_File_Metadata) Download_URL() (string, error) {
    return a.m.String(4)
 }
 
+// fileType
+func (a App_File_Metadata) File_Type() (uint64, error) {
+   return a.m.Varint(1)
+}
+
+// id
+func (s Split_Data) ID() (string, error) {
+   return s.m.String(1)
+}
+
+// downloadUrl
+func (d Delivery) Download_URL() (string, error) {
+   return d.m.String(3)
+}
+
+// downloadUrl
+func (s Split_Data) Download_URL() (string, error) {
+   return s.m.String(5)
+}
+
 func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
    req, err := http.NewRequest(
       "GET", "https://play-fe.googleapis.com/fdfe/delivery", nil,
@@ -91,20 +111,18 @@ func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
       "doc": {doc},
       "vc": {strconv.FormatUint(vc, 10)},
    }.Encode()
-   h.Set_Agent(req.Header)
-   h.Set_Auth(req.Header) // needed for single APK
-   h.Set_Device(req.Header)
+   req.Header = h.h
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return nil, err
    }
    defer res.Body.Close()
-   body, err := io.ReadAll(res.Body)
+   data, err := io.ReadAll(res.Body)
    if err != nil {
       return nil, err
    }
    // ResponseWrapper
-   mes, err := protobuf.Consume(body)
+   mes, err := protobuf.Consume(data)
    if err != nil {
       return nil, err
    }
@@ -127,24 +145,4 @@ func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
       return nil, errors.New("appDeliveryData not found")
    }
    return &Delivery{mes}, nil
-}
-
-// fileType
-func (a App_File_Metadata) File_Type() (uint64, error) {
-   return a.m.Varint(1)
-}
-
-// id
-func (s Split_Data) ID() (string, error) {
-   return s.m.String(1)
-}
-
-// downloadUrl
-func (d Delivery) Download_URL() (string, error) {
-   return d.m.String(3)
-}
-
-// downloadUrl
-func (s Split_Data) Download_URL() (string, error) {
-   return s.m.String(5)
 }
