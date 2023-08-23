@@ -8,6 +8,41 @@ import (
    "net/http"
 )
 
+func (h Header) Details(doc string) (*Details, error) {
+   req, err := http.NewRequest(
+      "GET", "https://android.clients.google.com/fdfe/details?doc=" + doc, nil,
+   )
+   if err != nil {
+      return nil, err
+   }
+   req.Header.Set(h.Agent())
+   req.Header.Set(h.Authorization())
+   req.Header.Set(h.Device())
+   res, err := http.DefaultClient.Do(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   data, err := io.ReadAll(res.Body)
+   if err != nil {
+      return nil, err
+   }
+   // ResponseWrapper
+   mes, err := protobuf.Consume(data)
+   if err != nil {
+      return nil, err
+   }
+   mes, err = mes.Message(1)
+   if err != nil {
+      return nil, fmt.Errorf("payload not found")
+   }
+   // detailsResponse
+   mes, _ = mes.Message(2)
+   // docV2
+   mes, _ = mes.Message(4)
+   return &Details{mes}, nil
+}
+
 type Details struct {
    m protobuf.Message
 }
@@ -155,37 +190,4 @@ type File_Metadata struct {
 // fileType
 func (f File_Metadata) File_Type() (uint64, error) {
    return f.m.Varint(1)
-}
-
-func (h Header) Details(doc string) (*Details, error) {
-   req, err := http.NewRequest(
-      "GET", "https://android.clients.google.com/fdfe/details?doc=" + doc, nil,
-   )
-   if err != nil {
-      return nil, err
-   }
-   req.Header = h.h
-   res, err := http.DefaultClient.Do(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   data, err := io.ReadAll(res.Body)
-   if err != nil {
-      return nil, err
-   }
-   // ResponseWrapper
-   mes, err := protobuf.Consume(data)
-   if err != nil {
-      return nil, err
-   }
-   mes, err = mes.Message(1)
-   if err != nil {
-      return nil, fmt.Errorf("payload not found")
-   }
-   // detailsResponse
-   mes, _ = mes.Message(2)
-   // docV2
-   mes, _ = mes.Message(4)
-   return &Details{mes}, nil
 }

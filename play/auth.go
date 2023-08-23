@@ -30,43 +30,8 @@ func parse_query(query string) (map[string]string, error) {
 
 type Access_Token map[string]string
 
-func (a Access_Token) Header(d *Device, single bool) (*Header, error) {
-   h := make(http.Header)
-   h.Set("Authorization", "Bearer " + a.auth())
-   {
-      var b []byte
-      // `sdk` is needed for `/fdfe/delivery`
-      b = append(b, "Android-Finsky (sdk="...)
-      // valid range 0 - 0x7FFF_FFFF
-      b = strconv.AppendInt(b, 9, 10)
-      // com.android.vending
-      b = append(b, ",versionCode="...)
-      if single {
-         // valid range 8_03_2_00_00 - 8_09_1_99_99
-         b = strconv.AppendInt(b, 8_09_1_99_99, 10)
-      } else {
-         // valid range 8_09_2_00_00 - math.MaxInt32
-         b = strconv.AppendInt(b, 9_99_9_99_99, 10)
-      }
-      b = append(b, ')')
-      h.Set("User-Agent", string(b))
-   }
-   {
-      id, err := d.ID()
-      if err != nil {
-         return nil, err
-      }
-      h.Set("X-DFE-Device-ID", strconv.FormatUint(id, 16))
-   }
-   return &Header{h}, nil
-}
-
 func (a Access_Token) auth() string {
    return a["Auth"]
-}
-
-type Header struct {
-   h http.Header
 }
 
 type Raw_Token []byte
@@ -120,4 +85,37 @@ func (r Refresh_Token) Access() (Access_Token, error) {
 
 func (r Refresh_Token) token() string {
    return r["Token"]
+}
+
+func (h Header) Authorization() (string, string) {
+   return "Authorization", "Bearer " + h.Token.auth()
+}
+
+func (h Header) Agent() (string, string) {
+   var b []byte
+   // `sdk` is needed for `/fdfe/delivery`
+   b = append(b, "Android-Finsky (sdk="...)
+   // valid range 0 - 0x7FFF_FFFF
+   b = strconv.AppendInt(b, 9, 10)
+   // com.android.vending
+   b = append(b, ",versionCode="...)
+   if h.Single {
+      // valid range 8_03_2_00_00 - 8_09_1_99_99
+      b = strconv.AppendInt(b, 8_09_1_99_99, 10)
+   } else {
+      // valid range 8_09_2_00_00 - math.MaxInt32
+      b = strconv.AppendInt(b, 9_99_9_99_99, 10)
+   }
+   b = append(b, ')')
+   return "User-Agent", string(b)
+}
+
+type Header struct {
+   Device_ID uint64
+   Single bool
+   Token Access_Token
+}
+
+func (h Header) Device() (string, string) {
+   return "X-DFE-Device-ID", strconv.FormatUint(h.Device_ID, 16)
 }

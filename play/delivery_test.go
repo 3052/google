@@ -12,20 +12,33 @@ func Test_Delivery(t *testing.T) {
       t.Fatal(err)
    }
    var head Header
-   head.Auth = make(Auth)
    {
-      b, err := os.ReadFile(home + "/google/play/auth.txt")
+      b, err := os.ReadFile(home + "/google/play/token.txt")
       if err != nil {
          t.Fatal(err)
       }
-      head.Auth.UnmarshalText(b)
+      r, err := Raw_Token.Refresh(b)
+      if err != nil {
+         t.Fatal(err)
+      }
+      head.Token, err = r.Access()
+      if err != nil {
+         t.Fatal(err)
+      }
    }
    {
       b, err := os.ReadFile(home + "/google/play/x86.bin")
       if err != nil {
          t.Fatal(err)
       }
-      head.Device.UnmarshalBinary(b)
+      d, err := Raw_Device.Device(b)
+      if err != nil {
+         t.Fatal(err)
+      }
+      head.Device_ID, err = d.ID()
+      if err != nil {
+         t.Fatal(err)
+      }
    }
    del, err := head.Delivery("com.google.android.youtube", 1524221376)
    if err != nil {

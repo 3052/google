@@ -4,7 +4,6 @@ import (
    "fmt"
    "os"
    "testing"
-   "time"
 )
 
 func Test_Auth_Read(t *testing.T) {
@@ -12,15 +11,15 @@ func Test_Auth_Read(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   raw, err := os.ReadFile(home + "/google/play/auth.txt")
+   text, err := os.ReadFile(home + "/google/play/token.txt")
    if err != nil {
       t.Fatal(err)
    }
-   ref, err := New_Refresh_Token(raw)
+   ref, err := Raw_Token.Refresh(text)
    if err != nil {
       t.Fatal(err)
    }
-   acc, err := ref.Refresh()
+   acc, err := ref.Access()
    if err != nil {
       t.Fatal(err)
    }
@@ -38,5 +37,5 @@ func Test_Auth_Write(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   os.WriteFile(home + "/google/play/auth.txt", text, 0666)
+   os.WriteFile(home + "/google/play/token.txt", text, 0666)
 }

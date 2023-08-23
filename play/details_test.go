@@ -16,22 +16,35 @@ func Test_Details(t *testing.T) {
    }
    home += "/google/play"
    var head Header
-   head.Auth = make(Auth)
    {
-      b, err := os.ReadFile(home + "/auth.txt")
+      b, err := os.ReadFile(home + "/token.txt")
       if err != nil {
          t.Fatal(err)
       }
-      head.Auth.UnmarshalText(b)
+      r, err := Raw_Token.Refresh(b)
+      if err != nil {
+         t.Fatal(err)
+      }
+      head.Token, err = r.Access()
+      if err != nil {
+         t.Fatal(err)
+      }
    }
-   head.Auth.Exchange()
    for i, app := range apps {
+      fmt.Println(app)
       {
          b, err := os.ReadFile(home + "/" + Platforms[app.platform] + ".bin")
          if err != nil {
             t.Fatal(err)
          }
-         head.Device.UnmarshalBinary(b)
+         d, err := Raw_Device.Device(b)
+         if err != nil {
+            t.Fatal(err)
+         }
+         head.Device_ID, err = d.ID()
+         if err != nil {
+            t.Fatal(err)
+         }
       }
       d, err := head.Details(app.doc)
       if err != nil {

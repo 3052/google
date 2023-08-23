@@ -19,7 +19,7 @@ func (f flags) do_auth(dir string) error {
       if err != nil {
          return err
       }
-      os.WriteFile(dir + "/auth.txt", b, 0666)
+      os.WriteFile(dir + "/token.txt", b, 0666)
    }
    return nil
 }
@@ -105,7 +105,7 @@ func (f flags) do_header(dir, platform string) (*play.Header, error) {
    var head play.Header
    head.Auth = make(play.Auth)
    {
-      b, err := os.ReadFile(dir + "/auth.txt")
+      b, err := os.ReadFile(dir + "/token.txt")
       if err != nil {
          return nil, err
       }
