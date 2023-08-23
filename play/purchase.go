@@ -1,9 +1,7 @@
 package play
 
 import (
-   "io"
    "net/http"
-   "os"
    "strconv"
    "strings"
    "time"
@@ -51,16 +49,4 @@ func (h Header) Purchase(doc string) error {
       return err
    }
    return res.Body.Close()
-}
-
-func (r Response) Write_File(name string) error {
-   data, err := io.ReadAll(r.Body)
-   if err != nil {
-      return err
-   }
-   return os.WriteFile(name, data, 0666)
-}
-
-type Response struct {
-   *http.Response
 }

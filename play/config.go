@@ -3,26 +3,9 @@ package play
 import (
    "154.pages.dev/encoding/protobuf"
    "bytes"
+   "io"
    "net/http"
 )
-
-// Checkin$AndroidCheckinResponse
-type Device struct {
-   m protobuf.Message
-}
-
-func (d Device) MarshalBinary() ([]byte, error) {
-   return d.m.Append(nil), nil
-}
-
-func (d *Device) UnmarshalBinary(data []byte) error {
-   var err error
-   d.m, err = protobuf.Consume(data)
-   if err != nil {
-      return err
-   }
-   return nil
-}
 
 // These can use default values, but they must all be included
 type Config struct {
@@ -100,7 +83,7 @@ var Phone = Config{
 }
 
 // A Sleep is needed after this.
-func (c Config) Checkin(platform string) (*Response, error) {
+func (c Config) Checkin(platform string) (Raw_Device, error) {
    var m protobuf.Message
    m.Add(4, func(m *protobuf.Message) { // checkin
       m.Add(1, func(m *protobuf.Message) { // build
@@ -144,5 +127,39 @@ func (c Config) Checkin(platform string) (*Response, error) {
    if err != nil {
       return nil, err
    }
-   return &Response{res}, nil
+   defer res.Body.Close()
+   return io.ReadAll(res.Body)
+}
+
+type Raw_Device []byte
+
+// Checkin$AndroidCheckinResponse
+type Device struct {
+   m protobuf.Message
+}
+
+func New_Device(r Raw_Device) (*Device, error) {
+   var dev Device
+   if err := dev.UnmarshalBinary(r); err != nil {
+      return nil, err
+   }
+   return &dev, nil
+}
+
+func (d Device) MarshalBinary() ([]byte, error) {
+   return d.m.Append(nil), nil
+}
+
+func (d *Device) UnmarshalBinary(data []byte) error {
+   var err error
+   d.m, err = protobuf.Consume(data)
+   if err != nil {
+      return err
+   }
+   return nil
+}
+
+// androidId
+func (d Device) ID() (uint64, error) {
+   return d.m.Fixed64(7)
 }

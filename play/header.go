@@ -18,11 +18,6 @@ func (h Header) Set_Device(head http.Header) error {
    return nil
 }
 
-// androidId
-func (d Device) ID() (uint64, error) {
-   return d.m.Fixed64(7)
-}
-
 type Header struct {
    Auth Access_Token // Authorization
    Device Device // X-DFE-Device-ID
