@@ -5,6 +5,19 @@ import (
    "strconv"
 )
 
+func (h Header) Set_Auth(head http.Header) {
+   head.Set("Authorization", "Bearer " + h.Auth.auth())
+}
+
+func (h Header) Set_Device(head http.Header) error {
+   id, err  := h.Device.ID()
+   if err != nil {
+      return err
+   }
+   head.Set("X-DFE-Device-ID", strconv.FormatUint(id, 16))
+   return nil
+}
+
 // androidId
 func (d Device) ID() (uint64, error) {
    return d.m.Fixed64(7)
@@ -33,17 +46,4 @@ func (h Header) Set_Agent(head http.Header) {
    }
    b = append(b, ')')
    head.Set("User-Agent", string(b))
-}
-
-func (h Header) Set_Auth(head http.Header) {
-   head.Set("Authorization", "Bearer " + h.Auth.Auth())
-}
-
-func (h Header) Set_Device(head http.Header) error {
-   id, err  := h.Device.ID()
-   if err != nil {
-      return err
-   }
-   head.Set("X-DFE-Device-ID", strconv.FormatUint(id, 16))
-   return nil
 }
