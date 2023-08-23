@@ -1,36 +1,35 @@
 package play
 
 import (
+   "fmt"
    "os"
    "testing"
    "time"
 )
 
-func Test_Header(t *testing.T) {
+func Test_Auth_Read(t *testing.T) {
    home, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
    }
-   var head Header
-   head.Auth = make(Auth)
-   {
-      b, err := os.ReadFile(home + "/google/play/auth.txt")
-      if err != nil {
-         t.Fatal(err)
-      }
-      head.Auth.UnmarshalText(b)
+   raw, err := os.ReadFile(home + "/google/play/auth.txt")
+   if err != nil {
+      t.Fatal(err)
    }
-   for i := 0; i < 9; i++ {
-      if head.Auth.Auth() == "" {
-         t.Fatalf("%+v", head)
-      }
-      time.Sleep(time.Second)
+   ref, err := New_Refresh_Token(raw)
+   if err != nil {
+      t.Fatal(err)
    }
+   acc, err := ref.Refresh()
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Println(acc)
 }
 
 const code = "oauth2_4/0Adeu5BVtOS_6vKpJRrBcF7xoa5V-J8XfKlMG3J1JbIj5bcaEb5IOX..."
 
-func Test_Auth(t *testing.T) {
+func Test_Auth_Write(t *testing.T) {
    home, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
