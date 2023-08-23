@@ -4,6 +4,7 @@ import (
    "io"
    "net/http"
    "net/url"
+   "strconv"
    "strings"
 )
 
@@ -29,8 +30,43 @@ func parse_query(query string) (map[string]string, error) {
 
 type Access_Token map[string]string
 
+func (a Access_Token) Header(d *Device, single bool) (*Header, error) {
+   h := make(http.Header)
+   h.Set("Authorization", "Bearer " + a.auth())
+   {
+      var b []byte
+      // `sdk` is needed for `/fdfe/delivery`
+      b = append(b, "Android-Finsky (sdk="...)
+      // valid range 0 - 0x7FFF_FFFF
+      b = strconv.AppendInt(b, 9, 10)
+      // com.android.vending
+      b = append(b, ",versionCode="...)
+      if single {
+         // valid range 8_03_2_00_00 - 8_09_1_99_99
+         b = strconv.AppendInt(b, 8_09_1_99_99, 10)
+      } else {
+         // valid range 8_09_2_00_00 - math.MaxInt32
+         b = strconv.AppendInt(b, 9_99_9_99_99, 10)
+      }
+      b = append(b, ')')
+      h.Set("User-Agent", string(b))
+   }
+   {
+      id, err := d.ID()
+      if err != nil {
+         return nil, err
+      }
+      h.Set("X-DFE-Device-ID", strconv.FormatUint(id, 16))
+   }
+   return &Header{h}, nil
+}
+
 func (a Access_Token) auth() string {
    return a["Auth"]
+}
+
+type Header struct {
+   h http.Header
 }
 
 type Raw_Token []byte
@@ -55,13 +91,13 @@ func New_Raw_Token(code string) (Raw_Token, error) {
    return io.ReadAll(res.Body)
 }
 
-type Refresh_Token map[string]string
-
-func New_Refresh_Token(r Raw_Token) (Refresh_Token, error) {
+func (r Raw_Token) Refresh() (Refresh_Token, error) {
    return parse_query(string(r))
 }
 
-func (r Refresh_Token) Refresh() (Access_Token, error) {
+type Refresh_Token map[string]string
+
+func (r Refresh_Token) Access() (Access_Token, error) {
    // these values take from Android API 28
    res, err := http.PostForm(
       "https://android.googleapis.com/auth", url.Values{

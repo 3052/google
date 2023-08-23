@@ -9,6 +9,26 @@ import (
    "strconv"
 )
 
+// AppFileMetadata
+type App_File_Metadata struct {
+   m protobuf.Message
+}
+
+// downloadUrl
+func (a App_File_Metadata) Download_URL() (string, error) {
+   return a.m.String(4)
+}
+
+// fileType
+func (a App_File_Metadata) File_Type() (uint64, error) {
+   return a.m.Varint(1)
+}
+
+// AndroidAppDeliveryData
+type Delivery struct {
+   m protobuf.Message
+}
+
 func (d Delivery) Additional_File() []App_File_Metadata {
    var files []App_File_Metadata
    // additionalFile
@@ -16,6 +36,11 @@ func (d Delivery) Additional_File() []App_File_Metadata {
       files = append(files, App_File_Metadata{file})
    })
    return files
+}
+
+// downloadUrl
+func (d Delivery) Download_URL() (string, error) {
+   return d.m.String(3)
 }
 
 func (d Delivery) Split_Data() []Split_Data {
@@ -27,39 +52,9 @@ func (d Delivery) Split_Data() []Split_Data {
    return splits
 }
 
-// AndroidAppDeliveryData
-type Delivery struct {
-   m protobuf.Message
-}
-
-// SplitDeliveryData
-type Split_Data struct {
-   m protobuf.Message
-}
-
-// AppFileMetadata
-type App_File_Metadata struct {
-   m protobuf.Message
-}
-
 type File struct {
    Package_Name string
    Version_Code uint64
-}
-
-func (f File) OBB(file_type uint64) string {
-   var b []byte
-   if file_type >= 1 {
-      b = append(b, "patch"...)
-   } else {
-      b = append(b, "main"...)
-   }
-   b = append(b, '.')
-   b = strconv.AppendUint(b, f.Version_Code, 10)
-   b = append(b, '.')
-   b = append(b, f.Package_Name...)
-   b = append(b, ".obb"...)
-   return string(b)
 }
 
 func (f File) APK(id string) string {
@@ -75,29 +70,19 @@ func (f File) APK(id string) string {
    return string(b)
 }
 
-// downloadUrl
-func (a App_File_Metadata) Download_URL() (string, error) {
-   return a.m.String(4)
-}
-
-// fileType
-func (a App_File_Metadata) File_Type() (uint64, error) {
-   return a.m.Varint(1)
-}
-
-// id
-func (s Split_Data) ID() (string, error) {
-   return s.m.String(1)
-}
-
-// downloadUrl
-func (d Delivery) Download_URL() (string, error) {
-   return d.m.String(3)
-}
-
-// downloadUrl
-func (s Split_Data) Download_URL() (string, error) {
-   return s.m.String(5)
+func (f File) OBB(file_type uint64) string {
+   var b []byte
+   if file_type >= 1 {
+      b = append(b, "patch"...)
+   } else {
+      b = append(b, "main"...)
+   }
+   b = append(b, '.')
+   b = strconv.AppendUint(b, f.Version_Code, 10)
+   b = append(b, '.')
+   b = append(b, f.Package_Name...)
+   b = append(b, ".obb"...)
+   return string(b)
 }
 
 func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
@@ -145,4 +130,19 @@ func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
       return nil, errors.New("appDeliveryData not found")
    }
    return &Delivery{mes}, nil
+}
+
+// SplitDeliveryData
+type Split_Data struct {
+   m protobuf.Message
+}
+
+// downloadUrl
+func (s Split_Data) Download_URL() (string, error) {
+   return s.m.String(5)
+}
+
+// id
+func (s Split_Data) ID() (string, error) {
+   return s.m.String(1)
 }

@@ -136,17 +136,17 @@ type Device struct {
    m protobuf.Message
 }
 
-func New_Device(r Raw_Device) (*Device, error) {
-   m, err := protobuf.Consume(r)
-   if err != nil {
-      return nil, err
-   }
-   return &Device{m}, nil
-}
-
 // androidId
 func (d Device) ID() (uint64, error) {
    return d.m.Fixed64(7)
 }
 
 type Raw_Device []byte
+
+func (r Raw_Device) Device() (*Device, error) {
+   m, err := protobuf.Consume(r)
+   if err != nil {
+      return nil, err
+   }
+   return &Device{m}, nil
+}
