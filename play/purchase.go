@@ -1,6 +1,7 @@
 package play
 
 import (
+   "errors"
    "net/http"
    "strconv"
    "strings"
@@ -19,11 +20,17 @@ func (h Header) Purchase(doc string) error {
       return err
    }
    req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+   req.Header.Set(h.Authorization())
+   req.Header.Set(h.Device())
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return err
    }
-   return res.Body.Close()
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return errors.New(res.Status)
+   }
+   return nil
 }
 
 type Native_Platform map[int64]string

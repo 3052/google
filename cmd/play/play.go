@@ -9,19 +9,46 @@ import (
    "time"
 )
 
+func (f flags) do_header(dir, platform string) (*play.Header, error) {
+   var head play.Header
+   {
+      b, err := os.ReadFile(dir + "/token.txt")
+      if err != nil {
+         return nil, err
+      }
+      r, err := play.Raw_Token.Refresh(b)
+      if err != nil {
+         return nil, err
+      }
+      head.Token, err = r.Access()
+      if err != nil {
+         return nil, err
+      }
+   }
+   {
+      b, err := os.ReadFile(dir + "/" + platform + ".bin")
+      if err != nil {
+         return nil, err
+      }
+      d, err := play.Raw_Device.Device(b)
+      if err != nil {
+         return nil, err
+      }
+      head.Device_ID, err = d.ID()
+      if err != nil {
+         return nil, err
+      }
+   }
+   head.Single = f.single
+   return &head, nil
+}
+
 func (f flags) do_auth(dir string) error {
-   auth, err := play.New_Auth(f.code)
+   text, err := play.New_Raw_Token(f.code)
    if err != nil {
       return err
    }
-   {
-      b, err := auth.MarshalText()
-      if err != nil {
-         return err
-      }
-      os.WriteFile(dir + "/token.txt", b, 0666)
-   }
-   return nil
+   return os.WriteFile(dir + "/token.txt", text, 0666)
 }
 
 func (f flags) download(ref, name string) error {
@@ -82,47 +109,24 @@ func (f flags) do_delivery(head *play.Header) error {
    return f.download(ref, file.APK(""))
 }
 
-func (f flags) do_details(head *play.Header) ([]byte, error) {
+func (f flags) do_details(head *play.Header) (string, error) {
    detail, err := head.Details(f.doc)
    if err != nil {
-      return nil, err
+      return "", err
    }
-   return detail.MarshalText()
+   return detail.String(), nil
 }
 
 func (f flags) do_device(dir, platform string) error {
-   res, err := play.Phone.Checkin(platform)
+   data, err := play.Phone.Checkin(platform)
    if err != nil {
       return err
    }
-   defer res.Body.Close()
+   err = os.WriteFile(dir + "/" + platform + ".bin", data, 0666)
+   if err != nil {
+      return err
+   }
    fmt.Printf("Sleeping %v for server to process\n", play.Sleep)
    time.Sleep(play.Sleep)
-   return res.Write_File(dir + "/" + platform + ".bin")
+   return nil
 }
-
-func (f flags) do_header(dir, platform string) (*play.Header, error) {
-   var head play.Header
-   head.Auth = make(play.Auth)
-   {
-      b, err := os.ReadFile(dir + "/token.txt")
-      if err != nil {
-         return nil, err
-      }
-      head.Auth.UnmarshalText(b)
-   }
-   err := head.Auth.Exchange()
-   if err != nil {
-      return nil, err
-   }
-   {
-      b, err := os.ReadFile(dir + "/" + platform + ".bin")
-      if err != nil {
-         return nil, err
-      }
-      head.Device.UnmarshalBinary(b)
-   }
-   head.Single = f.single
-   return &head, nil
-}
-

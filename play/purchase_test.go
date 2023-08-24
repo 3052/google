@@ -4,16 +4,18 @@ import (
    "fmt"
    "os"
    "testing"
+   "time"
 )
 
-func Test_Delivery(t *testing.T) {
+func Test_Purchase(t *testing.T) {
    home, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
    }
+   home += "/google/play"
    var head Header
    {
-      b, err := os.ReadFile(home + "/google/play/token.txt")
+      b, err := os.ReadFile(home + "/token.txt")
       if err != nil {
          t.Fatal(err)
       }
@@ -27,7 +29,7 @@ func Test_Delivery(t *testing.T) {
       }
    }
    {
-      b, err := os.ReadFile(home + "/google/play/x86.bin")
+      b, err := os.ReadFile(home + "/x86.bin")
       if err != nil {
          t.Fatal(err)
       }
@@ -40,10 +42,12 @@ func Test_Delivery(t *testing.T) {
          t.Fatal(err)
       }
    }
-   head.Single = true
-   del, err := head.Delivery("com.google.android.youtube", 1524221376)
-   if err != nil {
-      t.Fatal(err)
+   for _, app := range apps {
+      fmt.Println(app)
+      err := head.Purchase(app.doc)
+      if err != nil {
+         t.Fatal(err)
+      }
+      time.Sleep(99 * time.Millisecond)
    }
-   fmt.Printf("%+v\n", del)
 }
