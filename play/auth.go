@@ -101,6 +101,7 @@ func (r Refresh_Token) token() string {
 }
 
 func (r Refresh_Token) Access() (Access_Token, error) {
+   // Android API 21
    res, err := http.PostForm(
       "https://android.googleapis.com/auth", url.Values{
          "Token": {r.token()},
