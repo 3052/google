@@ -8,41 +8,6 @@ import (
    "net/http"
 )
 
-func (h Header) Details(doc string) (*Details, error) {
-   req, err := http.NewRequest(
-      "GET", "https://android.clients.google.com/fdfe/details?doc=" + doc, nil,
-   )
-   if err != nil {
-      return nil, err
-   }
-   req.Header.Set(h.Agent())
-   req.Header.Set(h.Authorization())
-   req.Header.Set(h.Device())
-   res, err := http.DefaultClient.Do(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   data, err := io.ReadAll(res.Body)
-   if err != nil {
-      return nil, err
-   }
-   // ResponseWrapper
-   mes, err := protobuf.Consume(data)
-   if err != nil {
-      return nil, err
-   }
-   mes, err = mes.Message(1)
-   if err != nil {
-      return nil, fmt.Errorf("payload not found")
-   }
-   // detailsResponse
-   mes, _ = mes.Message(2)
-   // docV2
-   mes, _ = mes.Message(4)
-   return &Details{mes}, nil
-}
-
 type Details struct {
    m protobuf.Message
 }
@@ -179,6 +144,41 @@ func (d Details) Version_Code() (uint64, error) {
    // appDetails
    d.m, _ = d.m.Message(1)
    return d.m.Varint(3)
+}
+
+func (h Header) Details(doc string) (*Details, error) {
+   req, err := http.NewRequest(
+      "GET", "https://android.clients.google.com/fdfe/details?doc=" + doc, nil,
+   )
+   if err != nil {
+      return nil, err
+   }
+   req.Header.Set(h.agent())
+   req.Header.Set(h.authorization())
+   req.Header.Set(h.device())
+   res, err := http.DefaultClient.Do(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   data, err := io.ReadAll(res.Body)
+   if err != nil {
+      return nil, err
+   }
+   // ResponseWrapper
+   mes, err := protobuf.Consume(data)
+   if err != nil {
+      return nil, err
+   }
+   mes, err = mes.Message(1)
+   if err != nil {
+      return nil, fmt.Errorf("payload not found")
+   }
+   // detailsResponse
+   mes, _ = mes.Message(2)
+   // docV2
+   mes, _ = mes.Message(4)
+   return &Details{mes}, nil
 }
 
 // FileMetadata

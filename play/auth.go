@@ -34,6 +34,39 @@ func (a Access_Token) auth() string {
    return a["Auth"]
 }
 
+type Header struct {
+   Device_ID uint64
+   Single bool
+   Token Access_Token
+}
+
+func (h Header) agent() (string, string) {
+   var b []byte
+   // `sdk` is needed for `/fdfe/delivery`
+   b = append(b, "Android-Finsky (sdk="...)
+   // valid range 0 - 0x7FFF_FFFF
+   b = strconv.AppendInt(b, 9, 10)
+   // com.android.vending
+   b = append(b, ",versionCode="...)
+   if h.Single {
+      // valid range 8_03_2_00_00 - 8_09_1_99_99
+      b = strconv.AppendInt(b, 8_09_1_99_99, 10)
+   } else {
+      // valid range 8_09_2_00_00 - math.MaxInt32
+      b = strconv.AppendInt(b, 9_99_9_99_99, 10)
+   }
+   b = append(b, ')')
+   return "User-Agent", string(b)
+}
+
+func (h Header) authorization() (string, string) {
+   return "Authorization", "Bearer " + h.Token.auth()
+}
+
+func (h Header) device() (string, string) {
+   return "X-DFE-Device-ID", strconv.FormatUint(h.Device_ID, 16)
+}
+
 type Raw_Token []byte
 
 // accounts.google.com/embedded/setup/android
@@ -42,6 +75,7 @@ type Raw_Token []byte
 // but it should be supplied here with the prefix:
 // oauth2_4/0Adeu5B...
 func New_Raw_Token(code string) (Raw_Token, error) {
+   // Android API 21
    res, err := http.PostForm(
       "https://android.googleapis.com/auth", url.Values{
          "ACCESS_TOKEN": {"1"},
@@ -62,8 +96,11 @@ func (r Raw_Token) Refresh() (Refresh_Token, error) {
 
 type Refresh_Token map[string]string
 
+func (r Refresh_Token) token() string {
+   return r["Token"]
+}
+
 func (r Refresh_Token) Access() (Access_Token, error) {
-   // these values take from Android API 28
    res, err := http.PostForm(
       "https://android.googleapis.com/auth", url.Values{
          "Token": {r.token()},
@@ -81,41 +118,4 @@ func (r Refresh_Token) Access() (Access_Token, error) {
       return nil, err
    }
    return parse_query(string(text))
-}
-
-func (r Refresh_Token) token() string {
-   return r["Token"]
-}
-
-func (h Header) Authorization() (string, string) {
-   return "Authorization", "Bearer " + h.Token.auth()
-}
-
-func (h Header) Agent() (string, string) {
-   var b []byte
-   // `sdk` is needed for `/fdfe/delivery`
-   b = append(b, "Android-Finsky (sdk="...)
-   // valid range 0 - 0x7FFF_FFFF
-   b = strconv.AppendInt(b, 9, 10)
-   // com.android.vending
-   b = append(b, ",versionCode="...)
-   if h.Single {
-      // valid range 8_03_2_00_00 - 8_09_1_99_99
-      b = strconv.AppendInt(b, 8_09_1_99_99, 10)
-   } else {
-      // valid range 8_09_2_00_00 - math.MaxInt32
-      b = strconv.AppendInt(b, 9_99_9_99_99, 10)
-   }
-   b = append(b, ')')
-   return "User-Agent", string(b)
-}
-
-type Header struct {
-   Device_ID uint64
-   Single bool
-   Token Access_Token
-}
-
-func (h Header) Device() (string, string) {
-   return "X-DFE-Device-ID", strconv.FormatUint(h.Device_ID, 16)
 }
