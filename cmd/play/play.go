@@ -9,46 +9,24 @@ import (
    "time"
 )
 
-func (f flags) do_header(dir, platform string) (*play.Header, error) {
-   var head play.Header
-   {
-      b, err := os.ReadFile(dir + "/token.txt")
-      if err != nil {
-         return nil, err
-      }
-      r, err := play.Raw_Token.Refresh(b)
-      if err != nil {
-         return nil, err
-      }
-      head.Token, err = r.Access()
-      if err != nil {
-         return nil, err
-      }
-   }
-   {
-      b, err := os.ReadFile(dir + "/" + platform + ".bin")
-      if err != nil {
-         return nil, err
-      }
-      d, err := play.Raw_Device.Device(b)
-      if err != nil {
-         return nil, err
-      }
-      head.Device_ID, err = d.ID()
-      if err != nil {
-         return nil, err
-      }
-   }
-   head.Single = f.single
-   return &head, nil
-}
-
 func (f flags) do_auth(dir string) error {
-   text, err := play.New_Raw_Token(f.code)
+   text, err := play.New_Refresh_Token(f.code)
    if err != nil {
       return err
    }
    return os.WriteFile(dir + "/token.txt", text, 0666)
+}
+
+func (f flags) do_header(dir, platform string) (*play.Header, error) {
+   token, err := os.ReadFile(dir + "/token.txt")
+   if err != nil {
+      return nil, err
+   }
+   checkin, err := os.ReadFile(dir + "/" + platform + ".bin")
+   if err != nil {
+      return nil, err
+   }
+   return play.New_Header(token, checkin, f.single)
 }
 
 func (f flags) download(ref, name string) error {

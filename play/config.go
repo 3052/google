@@ -83,7 +83,7 @@ var Phone = Config{
 }
 
 // A Sleep is needed after this.
-func (c Config) Checkin(platform string) (Raw_Device, error) {
+func (c Config) Checkin(platform string) ([]byte, error) {
    var m protobuf.Message
    m.Add(4, func(m *protobuf.Message) { // checkin
       m.Add(1, func(m *protobuf.Message) { // build
@@ -131,22 +131,12 @@ func (c Config) Checkin(platform string) (Raw_Device, error) {
    return io.ReadAll(res.Body)
 }
 
-// Checkin$AndroidCheckinResponse
-type Device struct {
-   m protobuf.Message
-}
-
 // androidId
-func (d Device) ID() (uint64, error) {
-   return d.m.Fixed64(7)
+func (a Android_Checkin) ID() (uint64, error) {
+   return a.m.Fixed64(7)
 }
 
-type Raw_Device []byte
-
-func (r Raw_Device) Device() (*Device, error) {
-   m, err := protobuf.Consume(r)
-   if err != nil {
-      return nil, err
-   }
-   return &Device{m}, nil
+// Checkin$AndroidCheckinResponse
+type Android_Checkin struct {
+   m protobuf.Message
 }

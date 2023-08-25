@@ -96,9 +96,9 @@ func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
       "doc": {doc},
       "vc": {strconv.FormatUint(vc, 10)},
    }.Encode()
-   req.Header.Set(h.agent())
-   req.Header.Set(h.authorization())
-   req.Header.Set(h.device())
+   h.agent(req)
+   h.authorization(req)
+   h.device(req)
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return nil, err
