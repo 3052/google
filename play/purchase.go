@@ -19,9 +19,9 @@ func (h Header) Purchase(doc string) error {
    if err != nil {
       return err
    }
-   h.authorization(req)
-   h.device(req)
    req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+   req.Header.Set(h.authorization())
+   req.Header.Set(h.device())
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return err

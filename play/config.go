@@ -132,11 +132,11 @@ func (c Config) Checkin(platform string) ([]byte, error) {
 }
 
 // androidId
-func (a Android_Checkin) ID() (uint64, error) {
-   return a.m.Fixed64(7)
+func (d Device) ID() (uint64, error) {
+   return d.m.Fixed64(7)
 }
 
 // Checkin$AndroidCheckinResponse
-type Android_Checkin struct {
+type Device struct {
    m protobuf.Message
 }

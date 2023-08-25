@@ -15,9 +15,9 @@ func (h Header) Details(doc string) (*Details, error) {
    if err != nil {
       return nil, err
    }
-   h.agent(req)
-   h.authorization(req)
-   h.device(req)
+   req.Header.Set(h.agent())
+   req.Header.Set(h.authorization())
+   req.Header.Set(h.device())
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return nil, err

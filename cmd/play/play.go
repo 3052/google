@@ -9,24 +9,24 @@ import (
    "time"
 )
 
-func (f flags) do_auth(dir string) error {
-   text, err := play.New_Refresh_Token(f.code)
-   if err != nil {
-      return err
-   }
-   return os.WriteFile(dir + "/token.txt", text, 0666)
-}
-
 func (f flags) do_header(dir, platform string) (*play.Header, error) {
    token, err := os.ReadFile(dir + "/token.txt")
    if err != nil {
       return nil, err
    }
-   checkin, err := os.ReadFile(dir + "/" + platform + ".bin")
+   device, err := os.ReadFile(dir + "/" + platform + ".bin")
    if err != nil {
       return nil, err
    }
-   return play.New_Header(token, checkin, f.single)
+   var head play.Header
+   head.Set_Agent(f.single)
+   if err := head.Set_Authorization(token); err != nil {
+      return nil, err
+   }
+   if err := head.Set_Device(device); err != nil {
+      return nil, err
+   }
+   return &head, nil
 }
 
 func (f flags) download(ref, name string) error {
@@ -108,3 +108,12 @@ func (f flags) do_device(dir, platform string) error {
    time.Sleep(play.Sleep)
    return nil
 }
+
+func (f flags) do_auth(dir string) error {
+   text, err := play.New_Refresh_Token(f.code)
+   if err != nil {
+      return err
+   }
+   return os.WriteFile(dir + "/token.txt", text, 0666)
+}
+
