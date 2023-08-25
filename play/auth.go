@@ -34,6 +34,35 @@ func (a Access_Token) auth() string {
    return a["Auth"]
 }
 
+type Raw_Token []byte
+
+// accounts.google.com/embedded/setup/android
+// the authorization code (oauth_token) looks like this:
+// 4/0Adeu5B...
+// but it should be supplied here with the prefix:
+// oauth2_4/0Adeu5B...
+func New_Raw_Token(code string) (Raw_Token, error) {
+   // Android API 21
+   res, err := http.PostForm(
+      "https://android.googleapis.com/auth", url.Values{
+         "ACCESS_TOKEN": {"1"},
+         "Token": {code},
+         "service": {"ac2dm"},
+      },
+   )
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   return io.ReadAll(res.Body)
+}
+
+type Refresh_Token map[string]string
+
+func (r Refresh_Token) token() string {
+   return r["Token"]
+}
+
 type Header struct {
    Device_ID uint64
    Single bool
@@ -67,37 +96,8 @@ func (h Header) device() (string, string) {
    return "X-DFE-Device-ID", strconv.FormatUint(h.Device_ID, 16)
 }
 
-type Raw_Token []byte
-
-// accounts.google.com/embedded/setup/android
-// the authorization code (oauth_token) looks like this:
-// 4/0Adeu5B...
-// but it should be supplied here with the prefix:
-// oauth2_4/0Adeu5B...
-func New_Raw_Token(code string) (Raw_Token, error) {
-   // Android API 21
-   res, err := http.PostForm(
-      "https://android.googleapis.com/auth", url.Values{
-         "ACCESS_TOKEN": {"1"},
-         "Token": {code},
-         "service": {"ac2dm"},
-      },
-   )
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   return io.ReadAll(res.Body)
-}
-
 func (r Raw_Token) Refresh() (Refresh_Token, error) {
    return parse_query(string(r))
-}
-
-type Refresh_Token map[string]string
-
-func (r Refresh_Token) token() string {
-   return r["Token"]
 }
 
 func (r Refresh_Token) Access() (Access_Token, error) {
