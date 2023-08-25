@@ -29,12 +29,12 @@ func (h *Header) Set_Authorization(token []byte) error {
       return err
    }
    defer res.Body.Close()
-   text, err := io.ReadAll(res.Body)
-   if err != nil {
-      return err
-   }
    access, err := func() (Access_Token, error) {
-      return parse_query(string(text))
+      b, err := io.ReadAll(res.Body)
+      if err != nil {
+         return nil, err
+      }
+      return parse_query(string(b))
    }()
    if err != nil {
       return err
@@ -143,4 +143,3 @@ func New_Refresh_Token(code string) ([]byte, error) {
    defer res.Body.Close()
    return io.ReadAll(res.Body)
 }
-
