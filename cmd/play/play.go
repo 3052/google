@@ -10,21 +10,25 @@ import (
 )
 
 func (f flags) do_header(dir, platform string) (*play.Header, error) {
-   token, err := os.ReadFile(dir + "/token.txt")
-   if err != nil {
-      return nil, err
-   }
-   device, err := os.ReadFile(dir + "/" + platform + ".bin")
-   if err != nil {
-      return nil, err
-   }
    var head play.Header
    head.Set_Agent(f.single)
-   if err := head.Set_Authorization(token); err != nil {
-      return nil, err
+   {
+      b, err := os.ReadFile(dir + "/token.txt")
+      if err != nil {
+         return nil, err
+      }
+      if err := head.Set_Authorization(b); err != nil {
+         return nil, err
+      }
    }
-   if err := head.Set_Device(device); err != nil {
-      return nil, err
+   {
+      b, err := os.ReadFile(dir + "/" + platform + ".bin")
+      if err != nil {
+         return nil, err
+      }
+      if err := head.Set_Device(b); err != nil {
+         return nil, err
+      }
    }
    return &head, nil
 }

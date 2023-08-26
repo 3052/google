@@ -19,28 +19,14 @@ func Test_Purchase(t *testing.T) {
       if err != nil {
          t.Fatal(err)
       }
-      r, err := Raw_Token.Refresh(b)
-      if err != nil {
-         t.Fatal(err)
-      }
-      head.Token, err = r.Access()
-      if err != nil {
-         t.Fatal(err)
-      }
+      head.Set_Authorization(b)
    }
    {
       b, err := os.ReadFile(home + "/x86.bin")
       if err != nil {
          t.Fatal(err)
       }
-      d, err := Raw_Device.Device(b)
-      if err != nil {
-         t.Fatal(err)
-      }
-      head.Device_ID, err = d.ID()
-      if err != nil {
-         t.Fatal(err)
-      }
+      head.Set_Device(b)
    }
    for _, app := range apps {
       fmt.Println(app)
