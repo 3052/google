@@ -131,12 +131,12 @@ func (c Config) Checkin(platform string) ([]byte, error) {
    return io.ReadAll(res.Body)
 }
 
-// androidId
-func (d Device) ID() (uint64, error) {
-   return d.m.Fixed64(7)
-}
-
 // Checkin$AndroidCheckinResponse
 type Device struct {
    m protobuf.Message
+}
+
+// androidId
+func (d Device) ID() (uint64, error) {
+   return d.m.Fixed64(7)
 }
