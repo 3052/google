@@ -91,14 +91,6 @@ func (f flags) do_delivery(head *play.Header) error {
    return f.download(ref, file.APK(""))
 }
 
-func (f flags) do_details(head *play.Header) (string, error) {
-   detail, err := head.Details(f.doc)
-   if err != nil {
-      return "", err
-   }
-   return detail.String(), nil
-}
-
 func (f flags) do_device(dir, platform string) error {
    data, err := play.Phone.Checkin(platform)
    if err != nil {

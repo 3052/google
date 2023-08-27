@@ -2,9 +2,21 @@
 
 <https://wikipedia.org/wiki/Android_Lollipop>
 
+swap image for this:
+
+<http://dl.google.com/android/repository/sys-img/google_apis/x86-21_r30.zip>
+
 ~~~
-dl.google.com/android/repository/sys-img/google_apis/x86-21_r32.zip
-google_play_services_version:   202414013
+package: name='com.google.android.gms' versionCode='16089013'
+versionName='16.0.89 (020700-239467275)' platformBuildVersionName='Q'
+~~~
+
+older versions are available, but they fail:
+
+~~~
+adb: error: failed to copy 'Phonesky\lib\x86\libcronet.102.0.4973.2.so' to
+'/system/priv-app/Phonesky/lib/x86/libcronet.102.0.4973.2.so': remote No space
+left on device
 ~~~
 
 1. Android Studio
@@ -48,9 +60,12 @@ then:
 
 ~~~
 adb remount
-
 adb push Phonesky /system/priv-app
 adb reboot
 ~~~
 
-then enable proxy, then install system certificate.
+then enable proxy, then install system certificate. this is the new purchase:
+
+~~~
+https://play-fe.googleapis.com/fdfe/acquire?theme=2
+~~~

@@ -78,11 +78,11 @@ func main() {
                panic(err)
             }
          } else {
-            detail, err := f.do_details(head)
+            detail, err := head.Details(f.doc)
             if err != nil {
                panic(err)
             }
-            fmt.Println(string(detail))
+            fmt.Println(detail)
          }
       } else {
          flag.Usage()
