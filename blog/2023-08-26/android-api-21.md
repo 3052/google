@@ -21,15 +21,21 @@ left on device
 
 1. Android Studio
 2. Android 5
-3. https://opengapps.org
+
+here is Open GApps version:
 
 ~~~
-open_gapps-x86-5.0-pico-20220503.zip\Core\vending-x86.tar.lz\vending-x86.tar\
-vending-x86\common\priv-app\Phonesky
-
-open_gapps-x86-5.0-pico-20220503.zip\Core\vending-x86.tar.lz\vending-x86.tar\
-vending-x86\nodpi\priv-app\Phonesky
+package: name='com.android.vending' versionCode='83032110'
+versionName='30.3.21-21 [0] [PR] 445437866' platformBuildVersionName='Tiramisu'
 ~~~
+
+version 10 works:
+
+http://apkmirror.com/apk/google-inc/google-play-store/google-play-store-10-8-50-release
+
+earlier versions fail:
+
+> Unfortunately, Google Play services has stopped.
 
 then:
 
@@ -60,7 +66,7 @@ then:
 
 ~~~
 adb remount
-adb push Phonesky /system/priv-app
+adb push com.android.vending_10.8.50.apk /system/priv-app
 adb reboot
 ~~~
 
