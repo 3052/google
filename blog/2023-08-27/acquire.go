@@ -16,7 +16,7 @@ import (
 var message = protobuf.Message{
    protobuf.Field{Number: 1, Type: 2, Value: protobuf.Prefix{
       protobuf.Field{Number: 1, Type: 2, Value: protobuf.Prefix{
-         protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("com.viber.voip")},
+         protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("sg.bigo.live")},
          protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(1)},
          protobuf.Field{Number: 3, Type: 0, Value: protobuf.Varint(3)},
       }},
@@ -39,16 +39,16 @@ var message = protobuf.Message{
 func main() {
    var req http.Request
    req.Header = make(http.Header)
+   req.Header["Authorization"] = []string{"Bearer ya29.a0AfB_byAl_x_9sQ7Mn0NYODLee5aBJzA-jJOnK92Nsomgl3lrAY-ABzY5Z5qtOXql3S6ULw-cpuP6-_wqomCuTExhp4nAzsxMZTzx4L0JyTeUych8txUMm87NdIBvVsjMwo6rsoFp7SJz-ltGQuq0-rM4XLGGFl8PDTOQn42-zNhe6n__xnqJ50O6in-vmEBwsGOe8OZ9qC9_NYfOx_s19KyhZ4XBKfP_OVprU5hBPvSmKXqxdtu0ViKpvgNT4ZP6lEjhKthHcz8XjFJFkJv89D8vaePl3J9PUwfPtPb6_d_Fr9FijkEk9lThBx2O_yfnxJdSDEBtZQaCgYKARcSARESFQHsvYls1RWcFpHM5RF-XWlQFCrIFA0337"}
+   req.Header["X-Dfe-Device-Id"] = []string{"32cf69cd18ab8bcc"}
    req.Header["Accept-Encoding"] = []string{"identity"}
    req.Header["Accept-Language"] = []string{"en-US"}
-   req.Header["Authorization"] = []string{"Bearer ya29.a0AfB_byB6SgGYZ9WVcxRMG2-BIAxPN27IpQQtMKng6swpA9GoTIisva5nOdSmX_XcwbdQLhFO8DCZpHf0G53NkRc9ZO7rN9rx30NLfEYLYl9WcaV2c6LqYWOs-b7na6Q5ppC6w66iWACyE52y-kLP5iQJ8exWemA5FG9wppayzzF-mi2iv0d3QoxoOzjprU6WJFhJJG7nkw_V0EQx5pb_liNrqdXzT9S-5z5RO-5-cJKJm70tcUQU0fq_Vd2n1o0lNaZzu8vGPTX38AqOF3nqzLFTMTQ2PNO2MH9eN0lExLBI7N1DGceuJciWBA1ZeWVYNiRxxbS_fQaCgYKAUwSARESFQHsvYls8pn8nvwKuK_ktM9X5lUGBw0337"}
    req.Header["Connection"] = []string{"Keep-Alive"}
    req.Header["Content-Type"] = []string{"application/x-protobuf"}
    req.Header["Host"] = []string{"android.clients.google.com"}
    req.Header["User-Agent"] = []string{"Android-Finsky/22.0.18-21%20%5B0%5D%20%5BPR%5D%20333153705 (api=3,versionCode=82201810,sdk=21,device=generic_x86,hardware=ranchu,product=sdk_google_phone_x86,platformVersionRelease=5.0.2,model=Android%20SDK%20built%20for%20x86,buildId=LSY66K,isWideScreen=0,supportedAbis=x86)"}
    req.Header["X-Dfe-Client-Id"] = []string{"am-google"}
    req.Header["X-Dfe-Content-Filters"] = []string{""}
-   req.Header["X-Dfe-Device-Id"] = []string{"37d24ef6609f5b60"}
    req.Header["X-Dfe-Mccmnc"] = []string{"310260"}
    req.Header["X-Dfe-Network-Type"] = []string{"3"}
    req.Header["X-Dfe-Request-Params"] = []string{"timeoutMs=35000"}
