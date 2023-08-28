@@ -1,6 +1,6 @@
 # Google Services Framework 21 with old stuff
 
-uses bot guard. these are the involved packages:
+Android 5. uses bot guard. these are the involved packages:
 
 ~~~
 package: name='com.google.android.gsf' versionCode='21'
@@ -31,6 +31,16 @@ earlier versions fail:
 when does `/fdfe/purchase` switch to `/fdfe/acquire`?
 
 ~~~
+apkmirror.com/apk/google-inc/google-play-store/google-play-store-11-9-30-release
+/fdfe/acquire
+
+apkmirror.com/apk/google-inc/google-play-store/google-play-store-10-8-50-release
+/fdfe/purchase
+~~~
+
+then:
+
+~~~
 mitmproxy
 ~~~
 
@@ -42,6 +52,7 @@ Press `O` to enter options. Move to `block_list` and press Enter. Then press
 `a` to add a new entry. Press Esc when finished, then `q`.
 
 ~~~
+/~u fdfe.acquire/444
 /~u play-apps-download-default.download.by-id/444
 ~~~
 
@@ -62,9 +73,9 @@ adb reboot
 then enable proxy, then install system certificate.
 
 ~~~
-apkmirror.com/apk/google-inc/google-play-store/google-play-store-11-9-30-release
-/fdfe/acquire
+play -d com.android.vending -v 82195010 
+fail
 
-apkmirror.com/apk/google-inc/google-play-store/google-play-store-10-8-50-release
-/fdfe/purchase
+play -s -d com.android.vending -v 82284410
+pass
 ~~~

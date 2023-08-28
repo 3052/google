@@ -10,6 +10,7 @@ import (
 )
 
 type flags struct {
+   acquire bool
    code string
    device bool
    doc string
@@ -22,6 +23,7 @@ type flags struct {
 
 func main() {
    var f flags
+   flag.BoolVar(&f.acquire, "a", false, "acquire (experimental)")
    {
       var b strings.Builder
       b.WriteString("oauth_token from ")
@@ -57,34 +59,41 @@ func main() {
       }
    } else {
       platform := play.Platforms[f.platform]
-      if f.device {
+      switch {
+      case f.device:
          err := f.do_device(dir, platform)
          if err != nil {
             panic(err)
          }
-      } else if f.doc != "" {
+      case f.doc != "":
          head, err := f.do_header(dir, platform)
          if err != nil {
             panic(err)
          }
-         if f.purchase {
+         switch {
+         case f.acquire:
+            err := head.Acquire(f.doc)
+            if err != nil {
+               panic(err)
+            }
+         case f.purchase:
             err := head.Purchase(f.doc)
             if err != nil {
                panic(err)
             }
-         } else if f.vc >= 1 {
+         case f.vc >= 1:
             err := f.do_delivery(head)
             if err != nil {
                panic(err)
             }
-         } else {
+         default:
             detail, err := head.Details(f.doc)
             if err != nil {
                panic(err)
             }
             fmt.Println(detail)
          }
-      } else {
+      default:
          flag.Usage()
       }
    }
