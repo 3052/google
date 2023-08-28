@@ -76,6 +76,6 @@ then enable proxy, then install system certificate.
 play -d com.android.vending -v 82195010 
 fail
 
-play -s -d com.android.vending -v 82284410
+play -d com.android.vending -v 82201810
 pass
 ~~~
