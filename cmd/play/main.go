@@ -10,10 +10,8 @@ import (
 )
 
 type flags struct {
-   acquire bool
    code string
    device bool
-   device_acquire bool
    doc string
    platform int64
    purchase bool
@@ -24,7 +22,6 @@ type flags struct {
 
 func main() {
    var f flags
-   flag.BoolVar(&f.acquire, "a", false, "acquire (experimental)")
    {
       var b strings.Builder
       b.WriteString("oauth_token from ")
@@ -33,7 +30,6 @@ func main() {
    }
    flag.StringVar(&f.doc, "d", "", "doc")
    flag.BoolVar(&f.device, "device", false, "create device")
-   flag.BoolVar(&f.device_acquire, "device_acquire", false, "device acquire (experimental)")
    flag.Int64Var(&f.platform, "p", 0, play.Platforms.String())
    flag.BoolVar(&f.purchase, "purchase", false, "purchase request")
    flag.BoolVar(&f.single, "s", false, "single APK")
@@ -62,11 +58,6 @@ func main() {
    } else {
       platform := play.Platforms[f.platform]
       switch {
-      case f.device_acquire:
-         err := f.do_device_acquire(dir, platform)
-         if err != nil {
-            panic(err)
-         }
       case f.device:
          err := f.do_device(dir, platform)
          if err != nil {
@@ -78,11 +69,6 @@ func main() {
             panic(err)
          }
          switch {
-         case f.acquire:
-            err := head.Acquire(f.doc)
-            if err != nil {
-               panic(err)
-            }
          case f.purchase:
             err := head.Purchase(f.doc)
             if err != nil {

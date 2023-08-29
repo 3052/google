@@ -9,20 +9,6 @@ import (
    "time"
 )
 
-func (f flags) do_device_acquire(dir, platform string) error {
-   data, err := play.Checkin_Acquire(platform)
-   if err != nil {
-      return err
-   }
-   err = os.WriteFile(dir + "/" + platform + ".bin", data, 0666)
-   if err != nil {
-      return err
-   }
-   fmt.Printf("Sleeping %v for server to process\n", play.Sleep)
-   time.Sleep(play.Sleep)
-   return nil
-}
-
 func (f flags) do_device(dir, platform string) error {
    data, err := play.Phone.Checkin(platform)
    if err != nil {
@@ -126,4 +112,3 @@ func (f flags) do_auth(dir string) error {
    }
    return os.WriteFile(dir + "/token.txt", text, 0666)
 }
-
