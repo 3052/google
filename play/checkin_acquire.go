@@ -1,14 +1,33 @@
 package play
 
-import "154.pages.dev/encoding/protobuf"
+import (
+   "154.pages.dev/encoding/protobuf"
+   "bytes"
+   "errors"
+   "io"
+   "net/http"
+)
 
-var Checkin = protobuf.Message{
+func Checkin_Acquire(platform string) ([]byte, error) {
+   res, err := http.Post(
+      "https://android.googleapis.com/checkin", "application/x-protobuffer",
+      bytes.NewReader(Phone_Acquire.Append(nil)),
+   )
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errors.New(res.Status)
+   }
+   return io.ReadAll(res.Body)
+}
+
+var Phone_Acquire = protobuf.Message{
    protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(0)},
    protobuf.Field{Number: 3, Type: 2, Value: protobuf.Bytes("1-da39a3ee5e6b4b0d3255bfef95601890afd80709")},
-   protobuf.Field{Number: 4, Type: 2, Value: protobuf.Bytes("\n\xe9\x01\nOgeneric_x86/sdk_google_phone_x86/generic_x86:5.0.2/LSY66K/6695550:eng/test-keys\x12\x06ranchu\x1a\vgeneric_x86*\aunknown2\x0eandroid-google8\xf7\xa7\xd9\xf8\x05@\xbd\xaf\xc2`J\vgeneric_x86P\x15Z\x19Android SDK built for x86b\aunknownj\x14sdk_google_phone_x86p\x00z\x12\b\x01\x12\x0eandroid-google2\x06310260:\x06310260B\vMOBILE:LTE:H\x00p\x02z\x15\b\x01\x10\x01\x1a\vunspecified\"\x00(\x00\x82\x01/\n\x06310260\x12\aAndroid\x1a\x010 \x00 \x01 \x022\x0f310260000000000B\x02\x17L\x9a\x01\x06MOBILE")},
-   protobuf.Field{Number: 4, Type: 2, Value: protobuf.Maybe{
-      protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("\nOgeneric_x86/sdk_google_phone_x86/generic_x86:5.0.2/LSY66K/6695550:eng/test-keys\x12\x06ranchu\x1a\vgeneric_x86*\aunknown2\x0eandroid-google8\xf7\xa7\xd9\xf8\x05@\xbd\xaf\xc2`J\vgeneric_x86P\x15Z\x19Android SDK built for x86b\aunknownj\x14sdk_google_phone_x86p\x00z\x12\b\x01\x12\x0eandroid-google")},
-      protobuf.Field{Number: 1, Type: 2, Value: protobuf.Maybe{
+   protobuf.Field{Number: 4, Type: 2, Value: protobuf.Prefix{
+      protobuf.Field{Number: 1, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("generic_x86/sdk_google_phone_x86/generic_x86:5.0.2/LSY66K/6695550:eng/test-keys")},
          protobuf.Field{Number: 2, Type: 2, Value: protobuf.Bytes("ranchu")},
          protobuf.Field{Number: 3, Type: 2, Value: protobuf.Bytes("generic_x86")},
@@ -22,8 +41,7 @@ var Checkin = protobuf.Message{
          protobuf.Field{Number: 12, Type: 2, Value: protobuf.Bytes("unknown")},
          protobuf.Field{Number: 13, Type: 2, Value: protobuf.Bytes("sdk_google_phone_x86")},
          protobuf.Field{Number: 14, Type: 0, Value: protobuf.Varint(0)},
-         protobuf.Field{Number: 15, Type: 2, Value: protobuf.Bytes("\b\x01\x12\x0eandroid-google")},
-         protobuf.Field{Number: 15, Type: 2, Value: protobuf.Maybe{
+         protobuf.Field{Number: 15, Type: 2, Value: protobuf.Prefix{
             protobuf.Field{Number: 1, Type: 0, Value: protobuf.Varint(1)},
             protobuf.Field{Number: 2, Type: 2, Value: protobuf.Bytes("android-google")},
          }},
@@ -33,16 +51,14 @@ var Checkin = protobuf.Message{
       protobuf.Field{Number: 8, Type: 2, Value: protobuf.Bytes("MOBILE:LTE:")},
       protobuf.Field{Number: 9, Type: 0, Value: protobuf.Varint(0)},
       protobuf.Field{Number: 14, Type: 0, Value: protobuf.Varint(2)},
-      protobuf.Field{Number: 15, Type: 2, Value: protobuf.Bytes("\b\x01\x10\x01\x1a\vunspecified\"\x00(\x00")},
-      protobuf.Field{Number: 15, Type: 2, Value: protobuf.Maybe{
+      protobuf.Field{Number: 15, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 0, Value: protobuf.Varint(1)},
          protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(1)},
          protobuf.Field{Number: 3, Type: 2, Value: protobuf.Bytes("unspecified")},
          protobuf.Field{Number: 4, Type: 2, Value: protobuf.Bytes("")},
          protobuf.Field{Number: 5, Type: 0, Value: protobuf.Varint(0)},
       }},
-      protobuf.Field{Number: 16, Type: 2, Value: protobuf.Bytes("\n\x06310260\x12\aAndroid\x1a\x010 \x00 \x01 \x022\x0f310260000000000B\x02\x17L")},
-      protobuf.Field{Number: 16, Type: 2, Value: protobuf.Maybe{
+      protobuf.Field{Number: 16, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("310260")},
          protobuf.Field{Number: 2, Type: 2, Value: protobuf.Bytes("Android")},
          protobuf.Field{Number: 3, Type: 2, Value: protobuf.Bytes("0")},
@@ -55,17 +71,10 @@ var Checkin = protobuf.Message{
       protobuf.Field{Number: 19, Type: 2, Value: protobuf.Bytes("MOBILE")},
    }},
    protobuf.Field{Number: 6, Type: 2, Value: protobuf.Bytes("en-US")},
-   protobuf.Field{Number: 6, Type: 2, Value: protobuf.Maybe{
-      protobuf.Field{Number: 12, Type: 5, Value: protobuf.Fixed32(1398091118)},
-   }},
    protobuf.Field{Number: 7, Type: 0, Value: protobuf.Varint(16045423075696072033)},
    protobuf.Field{Number: 10, Type: 2, Value: protobuf.Bytes("358240051111110")},
    protobuf.Field{Number: 11, Type: 2, Value: protobuf.Bytes("")},
    protobuf.Field{Number: 12, Type: 2, Value: protobuf.Bytes("America/Denver")},
-   protobuf.Field{Number: 12, Type: 2, Value: protobuf.Maybe{
-      protobuf.Field{Number: 8, Type: 1, Value: protobuf.Fixed64(4913252798083261805)},
-      protobuf.Field{Number: 12, Type: 5, Value: protobuf.Fixed32(1919252078)},
-   }},
    protobuf.Field{Number: 14, Type: 0, Value: protobuf.Varint(3)},
    protobuf.Field{Number: 15, Type: 2, Value: protobuf.Bytes("71Q6Rn2DDZl1zPDVaaeEHItd+Yg=")},
    protobuf.Field{Number: 16, Type: 2, Value: protobuf.Bytes("EMULATOR32X1X14X0")},
@@ -79,11 +88,6 @@ var Checkin = protobuf.Message{
       protobuf.Field{Number: 7, Type: 0, Value: protobuf.Varint(400)},
       protobuf.Field{Number: 8, Type: 0, Value: protobuf.Varint(196609)},
       protobuf.Field{Number: 9, Type: 2, Value: protobuf.Bytes("android.test.runner")},
-      protobuf.Field{Number: 9, Type: 2, Value: protobuf.Maybe{
-         protobuf.Field{Number: 12, Type: 1, Value: protobuf.Fixed64(8371739161332442222)},
-         protobuf.Field{Number: 12, Type: 5, Value: protobuf.Fixed32(1915647091)},
-         protobuf.Field{Number: 14, Type: 5, Value: protobuf.Fixed32(1919250030)},
-      }},
       protobuf.Field{Number: 9, Type: 2, Value: protobuf.Bytes("com.android.future.usb.accessory")},
       protobuf.Field{Number: 9, Type: 2, Value: protobuf.Bytes("com.android.location.provider")},
       protobuf.Field{Number: 9, Type: 2, Value: protobuf.Bytes("com.android.media.remotedisplay")},
@@ -96,21 +100,11 @@ var Checkin = protobuf.Message{
       protobuf.Field{Number: 10, Type: 2, Value: protobuf.Bytes("android.hardware.bluetooth")},
       protobuf.Field{Number: 10, Type: 2, Value: protobuf.Bytes("android.hardware.camera")},
       protobuf.Field{Number: 10, Type: 2, Value: protobuf.Bytes("android.hardware.camera.any")},
-      protobuf.Field{Number: 10, Type: 2, Value: protobuf.Maybe{
-         protobuf.Field{Number: 12, Type: 1, Value: protobuf.Fixed64(7507048032877306990)},
-         protobuf.Field{Number: 12, Type: 1, Value: protobuf.Fixed64(7146761200619447410)},
-         protobuf.Field{Number: 12, Type: 1, Value: protobuf.Fixed64(8750037977858729325)},
-      }},
       protobuf.Field{Number: 10, Type: 2, Value: protobuf.Bytes("android.hardware.camera.autofocus")},
       protobuf.Field{Number: 10, Type: 2, Value: protobuf.Bytes("android.hardware.faketouch")},
       protobuf.Field{Number: 10, Type: 2, Value: protobuf.Bytes("android.hardware.location")},
       protobuf.Field{Number: 10, Type: 2, Value: protobuf.Bytes("android.hardware.location.network")},
       protobuf.Field{Number: 10, Type: 2, Value: protobuf.Bytes("android.hardware.microphone")},
-      protobuf.Field{Number: 10, Type: 2, Value: protobuf.Maybe{
-         protobuf.Field{Number: 12, Type: 1, Value: protobuf.Fixed64(7507048032877306990)},
-         protobuf.Field{Number: 12, Type: 1, Value: protobuf.Fixed64(7867337140998726770)},
-         protobuf.Field{Number: 13, Type: 1, Value: protobuf.Fixed64(7308901739622527587)},
-      }},
       protobuf.Field{Number: 10, Type: 2, Value: protobuf.Bytes("android.hardware.screen.landscape")},
       protobuf.Field{Number: 10, Type: 2, Value: protobuf.Bytes("android.hardware.screen.portrait")},
       protobuf.Field{Number: 10, Type: 2, Value: protobuf.Bytes("android.hardware.sensor.accelerometer")},
@@ -159,55 +153,19 @@ var Checkin = protobuf.Message{
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("de-LI")},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("el")},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("el-GR")},
-      protobuf.Field{Number: 14, Type: 2, Value: protobuf.Maybe{
-         protobuf.Field{Number: 12, Type: 5, Value: protobuf.Fixed32(1380396396)},
-      }},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("en")},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("en-AU")},
-      protobuf.Field{Number: 14, Type: 2, Value: protobuf.Maybe{
-         protobuf.Field{Number: 12, Type: 5, Value: protobuf.Fixed32(1430334830)},
-      }},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("en-CA")},
-      protobuf.Field{Number: 14, Type: 2, Value: protobuf.Maybe{
-         protobuf.Field{Number: 12, Type: 5, Value: protobuf.Fixed32(1094921582)},
-      }},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("en-GB")},
-      protobuf.Field{Number: 14, Type: 2, Value: protobuf.Maybe{
-         protobuf.Field{Number: 12, Type: 5, Value: protobuf.Fixed32(1111960942)},
-      }},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("en-IE")},
-      protobuf.Field{Number: 14, Type: 2, Value: protobuf.Maybe{
-         protobuf.Field{Number: 12, Type: 5, Value: protobuf.Fixed32(1162423662)},
-      }},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("en-IN")},
-      protobuf.Field{Number: 14, Type: 2, Value: protobuf.Maybe{
-         protobuf.Field{Number: 12, Type: 5, Value: protobuf.Fixed32(1313418606)},
-      }},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("en-NZ")},
-      protobuf.Field{Number: 14, Type: 2, Value: protobuf.Maybe{
-         protobuf.Field{Number: 12, Type: 5, Value: protobuf.Fixed32(1515072878)},
-      }},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("en-SG")},
-      protobuf.Field{Number: 14, Type: 2, Value: protobuf.Maybe{
-         protobuf.Field{Number: 12, Type: 5, Value: protobuf.Fixed32(1196633454)},
-      }},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("en-US")},
-      protobuf.Field{Number: 14, Type: 2, Value: protobuf.Maybe{
-         protobuf.Field{Number: 12, Type: 5, Value: protobuf.Fixed32(1398091118)},
-      }},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("en-ZA")},
-      protobuf.Field{Number: 14, Type: 2, Value: protobuf.Maybe{
-         protobuf.Field{Number: 12, Type: 5, Value: protobuf.Fixed32(1096428910)},
-      }},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("es")},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("es-ES")},
-      protobuf.Field{Number: 14, Type: 2, Value: protobuf.Maybe{
-         protobuf.Field{Number: 12, Type: 5, Value: protobuf.Fixed32(1397042547)},
-      }},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("es-US")},
-      protobuf.Field{Number: 14, Type: 2, Value: protobuf.Maybe{
-         protobuf.Field{Number: 12, Type: 5, Value: protobuf.Fixed32(1398091123)},
-      }},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("et")},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("eu")},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("fa")},
@@ -223,24 +181,12 @@ var Checkin = protobuf.Message{
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("gl")},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("gu")},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("hi")},
-      protobuf.Field{Number: 14, Type: 2, Value: protobuf.Maybe{
-         protobuf.Field{Number: 13, Type: 0, Value: protobuf.Varint(105)},
-      }},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("hi-IN")},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("hr")},
-      protobuf.Field{Number: 14, Type: 2, Value: protobuf.Maybe{
-         protobuf.Field{Number: 13, Type: 0, Value: protobuf.Varint(114)},
-      }},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("hr-HR")},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("hu")},
-      protobuf.Field{Number: 14, Type: 2, Value: protobuf.Maybe{
-         protobuf.Field{Number: 13, Type: 0, Value: protobuf.Varint(117)},
-      }},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("hu-HU")},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("hy")},
-      protobuf.Field{Number: 14, Type: 2, Value: protobuf.Maybe{
-         protobuf.Field{Number: 13, Type: 0, Value: protobuf.Varint(121)},
-      }},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("id")},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("in")},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("is")},
@@ -276,18 +222,9 @@ var Checkin = protobuf.Message{
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("nl-NL")},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("or")},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("pa")},
-      protobuf.Field{Number: 14, Type: 2, Value: protobuf.Maybe{
-         protobuf.Field{Number: 14, Type: 0, Value: protobuf.Varint(97)},
-      }},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("pl")},
-      protobuf.Field{Number: 14, Type: 2, Value: protobuf.Maybe{
-         protobuf.Field{Number: 14, Type: 0, Value: protobuf.Varint(108)},
-      }},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("pl-PL")},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("pt")},
-      protobuf.Field{Number: 14, Type: 2, Value: protobuf.Maybe{
-         protobuf.Field{Number: 14, Type: 0, Value: protobuf.Varint(116)},
-      }},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("pt-BR")},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("pt-PT")},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("ro")},
@@ -314,9 +251,6 @@ var Checkin = protobuf.Message{
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("tr-TR")},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("uk")},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("uk-UA")},
-      protobuf.Field{Number: 14, Type: 2, Value: protobuf.Maybe{
-         protobuf.Field{Number: 14, Type: 5, Value: protobuf.Fixed32(1096101227)},
-      }},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("ur")},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("uz")},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("vi")},
@@ -376,158 +310,119 @@ var Checkin = protobuf.Message{
       protobuf.Field{Number: 19, Type: 0, Value: protobuf.Varint(0)},
       protobuf.Field{Number: 20, Type: 0, Value: protobuf.Varint(1588760576)},
       protobuf.Field{Number: 21, Type: 0, Value: protobuf.Varint(4)},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Bytes("\n\x1dandroid.hardware.audio.output\x10\x00")},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Maybe{
+      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.audio.output")},
          protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(0)},
       }},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Bytes("\n\x1aandroid.hardware.bluetooth\x10\x00")},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Maybe{
+      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.bluetooth")},
          protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(0)},
       }},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Bytes("\n\x17android.hardware.camera\x10\x00")},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Maybe{
+      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.camera")},
          protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(0)},
       }},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Bytes("\n\x1bandroid.hardware.camera.any\x10\x00")},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Maybe{
+      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.camera.any")},
-         protobuf.Field{Number: 1, Type: 2, Value: protobuf.Maybe{
-            protobuf.Field{Number: 12, Type: 1, Value: protobuf.Fixed64(7507048032877306990)},
-            protobuf.Field{Number: 12, Type: 1, Value: protobuf.Fixed64(7146761200619447410)},
-            protobuf.Field{Number: 12, Type: 1, Value: protobuf.Fixed64(8750037977858729325)},
-         }},
          protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(0)},
       }},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Bytes("\n!android.hardware.camera.autofocus\x10\x00")},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Maybe{
+      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.camera.autofocus")},
          protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(0)},
       }},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Bytes("\n\x1aandroid.hardware.faketouch\x10\x00")},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Maybe{
+      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.faketouch")},
          protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(0)},
       }},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Bytes("\n\x19android.hardware.location\x10\x00")},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Maybe{
+      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.location")},
          protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(0)},
       }},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Bytes("\n!android.hardware.location.network\x10\x00")},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Maybe{
+      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.location.network")},
          protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(0)},
       }},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Bytes("\n\x1bandroid.hardware.microphone\x10\x00")},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Maybe{
+      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.microphone")},
-         protobuf.Field{Number: 1, Type: 2, Value: protobuf.Maybe{
-            protobuf.Field{Number: 12, Type: 1, Value: protobuf.Fixed64(7507048032877306990)},
-            protobuf.Field{Number: 12, Type: 1, Value: protobuf.Fixed64(7867337140998726770)},
-            protobuf.Field{Number: 13, Type: 1, Value: protobuf.Fixed64(7308901739622527587)},
-         }},
          protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(0)},
       }},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Bytes("\n!android.hardware.screen.landscape\x10\x00")},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Maybe{
+      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.screen.landscape")},
          protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(0)},
       }},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Bytes("\n android.hardware.screen.portrait\x10\x00")},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Maybe{
+      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.screen.portrait")},
          protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(0)},
       }},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Bytes("\n%android.hardware.sensor.accelerometer\x10\x00")},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Maybe{
+      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.sensor.accelerometer")},
          protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(0)},
       }},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Bytes("\n\x1fandroid.hardware.sensor.compass\x10\x00")},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Maybe{
+      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.sensor.compass")},
          protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(0)},
       }},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Bytes("\n\x1candroid.hardware.touchscreen\x10\x00")},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Maybe{
+      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.touchscreen")},
          protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(0)},
       }},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Bytes("\n'android.hardware.touchscreen.multitouch\x10\x00")},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Maybe{
+      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.touchscreen.multitouch")},
          protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(0)},
       }},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Bytes("\n0android.hardware.touchscreen.multitouch.distinct\x10\x00")},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Maybe{
+      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.touchscreen.multitouch.distinct")},
          protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(0)},
       }},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Bytes("\n0android.hardware.touchscreen.multitouch.jazzhand\x10\x00")},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Maybe{
+      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.touchscreen.multitouch.jazzhand")},
          protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(0)},
       }},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Bytes("\n\x1eandroid.hardware.usb.accessory\x10\x00")},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Maybe{
+      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.usb.accessory")},
          protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(0)},
       }},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Bytes("\n\x1candroid.software.app_widgets\x10\x00")},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Maybe{
+      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.software.app_widgets")},
          protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(0)},
       }},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Bytes("\n\x17android.software.backup\x10\x00")},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Maybe{
+      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.software.backup")},
          protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(0)},
       }},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Bytes("\n\"android.software.connectionservice\x10\x00")},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Maybe{
+      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.software.connectionservice")},
          protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(0)},
       }},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Bytes("\n\x1dandroid.software.device_admin\x10\x00")},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Maybe{
+      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.software.device_admin")},
          protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(0)},
       }},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Bytes("\n\x1candroid.software.home_screen\x10\x00")},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Maybe{
+      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.software.home_screen")},
          protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(0)},
       }},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Bytes("\n\x1eandroid.software.input_methods\x10\x00")},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Maybe{
+      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.software.input_methods")},
          protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(0)},
       }},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Bytes("\n\x1fandroid.software.live_wallpaper\x10\x00")},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Maybe{
+      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.software.live_wallpaper")},
          protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(0)},
       }},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Bytes("\n\x1eandroid.software.managed_users\x10\x00")},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Maybe{
+      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.software.managed_users")},
          protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(0)},
       }},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Bytes("\n\x16android.software.print\x10\x00")},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Maybe{
+      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.software.print")},
          protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(0)},
       }},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Bytes("\n\"android.software.voice_recognizers\x10\x00")},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Maybe{
+      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.software.voice_recognizers")},
          protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(0)},
       }},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Bytes("\n\x18android.software.webview\x10\x00")},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Maybe{
+      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.software.webview")},
          protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(0)},
       }},
