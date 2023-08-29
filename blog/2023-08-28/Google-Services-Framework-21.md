@@ -53,6 +53,16 @@ Press `O` to enter options. Move to `block_list` and press Enter. Then press
 
 https://docs.mitmproxy.org/stable/overview-features#blocklist
 
+this is the current latest working combination:
+
+<http://dl.google.com/android/repository/sys-img/google_apis/x86-21_r32.zip>
+
+~~~
+play -d com.android.vending -v 82011800
+~~~
+
+then:
+
 ~~~
 emulator -avd Pixel_3a_XL_API_21 -writable-system
 ~~~
@@ -65,11 +75,4 @@ adb push com.android.vending.apk /system/priv-app
 adb reboot
 ~~~
 
-then enable proxy, then install system certificate. this is the current latest
-working combination:
-
-<http://dl.google.com/android/repository/sys-img/google_apis/x86-21_r32.zip>
-
-~~~
-play -d com.android.vending -v 82011800
-~~~
+then enable proxy, then install system certificate.

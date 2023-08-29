@@ -9,20 +9,6 @@ import (
 )
 
 func Checkin_Acquire(platform string) ([]byte, error) {
-   res, err := http.Post(
-      "https://android.googleapis.com/checkin", "application/x-protobuffer",
-      bytes.NewReader(Phone_Acquire.Append(nil)),
-   )
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
-   return io.ReadAll(res.Body)
-}
-
 var Phone_Acquire = protobuf.Message{
    protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(0)},
    protobuf.Field{Number: 3, Type: 2, Value: protobuf.Bytes("1-da39a3ee5e6b4b0d3255bfef95601890afd80709")},
@@ -76,7 +62,7 @@ var Phone_Acquire = protobuf.Message{
    protobuf.Field{Number: 11, Type: 2, Value: protobuf.Bytes("")},
    protobuf.Field{Number: 12, Type: 2, Value: protobuf.Bytes("America/Denver")},
    protobuf.Field{Number: 14, Type: 0, Value: protobuf.Varint(3)},
-   protobuf.Field{Number: 15, Type: 2, Value: protobuf.Bytes("71Q6Rn2DDZl1zPDVaaeEHItd+Yg=")},
+   //protobuf.Field{Number: 15, Type: 2, Value: protobuf.Bytes("71Q6Rn2DDZl1zPDVaaeEHItd+Yg=")},
    protobuf.Field{Number: 16, Type: 2, Value: protobuf.Bytes("EMULATOR32X1X14X0")},
    protobuf.Field{Number: 18, Type: 2, Value: protobuf.Prefix{
       protobuf.Field{Number: 1, Type: 0, Value: protobuf.Varint(3)},
@@ -125,7 +111,7 @@ var Phone_Acquire = protobuf.Message{
       protobuf.Field{Number: 10, Type: 2, Value: protobuf.Bytes("android.software.print")},
       protobuf.Field{Number: 10, Type: 2, Value: protobuf.Bytes("android.software.voice_recognizers")},
       protobuf.Field{Number: 10, Type: 2, Value: protobuf.Bytes("android.software.webview")},
-      protobuf.Field{Number: 11, Type: 2, Value: protobuf.Bytes("x86")},
+      protobuf.Field{Number: 11, Type: 2, Value: protobuf.Bytes(platform)},
       protobuf.Field{Number: 12, Type: 0, Value: protobuf.Varint(1080)},
       protobuf.Field{Number: 13, Type: 0, Value: protobuf.Varint(2160)},
       protobuf.Field{Number: 14, Type: 2, Value: protobuf.Bytes("af")},
@@ -436,4 +422,17 @@ var Phone_Acquire = protobuf.Message{
    protobuf.Field{Number: 29, Type: 0, Value: protobuf.Varint(0)},
    protobuf.Field{Number: 30, Type: 0, Value: protobuf.Varint(0)},
    protobuf.Field{Number: 31, Type: 0, Value: protobuf.Varint(0)},
+}
+   res, err := http.Post(
+      "https://android.googleapis.com/checkin", "application/x-protobuffer",
+      bytes.NewReader(Phone_Acquire.Append(nil)),
+   )
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errors.New(res.Status)
+   }
+   return io.ReadAll(res.Body)
 }
