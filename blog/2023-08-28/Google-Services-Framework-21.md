@@ -3,14 +3,9 @@
 Android 5. uses bot guard. these are the involved packages:
 
 ~~~
-package: name='com.google.android.gsf' versionCode='21'
-versionName='5.0.2-1649326' platformBuildVersionName='5.0.2-1649326'
-
-package: name='com.google.android.gms' versionCode='214857013'
-versionName='21.48.57 (020700-424705839)' platformBuildVersionName='Tiramisu'
-
-package: name='com.android.vending' versionCode='83032110'
-versionName='30.3.21-21 [0] [PR] 445437866' platformBuildVersionName='Tiramisu'
+com.google.android.gsf
+com.google.android.gms
+com.android.vending
 ~~~
 
 what are the versions of Google Play Store? here is Open GApps version:
@@ -70,12 +65,11 @@ adb push com.android.vending.apk /system/priv-app
 adb reboot
 ~~~
 
-then enable proxy, then install system certificate.
+then enable proxy, then install system certificate. this is the current latest
+working combination:
+
+<http://dl.google.com/android/repository/sys-img/google_apis/x86-21_r32.zip>
 
 ~~~
-play -d com.android.vending -v 82195010 
-fail
-
-play -d com.android.vending -v 82201810
-pass
+play -d com.android.vending -v 82011800
 ~~~

@@ -92,7 +92,7 @@ func (c Config) Checkin(platform string) ([]byte, error) {
          // multiple APK valid range 14 - 0x7FFF_FFFF
          m.Add_Varint(10, 28)
       })
-      m.Add_Varint(18, 1) // voiceCapable?
+      m.Add_Varint(18, 1)
    })
    // int version
    // valid range 2 - 3
