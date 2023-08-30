@@ -27,8 +27,7 @@ func Acquire(h *play.Header, doc string) error {
       return err
    }
    req.Header.Set(h.Authorization())
-   // req.Header.Set(h.Device())
-   req.Header.Set("X-DFE-Device-Id", "306e9f7f4192be79")
+   req.Header.Set("X-DFE-Device-Id", device_ID)
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return err

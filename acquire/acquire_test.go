@@ -11,22 +11,28 @@ import (
    "testing"
 )
 
-type flags struct {
-   device bool
-   doc string
-   platform int64
-   trace bool
-   vc uint64
-}
-
 func Test_Acquire(t *testing.T) {
-   var f flags
-   flag.StringVar(&f.doc, "d", "", "doc")
-   flag.BoolVar(&f.device, "device", false, "device acquire (experimental)")
-   flag.Int64Var(&f.platform, "p", 0, play.Platforms.String())
-   flag.BoolVar(&f.trace, "t", false, "print full HTTP requests")
-   flag.Uint64Var(&f.vc, "v", 0, "version code")
-   flag.Parse()
+   var head play.Header
+   head.Set_Agent(false)
+   {
+      b, err := os.ReadFile(dir + "/token.txt")
+      if err != nil {
+         return nil, err
+      }
+      if err := head.Set_Authorization(b); err != nil {
+         return nil, err
+      }
+   }
+   {
+      b, err := os.ReadFile(dir + "/" + platform + ".bin")
+      if err != nil {
+         return nil, err
+      }
+      if err := head.Set_Device(b); err != nil {
+         return nil, err
+      }
+   }
+   return &head, nil
    dir, err := os.UserHomeDir()
    if err != nil {
       panic(err)
@@ -59,28 +65,4 @@ func Test_Acquire(t *testing.T) {
    default:
       flag.Usage()
    }
-}
-
-func (f flags) do_header(dir, platform string) (*play.Header, error) {
-   var head play.Header
-   head.Set_Agent(false)
-   {
-      b, err := os.ReadFile(dir + "/token.txt")
-      if err != nil {
-         return nil, err
-      }
-      if err := head.Set_Authorization(b); err != nil {
-         return nil, err
-      }
-   }
-   {
-      b, err := os.ReadFile(dir + "/" + platform + ".bin")
-      if err != nil {
-         return nil, err
-      }
-      if err := head.Set_Device(b); err != nil {
-         return nil, err
-      }
-   }
-   return &head, nil
 }
