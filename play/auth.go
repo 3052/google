@@ -57,9 +57,9 @@ func (a Access_Token) auth() string {
 }
 
 type Header struct {
-   agent func() (string, string)
-   authorization func() (string, string)
-   device func() (string, string)
+   Agent func() (string, string)
+   Authorization func() (string, string)
+   Device func() (string, string)
 }
 
 func (h *Header) Set_Agent(single bool) {
@@ -78,7 +78,7 @@ func (h *Header) Set_Agent(single bool) {
       b = strconv.AppendInt(b, 9_99_9_99_99, 10)
    }
    b = append(b, ')')
-   h.agent = func() (string, string) {
+   h.Agent = func() (string, string) {
       return "User-Agent", string(b)
    }
 }
@@ -113,7 +113,7 @@ func (h *Header) Set_Authorization(token []byte) error {
    if err != nil {
       return err
    }
-   h.authorization = func() (string, string) {
+   h.Authorization = func() (string, string) {
       return "Authorization", "Bearer " + access.auth()
    }
    return nil
@@ -132,7 +132,7 @@ func (h *Header) Set_Device(device []byte) error {
    if err != nil {
       return err
    }
-   h.device = func() (string, string) {
+   h.Device = func() (string, string) {
       return "X-DFE-Device-ID", strconv.FormatUint(id, 16)
    }
    return nil

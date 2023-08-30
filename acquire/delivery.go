@@ -1,4 +1,4 @@
-package play
+package acquire
 
 import (
    "154.pages.dev/encoding/protobuf"
