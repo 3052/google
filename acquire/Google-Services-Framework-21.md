@@ -61,7 +61,9 @@ this is the current latest working combination:
 play -d com.android.vending -v 82011800
 ~~~
 
-then:
+this older version of the Google Play Store is a little buggy, but it more or
+less works. if it crashes you should just be able to start it again. or you can
+bump up to like version 22 and the crashing seems to be resolved. then:
 
 ~~~
 emulator -avd Pixel_3a_XL_API_21 -writable-system
