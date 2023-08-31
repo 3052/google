@@ -1,12 +1,8 @@
 # event logging does not work
 
 ~~~
-10.0.0 pass
-9.0.1
-9.0.0
-v8.1.1
-v8.1.0
-v8.0.0 fail
+9.0.0 pass
+v8.1.1 fail
 ~~~
 
 if I have this script:
