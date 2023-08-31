@@ -44,11 +44,10 @@ we need to block these:
 https://rr3---sn-q4flrnsd.gvt1.com/play-apps-download-default/download/by-id
 
 Press `O` to enter options. Move to `block_list` and press Enter. Then press
-`a` to add a new entry. Press Esc when finished, then `q`.
+`a` to add a new entry. Press Esc when finished, then `q`. need this:
 
 ~~~
-/~u fdfe.acquire/444
-/~u play-apps-download-default.download.by-id/444
+/fdfe/uploadDeviceConfig
 ~~~
 
 https://docs.mitmproxy.org/stable/overview-features#blocklist
