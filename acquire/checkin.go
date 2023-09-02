@@ -1,21 +1,18 @@
-package main
+package acquire
 
 import (
    "154.pages.dev/encoding/protobuf"
    "bytes"
+   "errors"
    "io"
    "net/http"
-   "net/http/httputil"
    "net/url"
-   "os"
 )
 
-func main() {
+func checkin() (uint64, error) {
    var req http.Request
    req.Header = make(http.Header)
-   req.Header["Accept-Encoding"] = []string{"gzip"}
    req.Header["Connection"] = []string{"Keep-Alive"}
-   req.Header["Content-Length"] = []string{"14986"}
    req.Header["Content-Type"] = []string{"application/x-protobuffer"}
    req.Header["Host"] = []string{"android.googleapis.com"}
    req.Header["User-Agent"] = []string{"Dalvik/2.1.0 (Linux; U; Android 5.0.2; Android SDK built for x86 Build/LSY66K)"}
@@ -25,24 +22,28 @@ func main() {
    req.URL = new(url.URL)
    req.URL.Host = "android.googleapis.com"
    req.URL.Path = "/checkin"
-   req.URL.RawPath = ""
-   val := make(url.Values)
-   req.URL.RawQuery = val.Encode()
    req.URL.Scheme = "https"
-   req.Body = io.NopCloser(bytes.NewReader(body.Append(nil)))
+   req.Body = io.NopCloser(bytes.NewReader(checkin_body.Append(nil)))
    res, err := new(http.Transport).RoundTrip(&req)
    if err != nil {
-      panic(err)
+      return 0, err
    }
    defer res.Body.Close()
-   res_body, err := httputil.DumpResponse(res, true)
-   if err != nil {
-      panic(err)
+   if res.StatusCode != http.StatusOK {
+      return 0, errors.New(res.Status)
    }
-   os.Stdout.Write(res_body)
+   data, err := io.ReadAll(res.Body)
+   if err != nil {
+      return 0, err
+   }
+   mes, err := protobuf.Consume(data)
+   if err != nil {
+      return 0, err
+   }
+   return mes.Fixed64(7)
 }
 
-var body = protobuf.Message{
+var checkin_body = protobuf.Message{
    protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(0)},
    protobuf.Field{Number: 3, Type: 2, Value: protobuf.Bytes("1-da39a3ee5e6b4b0d3255bfef95601890afd80709")},
    protobuf.Field{Number: 4, Type: 2, Value: protobuf.Prefix{
