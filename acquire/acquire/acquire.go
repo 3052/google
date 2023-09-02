@@ -34,15 +34,11 @@ func main() {
          panic(err)
       }
    }
-   if err := acquire.Acquire_2(head, doc, version_code); err != nil {
+   if err := acquire.Acquire(head, doc); err != nil {
       panic(err)
    }
    fmt.Println("sleep")
-   //pass
-   //time.Sleep(69*time.Second)
-   
-   time.Sleep(59*time.Second)
-   
+   time.Sleep(9*time.Second)
    if err := acquire.New_Delivery(head, doc, version_code); err != nil {
       panic(err)
    }

@@ -11,8 +11,6 @@ import (
    "strconv"
 )
 
-const device_ID = "306e9f7f4192be79"
-
 func New_Delivery(h *play.Header, doc string, vc uint64) error {
    req, err := http.NewRequest(
       "GET", "https://play-fe.googleapis.com/fdfe/delivery", nil,
