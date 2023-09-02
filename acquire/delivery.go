@@ -4,6 +4,7 @@ import (
    "154.pages.dev/encoding/protobuf"
    "154.pages.dev/google/play"
    "errors"
+   "fmt"
    "io"
    "net/http"
    "net/url"
@@ -57,5 +58,6 @@ func New_Delivery(h *play.Header, doc string, vc uint64) error {
    if _, err := mes.Message(2); err != nil {
       return errors.New("appDeliveryData not found")
    }
+   fmt.Printf("%#v\n", mes)
    return nil
 }

@@ -5,6 +5,7 @@ import (
    "154.pages.dev/google/play"
    "bytes"
    "errors"
+   "fmt"
    "io"
    "net/http"
    "net/url"
@@ -47,28 +48,21 @@ func acquire_2(h *play.Header, doc string, vc uint64) error {
    req.URL.RawQuery = val.Encode()
    req.URL.Scheme = "https"
    req.Body = io.NopCloser(bytes.NewReader(acquire_2_body.Append(nil)))
-   req.Header.Set(h.Authorization())
    req.Header["X-Dfe-Device-Id"] = []string{device_ID}
-   req.Header["Accept-Encoding"] = []string{"identity"}
-   req.Header["Accept-Language"] = []string{"en-US"}
-   req.Header["Connection"] = []string{"Keep-Alive"}
+   req.Header.Set(h.Authorization())
    req.Header["Content-Type"] = []string{"application/x-protobuf"}
-   req.Header["Host"] = []string{"android.clients.google.com"}
-   req.Header["User-Agent"] = []string{"Android-Finsky/20.1.18-all%20%5B0%5D%20%5BPR%5D%20311592326 (api=3,versionCode=82011800,sdk=21,device=generic_x86,hardware=ranchu,product=sdk_google_phone_x86,platformVersionRelease=5.0.2,model=Android%20SDK%20built%20for%20x86,buildId=LSY66K,isWideScreen=0,supportedAbis=x86)"}
-   req.Header["X-Dfe-Client-Id"] = []string{"am-google"}
-   req.Header["X-Dfe-Content-Filters"] = []string{""}
-   //req.Header["X-Dfe-Cookie"] = []string{"EAEYACICVVMyUENqa2FOd29UTkRBMk5EZ3dNemt5TVRBeE5qWTVOakV6T0JJZ0NoQXhOamt6TXpVNU9UVTJOekkyTURZNEVnd0kxTDY2cHdZUW9OYWIyZ0k9ShIKAlVTEgwI1JLOqAYQqIbkvgNYAA"}
-   //req.Header["X-Dfe-Device-Config-Token"] = []string{"CjkaNwoTNDA2NDgwMzkyMTAxNjY5NjEzOBIgChAxNjkzMzU5OTU2NzI2MDY4EgwI1L66pwYQoNab2gI="}
-   //req.Header["X-Dfe-Encoded-Targets"] = []string{"CAESIFelooEG2AMBARShgQHKX6Y1szCeBwGOBcUMrjDtDtkPGnTjBQXQj4EGCcQCBAEBDecBfS+6AVYBIQojDSI3hAEODGMJWL0BjAIUTMoBGeIFBJICPJwCpwekBFm9BpIK4AXgH64c7gbkB5saAgGQBaUHpQLtCvcHqwLjCYMDvALLARakP6JFRbkIrhHpGv4ZkgbHO+A8EQ"}
-   //req.Header["X-Public-Android-Id"] = []string{"7cfdaa6592b8e5e4"}
-   req.Header["X-Dfe-Mccmnc"] = []string{"310260"}
-   req.Header["X-Dfe-Network-Type"] = []string{"3"}
-   req.Header["X-Dfe-Request-Params"] = []string{"timeoutMs=35000"}
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return err
    }
    defer res.Body.Close()
+   {
+      b, err := io.ReadAll(res.Body)
+      if err != nil {
+         return err
+      }
+      fmt.Printf("%q\n", b)
+   }
    if res.StatusCode != http.StatusOK {
       return errors.New(res.Status)
    }
