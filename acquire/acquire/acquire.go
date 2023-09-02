@@ -39,6 +39,7 @@ func main() {
    if err := acquire.Acquire(head, doc); err != nil {
       panic(err)
    }
+   return
    fmt.Println("sleep")
    time.Sleep(9 * time.Second)
    if err := acquire.New_Delivery(head, doc, version_code); err != nil {
