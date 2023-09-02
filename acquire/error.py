@@ -1,7 +1,10 @@
-from mitmproxy import http
-
 # Error
 # Please open my apps to establish a connection with the server.
+
+from mitmproxy import ctx, http
+
+def running():
+   ctx.options.showhost = True
 
 def request(f: http.HTTPFlow) -> None:
    if f.request.path.startswith('/fdfe/apps/contentSync'):
