@@ -1,6 +1,13 @@
 package main
 
-import "154.pages.dev/encoding/protobuf"
+import (
+   "154.pages.dev/encoding/protobuf"
+   "fmt"
+)
+
+func main() {
+   fmt.Println(Failure)
+}
 
 var Failure = protobuf.Message{
    protobuf.Field{Number: 1, Type: 2, Value: protobuf.Prefix{

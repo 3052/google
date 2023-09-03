@@ -11,10 +11,10 @@ import (
 )
 
 // Please open my apps to establish a connection with the server.
-// const device_ID = "3df176728bcff84c"
+const device_ID = "3df176728bcff84c"
 
 // pass
-const device_ID = "306e9f7f4192be79"
+//const device_ID = "306e9f7f4192be79"
 
 func Acquire(h *play.Header, doc string) error {
 	var m protobuf.Message
