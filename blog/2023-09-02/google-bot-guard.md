@@ -4,6 +4,10 @@ Android 5
 
 <https://wikipedia.org/wiki/Android_Lollipop>
 
+## API 25
+
+https://accounts.google.com/embedded/setup/v2/android
+
 ## API 21-24
 
 https://accounts.google.com/embedded/setup/android

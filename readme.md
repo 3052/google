@@ -79,10 +79,11 @@ play -d com.google.android.youtube -v 1537856960
 
 ## Why cant I login with email and password?
 
-Up to Android API 19, the login is protected with TLS fingerprinting, which is
-difficult but possible to bypass. Since API 21, Google uses bot-guard via
-JavaScript to protect the login. I do not know how to reverse that, and I did
-not find any implementations online.
+Up to Google Services Framework 19, the login is protected with TLS
+fingerprinting, which is difficult but possible to bypass. Since Google
+Services Framework 21, Google uses bot-guard via JavaScript to protect the
+login. I do not know how to reverse that, and I did not find any
+implementations online.
 
 ## Contact
 
