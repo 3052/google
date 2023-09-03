@@ -28,3 +28,14 @@ works with these:
 sdkVersion:'9'
 targetSdkVersion:'23'
 ~~~
+
+can we get this working with API Level 23? choose this:
+
+API Level | Target
+----------|----------
+23        | Android 6
+
+~~~
+play -d com.android.vending -v 82011800
+play -d com.google.android.gms -v 9452470
+~~~
