@@ -7,6 +7,7 @@ import (
    "io"
    "net/http"
    "net/url"
+   "strconv"
 )
 
 func checkin() (uint64, error) {
@@ -42,6 +43,14 @@ func checkin() (uint64, error) {
    }
    return mes.Fixed64(7)
 }
+
+var Device_ID = strconv.FormatInt(3524894927667404338, 16)
+
+// Please open my apps to establish a connection with the server.
+//const device_ID = "3df176728bcff84c"
+
+// pass
+//const device_ID = "306e9f7f4192be79"
 
 var checkin_body = protobuf.Message{
    protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(0)},

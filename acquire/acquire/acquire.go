@@ -24,7 +24,7 @@ func main() {
    head := new(play.Header)
    head.Set_Agent(false)
    option.No_Location()
-   option.Verbose()
+   option.Trace()
    {
       b, err := os.ReadFile(home + "/token.txt")
       if err != nil {
