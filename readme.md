@@ -85,6 +85,8 @@ Services Framework 21, Google uses bot-guard via JavaScript to protect the
 login. I do not know how to reverse that, and I did not find any
 implementations online.
 
+https://android-developers.googleblog.com/2023/07/google-play-services-discontinuing-updates-for-kitkat.html
+
 ## Contact
 
 <dl>

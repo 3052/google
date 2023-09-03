@@ -90,7 +90,7 @@ func (h *Header) Set_Authorization(token []byte) error {
    if err != nil {
       return err
    }
-   // Android API 21
+   // Google Services Framework 21 
    res, err := http.PostForm(
       "https://android.googleapis.com/auth", url.Values{
          "Token": {refresh.token()},
