@@ -40,59 +40,118 @@ panic: appDeliveryData not found
 panic: appDeliveryData not found
 ~~~
 
-we should be able to just pull the files from the device itself. its these files:
+we should be able to just pull the files from the device itself. its these:
 
 ~~~
-x86\system.img\priv-app\GoogleServicesFramework\GoogleServicesFramework.apk
-x86\system.img\priv-app\GoogleServicesFramework\x86\GoogleServicesFramework.odex
+x86\system.img\priv-app\GoogleServicesFramework
+x86\system.img\framework\x86\boot.art
 ~~~
 
 now lets try this:
 
 <http://dl.google.com/android/repository/sys-img/android/x86-21_r05.zip>
 
-lets try just the APK to start. push:
-
 ~~~
-adb push GoogleServicesFramework.apk /system/priv-app
+adb push GoogleServicesFramework /system/priv-app
+adb push boot.art /system/framework/x86/boot.art
 adb push com.google.android.gms-202414013.apk /system/priv-app
 adb push com.google.android.play.games-95330070.apk /system/app
 ~~~
 
-fail:
-
-> Unfortunately, Google Services Framework has stopped.
-
-lets try the whole folder:
+> Something went wrong
+>
+> Google Play Games is having trouble with Google Play services. Please try
+> again.
 
 ~~~
+x86\system.img\app\PlayGames
+x86\system.img\framework\x86\boot.art
 x86\system.img\priv-app\GoogleServicesFramework
+x86\system.img\priv-app\PrebuiltGmsCore
 ~~~
 
 push:
 
 ~~~
 adb push GoogleServicesFramework /system/priv-app
-adb push com.google.android.gms-202414013.apk /system/priv-app
-adb push com.google.android.play.games-95330070.apk /system/app
+adb push PlayGames /system/app
+adb push PrebuiltGmsCore /system/priv-app
+adb push boot.art /system/framework/x86
 ~~~
 
-fail:
-
-> Unfortunately, Google Services Framework has stopped.
-
-lets try `lib` too:
+> Unfortunately, Google Play services has stopped.
 
 ~~~
-x86\system.img\lib
+x86\system.img\app\PlayGames
+x86\system.img\framework\x86\boot.art
+x86\system.img\priv-app\GoogleLoginService
 x86\system.img\priv-app\GoogleServicesFramework
+x86\system.img\priv-app\PrebuiltGmsCore
 ~~~
 
 push:
 
 ~~~
+adb push GoogleLoginService /system/priv-app
 adb push GoogleServicesFramework /system/priv-app
-adb push lib /system
-adb push com.google.android.gms-202414013.apk /system/priv-app
-adb push com.google.android.play.games-95330070.apk /system/app
+adb push PlayGames /system/app
+adb push PrebuiltGmsCore /system/priv-app
+adb push boot.art /system/framework/x86
+~~~
+
+maybe the better option is to just use this:
+
+<http://dl.google.com/android/repository/sys-img/google_apis/x86-21_r32.zip>
+
+comes with this:
+
+~~~
+package: name='com.google.android.gms' versionCode='202414013'
+versionName='20.24.14 (020700-319035315)' compileSdkVersion='30'
+~~~
+
+better:
+
+~~~
+play -d com.google.android.gms -v 9452270
+~~~
+
+result:
+
+~~~
+package: name='com.google.android.gms' versionCode='9452270'
+versionName='9.4.52 (270-127739847)' platformBuildVersionName='6.0-2166767'
+sdkVersion:'21'
+~~~
+
+install:
+
+~~~
+adb install com.google.android.gms-9452270.apk
+~~~
+
+result:
+
+~~~
+Failure [INSTALL_FAILED_DUPLICATE_PERMISSION
+perm=com.google.android.gms.WRITE_VERIFY_APPS_CONSENT
+pkg=com.google.android.gms]
+~~~
+
+search:
+
+~~~
+INSTALL_FAILED_DUPLICATE_PERMISSION com.google.android.gms
+~~~
+
+then:
+
+~~~
+adb install -r -d com.google.android.gms-9452270.apk
+~~~
+
+result:
+
+~~~
+INSTALL_FAILED_DUPLICATE_PERMISSION
 ~~~
