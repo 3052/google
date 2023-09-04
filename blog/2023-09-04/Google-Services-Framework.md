@@ -99,59 +99,40 @@ adb push PrebuiltGmsCore /system/priv-app
 adb push boot.art /system/framework/x86
 ~~~
 
-maybe the better option is to just use this:
-
-<http://dl.google.com/android/repository/sys-img/google_apis/x86-21_r32.zip>
-
-comes with this:
+> Unfortunately, Google Play services has stopped.
 
 ~~~
-package: name='com.google.android.gms' versionCode='202414013'
-versionName='20.24.14 (020700-319035315)' compileSdkVersion='30'
+x86\system.img\app
+x86\system.img\framework (exclude x86\boot.oat)
+x86\system.img\priv-app
 ~~~
 
-better:
+push:
 
 ~~~
-play -d com.google.android.gms -v 9452270
+adb push system/app /system
+adb push system/framework /system
+adb push system/priv-app /system
 ~~~
 
-result:
+> Unfortunately, Google Play services has stopped.
 
 ~~~
-package: name='com.google.android.gms' versionCode='9452270'
-versionName='9.4.52 (270-127739847)' platformBuildVersionName='6.0-2166767'
-sdkVersion:'21'
+x86\system.img\app\PlayGames
+x86\system.img\framework (exclude x86\boot.oat)
+x86\system.img\lib
+x86\system.img\priv-app
+x86\system.img\vendor
 ~~~
 
-install:
+push:
 
 ~~~
-adb install com.google.android.gms-9452270.apk
+adb push system/app/PlayGames /system/app
+adb push system/framework /system
+adb push system/lib /system
+adb push system/priv-app /system
+adb push system/vendor /system
 ~~~
 
-result:
-
-~~~
-Failure [INSTALL_FAILED_DUPLICATE_PERMISSION
-perm=com.google.android.gms.WRITE_VERIFY_APPS_CONSENT
-pkg=com.google.android.gms]
-~~~
-
-search:
-
-~~~
-INSTALL_FAILED_DUPLICATE_PERMISSION com.google.android.gms
-~~~
-
-then:
-
-~~~
-adb install -r -d com.google.android.gms-9452270.apk
-~~~
-
-result:
-
-~~~
-INSTALL_FAILED_DUPLICATE_PERMISSION
-~~~
+> Unfortunately, Google Play services has stopped.
