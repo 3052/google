@@ -137,8 +137,7 @@ adb push system/vendor /system
 
 > Unfortunately, Google Play services has stopped.
 
-- https://apkmirror.com/apk/google-inc/google-services-framework
-- https://github.com/illogical-robot/apkmirror-public/issues/261
+https://github.com/illogical-robot/apkmirror-public/issues/261
 
 ~~~
 Date: Mon, 4 Sep 2023 09:41:14 -0500
@@ -150,4 +149,20 @@ is not downloadable, even using the internal Google APIs. So my question is,
 where are you getting this app from?
 
 https://apkpure.com/google-services-framework/com.google.android.gsf
+~~~
+
+this is interesting. this:
+
+http://apkpure.com/google-services-framework/com.google.android.gsf/download
+
+~~~
+bd32424203e0fb25f36b57e5aa356f9bdd1da998
+~~~
+
+matches with this:
+
+http://apkmirror.com/apk/google-inc/google-services-framework/google-services-framework-14-release
+
+~~~
+Signature: bd32424203e0fb25f36b57e5aa356f9bdd1da998
 ~~~
