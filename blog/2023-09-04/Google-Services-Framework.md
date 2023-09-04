@@ -136,3 +136,18 @@ adb push system/vendor /system
 ~~~
 
 > Unfortunately, Google Play services has stopped.
+
+- https://apkmirror.com/apk/google-inc/google-services-framework
+- https://github.com/illogical-robot/apkmirror-public/issues/261
+
+~~~
+Date: Mon, 4 Sep 2023 09:41:14 -0500
+Subject: Google Services Framework
+To: opensource@apkpure.com
+
+My understanding is the Google Services Framework app (com.google.android.gsf)
+is not downloadable, even using the internal Google APIs. So my question is,
+where are you getting this app from?
+
+https://apkpure.com/google-services-framework/com.google.android.gsf
+~~~
