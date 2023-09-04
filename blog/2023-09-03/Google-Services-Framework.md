@@ -151,18 +151,4 @@ where are you getting this app from?
 https://apkpure.com/google-services-framework/com.google.android.gsf
 ~~~
 
-this is interesting. this:
-
-http://apkpure.com/google-services-framework/com.google.android.gsf/download
-
-~~~
-bd32424203e0fb25f36b57e5aa356f9bdd1da998
-~~~
-
-matches with this:
-
-http://apkmirror.com/apk/google-inc/google-services-framework/google-services-framework-14-release
-
-~~~
-Signature: bd32424203e0fb25f36b57e5aa356f9bdd1da998
-~~~
+https://forum.xda-developers.com/t/extract-google-services-framework.4624097
