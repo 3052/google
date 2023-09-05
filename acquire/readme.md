@@ -19,3 +19,12 @@ X-DFE-Device-Id: 306e9f7f4192be79
 ~~~
 
 so we can borrow this ID for now, and try to get the rest of the request working.
+when does `/fdfe/purchase` switch to `/fdfe/acquire`?
+
+~~~
+apkmirror.com/apk/google-inc/google-play-store/google-play-store-11-9-30-release
+/fdfe/acquire
+
+apkmirror.com/apk/google-inc/google-play-store/google-play-store-10-8-50-release
+/fdfe/purchase
+~~~
