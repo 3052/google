@@ -8,7 +8,7 @@
 
 Download APK from Google Play or send API requests
 
-## How to install?
+## How to build?
 
 This module works with Windows, macOS or Linux. Download Go [1] and extract
 archive. Then download Google Play Zip and extract archive. Then navigate to:
