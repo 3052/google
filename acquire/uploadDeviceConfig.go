@@ -1,23 +1,23 @@
-package main
+package acquire
 
 import (
    "154.pages.dev/encoding/protobuf"
    "bytes"
+   "errors"
+   "fmt"
    "io"
    "net/http"
-   "net/http/httputil"
    "net/url"
-   "os"
+   "strconv"
 )
 
-func main() {
+func (c checkin) upload_device() error {
    var req http.Request
    req.Header = make(http.Header)
    req.Header["Authorization"] = []string{"GoogleLogin auth=aghNhuY8mfnldimVPcpmITL5Q2e6-HLpqLBU08wN8MqBroyW0EzpdCgO58px5BrayQ6rvQ."}
    req.Header["Content-Type"] = []string{"application/x-protobuf"}
    req.Header["Host"] = []string{"android.clients.google.com"}
    req.Header["User-Agent"] = []string{"Android-Finsky/11.9.30-all%20%5B0%5D%20%5BPR%5D%20215272473 (api=3,versionCode=81193000,sdk=21,device=generic_x86,hardware=ranchu,product=sdk_google_phone_x86,platformVersionRelease=5.0.2,model=Android%20SDK%20built%20for%20x86,buildId=LSY66K,isWideScreen=0,supportedAbis=x86)"}
-   req.Header["X-Dfe-Device-Id"] = []string{"337ff139c042f382"}
    req.Method = "POST"
    req.ProtoMajor = 1
    req.ProtoMinor = 1
@@ -26,16 +26,29 @@ func main() {
    req.URL.Path = "/fdfe/uploadDeviceConfig"
    req.URL.Scheme = "https"
    req.Body = io.NopCloser(bytes.NewReader(device_config.Append(nil)))
+   id, err := c.id()
+   if err != nil {
+      return err
+   }
+   req.Header["X-Dfe-Device-Id"] = []string{id}
+   fmt.Println(id)
    res, err := new(http.Transport).RoundTrip(&req)
    if err != nil {
-      panic(err)
+      return err
    }
    defer res.Body.Close()
-   res_body, err := httputil.DumpResponse(res, true)
-   if err != nil {
-      panic(err)
+   if res.StatusCode != http.StatusOK {
+      return errors.New(res.Status)
    }
-   os.Stdout.Write(res_body)
+   return nil
+}
+
+func (c checkin) id() (string, error) {
+   id, err := c.m.Fixed64(7)
+   if err != nil {
+      return "", err
+   }
+   return strconv.FormatUint(id, 16), nil
 }
 
 var device_config = protobuf.Message{

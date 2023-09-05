@@ -7,10 +7,12 @@ import (
    "io"
    "net/http"
    "net/url"
-   "strconv"
 )
 
-func checkin() (uint64, error) {
+// pass
+const Device_ID = "306e9f7f4192be79"
+
+func new_checkin() (*checkin, error) {
    var req http.Request
    req.Header = make(http.Header)
    req.Header["Connection"] = []string{"Keep-Alive"}
@@ -27,30 +29,29 @@ func checkin() (uint64, error) {
    req.Body = io.NopCloser(bytes.NewReader(checkin_body.Append(nil)))
    res, err := new(http.Transport).RoundTrip(&req)
    if err != nil {
-      return 0, err
+      return nil, err
    }
    defer res.Body.Close()
    if res.StatusCode != http.StatusOK {
-      return 0, errors.New(res.Status)
+      return nil, errors.New(res.Status)
    }
-   data, err := io.ReadAll(res.Body)
-   if err != nil {
-      return 0, err
+   var check checkin
+   {
+      b, err := io.ReadAll(res.Body)
+      if err != nil {
+         return nil, err
+      }
+      check.m, err = protobuf.Consume(b)
+      if err != nil {
+         return nil, err
+      }
    }
-   mes, err := protobuf.Consume(data)
-   if err != nil {
-      return 0, err
-   }
-   return mes.Fixed64(7)
+   return &check, nil
 }
 
-var Device_ID = strconv.FormatInt(3524894927667404338, 16)
-
-// fail
-//const device_ID = "3df176728bcff84c"
-
-// pass
-//const device_ID = "306e9f7f4192be79"
+type checkin struct {
+   m protobuf.Message
+}
 
 var checkin_body = protobuf.Message{
    protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(0)},
