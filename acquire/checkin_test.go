@@ -6,9 +6,9 @@ import (
 )
 
 func Test_Checkin(t *testing.T) {
-   id, err := checkin()
+   check, err := new_checkin()
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%x\n", id)
+   fmt.Println(check)
 }

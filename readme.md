@@ -85,9 +85,9 @@ play -d com.google.android.youtube -v 1537856960
 Non goals:
 
 Supporting older items. sadly this means that email/password login is no longer
-possible, and maybe never be again. up to Google Services Framework 19, the
-login is protected with TLS fingerprinting, which is difficult but possible to
-bypass. Since Google Services Framework 21, Google uses bot-guard via
+possible, and maybe never be again. up to Google Services Framework 19 (2013),
+the login is protected with TLS fingerprinting, which is difficult but possible
+to bypass. Since Google Services Framework 21 (2014), Google uses bot-guard via
 JavaScript to protect the login. I do not know how to reverse that, and I did
 not find any implementations online.
 
