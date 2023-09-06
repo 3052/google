@@ -13,8 +13,8 @@ import (
 )
 
 type AuthData struct {
-	Email                         string
-	AASToken                      string
+	_Email                        string
+	_AASToken                     string
 	AuthToken                     string
 	GsfID                         string
 	DeviceCheckInConsistencyToken string
@@ -165,7 +165,7 @@ func (client *GooglePlayClient) setDefaultAuthParams(params *url.Values) {
 		params.Set("androidId", client.AuthData.GsfID)
 	}
 	params.Set("sdk_version", strconv.Itoa(int(client.DeviceInfo.Build.GetSdkVersion())))
-	params.Set("email", client.AuthData.Email)
+	params.Set("email", client.AuthData._Email)
 	params.Set("google_play_services_version", strconv.Itoa(int(client.DeviceInfo.Build.GetGoogleServices())))
 	params.Set("device_country", "us")
 	params.Set("lang", "en-gb")
@@ -176,7 +176,7 @@ func (client *GooglePlayClient) setAuthParams(params *url.Values) {
 	params.Set("app", "com.android.vending")
 	params.Set("client_sig", "38918a453d07199354f8b19af05ec6562ced5788")
 	params.Set("callerPkg", "com.google.android.gms")
-	params.Set("Token", client.AuthData.AASToken)
+	params.Set("Token", client.AuthData._AASToken)
 	params.Set("oauth2_foreground", "1")
 	params.Set("token_request_options", "CAA4AVAB")
 	params.Set("check_email", "1")
