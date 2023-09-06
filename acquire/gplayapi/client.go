@@ -24,6 +24,9 @@ func doReq(r *http.Request) ([]byte, int, error) {
       return nil, 0, err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, 0, errors.New(res.Status)
+   }
    b, err := io.ReadAll(res.Body)
    return b, res.StatusCode, err
 }

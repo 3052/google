@@ -4,12 +4,11 @@ import (
    "bytes"
    "errors"
    "fmt"
+   "github.com/Juby210/gplayapi-go/gpproto"
+   "google.golang.org/protobuf/proto"
    "net/http"
    "net/url"
    "strconv"
-
-   "github.com/Juby210/gplayapi-go/gpproto"
-   "google.golang.org/protobuf/proto"
 )
 
 type _AuthData struct {
@@ -66,14 +65,14 @@ func (client *_GooglePlayClient) uploadDeviceConfig() (*gpproto.UploadDeviceConf
    return payload.UploadDeviceConfigResponse, nil
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
 func (client *_GooglePlayClient) _GenerateGPToken() (string, error) {
    params := &url.Values{}
    client.setDefaultAuthParams(params)
    client.setAuthParams(params)
-
-   params.Set("app", "com.google.android.gms")
    params.Set("service", "oauth2:https://www.googleapis.com/auth/googleplay")
-
+   params.Set("app", "com.google.android.gms")
    r, _ := http.NewRequest("POST", _UrlAuth+"?"+params.Encode(), nil)
    client.setAuthHeaders(r)
    b, _, err := doReq(r)
