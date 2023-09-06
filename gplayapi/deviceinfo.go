@@ -11,34 +11,34 @@ import (
 
 type (
 	DeviceInfo struct {
-		_Build          *DeviceBuildInfo
-		_SimOperator    string
-		Platforms       []string
-		OtaInstalled    bool
-		CellOperator    string
-		Roaming         string
-		TimeZone        string
-		TouchScreen     int32
-		Keyboard        int32
-		Navigation      int32
-		ScreenLayout    int32
-		Screen          *DeviceInfoScreen
-		GLVersion       int32
-		GLExtensions    []string
-		SharedLibraries []string
-		Features        []string
-		Locales         []string
+		_Build           *DeviceBuildInfo
+		_SimOperator     string
+		_Platforms       []string
+		_OtaInstalled    bool
+		_CellOperator    string
+		_Roaming         string
+		_TimeZone        string
+		_TouchScreen     int32
+		_Keyboard        int32
+		_Navigation      int32
+		_ScreenLayout    int32
+		_Screen          *DeviceInfoScreen
+		_GLVersion       int32
+		_GLExtensions    []string
+		_SharedLibraries []string
+		_Features        []string
+		_Locales         []string
 	}
 
 	DeviceBuildInfo struct {
 		*gpproto.AndroidBuildProto
-		VersionRelease int
+		_VersionRelease int
 	}
 
 	DeviceInfoScreen struct {
-		Density int32
-		Width   int32
-		Height  int32
+		_Density int32
+		_Width   int32
+		_Height  int32
 	}
 )
 
@@ -54,11 +54,11 @@ func (i *DeviceInfo) GetUserAgent() string {
 		"device=" + i._Build.GetDevice(),
 		"hardware=" + i._Build.GetDevice(),
 		"product=" + i._Build.GetProduct(),
-		"platformVersionRelease=" + strconv.Itoa(i._Build.VersionRelease),
+		"platformVersionRelease=" + strconv.Itoa(i._Build._VersionRelease),
 		"model=" + i._Build.GetModel(),
 		"buildId=" + i._Build.GetId(),
 		"isWideScreen=0",
-		"supportedAbis=" + strings.Join(i.Platforms, ";"),
+		"supportedAbis=" + strings.Join(i._Platforms, ";"),
 	}
 	return "Android-Finsky/15.8.23-all [0] [PR] 259261889 (" + strings.Join(params, ",") + ")"
 }
@@ -73,13 +73,13 @@ func (i *DeviceInfo) GenerateAndroidCheckInRequest() *gpproto.AndroidCheckinRequ
 		Checkin: &gpproto.AndroidCheckinProto{
 			Build:           i._Build.AndroidBuildProto,
 			LastCheckinMsec: &int0,
-			CellOperator:    &i.CellOperator,
+			CellOperator:    &i._CellOperator,
 			SimOperator:     &i._SimOperator,
-			Roaming:         &i.Roaming,
+			Roaming:         &i._Roaming,
 			UserNumber:      ptrInt32(0),
 		},
 		Locale:              ptrStr("en_GB"),
-		TimeZone:            &i.TimeZone,
+		TimeZone:            &i._TimeZone,
 		Version:             ptrInt32(3),
 		DeviceConfiguration: i.GetDeviceConfigProto(),
 		Fragment:            ptrInt32(0),
@@ -89,21 +89,21 @@ func (i *DeviceInfo) GenerateAndroidCheckInRequest() *gpproto.AndroidCheckinRequ
 func (i *DeviceInfo) GetDeviceConfigProto() *gpproto.DeviceConfigurationProto {
 	var mem int64 = 8589935000
 	return &gpproto.DeviceConfigurationProto{
-		TouchScreen:            &i.TouchScreen,
-		Keyboard:               &i.Keyboard,
-		Navigation:             &i.Navigation,
-		ScreenLayout:           &i.ScreenLayout,
+		TouchScreen:            &i._TouchScreen,
+		Keyboard:               &i._Keyboard,
+		Navigation:             &i._Navigation,
+		ScreenLayout:           &i._ScreenLayout,
 		HasHardKeyboard:        ptrBool(false),
 		HasFiveWayNavigation:   ptrBool(false),
-		ScreenDensity:          &i.Screen.Density,
-		GlEsVersion:            &i.GLVersion,
-		SystemSharedLibrary:    i.SharedLibraries,
-		SystemAvailableFeature: i.Features,
-		NativePlatform:         i.Platforms,
-		ScreenWidth:            &i.Screen.Width,
-		ScreenHeight:           &i.Screen.Height,
-		SystemSupportedLocale:  i.Locales,
-		GlExtension:            i.GLExtensions,
+		ScreenDensity:          &i._Screen._Density,
+		GlEsVersion:            &i._GLVersion,
+		SystemSharedLibrary:    i._SharedLibraries,
+		SystemAvailableFeature: i._Features,
+		NativePlatform:         i._Platforms,
+		ScreenWidth:            &i._Screen._Width,
+		ScreenHeight:           &i._Screen._Height,
+		SystemSupportedLocale:  i._Locales,
+		GlExtension:            i._GLExtensions,
 		DeviceClass:            ptrInt32(0),
 		LowRamDevice:           ptrInt32(0),
 		TotalMemoryBytes:       &mem,
@@ -114,7 +114,7 @@ func (i *DeviceInfo) GetDeviceConfigProto() *gpproto.DeviceConfigurationProto {
 
 func (i *DeviceInfo) GetDeviceFeatures() (ret []*gpproto.DeviceFeature) {
 	var int0 int32 = 0
-	for _, f := range i.Features {
+	for _, f := range i._Features {
 		name := f
 		ret = append(ret, &gpproto.DeviceFeature{Name: &name, Value: &int0})
 	}
