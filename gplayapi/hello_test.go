@@ -2,7 +2,9 @@ package gplayapi
 
 import (
    "encoding/json"
+   "net/url"
    "os"
+   "strings"
    "testing"
 )
 
