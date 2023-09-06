@@ -9,7 +9,6 @@ import (
 )
 
 var (
-   unknown               = ptrStr("unknown")
    androidGoogle         = ptrStr("android-google")
    falsePtr              = ptrBool(false)
    roaming               = "mobile-notroaming"
@@ -62,12 +61,12 @@ var (
       _Locales:         locales,
    }
 )
+
 type (
    _DeviceInfo struct {
       _Build           *_DeviceBuildInfo
       _SimOperator     string
       _Platforms       []string
-      _OtaInstalled    bool
       _CellOperator    string
       _Roaming         string
       _TimeZone        string
