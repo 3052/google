@@ -1,4 +1,4 @@
-package main
+package play
 
 import (
    "net/http"
@@ -7,11 +7,22 @@ import (
    "os"
 )
 
-func main() {
-   var req http.Request
+func token() (string, error) {
+   b, err := os.ReadFile(`C:\Users\Steven\google\play\token.txt`)
+   if err != nil {
+      return "", err
+   }
+   v, err := url.ParseQuery(strings.ReplaceAll(string(b), "\n", "&"))
+   if err != nil {
+      return "", err
+   }
+   return v.Get("Token"), nil
+}
+
+func (c checkin) auth() (url.Values, error) {
+   req := new(http.Request)
    req.Header = make(http.Header)
    req.Header["App"] = []string{"com.google.android.gms"}
-   req.Header["Device"] = []string{"31e6cfcf2d498dc5"}
    req.Header["Host"] = []string{"android.clients.google.com"}
    req.Header["User-Agent"] = []string{"GoogleAuth/1.4 sargo PQ3B.190705.003"}
    req.Method = "POST"
@@ -21,8 +32,6 @@ func main() {
    req.URL.Host = "android.clients.google.com"
    req.URL.Path = "/auth"
    val := make(url.Values)
-   val["Token"] = []string{"aas_et/AKppINb5G..."}
-   val["androidId"] = []string{"31e6cfcf2d498dc5"}
    val["app"] = []string{"com.google.android.gms"}
    val["callerPkg"] = []string{"com.google.android.gms"}
    val["callerSig"] = []string{"38918a453d07199354f8b19af05ec6562ced5788"}
@@ -37,16 +46,34 @@ func main() {
    val["service"] = []string{"oauth2:https://www.googleapis.com/auth/googleplay"}
    val["system_partition"] = []string{"1"}
    val["token_request_options"] = []string{"CAA4AVAB"}
+   {
+      t, err := token()
+      if err != nil {
+         return nil, err
+      }
+      val["Token"] = []string{t}
+   }
+   {
+      id, err := c.id()
+      if err != nil {
+         return nil, err
+      }
+      req.Header["Device"] = []string{id}
+      val["androidId"] = []string{id}
+   }
    req.URL.RawQuery = val.Encode()
    req.URL.Scheme = "https"
-   res, err := new(http.Transport).RoundTrip(&req)
+   res, err := http.DefaultClient.Do(req)
    if err != nil {
-      panic(err)
+      return nil, err
    }
    defer res.Body.Close()
-   res_body, err := httputil.DumpResponse(res, true)
-   if err != nil {
-      panic(err)
+   if res.StatusCode != http.StatusOK {
+      return errors.New(res.Status)
    }
-   os.Stdout.Write(res_body)
+   text, err := io.ReadAll(res.Body)
+   if err != nil {
+      return nil, err
+   }
+   return url.ParseQuery(string(text))
 }

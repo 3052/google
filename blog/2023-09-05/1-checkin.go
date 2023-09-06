@@ -1,4 +1,4 @@
-package main
+package play
 
 import (
    "154.pages.dev/encoding/protobuf"
@@ -10,8 +10,20 @@ import (
    "os"
 )
 
-func main() {
-   var req http.Request
+func (c checkin) id() (string, error) {
+   id, err := c.m.Fixed64(7)
+   if err != nil {
+      return "", err
+   }
+   return strconv.FormatUint(id, 16), nil
+}
+
+type checkin struct {
+   m protobuf.Message
+}
+
+func new_checkin() (*checkin, error) {
+   req := new(http.Request)
    req.Header = make(http.Header)
    req.Header["App"] = []string{"com.google.android.gms"}
    req.Header["Content-Type"] = []string{"application/x-protobuffer"}
@@ -25,16 +37,26 @@ func main() {
    req.URL.Path = "/checkin"
    req.URL.Scheme = "https"
    req.Body = io.NopCloser(bytes.NewReader(checkin_body.Append(nil)))
-   res, err := new(http.Transport).RoundTrip(&req)
+   res, err := http.DefaultClient.Do(req)
    if err != nil {
-      panic(err)
+      return nil, err
    }
    defer res.Body.Close()
-   res_body, err := httputil.DumpResponse(res, true)
-   if err != nil {
-      panic(err)
+   if res.StatusCode != http.StatusOK {
+      return nil, errors.New(res.Status)
    }
-   os.Stdout.Write(res_body)
+   var check checkin
+   {
+      b, err := io.ReadAll(res.Body)
+      if err != nil {
+         return nil, err
+      }
+      check.m, err = protobuf.Consume(m)
+      if err != nil {
+         return nil, err
+      }
+   }
+   return &check, nil
 }
 
 var checkin_body = protobuf.Message{
