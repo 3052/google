@@ -92,13 +92,6 @@ func (client *_GooglePlayClient) _RegenerateGPToken() (err error) {
 
 //goland:noinspection GoUnusedConst
 const (
-	_ImageTypeAppScreenshot = iota + 1
-	_ImageTypePlayStorePageBackground
-	_ImageTypeYoutubeVideoLink
-	_ImageTypeAppIcon
-	_ImageTypeCategoryIcon
-	_ImageTypeYoutubeVideoThumbnail = 13
-
 	_UrlBase               = "https://android.clients.google.com"
 	_UrlFdfe               = _UrlBase + "/fdfe"
 	_UrlAuth               = _UrlBase + "/auth"
@@ -110,8 +103,6 @@ const (
 	_UrlTosAccept          = _UrlFdfe + "/acceptTos"
 	_UrlUploadDeviceConfig = _UrlFdfe + "/uploadDeviceConfig"
 )
-
-var _ErrNilPayload = errors.New("got nil payload from google play")
 
 type _GooglePlayClient struct {
 	_AuthData   *_AuthData
