@@ -4,7 +4,6 @@ import (
    "154.pages.dev/encoding/protobuf"
    "bytes"
    "errors"
-   "fmt"
    "io"
    "net/http"
    "net/url"
@@ -12,7 +11,7 @@ import (
 )
 
 func (c checkin) upload_device() error {
-   var req http.Request
+   req := new(http.Request)
    req.Header = make(http.Header)
    req.Header["Authorization"] = []string{"GoogleLogin auth=aghNhuY8mfnldimVPcpmITL5Q2e6-HLpqLBU08wN8MqBroyW0EzpdCgO58px5BrayQ6rvQ."}
    req.Header["Content-Type"] = []string{"application/x-protobuf"}
@@ -31,8 +30,7 @@ func (c checkin) upload_device() error {
       return err
    }
    req.Header["X-Dfe-Device-Id"] = []string{id}
-   fmt.Println(id)
-   res, err := new(http.Transport).RoundTrip(&req)
+   res, err := http.DefaultClient.Do(req)
    if err != nil {
       return err
    }

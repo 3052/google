@@ -16,6 +16,10 @@ func main() {
    var version_code uint64
    flag.Uint64Var(&version_code, "v", 0, "version code")
    flag.Parse()
+   if doc == "" {
+      flag.Usage()
+      return
+   }
    home, err := os.UserHomeDir()
    if err != nil {
       panic(err)
@@ -39,7 +43,6 @@ func main() {
    if err := acquire.Acquire(head, doc); err != nil {
       panic(err)
    }
-   return
    fmt.Println("sleep")
    time.Sleep(9 * time.Second)
    if err := acquire.New_Delivery(head, doc, version_code); err != nil {

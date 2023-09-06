@@ -1,14 +1,18 @@
 package acquire
 
 import (
-   "fmt"
+   "154.pages.dev/http/option"
    "testing"
 )
 
 func Test_Checkin(t *testing.T) {
+   option.No_Location()
+   option.Trace()
    check, err := new_checkin()
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Println(check)
+   if err := check.upload_device(); err != nil {
+      t.Fatal(err)
+   }
 }

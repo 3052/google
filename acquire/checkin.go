@@ -10,10 +10,12 @@ import (
 )
 
 // pass
-const Device_ID = "306e9f7f4192be79"
+//const Device_ID = "306e9f7f4192be79"
+
+const Device_ID = "3419ddd967f9597f"
 
 func new_checkin() (*checkin, error) {
-   var req http.Request
+   req := new(http.Request)
    req.Header = make(http.Header)
    req.Header["Connection"] = []string{"Keep-Alive"}
    req.Header["Content-Type"] = []string{"application/x-protobuffer"}
@@ -27,7 +29,7 @@ func new_checkin() (*checkin, error) {
    req.URL.Path = "/checkin"
    req.URL.Scheme = "https"
    req.Body = io.NopCloser(bytes.NewReader(checkin_body.Append(nil)))
-   res, err := new(http.Transport).RoundTrip(&req)
+   res, err := http.DefaultClient.Do(req)
    if err != nil {
       return nil, err
    }
