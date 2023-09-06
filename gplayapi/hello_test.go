@@ -25,7 +25,7 @@ func TestPlay(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	c, err := NewClient("srpen6@gmail.com", token)
+	c, err := _NewClient("srpen6@gmail.com", token)
 	if err != nil {
 		t.Fatal(err)
 	}

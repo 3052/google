@@ -10,8 +10,8 @@ import (
 )
 
 type (
-	DeviceInfo struct {
-		_Build           *DeviceBuildInfo
+	_DeviceInfo struct {
+		_Build           *_DeviceBuildInfo
 		_SimOperator     string
 		_Platforms       []string
 		_OtaInstalled    bool
@@ -22,7 +22,7 @@ type (
 		_Keyboard        int32
 		_Navigation      int32
 		_ScreenLayout    int32
-		_Screen          *DeviceInfoScreen
+		_Screen          *_DeviceInfoScreen
 		_GLVersion       int32
 		_GLExtensions    []string
 		_SharedLibraries []string
@@ -30,23 +30,23 @@ type (
 		_Locales         []string
 	}
 
-	DeviceBuildInfo struct {
+	_DeviceBuildInfo struct {
 		*gpproto.AndroidBuildProto
 		_VersionRelease int
 	}
 
-	DeviceInfoScreen struct {
+	_DeviceInfoScreen struct {
 		_Density int32
 		_Width   int32
 		_Height  int32
 	}
 )
 
-func (i *DeviceInfo) GetAuthUserAgent() string {
+func (i *_DeviceInfo) _GetAuthUserAgent() string {
 	return fmt.Sprintf("GoogleAuth/1.4 %s %s", i._Build.GetDevice(), i._Build.GetId())
 }
 
-func (i *DeviceInfo) GetUserAgent() string {
+func (i *_DeviceInfo) _GetUserAgent() string {
 	params := []string{
 		"api=3",
 		"versionCode=81582300",
@@ -63,7 +63,7 @@ func (i *DeviceInfo) GetUserAgent() string {
 	return "Android-Finsky/15.8.23-all [0] [PR] 259261889 (" + strings.Join(params, ",") + ")"
 }
 
-func (i *DeviceInfo) GenerateAndroidCheckInRequest() *gpproto.AndroidCheckinRequest {
+func (i *_DeviceInfo) _GenerateAndroidCheckInRequest() *gpproto.AndroidCheckinRequest {
 	var int0 int64 = 0
 	timestamp := time.Now().Unix()
 	i._Build.Timestamp = &timestamp
@@ -81,12 +81,12 @@ func (i *DeviceInfo) GenerateAndroidCheckInRequest() *gpproto.AndroidCheckinRequ
 		Locale:              ptrStr("en_GB"),
 		TimeZone:            &i._TimeZone,
 		Version:             ptrInt32(3),
-		DeviceConfiguration: i.GetDeviceConfigProto(),
+		DeviceConfiguration: i._GetDeviceConfigProto(),
 		Fragment:            ptrInt32(0),
 	}
 }
 
-func (i *DeviceInfo) GetDeviceConfigProto() *gpproto.DeviceConfigurationProto {
+func (i *_DeviceInfo) _GetDeviceConfigProto() *gpproto.DeviceConfigurationProto {
 	var mem int64 = 8589935000
 	return &gpproto.DeviceConfigurationProto{
 		TouchScreen:            &i._TouchScreen,
@@ -108,11 +108,11 @@ func (i *DeviceInfo) GetDeviceConfigProto() *gpproto.DeviceConfigurationProto {
 		LowRamDevice:           ptrInt32(0),
 		TotalMemoryBytes:       &mem,
 		MaxNumOf_CPUCores:      ptrInt32(8),
-		DeviceFeature:          i.GetDeviceFeatures(),
+		DeviceFeature:          i._GetDeviceFeatures(),
 	}
 }
 
-func (i *DeviceInfo) GetDeviceFeatures() (ret []*gpproto.DeviceFeature) {
+func (i *_DeviceInfo) _GetDeviceFeatures() (ret []*gpproto.DeviceFeature) {
 	var int0 int32 = 0
 	for _, f := range i._Features {
 		name := f

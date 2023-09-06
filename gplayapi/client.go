@@ -53,7 +53,7 @@ func parseResponse(res string) map[string]string {
 	return ret
 }
 
-func (client *GooglePlayClient) _doAuthedReq(r *http.Request) (_ *gpproto.Payload, err error) {
+func (client *_GooglePlayClient) _doAuthedReq(r *http.Request) (_ *gpproto.Payload, err error) {
 	client.setDefaultHeaders(r)
 	b, status, err := doReq(r)
 	if err != nil {
@@ -70,7 +70,7 @@ func (client *GooglePlayClient) _doAuthedReq(r *http.Request) (_ *gpproto.Payloa
 	return resp.Payload, nil
 }
 
-func (client *GooglePlayClient) doAuthedReq(r *http.Request) (res *gpproto.Payload, err error) {
+func (client *_GooglePlayClient) doAuthedReq(r *http.Request) (res *gpproto.Payload, err error) {
 	res, err = client._doAuthedReq(r)
 	if err == err_GPTokenExpired {
 		err = client._RegenerateGPToken()
@@ -85,37 +85,37 @@ func (client *GooglePlayClient) doAuthedReq(r *http.Request) (res *gpproto.Paylo
 	return
 }
 
-func (client *GooglePlayClient) _RegenerateGPToken() (err error) {
+func (client *_GooglePlayClient) _RegenerateGPToken() (err error) {
 	client._AuthData._AuthToken, err = client._GenerateGPToken()
 	return
 }
 
 //goland:noinspection GoUnusedConst
 const (
-	ImageTypeAppScreenshot = iota + 1
-	ImageTypePlayStorePageBackground
-	ImageTypeYoutubeVideoLink
-	ImageTypeAppIcon
-	ImageTypeCategoryIcon
-	ImageTypeYoutubeVideoThumbnail = 13
+	_ImageTypeAppScreenshot = iota + 1
+	_ImageTypePlayStorePageBackground
+	_ImageTypeYoutubeVideoLink
+	_ImageTypeAppIcon
+	_ImageTypeCategoryIcon
+	_ImageTypeYoutubeVideoThumbnail = 13
 
-	UrlBase               = "https://android.clients.google.com"
-	UrlFdfe               = UrlBase + "/fdfe"
-	UrlAuth               = UrlBase + "/auth"
-	UrlCheckIn            = UrlBase + "/checkin"
-	UrlDetails            = UrlFdfe + "/details"
-	UrlDelivery           = UrlFdfe + "/delivery"
-	UrlPurchase           = UrlFdfe + "/purchase"
-	UrlToc                = UrlFdfe + "/toc"
-	UrlTosAccept          = UrlFdfe + "/acceptTos"
-	UrlUploadDeviceConfig = UrlFdfe + "/uploadDeviceConfig"
+	_UrlBase               = "https://android.clients.google.com"
+	_UrlFdfe               = _UrlBase + "/fdfe"
+	_UrlAuth               = _UrlBase + "/auth"
+	_UrlCheckIn            = _UrlBase + "/checkin"
+	_UrlDetails            = _UrlFdfe + "/details"
+	_UrlDelivery           = _UrlFdfe + "/delivery"
+	_UrlPurchase           = _UrlFdfe + "/purchase"
+	_UrlToc                = _UrlFdfe + "/toc"
+	_UrlTosAccept          = _UrlFdfe + "/acceptTos"
+	_UrlUploadDeviceConfig = _UrlFdfe + "/uploadDeviceConfig"
 )
 
-var ErrNilPayload = errors.New("got nil payload from google play")
+var _ErrNilPayload = errors.New("got nil payload from google play")
 
-type GooglePlayClient struct {
-	_AuthData   *AuthData
-	_DeviceInfo *DeviceInfo
+type _GooglePlayClient struct {
+	_AuthData   *_AuthData
+	_DeviceInfo *_DeviceInfo
 
 	// _SessionFile if _SessionFile is set then session will be saved to it after modification
 	_SessionFile string
@@ -127,18 +127,18 @@ var (
 	httpClient = &http.Client{}
 )
 
-// NewClient makes new client with Pixel3a config
-func NewClient(email, aasToken string) (*GooglePlayClient, error) {
-	return NewClientWithDeviceInfo(email, aasToken, Pixel3a)
+// _NewClient makes new client with Pixel3a config
+func _NewClient(email, aasToken string) (*_GooglePlayClient, error) {
+	return _NewClientWithDeviceInfo(email, aasToken, _Pixel3a)
 }
 
-func NewClientWithDeviceInfo(email, aasToken string, deviceInfo *DeviceInfo) (client *GooglePlayClient, err error) {
-	authData := &AuthData{
+func _NewClientWithDeviceInfo(email, aasToken string, deviceInfo *_DeviceInfo) (client *_GooglePlayClient, err error) {
+	authData := &_AuthData{
 		_Email:    email,
 		_AASToken: aasToken,
 		_Locale:   "en_GB",
 	}
-	client = &GooglePlayClient{_AuthData: authData, _DeviceInfo: deviceInfo}
+	client = &_GooglePlayClient{_AuthData: authData, _DeviceInfo: deviceInfo}
 
 	_, err = client._GenerateGsfID()
 	if err != nil {
@@ -161,7 +161,7 @@ func NewClientWithDeviceInfo(email, aasToken string, deviceInfo *DeviceInfo) (cl
 	return
 }
 
-func (client *GooglePlayClient) _SaveSession(file string) error {
+func (client *_GooglePlayClient) _SaveSession(file string) error {
 	f, err := os.OpenFile(file, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
 		return err
@@ -169,16 +169,16 @@ func (client *GooglePlayClient) _SaveSession(file string) error {
 	return json.NewEncoder(f).Encode(client._AuthData)
 }
 
-func LoadSession(file string) (*GooglePlayClient, error) {
-	return LoadSessionWithDeviceInfo(file, Pixel3a)
+func _LoadSession(file string) (*_GooglePlayClient, error) {
+	return _LoadSessionWithDeviceInfo(file, _Pixel3a)
 }
 
-func LoadSessionWithDeviceInfo(file string, deviceInfo *DeviceInfo) (client *GooglePlayClient, err error) {
+func _LoadSessionWithDeviceInfo(file string, deviceInfo *_DeviceInfo) (client *_GooglePlayClient, err error) {
 	f, err := os.Open(file)
 	if err != nil {
 		return
 	}
-	client = &GooglePlayClient{_DeviceInfo: deviceInfo}
+	client = &_GooglePlayClient{_DeviceInfo: deviceInfo}
 	err = json.NewDecoder(f).Decode(&client._AuthData)
 	return
 }

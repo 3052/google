@@ -15,9 +15,9 @@ var (
 
 	sargo = ptrStr("sargo")
 
-	// Pixel3a is default device which uses arm64 and Android 9 / SDK 28
-	Pixel3a = &DeviceInfo{
-		_Build: &DeviceBuildInfo{
+	// _Pixel3a is default device which uses arm64 and Android 9 / SDK 28
+	_Pixel3a = &_DeviceInfo{
+		_Build: &_DeviceBuildInfo{
 			AndroidBuildProto: &gpproto.AndroidBuildProto{
 				BuildProduct:   sargo,
 				Radio:          ptrStr("g670-00011-190411-B-5457439"),
@@ -44,7 +44,7 @@ var (
 		_Keyboard:     1,
 		_Navigation:   1,
 		_ScreenLayout: 2,
-		_Screen: &DeviceInfoScreen{
+		_Screen: &_DeviceInfoScreen{
 			_Density: 490,
 			_Width:   1080,
 			_Height:  2073,
@@ -58,9 +58,9 @@ var (
 
 	santoni = ptrStr("santoni")
 
-	// Redmi4 is device which uses arm and Android 10 / SDK 29
-	Redmi4 = &DeviceInfo{
-		_Build: &DeviceBuildInfo{
+	// _Redmi4 is device which uses arm and Android 10 / SDK 29
+	_Redmi4 = &_DeviceInfo{
+		_Build: &_DeviceBuildInfo{
 			AndroidBuildProto: &gpproto.AndroidBuildProto{
 				BuildProduct:   santoni,
 				Radio:          ptrStr("MPSS.TA.2.3.c1-00395-8953_GEN_PACK-1_V048"),
@@ -87,7 +87,7 @@ var (
 		_Keyboard:     1,
 		_Navigation:   1,
 		_ScreenLayout: 3,
-		_Screen: &DeviceInfoScreen{
+		_Screen: &_DeviceInfoScreen{
 			_Density: 224,
 			_Width:   720,
 			_Height:  1280,
@@ -102,9 +102,9 @@ var (
 	glExtensionsEmulator = []string{"ANDROID_EMU_CHECKSUM_HELPER_v1", "ANDROID_EMU_YUV_Cache", "ANDROID_EMU_deferred_vulkan_commands", "ANDROID_EMU_direct_mem", "ANDROID_EMU_dma_v1", "ANDROID_EMU_gles_max_version_3_0", "ANDROID_EMU_has_shared_slots_host_memory_allocator", "ANDROID_EMU_host_composition_v1", "ANDROID_EMU_host_composition_v2", "ANDROID_EMU_host_side_tracing", "ANDROID_EMU_native_sync_v2", "ANDROID_EMU_native_sync_v3", "ANDROID_EMU_native_sync_v4", "ANDROID_EMU_read_color_buffer_dma", "ANDROID_EMU_sync_buffer_data", "ANDROID_EMU_vulkan", "ANDROID_EMU_vulkan_async_queue_submit", "ANDROID_EMU_vulkan_create_resources_with_requirements", "ANDROID_EMU_vulkan_free_memory_sync", "ANDROID_EMU_vulkan_ignored_handles", "ANDROID_EMU_vulkan_null_optional_strings", "ANDROID_EMU_vulkan_shader_float16_int8", "GL_APPLE_texture_format_BGRA8888", "GL_EXT_color_buffer_float", "GL_EXT_color_buffer_half_float", "GL_EXT_debug_marker", "GL_EXT_robustness", "GL_EXT_texture_format_BGRA8888", "GL_KHR_texture_compression_astc_ldr", "GL_OES_EGL_image", "GL_OES_EGL_image_external", "GL_OES_EGL_image_external_essl3", "GL_OES_EGL_sync", "GL_OES_blend_equation_separate", "GL_OES_blend_func_separate", "GL_OES_blend_subtract", "GL_OES_byte_coordinates", "GL_OES_compressed_ETC1_RGB8_texture", "GL_OES_compressed_paletted_texture", "GL_OES_depth24", "GL_OES_depth32", "GL_OES_depth_texture", "GL_OES_draw_texture", "GL_OES_element_index_uint", "GL_OES_fbo_render_mipmap", "GL_OES_framebuffer_object", "GL_OES_packed_depth_stencil", "GL_OES_point_size_array", "GL_OES_point_sprite", "GL_OES_rgb8_rgba8", "GL_OES_single_precision", "GL_OES_stencil1", "GL_OES_stencil4", "GL_OES_stencil8", "GL_OES_stencil_wrap", "GL_OES_texture_cube_map", "GL_OES_texture_env_crossbar", "GL_OES_texture_float", "GL_OES_texture_float_linear", "GL_OES_texture_half_float", "GL_OES_texture_half_float_linear", "GL_OES_texture_mirored_repeat", "GL_OES_texture_npot", "GL_OES_vertex_array_object", "GL_OES_vertex_half_float"}
 	android              = ptrStr("Android")
 
-	// Emulator_x86_64 is device which uses x86_64 and Android 11 / SDK 30
-	Emulator_x86_64 = &DeviceInfo{
-		_Build: &DeviceBuildInfo{
+	// _Emulator_x86_64 is device which uses x86_64 and Android 11 / SDK 30
+	_Emulator_x86_64 = &_DeviceInfo{
+		_Build: &_DeviceBuildInfo{
 			AndroidBuildProto: &gpproto.AndroidBuildProto{
 				BuildProduct:   ptrStr("sdk_phone_x86_64"),
 				Radio:          ptrStr("1.0.0.0"),
@@ -131,7 +131,7 @@ var (
 		_Keyboard:     2,
 		_Navigation:   2,
 		_ScreenLayout: 2,
-		_Screen: &DeviceInfoScreen{
+		_Screen: &_DeviceInfoScreen{
 			_Density: 420,
 			_Width:   1080,
 			_Height:  1794,
@@ -143,9 +143,9 @@ var (
 		_Locales:         locales,
 	}
 
-	// Emulator_x86 is device which uses x86 and Android 11 / SDK 30
-	Emulator_x86 = &DeviceInfo{
-		_Build: &DeviceBuildInfo{
+	// _Emulator_x86 is device which uses x86 and Android 11 / SDK 30
+	_Emulator_x86 = &_DeviceInfo{
+		_Build: &_DeviceBuildInfo{
 			AndroidBuildProto: &gpproto.AndroidBuildProto{
 				BuildProduct:   ptrStr("sdk_phone_x86"),
 				Radio:          ptrStr("1.0.0.0"),
@@ -172,7 +172,7 @@ var (
 		_Keyboard:     2,
 		_Navigation:   2,
 		_ScreenLayout: 2,
-		_Screen: &DeviceInfoScreen{
+		_Screen: &_DeviceInfoScreen{
 			_Density: 420,
 			_Width:   1080,
 			_Height:  1794,
