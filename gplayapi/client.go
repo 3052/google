@@ -85,26 +85,15 @@ func (client *_GooglePlayClient) _RegenerateGPToken() (err error) {
    return
 }
 
-//goland:noinspection GoUnusedConst
-const (
-   _UrlBase               = "https://android.clients.google.com"
-   _UrlFdfe               = _UrlBase + "/fdfe"
-   _UrlAuth               = _UrlBase + "/auth"
-   _UrlCheckIn            = _UrlBase + "/checkin"
-   _UrlDetails            = _UrlFdfe + "/details"
-   _UrlDelivery           = _UrlFdfe + "/delivery"
-   _UrlPurchase           = _UrlFdfe + "/purchase"
-   _UrlToc                = _UrlFdfe + "/toc"
-   _UrlTosAccept          = _UrlFdfe + "/acceptTos"
-   _UrlUploadDeviceConfig = _UrlFdfe + "/uploadDeviceConfig"
-)
+const _UrlBase               = "https://android.clients.google.com"
+const _UrlFdfe               = _UrlBase + "/fdfe"
+const _UrlAuth               = _UrlBase + "/auth"
+const _UrlCheckIn            = _UrlBase + "/checkin"
+const _UrlUploadDeviceConfig = _UrlFdfe + "/uploadDeviceConfig"
 
 type _GooglePlayClient struct {
    _AuthData   *_AuthData
    _DeviceInfo *_DeviceInfo
-
-   // _SessionFile if _SessionFile is set then session will be saved to it after modification
-   _SessionFile string
 }
 
 var (
@@ -112,11 +101,6 @@ var (
 
    httpClient = &http.Client{}
 )
-
-// _NewClient makes new client with Pixel3a config
-func _NewClient(email, aasToken string) (*_GooglePlayClient, error) {
-   return _NewClientWithDeviceInfo(email, aasToken, _Pixel3a)
-}
 
 func _NewClientWithDeviceInfo(email, aasToken string, deviceInfo *_DeviceInfo) (client *_GooglePlayClient, err error) {
    authData := &_AuthData{
@@ -130,19 +114,15 @@ func _NewClientWithDeviceInfo(email, aasToken string, deviceInfo *_DeviceInfo) (
    if err != nil {
       return
    }
-
    deviceConfigRes, err := client.uploadDeviceConfig()
    if err != nil {
       return
    }
    authData._DeviceConfigToken = deviceConfigRes.GetUploadDeviceConfigToken()
-
    token, err := client._GenerateGPToken()
    if err != nil {
       return
    }
    authData._AuthToken = token
-
-   _, err = client.toc()
    return
 }

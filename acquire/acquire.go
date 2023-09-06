@@ -11,7 +11,9 @@ import (
 )
 
 // pass
-const Device_ID = "306e9f7f4192be79"
+//const Device_ID = "306e9f7f4192be79"
+
+const Device_ID = "31eee6a47b6b29f3"
 
 func Acquire(h *play.Header, doc string) error {
    var m protobuf.Message

@@ -25,9 +25,9 @@ func TestPlay(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   c, err := _NewClient("srpen6@gmail.com", token)
+   c, err := _NewClientWithDeviceInfo("srpen6@gmail.com", token, _Pixel3a)
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", c)
+   fmt.Printf("%+v\n", c._AuthData)
 }
