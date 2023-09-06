@@ -1,21 +1,6 @@
 # gplayapi
 
 ~~~
-rf 'mv AuthData.AuthToken AuthData._AuthToken'
-rf 'mv AuthData.GsfID AuthData._GsfID'
-rf 'mv AuthData.DeviceCheckInConsistencyToken AuthData._DeviceCheckInConsistencyToken'
-rf 'mv AuthData.DeviceConfigToken AuthData._DeviceConfigToken'
-rf 'mv AuthData.DFECookie AuthData._DFECookie'
-rf 'mv AuthData.Locale AuthData._Locale'
-rf 'mv GooglePlayClient.GenerateGsfID GooglePlayClient._GenerateGsfID'
-rf 'mv GooglePlayClient.GenerateGPToken GooglePlayClient._GenerateGPToken'
-rf 'mv GooglePlayClient.RegenerateGPToken GooglePlayClient._RegenerateGPToken'
-rf 'mv GooglePlayClient.AuthData GooglePlayClient._AuthData'
-rf 'mv GooglePlayClient.DeviceInfo GooglePlayClient._DeviceInfo'
-rf 'mv GooglePlayClient.SessionFile GooglePlayClient._SessionFile'
-rf 'mv GooglePlayClient.SaveSession GooglePlayClient._SaveSession'
-rf 'mv DeviceInfo.Build DeviceInfo._Build'
-rf 'mv DeviceInfo.SimOperator DeviceInfo._SimOperator'
 rf 'mv DeviceInfo.Platforms DeviceInfo._Platforms'
 rf 'mv DeviceInfo.OtaInstalled DeviceInfo._OtaInstalled'
 rf 'mv DeviceInfo.CellOperator DeviceInfo._CellOperator'

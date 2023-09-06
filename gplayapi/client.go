@@ -73,20 +73,20 @@ func (client *GooglePlayClient) _doAuthedReq(r *http.Request) (_ *gpproto.Payloa
 func (client *GooglePlayClient) doAuthedReq(r *http.Request) (res *gpproto.Payload, err error) {
 	res, err = client._doAuthedReq(r)
 	if err == err_GPTokenExpired {
-		err = client.RegenerateGPToken()
+		err = client._RegenerateGPToken()
 		if err != nil {
 			return
 		}
-		if client.SessionFile != "" {
-			client.SaveSession(client.SessionFile)
+		if client._SessionFile != "" {
+			client._SaveSession(client._SessionFile)
 		}
 		res, err = client._doAuthedReq(r)
 	}
 	return
 }
 
-func (client *GooglePlayClient) RegenerateGPToken() (err error) {
-	client.AuthData.AuthToken, err = client.GenerateGPToken()
+func (client *GooglePlayClient) _RegenerateGPToken() (err error) {
+	client._AuthData._AuthToken, err = client._GenerateGPToken()
 	return
 }
 
@@ -114,11 +114,11 @@ const (
 var ErrNilPayload = errors.New("got nil payload from google play")
 
 type GooglePlayClient struct {
-	AuthData   *AuthData
-	DeviceInfo *DeviceInfo
+	_AuthData   *AuthData
+	_DeviceInfo *DeviceInfo
 
-	// SessionFile if SessionFile is set then session will be saved to it after modification
-	SessionFile string
+	// _SessionFile if _SessionFile is set then session will be saved to it after modification
+	_SessionFile string
 }
 
 var (
@@ -136,11 +136,11 @@ func NewClientWithDeviceInfo(email, aasToken string, deviceInfo *DeviceInfo) (cl
 	authData := &AuthData{
 		_Email:    email,
 		_AASToken: aasToken,
-		Locale:    "en_GB",
+		_Locale:   "en_GB",
 	}
-	client = &GooglePlayClient{AuthData: authData, DeviceInfo: deviceInfo}
+	client = &GooglePlayClient{_AuthData: authData, _DeviceInfo: deviceInfo}
 
-	_, err = client.GenerateGsfID()
+	_, err = client._GenerateGsfID()
 	if err != nil {
 		return
 	}
@@ -149,24 +149,24 @@ func NewClientWithDeviceInfo(email, aasToken string, deviceInfo *DeviceInfo) (cl
 	if err != nil {
 		return
 	}
-	authData.DeviceConfigToken = deviceConfigRes.GetUploadDeviceConfigToken()
+	authData._DeviceConfigToken = deviceConfigRes.GetUploadDeviceConfigToken()
 
-	token, err := client.GenerateGPToken()
+	token, err := client._GenerateGPToken()
 	if err != nil {
 		return
 	}
-	authData.AuthToken = token
+	authData._AuthToken = token
 
 	_, err = client.toc()
 	return
 }
 
-func (client *GooglePlayClient) SaveSession(file string) error {
+func (client *GooglePlayClient) _SaveSession(file string) error {
 	f, err := os.OpenFile(file, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
 		return err
 	}
-	return json.NewEncoder(f).Encode(client.AuthData)
+	return json.NewEncoder(f).Encode(client._AuthData)
 }
 
 func LoadSession(file string) (*GooglePlayClient, error) {
@@ -178,7 +178,7 @@ func LoadSessionWithDeviceInfo(file string, deviceInfo *DeviceInfo) (client *Goo
 	if err != nil {
 		return
 	}
-	client = &GooglePlayClient{DeviceInfo: deviceInfo}
-	err = json.NewDecoder(f).Decode(&client.AuthData)
+	client = &GooglePlayClient{_DeviceInfo: deviceInfo}
+	err = json.NewDecoder(f).Decode(&client._AuthData)
 	return
 }

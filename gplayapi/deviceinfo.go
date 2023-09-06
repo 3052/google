@@ -11,8 +11,8 @@ import (
 
 type (
 	DeviceInfo struct {
-		Build           *DeviceBuildInfo
-		SimOperator     string
+		_Build          *DeviceBuildInfo
+		_SimOperator    string
 		Platforms       []string
 		OtaInstalled    bool
 		CellOperator    string
@@ -43,7 +43,7 @@ type (
 )
 
 func (i *DeviceInfo) GetAuthUserAgent() string {
-	return fmt.Sprintf("GoogleAuth/1.4 %s %s", i.Build.GetDevice(), i.Build.GetId())
+	return fmt.Sprintf("GoogleAuth/1.4 %s %s", i._Build.GetDevice(), i._Build.GetId())
 }
 
 func (i *DeviceInfo) GetUserAgent() string {
@@ -51,12 +51,12 @@ func (i *DeviceInfo) GetUserAgent() string {
 		"api=3",
 		"versionCode=81582300",
 		"sdk=28",
-		"device=" + i.Build.GetDevice(),
-		"hardware=" + i.Build.GetDevice(),
-		"product=" + i.Build.GetProduct(),
-		"platformVersionRelease=" + strconv.Itoa(i.Build.VersionRelease),
-		"model=" + i.Build.GetModel(),
-		"buildId=" + i.Build.GetId(),
+		"device=" + i._Build.GetDevice(),
+		"hardware=" + i._Build.GetDevice(),
+		"product=" + i._Build.GetProduct(),
+		"platformVersionRelease=" + strconv.Itoa(i._Build.VersionRelease),
+		"model=" + i._Build.GetModel(),
+		"buildId=" + i._Build.GetId(),
 		"isWideScreen=0",
 		"supportedAbis=" + strings.Join(i.Platforms, ";"),
 	}
@@ -66,15 +66,15 @@ func (i *DeviceInfo) GetUserAgent() string {
 func (i *DeviceInfo) GenerateAndroidCheckInRequest() *gpproto.AndroidCheckinRequest {
 	var int0 int64 = 0
 	timestamp := time.Now().Unix()
-	i.Build.Timestamp = &timestamp
+	i._Build.Timestamp = &timestamp
 
 	return &gpproto.AndroidCheckinRequest{
 		Id: &int0,
 		Checkin: &gpproto.AndroidCheckinProto{
-			Build:           i.Build.AndroidBuildProto,
+			Build:           i._Build.AndroidBuildProto,
 			LastCheckinMsec: &int0,
 			CellOperator:    &i.CellOperator,
-			SimOperator:     &i.SimOperator,
+			SimOperator:     &i._SimOperator,
 			Roaming:         &i.Roaming,
 			UserNumber:      ptrInt32(0),
 		},

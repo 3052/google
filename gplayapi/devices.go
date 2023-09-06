@@ -17,7 +17,7 @@ var (
 
 	// Pixel3a is default device which uses arm64 and Android 9 / SDK 28
 	Pixel3a = &DeviceInfo{
-		Build: &DeviceBuildInfo{
+		_Build: &DeviceBuildInfo{
 			AndroidBuildProto: &gpproto.AndroidBuildProto{
 				BuildProduct:   sargo,
 				Radio:          ptrStr("g670-00011-190411-B-5457439"),
@@ -35,7 +35,7 @@ var (
 			},
 			VersionRelease: 9,
 		},
-		SimOperator:  "20815",
+		_SimOperator: "20815",
 		Platforms:    []string{"arm64-v8a", "armeabi-v7a", "armeabi"},
 		CellOperator: "334050",
 		Roaming:      roaming,
@@ -60,7 +60,7 @@ var (
 
 	// Redmi4 is device which uses arm and Android 10 / SDK 29
 	Redmi4 = &DeviceInfo{
-		Build: &DeviceBuildInfo{
+		_Build: &DeviceBuildInfo{
 			AndroidBuildProto: &gpproto.AndroidBuildProto{
 				BuildProduct:   santoni,
 				Radio:          ptrStr("MPSS.TA.2.3.c1-00395-8953_GEN_PACK-1_V048"),
@@ -78,7 +78,7 @@ var (
 			},
 			VersionRelease: 10,
 		},
-		SimOperator:  "21601",
+		_SimOperator: "21601",
 		Platforms:    []string{"armeabi-v7a", "armeabi"},
 		CellOperator: "21601",
 		Roaming:      roaming,
@@ -104,7 +104,7 @@ var (
 
 	// Emulator_x86_64 is device which uses x86_64 and Android 11 / SDK 30
 	Emulator_x86_64 = &DeviceInfo{
-		Build: &DeviceBuildInfo{
+		_Build: &DeviceBuildInfo{
 			AndroidBuildProto: &gpproto.AndroidBuildProto{
 				BuildProduct:   ptrStr("sdk_phone_x86_64"),
 				Radio:          ptrStr("1.0.0.0"),
@@ -122,7 +122,7 @@ var (
 			},
 			VersionRelease: 11,
 		},
-		SimOperator:  "38",
+		_SimOperator: "38",
 		Platforms:    []string{"x86_64", "x86"},
 		CellOperator: "310",
 		Roaming:      roaming,
@@ -145,7 +145,7 @@ var (
 
 	// Emulator_x86 is device which uses x86 and Android 11 / SDK 30
 	Emulator_x86 = &DeviceInfo{
-		Build: &DeviceBuildInfo{
+		_Build: &DeviceBuildInfo{
 			AndroidBuildProto: &gpproto.AndroidBuildProto{
 				BuildProduct:   ptrStr("sdk_phone_x86"),
 				Radio:          ptrStr("1.0.0.0"),
@@ -163,7 +163,7 @@ var (
 			},
 			VersionRelease: 11,
 		},
-		SimOperator:  "38",
+		_SimOperator: "38",
 		Platforms:    []string{"x86"},
 		CellOperator: "310",
 		Roaming:      roaming,

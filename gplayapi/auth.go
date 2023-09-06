@@ -13,25 +13,25 @@ import (
 )
 
 type AuthData struct {
-	_Email                        string
-	_AASToken                     string
-	AuthToken                     string
-	GsfID                         string
-	DeviceCheckInConsistencyToken string
-	DeviceConfigToken             string
-	DFECookie                     string
-	Locale                        string
+	_Email                         string
+	_AASToken                      string
+	_AuthToken                     string
+	_GsfID                         string
+	_DeviceCheckInConsistencyToken string
+	_DeviceConfigToken             string
+	_DFECookie                     string
+	_Locale                        string
 }
 
-func (client *GooglePlayClient) GenerateGsfID() (gsfID string, err error) {
-	req := client.DeviceInfo.GenerateAndroidCheckInRequest()
+func (client *GooglePlayClient) _GenerateGsfID() (gsfID string, err error) {
+	req := client._DeviceInfo.GenerateAndroidCheckInRequest()
 	checkInResp, err := client.checkIn(req)
 	if err != nil {
 		return
 	}
 	gsfID = fmt.Sprintf("%x", checkInResp.GetAndroidId())
-	client.AuthData.GsfID = gsfID
-	client.AuthData.DeviceCheckInConsistencyToken = checkInResp.GetDeviceCheckinConsistencyToken()
+	client._AuthData._GsfID = gsfID
+	client._AuthData._DeviceCheckInConsistencyToken = checkInResp.GetDeviceCheckinConsistencyToken()
 	return
 }
 
@@ -54,7 +54,7 @@ func (client *GooglePlayClient) checkIn(req *gpproto.AndroidCheckinRequest) (res
 }
 
 func (client *GooglePlayClient) uploadDeviceConfig() (*gpproto.UploadDeviceConfigResponse, error) {
-	b, err := proto.Marshal(&gpproto.UploadDeviceConfigRequest{DeviceConfiguration: client.DeviceInfo.GetDeviceConfigProto()})
+	b, err := proto.Marshal(&gpproto.UploadDeviceConfigRequest{DeviceConfiguration: client._DeviceInfo.GetDeviceConfigProto()})
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +66,7 @@ func (client *GooglePlayClient) uploadDeviceConfig() (*gpproto.UploadDeviceConfi
 	return payload.UploadDeviceConfigResponse, nil
 }
 
-func (client *GooglePlayClient) GenerateGPToken() (string, error) {
+func (client *GooglePlayClient) _GenerateGPToken() (string, error) {
 	params := &url.Values{}
 	client.setDefaultAuthParams(params)
 	client.setAuthParams(params)
@@ -102,7 +102,7 @@ func (client *GooglePlayClient) toc() (_ *gpproto.TocResponse, err error) {
 		}
 	}
 	if tocResp.Cookie != nil {
-		client.AuthData.DFECookie = *tocResp.Cookie
+		client._AuthData._DFECookie = *tocResp.Cookie
 	}
 	return
 }
@@ -115,17 +115,17 @@ func (client *GooglePlayClient) acceptTos(tosToken string) error {
 
 func (client *GooglePlayClient) setAuthHeaders(r *http.Request) {
 	r.Header.Set("app", "com.google.android.gms")
-	r.Header.Set("User-Agent", client.DeviceInfo.GetAuthUserAgent())
-	if client.AuthData.GsfID != "" {
-		r.Header.Set("device", client.AuthData.GsfID)
+	r.Header.Set("User-Agent", client._DeviceInfo.GetAuthUserAgent())
+	if client._AuthData._GsfID != "" {
+		r.Header.Set("device", client._AuthData._GsfID)
 	}
 }
 
 func (client *GooglePlayClient) setDefaultHeaders(r *http.Request) {
-	data := client.AuthData
-	r.Header.Set("Authorization", "Bearer "+data.AuthToken)
-	r.Header.Set("User-Agent", client.DeviceInfo.GetUserAgent())
-	r.Header.Set("X-DFE-Device-Id", data.GsfID)
+	data := client._AuthData
+	r.Header.Set("Authorization", "Bearer "+data._AuthToken)
+	r.Header.Set("User-Agent", client._DeviceInfo.GetUserAgent())
+	r.Header.Set("X-DFE-Device-Id", data._GsfID)
 	r.Header.Set("Accept-Language", "en-GB")
 	r.Header.Set(
 		"X-DFE-Encoded-Targets",
@@ -143,30 +143,30 @@ func (client *GooglePlayClient) setDefaultHeaders(r *http.Request) {
 	r.Header.Set("X-DFE-UserLanguages", "en_GB")
 	r.Header.Set("X-DFE-Request-Params", "timeoutMs=4000")
 
-	if data.DeviceCheckInConsistencyToken != "" {
-		r.Header.Set("X-DFE-Device-Checkin-Consistency-Token", data.DeviceCheckInConsistencyToken)
+	if data._DeviceCheckInConsistencyToken != "" {
+		r.Header.Set("X-DFE-Device-Checkin-Consistency-Token", data._DeviceCheckInConsistencyToken)
 	}
 
-	if data.DeviceConfigToken != "" {
-		r.Header.Set("X-DFE-Device-Config-Token", data.DeviceConfigToken)
+	if data._DeviceConfigToken != "" {
+		r.Header.Set("X-DFE-Device-Config-Token", data._DeviceConfigToken)
 	}
 
-	if data.DFECookie != "" {
-		r.Header.Set("X-DFE-Cookie", data.DFECookie)
+	if data._DFECookie != "" {
+		r.Header.Set("X-DFE-Cookie", data._DFECookie)
 	}
 
-	if client.DeviceInfo.SimOperator != "" {
-		r.Header.Set("X-DFE-MCCMNC", client.DeviceInfo.SimOperator)
+	if client._DeviceInfo._SimOperator != "" {
+		r.Header.Set("X-DFE-MCCMNC", client._DeviceInfo._SimOperator)
 	}
 }
 
 func (client *GooglePlayClient) setDefaultAuthParams(params *url.Values) {
-	if client.AuthData.GsfID != "" {
-		params.Set("androidId", client.AuthData.GsfID)
+	if client._AuthData._GsfID != "" {
+		params.Set("androidId", client._AuthData._GsfID)
 	}
-	params.Set("sdk_version", strconv.Itoa(int(client.DeviceInfo.Build.GetSdkVersion())))
-	params.Set("email", client.AuthData._Email)
-	params.Set("google_play_services_version", strconv.Itoa(int(client.DeviceInfo.Build.GetGoogleServices())))
+	params.Set("sdk_version", strconv.Itoa(int(client._DeviceInfo._Build.GetSdkVersion())))
+	params.Set("email", client._AuthData._Email)
+	params.Set("google_play_services_version", strconv.Itoa(int(client._DeviceInfo._Build.GetGoogleServices())))
 	params.Set("device_country", "us")
 	params.Set("lang", "en-gb")
 	params.Set("callerSig", "38918a453d07199354f8b19af05ec6562ced5788")
@@ -176,7 +176,7 @@ func (client *GooglePlayClient) setAuthParams(params *url.Values) {
 	params.Set("app", "com.android.vending")
 	params.Set("client_sig", "38918a453d07199354f8b19af05ec6562ced5788")
 	params.Set("callerPkg", "com.google.android.gms")
-	params.Set("Token", client.AuthData._AASToken)
+	params.Set("Token", client._AuthData._AASToken)
 	params.Set("oauth2_foreground", "1")
 	params.Set("token_request_options", "CAA4AVAB")
 	params.Set("check_email", "1")
