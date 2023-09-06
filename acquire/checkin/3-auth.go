@@ -1,23 +1,13 @@
 package play
 
 import (
+   "errors"
+   "io"
    "net/http"
-   "net/http/httputil"
    "net/url"
    "os"
+   "strings"
 )
-
-func token() (string, error) {
-   b, err := os.ReadFile(`C:\Users\Steven\google\play\token.txt`)
-   if err != nil {
-      return "", err
-   }
-   v, err := url.ParseQuery(strings.ReplaceAll(string(b), "\n", "&"))
-   if err != nil {
-      return "", err
-   }
-   return v.Get("Token"), nil
-}
 
 func (c checkin) auth() (url.Values, error) {
    req := new(http.Request)
@@ -69,11 +59,23 @@ func (c checkin) auth() (url.Values, error) {
    }
    defer res.Body.Close()
    if res.StatusCode != http.StatusOK {
-      return errors.New(res.Status)
+      return nil, errors.New(res.Status)
    }
    text, err := io.ReadAll(res.Body)
    if err != nil {
       return nil, err
    }
-   return url.ParseQuery(string(text))
+   return url.ParseQuery(strings.ReplaceAll(string(text), "\n", "&"))
+}
+
+func token() (string, error) {
+   b, err := os.ReadFile(`C:\Users\Steven\google\play\token.txt`)
+   if err != nil {
+      return "", err
+   }
+   v, err := url.ParseQuery(strings.ReplaceAll(string(b), "\n", "&"))
+   if err != nil {
+      return "", err
+   }
+   return v.Get("Token"), nil
 }

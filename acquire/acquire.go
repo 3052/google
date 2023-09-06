@@ -10,6 +10,9 @@ import (
    "strings"
 )
 
+// pass
+const Device_ID = "306e9f7f4192be79"
+
 func Acquire(h *play.Header, doc string) error {
    var m protobuf.Message
    m.Add(1, func(m *protobuf.Message) {

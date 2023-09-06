@@ -3,11 +3,11 @@ package play
 import (
    "154.pages.dev/encoding/protobuf"
    "bytes"
+   "errors"
    "io"
    "net/http"
-   "net/http/httputil"
    "net/url"
-   "os"
+   "strconv"
 )
 
 func (c checkin) id() (string, error) {
@@ -51,7 +51,7 @@ func new_checkin() (*checkin, error) {
       if err != nil {
          return nil, err
       }
-      check.m, err = protobuf.Consume(m)
+      check.m, err = protobuf.Consume(b)
       if err != nil {
          return nil, err
       }
