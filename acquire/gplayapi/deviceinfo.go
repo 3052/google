@@ -1,8 +1,8 @@
 package gplayapi
 
 import (
+   "acquire/gplayapi/gpproto"
    "fmt"
-   "github.com/Juby210/gplayapi-go/gpproto"
    "strconv"
    "strings"
    "time"

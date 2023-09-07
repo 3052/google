@@ -6,8 +6,6 @@
 154.pages.dev/http v1.0.8/go.mod h1:OayLz9fCC8jQczJiIq8cb4kz4c1sAtRE9pLWdNx/4hI=
 154.pages.dev/strconv v1.0.4 h1:zPObc9UEerZD8lX7NINR2nDNbwPUAA+M63G/+OBy5GI=
 154.pages.dev/strconv v1.0.4/go.mod h1:HPQpZS7s8hlNlF5X2DNlT3qft3mN4rluNJW+GjbTf9I=
-github.com/Juby210/gplayapi-go v0.0.7 h1:uKUUsBbM38IBt/rSqQHpDAh7HU/iEnt+adcCKMwiG4o=
-github.com/Juby210/gplayapi-go v0.0.7/go.mod h1:88bAITatohFFBGClzJHnu4DW/fEz4MoV0OJn9gkvd+M=
 github.com/golang/protobuf v1.5.0/go.mod h1:FsONVRAS9T7sI+LIUmWTfcYkHO4aIWwzhcaSAoJOfIk=
 github.com/google/go-cmp v0.5.5 h1:Khx7svrCpmxxtHBq5j2mp/xVjsi8hQMfNLvJFAlrGgU=
 github.com/google/go-cmp v0.5.5/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
