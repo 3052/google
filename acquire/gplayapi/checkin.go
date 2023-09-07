@@ -2,31 +2,85 @@ package gplayapi
 
 import (
    "154.pages.dev/encoding/protobuf"
-   "acquire/gplayapi/gpproto"
    "bytes"
    "errors"
    "fmt"
-   "google.golang.org/protobuf/proto"
    "io"
    "net/http"
    "net/http/httputil"
    "net/url"
+   "strconv"
    "strings"
 )
+
+func (client *_GooglePlayClient) checkIn() (*checkin, error) {
+   b := checkin_body.Append(nil)
+   r, _ := http.NewRequest("POST", _UrlCheckIn, bytes.NewReader(b))
+   //r.Header.Set("User-Agent", client._DeviceInfo._GetAuthUserAgent())
+   r.Header.Set("User-Agent", "GoogleAuth/1.4 sargo PQ3B.190705.003")
+   r.Header.Set("Content-Type", "application/x-protobuffer")
+   r.Header.Set("Host", "android.clients.google.com")
+   b, _, err := doReq(r)
+   if err != nil {
+      return nil, err
+   }
+   var check checkin
+   check.m, err = protobuf.Consume(b)
+   if err != nil {
+      return nil, err
+   }
+   return &check, nil
+}
+
+func NewClientWithDeviceInfo(email, aasToken string) (*_GooglePlayClient, error) {
+   authData := &_AuthData{
+      _Email:    email,
+      _AASToken: aasToken,
+      _Locale:   "en_GB",
+   }
+   client := _GooglePlayClient{AuthData: authData}
+   checkInResp, err := client.checkIn()
+   if err != nil {
+      return nil, err
+   }
+   client.AuthData.GsfID, err = checkInResp.id()
+   if err != nil {
+      return nil, err
+   }
+   err = client.uploadDeviceConfig()
+   if err != nil {
+      return nil, err
+   }
+   token, err := client._GenerateGPToken()
+   if err != nil {
+      return nil, err
+   }
+   authData._AuthToken = token
+   return &client, nil
+}
+
+func (c checkin) id() (string, error) {
+   id, err := c.m.Fixed64(7)
+   if err != nil {
+      return "", err
+   }
+   return strconv.FormatUint(id, 16), nil
+}
+
+type checkin struct {
+   m protobuf.Message
+}
 
 type _AuthData struct {
    GsfID                          string
    _AASToken                      string
    _AuthToken                     string
-   _DeviceCheckInConsistencyToken string
-   _DeviceConfigToken             string
    _Email                         string
    _Locale                        string
 }
 
 type _GooglePlayClient struct {
    AuthData    *_AuthData
-   _DeviceInfo *_DeviceInfo
 }
 
 func doReq(r *http.Request) ([]byte, int, error) {
@@ -47,18 +101,6 @@ func doReq(r *http.Request) ([]byte, int, error) {
    }
    b, err := io.ReadAll(res.Body)
    return b, res.StatusCode, err
-}
-
-func ptrBool(b bool) *bool {
-   return &b
-}
-
-func ptrStr(str string) *string {
-   return &str
-}
-
-func ptrInt32(i int32) *int32 {
-   return &i
 }
 
 func parseResponse(res string) map[string]string {
@@ -91,32 +133,6 @@ func (client *_GooglePlayClient) _GenerateGPToken() (string, error) {
    return token, nil
 }
 
-func NewClientWithDeviceInfo(email, aasToken string, deviceInfo *_DeviceInfo) (client *_GooglePlayClient, err error) {
-   authData := &_AuthData{
-      _Email:    email,
-      _AASToken: aasToken,
-      _Locale:   "en_GB",
-   }
-   client = &_GooglePlayClient{AuthData: authData, _DeviceInfo: deviceInfo}
-   checkInResp, err := client.checkIn()
-   if err != nil {
-      return
-   }
-   client.AuthData.GsfID = fmt.Sprintf("%x", checkInResp.GetAndroidId())
-   client.AuthData._DeviceCheckInConsistencyToken = checkInResp.GetDeviceCheckinConsistencyToken()
-   deviceConfigRes, err := client.uploadDeviceConfig()
-   if err != nil {
-      return
-   }
-   authData._DeviceConfigToken = deviceConfigRes.GetUploadDeviceConfigToken()
-   token, err := client._GenerateGPToken()
-   if err != nil {
-      return
-   }
-   authData._AuthToken = token
-   return
-}
-
 const _UrlBase = "https://android.clients.google.com"
 const _UrlFdfe = _UrlBase + "/fdfe"
 const _UrlAuth = _UrlBase + "/auth"
@@ -128,21 +144,6 @@ var (
 
    httpClient = &http.Client{}
 )
-
-func (client *_GooglePlayClient) checkIn() (resp *gpproto.AndroidCheckinResponse, err error) {
-   b := checkin_body.Append(nil)
-   r, _ := http.NewRequest("POST", _UrlCheckIn, bytes.NewReader(b))
-   r.Header.Set("User-Agent", client._DeviceInfo._GetAuthUserAgent())
-   r.Header.Set("Content-Type", "application/x-protobuffer")
-   r.Header.Set("Host", "android.clients.google.com")
-   b, _, err = doReq(r)
-   if err != nil {
-      return
-   }
-   resp = &gpproto.AndroidCheckinResponse{}
-   err = proto.Unmarshal(b, resp)
-   return
-}
 
 var checkin_body = protobuf.Message{
    protobuf.Field{Number: 4, Type: 2, Value: protobuf.Prefix{

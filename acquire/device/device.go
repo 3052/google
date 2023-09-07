@@ -25,9 +25,7 @@ func main() {
    if err != nil {
       panic(err)
    }
-   c, err := gplayapi.NewClientWithDeviceInfo(
-      "srpen6@gmail.com", token, gplayapi.Pixel3a,
-   )
+   c, err := gplayapi.NewClientWithDeviceInfo("srpen6@gmail.com", token)
    if err != nil {
       panic(err)
    }

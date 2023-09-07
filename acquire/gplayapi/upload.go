@@ -2,34 +2,27 @@ package gplayapi
 
 import (
    "154.pages.dev/encoding/protobuf"
-   "acquire/gplayapi/gpproto"
    "bytes"
-   "google.golang.org/protobuf/proto"
    "net/http"
 )
 
-func (client *_GooglePlayClient) uploadDeviceConfig() (*gpproto.UploadDeviceConfigResponse, error) {
+func (client *_GooglePlayClient) uploadDeviceConfig() error {
    b := upload_body.Append(nil)
    r, _ := http.NewRequest("POST", _UrlUploadDeviceConfig, bytes.NewReader(b))
    data := client.AuthData
    r.Header.Set("Authorization", "Bearer "+data._AuthToken)
-   r.Header.Set("User-Agent", client._DeviceInfo._GetUserAgent())
+   r.Header.Set("User-Agent", "Android-Finsky/15.8.23-all [0] [PR] 259261889 (api=3,versionCode=81582300,sdk=28,device=sargo,hardware=sargo,product=sargo,platformVersionRelease=9,model=Pixel 3a,buildId=PQ3B.190705.003,isWideScreen=0,supportedAbis=arm64-v8a;armeabi-v7a;armeabi)")
    r.Header.Set("X-DFE-Device-Id", data.GsfID)
    // seems like we need this, what the fuck:
    r.Header.Set("X-DFE-Client-Id", "am-android-google")
-   b, status, err := doReq(r)
+   _, status, err := doReq(r)
    if err != nil {
-      return nil, err
+      return err
    }
    if status == 401 {
-      return nil, err_GPTokenExpired
+      return err_GPTokenExpired
    }
-   resp := &gpproto.ResponseWrapper{}
-   err = proto.Unmarshal(b, resp)
-   if err != nil {
-      return nil, err
-   }
-   return resp.Payload.UploadDeviceConfigResponse, nil
+   return nil
 }
 
 var upload_body = protobuf.Message{
