@@ -11,6 +11,36 @@ import (
    "strings"
 )
 
+type _GooglePlayClient struct {
+   AuthData   *_AuthData
+   _DeviceInfo *_DeviceInfo
+}
+
+func NewClientWithDeviceInfo(email, aasToken string, deviceInfo *_DeviceInfo) (client *_GooglePlayClient, err error) {
+   authData := &_AuthData{
+      _Email:    email,
+      _AASToken: aasToken,
+      _Locale:   "en_GB",
+   }
+   client = &_GooglePlayClient{AuthData: authData, _DeviceInfo: deviceInfo}
+
+   _, err = client._GenerateGsfID()
+   if err != nil {
+      return
+   }
+   deviceConfigRes, err := client.uploadDeviceConfig()
+   if err != nil {
+      return
+   }
+   authData._DeviceConfigToken = deviceConfigRes.GetUploadDeviceConfigToken()
+   token, err := client._GenerateGPToken()
+   if err != nil {
+      return
+   }
+   authData._AuthToken = token
+   return
+}
+
 func doReq(r *http.Request) ([]byte, int, error) {
    {
       b, err := httputil.DumpRequest(r, true)
@@ -84,7 +114,7 @@ func (client *_GooglePlayClient) doAuthedReq(r *http.Request) (res *gpproto.Payl
 }
 
 func (client *_GooglePlayClient) _RegenerateGPToken() (err error) {
-   client._AuthData._AuthToken, err = client._GenerateGPToken()
+   client.AuthData._AuthToken, err = client._GenerateGPToken()
    return
 }
 
@@ -94,38 +124,9 @@ const _UrlAuth               = _UrlBase + "/auth"
 const _UrlCheckIn            = _UrlBase + "/checkin"
 const _UrlUploadDeviceConfig = _UrlFdfe + "/uploadDeviceConfig"
 
-type _GooglePlayClient struct {
-   _AuthData   *_AuthData
-   _DeviceInfo *_DeviceInfo
-}
-
 var (
    err_GPTokenExpired = errors.New("unauthorized, gp token expired")
 
    httpClient = &http.Client{}
 )
 
-func _NewClientWithDeviceInfo(email, aasToken string, deviceInfo *_DeviceInfo) (client *_GooglePlayClient, err error) {
-   authData := &_AuthData{
-      _Email:    email,
-      _AASToken: aasToken,
-      _Locale:   "en_GB",
-   }
-   client = &_GooglePlayClient{_AuthData: authData, _DeviceInfo: deviceInfo}
-
-   _, err = client._GenerateGsfID()
-   if err != nil {
-      return
-   }
-   deviceConfigRes, err := client.uploadDeviceConfig()
-   if err != nil {
-      return
-   }
-   authData._DeviceConfigToken = deviceConfigRes.GetUploadDeviceConfigToken()
-   token, err := client._GenerateGPToken()
-   if err != nil {
-      return
-   }
-   authData._AuthToken = token
-   return
-}

@@ -21,7 +21,7 @@ var (
    sargo = ptrStr("sargo")
 
    // _Pixel3a is default device which uses arm64 and Android 9 / SDK 28
-   _Pixel3a = &_DeviceInfo{
+   Pixel3a = &_DeviceInfo{
       _Build: &_DeviceBuildInfo{
          AndroidBuildProto: &gpproto.AndroidBuildProto{
             BuildProduct:   sargo,

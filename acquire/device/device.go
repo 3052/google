@@ -1,11 +1,11 @@
-package gplayapi
+package main
 
 import (
+   "acquire/gplayapi"
    "fmt"
    "net/url"
    "os"
    "strings"
-   "testing"
 )
 
 func new_token() (string, error) {
@@ -20,14 +20,16 @@ func new_token() (string, error) {
    return v.Get("Token"), nil
 }
 
-func TestPlay(t *testing.T) {
+func main() {
    token, err := new_token()
    if err != nil {
-      t.Fatal(err)
+      panic(err)
    }
-   c, err := _NewClientWithDeviceInfo("srpen6@gmail.com", token, _Pixel3a)
+   c, err := gplayapi.NewClientWithDeviceInfo(
+      "srpen6@gmail.com", token, gplayapi.Pixel3a,
+   )
    if err != nil {
-      t.Fatal(err)
+      panic(err)
    }
-   fmt.Printf("%+v\n", c._AuthData)
+   fmt.Printf("%+v\n", c.AuthData.GsfID)
 }
