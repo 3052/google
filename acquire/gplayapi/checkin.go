@@ -16,7 +16,6 @@ import (
 func (client *_GooglePlayClient) checkIn() (*checkin, error) {
    b := checkin_body.Append(nil)
    r, _ := http.NewRequest("POST", _UrlCheckIn, bytes.NewReader(b))
-   //r.Header.Set("User-Agent", client._DeviceInfo._GetAuthUserAgent())
    r.Header.Set("User-Agent", "GoogleAuth/1.4 sargo PQ3B.190705.003")
    r.Header.Set("Content-Type", "application/x-protobuffer")
    r.Header.Set("Host", "android.clients.google.com")
