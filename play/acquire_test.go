@@ -10,6 +10,7 @@ import (
    "time"
 )
 
+// go run . -d com.chess24.application -v 10000957
 func main() {
    var doc string
    flag.StringVar(&doc, "d", "", "doc")
