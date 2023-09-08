@@ -42,7 +42,7 @@ func (c Config) Checkin(platform string) ([]byte, error) {
          protobuf.Field{Number: 7, Type: 2, Value: protobuf.Bytes("20815")},
          protobuf.Field{Number: 8, Type: 2, Value: protobuf.Bytes("mobile-notroaming")},
          protobuf.Field{Number: 9, Type: 0, Value: protobuf.Varint(0)},
-         m.Add_Varint(18, 1)
+         protobuf.Field{Number: 18, Type: 0, Value: protobuf.Varint(1)},
       }},
       protobuf.Field{Number: 14, Type: 0, Value: protobuf.Varint(3)},
    }
