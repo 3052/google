@@ -1,4 +1,4 @@
-package main
+package play
 
 import (
    "acquire/gplayapi"

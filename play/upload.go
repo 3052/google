@@ -1,10 +1,16 @@
-package gplayapi
+package play
 
 import (
    "154.pages.dev/encoding/protobuf"
    "bytes"
    "net/http"
 )
+
+const _UrlBase = "https://android.clients.google.com"
+
+const _UrlFdfe = _UrlBase + "/fdfe"
+
+const _UrlUploadDeviceConfig = _UrlFdfe + "/uploadDeviceConfig"
 
 func (client *_GooglePlayClient) uploadDeviceConfig() error {
    b := upload_body.Append(nil)

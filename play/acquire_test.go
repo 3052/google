@@ -1,4 +1,4 @@
-package main
+package play
 
 import (
    "154.pages.dev/google/play"
@@ -10,6 +10,7 @@ import (
    "time"
 )
 
+// var Device_ID = "306e9f7f4192be79"
 // go run . -d com.chess24.application -v 10000957
 func main() {
    var doc string

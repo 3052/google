@@ -1,8 +1,7 @@
-package acquire
+package play
 
 import (
    "154.pages.dev/encoding/protobuf"
-   "154.pages.dev/google/play"
    "bytes"
    "errors"
    "io"
@@ -10,11 +9,7 @@ import (
    "strings"
 )
 
-// pass
-//var Device_ID = "306e9f7f4192be79"
-var Device_ID = ""
-
-func Acquire(h *play.Header, doc string) error {
+func (h Header) Acquire(doc string) error {
    var m protobuf.Message
    m.Add(1, func(m *protobuf.Message) {
       m.Add(1, func(m *protobuf.Message) {
@@ -35,8 +30,8 @@ func Acquire(h *play.Header, doc string) error {
    if err != nil {
       return err
    }
-   req.Header.Set("X-Dfe-Device-Id", Device_ID)
    req.Header.Set(h.Authorization())
+   req.Header.Set(h.Device())
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return err
