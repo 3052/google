@@ -1,9 +1,9 @@
 package main
 
 import (
+   "154.pages.dev/google/acquire"
    "154.pages.dev/google/play"
    "154.pages.dev/http/option"
-   "acquire"
    "flag"
    "fmt"
    "os"
@@ -25,17 +25,16 @@ func main() {
       flag.Usage()
       return
    }
-   home, err := os.UserHomeDir()
-   if err != nil {
-      panic(err)
-   }
-   home += "/google/play"
    head := new(play.Header)
    head.Set_Agent(false)
    option.No_Location()
    option.Trace()
    {
-      b, err := os.ReadFile(home + "/token.txt")
+      s, err := os.UserHomeDir()
+      if err != nil {
+         panic(err)
+      }
+      b, err := os.ReadFile(s + "/google/play/token.txt")
       if err != nil {
          panic(err)
       }
