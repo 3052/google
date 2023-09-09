@@ -7,7 +7,23 @@ import (
    "net/http"
 )
 
-func (c Config) UploadDeviceConfig(h Header, platform string) error {
+// These can use default values, but they must all be included
+type Config struct {
+   Touch_Screen uint64 // 1
+   Keyboard uint64 // 2
+   Navigation uint64 // 3
+   Screen_Layout uint64 // 4
+   Has_Hard_Keyboard bool // 5
+   Has_Five_Way_Navigation bool // 6
+   Screen_Density uint64 // 7
+   GL_ES_Version uint64 // 8
+   System_Shared_Library []string // 9
+   Platform string // 11
+   GL_Extension []string // 15
+   System_Available_Feature []string // 26
+}
+
+func (h Header) upload_device(c Config) error {
    var m protobuf.Message
    m.Add(1, func(m *protobuf.Message) {
       //protobuf.Field{Number: 1, Type: 0, Value: protobuf.Varint(3)},
@@ -29,7 +45,7 @@ func (c Config) UploadDeviceConfig(h Header, platform string) error {
       for _, library := range c.System_Shared_Library {
          m.Add_String(9, library)
       }
-      m.Add_String(11, platform)
+      m.Add_String(11, c.Platform)
       for _, extension := range c.GL_Extension {
          m.Add_String(15, extension)
       }
@@ -45,11 +61,12 @@ func (c Config) UploadDeviceConfig(h Header, platform string) error {
       "https://android.clients.google.com/fdfe/uploadDeviceConfig",
       bytes.NewReader(m.Append(nil)),
    )
-   r.Header.Set("User-Agent", "Android-Finsky/15.8.23-all [0] [PR] 259261889 (api=3,versionCode=81582300,sdk=28,device=sargo,hardware=sargo,product=sargo,platformVersionRelease=9,model=Pixel 3a,buildId=PQ3B.190705.003,isWideScreen=0,supportedAbis=arm64-v8a;armeabi-v7a;armeabi)")
    // seems like we need this, what the fuck:
    r.Header.Set("X-DFE-Client-Id", "am-android-google")
    r.Header.Set(h.Authorization())
    r.Header.Set(h.Device())
+   //r.Header.Set("User-Agent", "Android-Finsky/15.8.23-all [0] [PR] 259261889 (api=3,versionCode=81582300,sdk=28,device=sargo,hardware=sargo,product=sargo,platformVersionRelease=9,model=Pixel 3a,buildId=PQ3B.190705.003,isWideScreen=0,supportedAbis=arm64-v8a;armeabi-v7a;armeabi)")
+   r.Header.Set(h.Agent())
    res, err := http.DefaultClient.Do(r)
    if err != nil {
       return err
@@ -59,20 +76,6 @@ func (c Config) UploadDeviceConfig(h Header, platform string) error {
       return errors.New(res.Status)
    }
    return nil
-}
-// These can use default values, but they must all be included
-type Config struct {
-   GL_ES_Version uint64
-   GL_Extension []string
-   Has_Five_Way_Navigation bool
-   Has_Hard_Keyboard bool
-   Keyboard uint64
-   Navigation uint64
-   Screen_Density uint64
-   Screen_Layout uint64
-   System_Available_Feature []string
-   System_Shared_Library []string
-   Touch_Screen uint64
 }
 
 var Phone = Config{

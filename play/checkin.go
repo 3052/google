@@ -3,6 +3,7 @@ package play
 import (
    "154.pages.dev/encoding/protobuf"
    "bytes"
+   "errors"
    "io"
    "net/http"
 )
@@ -18,7 +19,7 @@ func (d Device) ID() (uint64, error) {
 }
 
 // A Sleep is needed after this.
-func (c Config) Checkin(platform string) ([]byte, error) {
+func Checkin() ([]byte, error) {
    var checkin_body = protobuf.Message{
       protobuf.Field{Number: 4, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Prefix{
@@ -55,5 +56,8 @@ func (c Config) Checkin(platform string) ([]byte, error) {
       return nil, err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errors.New(res.Status)
+   }
    return io.ReadAll(res.Body)
 }

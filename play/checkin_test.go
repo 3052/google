@@ -12,12 +12,35 @@ func checkin_create(id int64) error {
       return err
    }
    home += "/google/play/"
-   data, err := Phone.Checkin(Platforms[id])
+   // checkin
+   data, err := Checkin()
    if err != nil {
       return err
    }
-   os.WriteFile(home + Platforms[id] + ".bin", data, 0666)
-   time.Sleep(Sleep)
+   // upload
+   var head Header
+   head.Set_Agent(false)
+   {
+      b, err := os.ReadFile(home + "token.txt")
+      if err != nil {
+         return err
+      }
+      head.Set_Authorization(b)
+   }
+   Phone.Platform = Platforms[id]
+   {
+      b, err := os.ReadFile(home + Phone.Platform + ".bin")
+      if err != nil {
+         return err
+      }
+      head.Set_Device(b)
+   }
+   if err := head.upload_device(Phone); err != nil {
+      return err
+   }
+   // write
+   os.WriteFile(home + Phone.Platform + ".bin", data, 0666)
+   time.Sleep(9*time.Second)
    return nil
 }
 
