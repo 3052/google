@@ -3,8 +3,8 @@ module 154.pages.dev/google
 go 1.20
 
 require (
-	154.pages.dev/encoding v1.12.0
-	154.pages.dev/http v1.0.8
+	154.pages.dev/encoding v1.12.2
+	154.pages.dev/http v1.0.9
 	154.pages.dev/strconv v1.0.4
 )
 
