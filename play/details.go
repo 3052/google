@@ -8,13 +8,38 @@ import (
    "net/http"
 )
 
-func (d Details) Currency_Code() (string, error) {
-   if v, ok := d.m.Message(8); ok { // Common.Offer[] offer
-      if v, ok := v.String(2); ok { // String currencyCode
-         return v, nil
-      }
+func (h Header) Details(doc string) (*Details, error) {
+   req, err := http.NewRequest(
+      "GET", "https://android.clients.google.com/fdfe/details?doc=" + doc, nil,
+   )
+   if err != nil {
+      return nil, err
    }
-   return "", fmt.Errorf("details, currency")
+   req.Header.Set(h.Agent())
+   req.Header.Set(h.Authorization())
+   req.Header.Set(h.Device())
+   res, err := http.DefaultClient.Do(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   data, err := io.ReadAll(res.Body)
+   if err != nil {
+      return nil, err
+   }
+   mes, err := protobuf.Consume(data) // ResponseWrapper
+   if err != nil {
+      return nil, err
+   }
+   mes, err = mes.Message(1) // Payload payload
+   if err != nil {
+      return nil, fmt.Errorf("payload not found")
+   }
+   // detailsResponse
+   mes, _ = mes.Message(2)
+   // docV2
+   mes, _ = mes.Message(4)
+   return &Details{mes}, nil
 }
 
 func (d Details) File() []File_Metadata {
@@ -152,41 +177,6 @@ func (f File_Metadata) File_Type() (uint64, error) {
    return f.m.Varint(1)
 }
 
-func (h Header) Details(doc string) (*Details, error) {
-   req, err := http.NewRequest(
-      "GET", "https://android.clients.google.com/fdfe/details?doc=" + doc, nil,
-   )
-   if err != nil {
-      return nil, err
-   }
-   req.Header.Set(h.Agent())
-   req.Header.Set(h.Authorization())
-   req.Header.Set(h.Device())
-   res, err := http.DefaultClient.Do(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   data, err := io.ReadAll(res.Body)
-   if err != nil {
-      return nil, err
-   }
-   // ResponseWrapper
-   mes, err := protobuf.Consume(data)
-   if err != nil {
-      return nil, err
-   }
-   mes, err = mes.Message(1)
-   if err != nil {
-      return nil, fmt.Errorf("payload not found")
-   }
-   // detailsResponse
-   mes, _ = mes.Message(2)
-   // docV2
-   mes, _ = mes.Message(4)
-   return &Details{mes}, nil
-}
-
 type Details struct {
    m protobuf.Message
 }
@@ -197,4 +187,13 @@ func (d Details) Creator() (string, error) {
       return v, nil
    }
    return "", fmt.Errorf("details, creator")
+}
+
+func (d Details) Currency_Code() (string, error) {
+   if v, ok := d.m.Message(8); ok { // Common.Offer[] offer
+      if v, ok := v.String(2); ok { // String currencyCode
+         return v, nil
+      }
+   }
+   return "", fmt.Errorf("details, currency")
 }
