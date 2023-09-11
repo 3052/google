@@ -9,6 +9,31 @@ import (
    "strings"
 )
 
+func (h *Header) Set_Device(device []byte) error {
+   var (
+      dev Device
+      err error
+   )
+   dev.m, err = protobuf.Consume(device)
+   if err != nil {
+      return err
+   }
+   id, err := dev.id()
+   if err != nil {
+      return err
+   }
+   h.Device = func() (string, string) {
+      return "X-DFE-Device-ID", strconv.FormatUint(id, 16)
+   }
+   return nil
+}
+
+type Refresh_Token map[string]string
+
+func (r Refresh_Token) token() string {
+   return r["Token"]
+}
+
 func (h *Header) Set_Authorization(token []byte) error {
    refresh, err := func() (Refresh_Token, error) {
       return parse_query(string(token))
@@ -119,27 +144,3 @@ func (h *Header) Set_Agent(single bool) {
    }
 }
 
-func (h *Header) Set_Device(device []byte) error {
-   var (
-      dev Device
-      err error
-   )
-   dev.m, err = protobuf.Consume(device)
-   if err != nil {
-      return err
-   }
-   id, err := dev.ID()
-   if err != nil {
-      return err
-   }
-   h.Device = func() (string, string) {
-      return "X-DFE-Device-ID", strconv.FormatUint(id, 16)
-   }
-   return nil
-}
-
-type Refresh_Token map[string]string
-
-func (r Refresh_Token) token() string {
-   return r["Token"]
-}

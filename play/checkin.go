@@ -8,14 +8,18 @@ import (
    "net/http"
 )
 
+// androidId
+func (d Device) id() (uint64, error) {
+   v, ok := d.m.Fixed64(7)
+   if !ok {
+      return 0, errors.New("androidId not found")
+   }
+   return v, nil
+}
+
 // Checkin$AndroidCheckinResponse
 type Device struct {
    m protobuf.Message
-}
-
-// androidId
-func (d Device) ID() (uint64, error) {
-   return d.m.Fixed64(7)
 }
 
 // A Sleep is needed after this.
