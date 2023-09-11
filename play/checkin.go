@@ -11,10 +11,10 @@ import (
 // androidId
 func (d Device) id() (uint64, error) {
    v, ok := d.m.Fixed64(7)
-   if !ok {
-      return 0, errors.New("androidId not found")
+   if ok {
+      return v, nil
    }
-   return v, nil
+   return 0, errors.New("androidId not found")
 }
 
 // Checkin$AndroidCheckinResponse

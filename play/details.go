@@ -8,18 +8,13 @@ import (
    "net/http"
 )
 
-type Details struct {
-   m protobuf.Message
-}
-
-func (d Details) Creator() (string, error) {
-   return d.m.String(6)
-}
-
 func (d Details) Currency_Code() (string, error) {
-   // offer
-   d.m, _ = d.m.Message(8)
-   return d.m.String(2)
+   if v, ok := d.m.Message(8); ok { // Common.Offer[] offer
+      if v, ok := v.String(2); ok { // String currencyCode
+         return v, nil
+      }
+   }
+   return "", fmt.Errorf("details, currency")
 }
 
 func (d Details) File() []File_Metadata {
@@ -190,4 +185,16 @@ func (h Header) Details(doc string) (*Details, error) {
    // docV2
    mes, _ = mes.Message(4)
    return &Details{mes}, nil
+}
+
+type Details struct {
+   m protobuf.Message
+}
+
+func (d Details) Creator() (string, error) {
+   v, ok := d.m.String(6)
+   if ok {
+      return v, nil
+   }
+   return "", fmt.Errorf("details, creator")
 }

@@ -236,10 +236,10 @@ func (client *_GooglePlayClient) _GenerateGPToken() (string, error) {
    }
    resp := parseResponse(string(b))
    token, ok := resp["Auth"]
-   if !ok {
-      return "", errors.New("authentication failed: could not generate oauth token")
+   if ok {
+      return token, nil
    }
-   return token, nil
+   return "", errors.New("authentication failed: could not generate oauth token")
 }
 
 const _UrlBase = "https://android.clients.google.com"

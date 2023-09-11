@@ -9,42 +9,20 @@ import (
    "strconv"
 )
 
-// downloadUrl
-func (a App_File_Metadata) Download_URL() (string, error) {
-   return a.m.String(4)
-}
-
-// fileType
-func (a App_File_Metadata) File_Type() (uint64, error) {
-   return a.m.Varint(1)
-}
-
-// AndroidAppDeliveryData
-type Delivery struct {
-   m protobuf.Message
-}
-
-func (d Delivery) Additional_File() []App_File_Metadata {
-   var files []App_File_Metadata
-   // additionalFile
-   d.m.Messages(4, func(file protobuf.Message) {
-      files = append(files, App_File_Metadata{file})
-   })
-   return files
-}
-
-// downloadUrl
-func (d Delivery) Download_URL() (string, error) {
-   return d.m.String(3)
-}
-
 func (d Delivery) Split() []Split_Delivery_Data {
    var splits []Split_Delivery_Data
-   // splitDeliveryData
-   d.m.Messages(15, func(split protobuf.Message) {
-      splits = append(splits, Split_Delivery_Data{split})
-   })
+   for _, f := range d.m {
+      if f.Number == 15 {
+         if split, ok := f.Message(); ok {
+            splits = append(splits, Split_Delivery_Data{split})
+         }
+      }
+   }
    return splits
+}
+
+type Split_Delivery_Data struct {
+   m protobuf.Message
 }
 
 type File struct {
@@ -121,21 +99,18 @@ func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
       }
    }
    mes, ok = mes.Message(2)
-   if !ok {
-      return nil, errors.New("appDeliveryData not found")
+   if ok {
+      return &Delivery{mes}, nil
    }
-   return &Delivery{mes}, nil
-}
-type Split_Delivery_Data struct {
-   m protobuf.Message
+   return nil, errors.New("appDeliveryData not found")
 }
 
 func (s Split_Delivery_Data) Download_URL() (string, error) {
    v, ok := s.m.String(5)
-   if !ok {
-      return "", errors.New("split delivery data, download URL")
+   if ok {
+      return v, nil
    }
-   return v, nil
+   return "", errors.New("split delivery data, download URL")
 }
 
 func (s Split_Delivery_Data) ID() (string, error) {
@@ -146,7 +121,46 @@ func (s Split_Delivery_Data) ID() (string, error) {
    return "", errors.New("split delivery data, ID")
 }
 
-// AppFileMetadata
+func (a App_File_Metadata) Download_URL() (string, error) {
+   v, ok := a.m.String(4)
+   if ok {
+      return v, nil
+   }
+   return "", errors.New("app file metadata, download URL")
+}
+
+func (a App_File_Metadata) File_Type() (uint64, error) {
+   v, ok := a.m.Varint(1)
+   if ok {
+      return v, nil
+   }
+   return 0, errors.New("app file metadata, file type")
+}
+
+// AndroidAppDeliveryData
+type Delivery struct {
+   m protobuf.Message
+}
+func (d Delivery) Additional_File() []App_File_Metadata {
+   var files []App_File_Metadata
+   // AppFileMetadata[] additionalFile
+   for _, f := range d.m {
+      if f.Number == 4 {
+         if file, ok := f.Message(); ok {
+            files = append(files, App_File_Metadata{file})
+         }
+      }
+   }
+   return files
+}
+
 type App_File_Metadata struct {
    m protobuf.Message
+}
+func (d Delivery) Download_URL() (string, error) {
+   v, ok := d.m.String(3)
+   if ok {
+      return v, nil
+   }
+   return "", errors.New("delivery, download URL")
 }
