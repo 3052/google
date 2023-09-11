@@ -37,157 +37,6 @@ public final class AndroidAppDeliveryData extends MessageNano {
     public boolean everExternallyHosted = false;
     public boolean hasEverExternallyHosted = false;
 
-    @Override // com.google.protobuf.nano.MessageNano
-    public final /* bridge */ /* synthetic */ MessageNano mergeFrom(CodedInputByteBufferNano x0) throws IOException {
-        int length;
-        int length2;
-        int length3;
-        while (true) {
-            int readTag = x0.readTag();
-            switch (readTag) {
-                case 0:
-                    break;
-                case 8:
-                    this.downloadSize = x0.readRawVarint64();
-                    this.hasDownloadSize = true;
-                    break;
-                case 18:
-                    this.signature = x0.readString();
-                    this.hasSignature = true;
-                    break;
-                case 26:
-                    this.downloadUrl = x0.readString();
-                    this.hasDownloadUrl = true;
-                    break;
-                case 34:
-                    int repeatedFieldArrayLength = WireFormatNano.getRepeatedFieldArrayLength(x0, 34);
-                    if (this.additionalFile == null) {
-                        length3 = 0;
-                    } else {
-                        length3 = this.additionalFile.length;
-                    }
-                    AppFileMetadata[] appFileMetadataArr = new AppFileMetadata[repeatedFieldArrayLength + length3];
-                    if (length3 != 0) {
-                        System.arraycopy(this.additionalFile, 0, appFileMetadataArr, 0, length3);
-                    }
-                    while (length3 < appFileMetadataArr.length - 1) {
-                        appFileMetadataArr[length3] = new AppFileMetadata();
-                        x0.readMessage(appFileMetadataArr[length3]);
-                        x0.readTag();
-                        length3++;
-                    }
-                    appFileMetadataArr[length3] = new AppFileMetadata();
-                    x0.readMessage(appFileMetadataArr[length3]);
-                    this.additionalFile = appFileMetadataArr;
-                    break;
-                case 42:
-                    int repeatedFieldArrayLength2 = WireFormatNano.getRepeatedFieldArrayLength(x0, 42);
-                    if (this.downloadAuthCookie == null) {
-                        length2 = 0;
-                    } else {
-                        length2 = this.downloadAuthCookie.length;
-                    }
-                    HttpCookie[] httpCookieArr = new HttpCookie[repeatedFieldArrayLength2 + length2];
-                    if (length2 != 0) {
-                        System.arraycopy(this.downloadAuthCookie, 0, httpCookieArr, 0, length2);
-                    }
-                    while (length2 < httpCookieArr.length - 1) {
-                        httpCookieArr[length2] = new HttpCookie();
-                        x0.readMessage(httpCookieArr[length2]);
-                        x0.readTag();
-                        length2++;
-                    }
-                    httpCookieArr[length2] = new HttpCookie();
-                    x0.readMessage(httpCookieArr[length2]);
-                    this.downloadAuthCookie = httpCookieArr;
-                    break;
-                case 48:
-                    this.forwardLocked = x0.readBool();
-                    this.hasForwardLocked = true;
-                    break;
-                case 56:
-                    this.refundTimeout = x0.readRawVarint64();
-                    this.hasRefundTimeout = true;
-                    break;
-                case 64:
-                    this.serverInitiated = x0.readBool();
-                    this.hasServerInitiated = true;
-                    break;
-                case 72:
-                    this.postInstallRefundWindowMillis = x0.readRawVarint64();
-                    this.hasPostInstallRefundWindowMillis = true;
-                    break;
-                case 80:
-                    this.immediateStartNeeded = x0.readBool();
-                    this.hasImmediateStartNeeded = true;
-                    break;
-                case 90:
-                    if (this.patchData == null) {
-                        this.patchData = new AndroidAppPatchData();
-                    }
-                    x0.readMessage(this.patchData);
-                    break;
-                case 98:
-                    if (this.encryptionParams == null) {
-                        this.encryptionParams = new EncryptionParams();
-                    }
-                    x0.readMessage(this.encryptionParams);
-                    break;
-                case 106:
-                    this.gzippedDownloadUrl = x0.readString();
-                    this.hasGzippedDownloadUrl = true;
-                    break;
-                case 112:
-                    this.gzippedDownloadSize = x0.readRawVarint64();
-                    this.hasGzippedDownloadSize = true;
-                    break;
-                case 122:
-                    int repeatedFieldArrayLength3 = WireFormatNano.getRepeatedFieldArrayLength(x0, 122);
-                    if (this.splitDeliveryData == null) {
-                        length = 0;
-                    } else {
-                        length = this.splitDeliveryData.length;
-                    }
-                    SplitDeliveryData[] splitDeliveryDataArr = new SplitDeliveryData[repeatedFieldArrayLength3 + length];
-                    if (length != 0) {
-                        System.arraycopy(this.splitDeliveryData, 0, splitDeliveryDataArr, 0, length);
-                    }
-                    while (length < splitDeliveryDataArr.length - 1) {
-                        splitDeliveryDataArr[length] = new SplitDeliveryData();
-                        x0.readMessage(splitDeliveryDataArr[length]);
-                        x0.readTag();
-                        length++;
-                    }
-                    splitDeliveryDataArr[length] = new SplitDeliveryData();
-                    x0.readMessage(splitDeliveryDataArr[length]);
-                    this.splitDeliveryData = splitDeliveryDataArr;
-                    break;
-                case 128:
-                    int readRawVarint32 = x0.readRawVarint32();
-                    switch (readRawVarint32) {
-                        case 0:
-                        case 1:
-                        case 2:
-                        case 3:
-                            this.installLocation = readRawVarint32;
-                            this.hasInstallLocation = true;
-                            continue;
-                    }
-                case 136:
-                    this.everExternallyHosted = x0.readBool();
-                    this.hasEverExternallyHosted = true;
-                    break;
-                default:
-                    if (WireFormatNano.parseUnknownField(x0, readTag)) {
-                        break;
-                    } else {
-                        break;
-                    }
-            }
-        }
-        return this;
-    }
-
     public AndroidAppDeliveryData() {
         this.cachedSize = -1;
     }
@@ -263,6 +112,7 @@ public final class AndroidAppDeliveryData extends MessageNano {
         super.writeTo(output);
     }
 
+    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.google.protobuf.nano.MessageNano
     public final int computeSerializedSize() {
         int size = super.computeSerializedSize();
@@ -333,5 +183,141 @@ public final class AndroidAppDeliveryData extends MessageNano {
             return size + CodedOutputByteBufferNano.computeTagSize(17) + 1;
         }
         return size;
+    }
+
+    @Override // com.google.protobuf.nano.MessageNano
+    public final /* bridge */ /* synthetic */ MessageNano mergeFrom(CodedInputByteBufferNano x0) throws IOException {
+        while (true) {
+            int readTag = x0.readTag();
+            switch (readTag) {
+                case 0:
+                    break;
+                case 8:
+                    this.downloadSize = x0.readRawVarint64();
+                    this.hasDownloadSize = true;
+                    break;
+                case 18:
+                    this.signature = x0.readString();
+                    this.hasSignature = true;
+                    break;
+                case 26:
+                    this.downloadUrl = x0.readString();
+                    this.hasDownloadUrl = true;
+                    break;
+                case 34:
+                    int repeatedFieldArrayLength = WireFormatNano.getRepeatedFieldArrayLength(x0, 34);
+                    int length = this.additionalFile == null ? 0 : this.additionalFile.length;
+                    AppFileMetadata[] appFileMetadataArr = new AppFileMetadata[repeatedFieldArrayLength + length];
+                    if (length != 0) {
+                        System.arraycopy(this.additionalFile, 0, appFileMetadataArr, 0, length);
+                    }
+                    while (length < appFileMetadataArr.length - 1) {
+                        appFileMetadataArr[length] = new AppFileMetadata();
+                        x0.readMessage(appFileMetadataArr[length]);
+                        x0.readTag();
+                        length++;
+                    }
+                    appFileMetadataArr[length] = new AppFileMetadata();
+                    x0.readMessage(appFileMetadataArr[length]);
+                    this.additionalFile = appFileMetadataArr;
+                    break;
+                case 42:
+                    int repeatedFieldArrayLength2 = WireFormatNano.getRepeatedFieldArrayLength(x0, 42);
+                    int length2 = this.downloadAuthCookie == null ? 0 : this.downloadAuthCookie.length;
+                    HttpCookie[] httpCookieArr = new HttpCookie[repeatedFieldArrayLength2 + length2];
+                    if (length2 != 0) {
+                        System.arraycopy(this.downloadAuthCookie, 0, httpCookieArr, 0, length2);
+                    }
+                    while (length2 < httpCookieArr.length - 1) {
+                        httpCookieArr[length2] = new HttpCookie();
+                        x0.readMessage(httpCookieArr[length2]);
+                        x0.readTag();
+                        length2++;
+                    }
+                    httpCookieArr[length2] = new HttpCookie();
+                    x0.readMessage(httpCookieArr[length2]);
+                    this.downloadAuthCookie = httpCookieArr;
+                    break;
+                case 48:
+                    this.forwardLocked = x0.readBool();
+                    this.hasForwardLocked = true;
+                    break;
+                case 56:
+                    this.refundTimeout = x0.readRawVarint64();
+                    this.hasRefundTimeout = true;
+                    break;
+                case 64:
+                    this.serverInitiated = x0.readBool();
+                    this.hasServerInitiated = true;
+                    break;
+                case 72:
+                    this.postInstallRefundWindowMillis = x0.readRawVarint64();
+                    this.hasPostInstallRefundWindowMillis = true;
+                    break;
+                case 80:
+                    this.immediateStartNeeded = x0.readBool();
+                    this.hasImmediateStartNeeded = true;
+                    break;
+                case 90:
+                    if (this.patchData == null) {
+                        this.patchData = new AndroidAppPatchData();
+                    }
+                    x0.readMessage(this.patchData);
+                    break;
+                case 98:
+                    if (this.encryptionParams == null) {
+                        this.encryptionParams = new EncryptionParams();
+                    }
+                    x0.readMessage(this.encryptionParams);
+                    break;
+                case 106:
+                    this.gzippedDownloadUrl = x0.readString();
+                    this.hasGzippedDownloadUrl = true;
+                    break;
+                case 112:
+                    this.gzippedDownloadSize = x0.readRawVarint64();
+                    this.hasGzippedDownloadSize = true;
+                    break;
+                case 122:
+                    int repeatedFieldArrayLength3 = WireFormatNano.getRepeatedFieldArrayLength(x0, 122);
+                    int length3 = this.splitDeliveryData == null ? 0 : this.splitDeliveryData.length;
+                    SplitDeliveryData[] splitDeliveryDataArr = new SplitDeliveryData[repeatedFieldArrayLength3 + length3];
+                    if (length3 != 0) {
+                        System.arraycopy(this.splitDeliveryData, 0, splitDeliveryDataArr, 0, length3);
+                    }
+                    while (length3 < splitDeliveryDataArr.length - 1) {
+                        splitDeliveryDataArr[length3] = new SplitDeliveryData();
+                        x0.readMessage(splitDeliveryDataArr[length3]);
+                        x0.readTag();
+                        length3++;
+                    }
+                    splitDeliveryDataArr[length3] = new SplitDeliveryData();
+                    x0.readMessage(splitDeliveryDataArr[length3]);
+                    this.splitDeliveryData = splitDeliveryDataArr;
+                    break;
+                case 128:
+                    int readRawVarint32 = x0.readRawVarint32();
+                    switch (readRawVarint32) {
+                        case 0:
+                        case 1:
+                        case 2:
+                        case 3:
+                            this.installLocation = readRawVarint32;
+                            this.hasInstallLocation = true;
+                            continue;
+                    }
+                case 136:
+                    this.everExternallyHosted = x0.readBool();
+                    this.hasEverExternallyHosted = true;
+                    break;
+                default:
+                    if (!WireFormatNano.parseUnknownField(x0, readTag)) {
+                        break;
+                    } else {
+                        break;
+                    }
+            }
+        }
+        return this;
     }
 }

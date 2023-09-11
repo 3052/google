@@ -12,56 +12,6 @@ public final class GetReviewsResponse extends MessageNano {
     public long matchingCount = 0;
     public boolean hasMatchingCount = false;
 
-    @Override // com.google.protobuf.nano.MessageNano
-    public final /* bridge */ /* synthetic */ MessageNano mergeFrom(CodedInputByteBufferNano x0) throws IOException {
-        int length;
-        while (true) {
-            int readTag = x0.readTag();
-            switch (readTag) {
-                case 0:
-                    break;
-                case 10:
-                    int repeatedFieldArrayLength = WireFormatNano.getRepeatedFieldArrayLength(x0, 10);
-                    if (this.review == null) {
-                        length = 0;
-                    } else {
-                        length = this.review.length;
-                    }
-                    Review[] reviewArr = new Review[repeatedFieldArrayLength + length];
-                    if (length != 0) {
-                        System.arraycopy(this.review, 0, reviewArr, 0, length);
-                    }
-                    while (length < reviewArr.length - 1) {
-                        reviewArr[length] = new Review();
-                        x0.readMessage(reviewArr[length]);
-                        x0.readTag();
-                        length++;
-                    }
-                    reviewArr[length] = new Review();
-                    x0.readMessage(reviewArr[length]);
-                    this.review = reviewArr;
-                    break;
-                case 16:
-                    this.matchingCount = x0.readRawVarint64();
-                    this.hasMatchingCount = true;
-                    break;
-                case 26:
-                    if (this.tip == null) {
-                        this.tip = new ReviewTip();
-                    }
-                    x0.readMessage(this.tip);
-                    break;
-                default:
-                    if (WireFormatNano.parseUnknownField(x0, readTag)) {
-                        break;
-                    } else {
-                        break;
-                    }
-            }
-        }
-        return this;
-    }
-
     public GetReviewsResponse() {
         this.cachedSize = -1;
     }
@@ -104,5 +54,50 @@ public final class GetReviewsResponse extends MessageNano {
             return size + CodedOutputByteBufferNano.computeMessageSize(3, this.tip);
         }
         return size;
+    }
+
+    @Override // com.google.protobuf.nano.MessageNano
+    public final /* bridge */ /* synthetic */ MessageNano mergeFrom(CodedInputByteBufferNano x0) throws IOException {
+        while (true) {
+            int readTag = x0.readTag();
+            switch (readTag) {
+                case 0:
+                    break;
+                case 10:
+                    int repeatedFieldArrayLength = WireFormatNano.getRepeatedFieldArrayLength(x0, 10);
+                    int length = this.review == null ? 0 : this.review.length;
+                    Review[] reviewArr = new Review[repeatedFieldArrayLength + length];
+                    if (length != 0) {
+                        System.arraycopy(this.review, 0, reviewArr, 0, length);
+                    }
+                    while (length < reviewArr.length - 1) {
+                        reviewArr[length] = new Review();
+                        x0.readMessage(reviewArr[length]);
+                        x0.readTag();
+                        length++;
+                    }
+                    reviewArr[length] = new Review();
+                    x0.readMessage(reviewArr[length]);
+                    this.review = reviewArr;
+                    break;
+                case 16:
+                    this.matchingCount = x0.readRawVarint64();
+                    this.hasMatchingCount = true;
+                    break;
+                case 26:
+                    if (this.tip == null) {
+                        this.tip = new ReviewTip();
+                    }
+                    x0.readMessage(this.tip);
+                    break;
+                default:
+                    if (!WireFormatNano.parseUnknownField(x0, readTag)) {
+                        break;
+                    } else {
+                        break;
+                    }
+            }
+        }
+        return this;
     }
 }

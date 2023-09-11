@@ -37,100 +37,6 @@ public interface Rating {
         public boolean hasThumbsDownCount = false;
         public Tip[] tip = Tip.emptyArray();
 
-        @Override // com.google.protobuf.nano.MessageNano
-        public final /* bridge */ /* synthetic */ MessageNano mergeFrom(CodedInputByteBufferNano x0) throws IOException {
-            int length;
-            while (true) {
-                int readTag = x0.readTag();
-                switch (readTag) {
-                    case 0:
-                        break;
-                    case 8:
-                        int readRawVarint32 = x0.readRawVarint32();
-                        switch (readRawVarint32) {
-                            case 1:
-                            case 2:
-                            case 3:
-                                this.type = readRawVarint32;
-                                this.hasType = true;
-                                continue;
-                        }
-                    case 21:
-                        this.starRating = Float.intBitsToFloat(x0.readRawLittleEndian32());
-                        this.hasStarRating = true;
-                        break;
-                    case 24:
-                        this.ratingsCount = x0.readRawVarint64();
-                        this.hasRatingsCount = true;
-                        break;
-                    case 32:
-                        this.oneStarRatings = x0.readRawVarint64();
-                        this.hasOneStarRatings = true;
-                        break;
-                    case 40:
-                        this.twoStarRatings = x0.readRawVarint64();
-                        this.hasTwoStarRatings = true;
-                        break;
-                    case 48:
-                        this.threeStarRatings = x0.readRawVarint64();
-                        this.hasThreeStarRatings = true;
-                        break;
-                    case 56:
-                        this.fourStarRatings = x0.readRawVarint64();
-                        this.hasFourStarRatings = true;
-                        break;
-                    case 64:
-                        this.fiveStarRatings = x0.readRawVarint64();
-                        this.hasFiveStarRatings = true;
-                        break;
-                    case 72:
-                        this.thumbsUpCount = x0.readRawVarint64();
-                        this.hasThumbsUpCount = true;
-                        break;
-                    case 80:
-                        this.thumbsDownCount = x0.readRawVarint64();
-                        this.hasThumbsDownCount = true;
-                        break;
-                    case 88:
-                        this.commentCount = x0.readRawVarint64();
-                        this.hasCommentCount = true;
-                        break;
-                    case 97:
-                        this.bayesianMeanRating = Double.longBitsToDouble(x0.readRawLittleEndian64());
-                        this.hasBayesianMeanRating = true;
-                        break;
-                    case 106:
-                        int repeatedFieldArrayLength = WireFormatNano.getRepeatedFieldArrayLength(x0, 106);
-                        if (this.tip == null) {
-                            length = 0;
-                        } else {
-                            length = this.tip.length;
-                        }
-                        Tip[] tipArr = new Tip[repeatedFieldArrayLength + length];
-                        if (length != 0) {
-                            System.arraycopy(this.tip, 0, tipArr, 0, length);
-                        }
-                        while (length < tipArr.length - 1) {
-                            tipArr[length] = new Tip();
-                            x0.readMessage(tipArr[length]);
-                            x0.readTag();
-                            length++;
-                        }
-                        tipArr[length] = new Tip();
-                        x0.readMessage(tipArr[length]);
-                        this.tip = tipArr;
-                        break;
-                    default:
-                        if (WireFormatNano.parseUnknownField(x0, readTag)) {
-                            break;
-                        } else {
-                            break;
-                        }
-                }
-            }
-            return this;
-        }
-
         public AggregateRating() {
             this.cachedSize = -1;
         }
@@ -234,6 +140,95 @@ public interface Rating {
             }
             return size;
         }
+
+        @Override // com.google.protobuf.nano.MessageNano
+        public final /* bridge */ /* synthetic */ MessageNano mergeFrom(CodedInputByteBufferNano x0) throws IOException {
+            while (true) {
+                int readTag = x0.readTag();
+                switch (readTag) {
+                    case 0:
+                        break;
+                    case 8:
+                        int readRawVarint32 = x0.readRawVarint32();
+                        switch (readRawVarint32) {
+                            case 1:
+                            case 2:
+                            case 3:
+                                this.type = readRawVarint32;
+                                this.hasType = true;
+                                continue;
+                        }
+                    case 21:
+                        this.starRating = Float.intBitsToFloat(x0.readRawLittleEndian32());
+                        this.hasStarRating = true;
+                        break;
+                    case 24:
+                        this.ratingsCount = x0.readRawVarint64();
+                        this.hasRatingsCount = true;
+                        break;
+                    case 32:
+                        this.oneStarRatings = x0.readRawVarint64();
+                        this.hasOneStarRatings = true;
+                        break;
+                    case 40:
+                        this.twoStarRatings = x0.readRawVarint64();
+                        this.hasTwoStarRatings = true;
+                        break;
+                    case 48:
+                        this.threeStarRatings = x0.readRawVarint64();
+                        this.hasThreeStarRatings = true;
+                        break;
+                    case 56:
+                        this.fourStarRatings = x0.readRawVarint64();
+                        this.hasFourStarRatings = true;
+                        break;
+                    case 64:
+                        this.fiveStarRatings = x0.readRawVarint64();
+                        this.hasFiveStarRatings = true;
+                        break;
+                    case 72:
+                        this.thumbsUpCount = x0.readRawVarint64();
+                        this.hasThumbsUpCount = true;
+                        break;
+                    case 80:
+                        this.thumbsDownCount = x0.readRawVarint64();
+                        this.hasThumbsDownCount = true;
+                        break;
+                    case 88:
+                        this.commentCount = x0.readRawVarint64();
+                        this.hasCommentCount = true;
+                        break;
+                    case 97:
+                        this.bayesianMeanRating = Double.longBitsToDouble(x0.readRawLittleEndian64());
+                        this.hasBayesianMeanRating = true;
+                        break;
+                    case 106:
+                        int repeatedFieldArrayLength = WireFormatNano.getRepeatedFieldArrayLength(x0, 106);
+                        int length = this.tip == null ? 0 : this.tip.length;
+                        Tip[] tipArr = new Tip[repeatedFieldArrayLength + length];
+                        if (length != 0) {
+                            System.arraycopy(this.tip, 0, tipArr, 0, length);
+                        }
+                        while (length < tipArr.length - 1) {
+                            tipArr[length] = new Tip();
+                            x0.readMessage(tipArr[length]);
+                            x0.readTag();
+                            length++;
+                        }
+                        tipArr[length] = new Tip();
+                        x0.readMessage(tipArr[length]);
+                        this.tip = tipArr;
+                        break;
+                    default:
+                        if (!WireFormatNano.parseUnknownField(x0, readTag)) {
+                            break;
+                        } else {
+                            break;
+                        }
+                }
+            }
+            return this;
+        }
     }
 
     /* loaded from: classes.dex */
@@ -250,65 +245,6 @@ public interface Rating {
         public String language = "";
         public boolean hasLanguage = false;
         public String[] snippetReviewId = WireFormatNano.EMPTY_STRING_ARRAY;
-
-        @Override // com.google.protobuf.nano.MessageNano
-        public final /* bridge */ /* synthetic */ MessageNano mergeFrom(CodedInputByteBufferNano x0) throws IOException {
-            while (true) {
-                int readTag = x0.readTag();
-                switch (readTag) {
-                    case 0:
-                        break;
-                    case 10:
-                        this.tipId = x0.readString();
-                        this.hasTipId = true;
-                        break;
-                    case 18:
-                        this.text = x0.readString();
-                        this.hasText = true;
-                        break;
-                    case 24:
-                        int readRawVarint32 = x0.readRawVarint32();
-                        switch (readRawVarint32) {
-                            case 0:
-                            case 1:
-                            case 2:
-                                this.polarity = readRawVarint32;
-                                this.hasPolarity = true;
-                                continue;
-                        }
-                    case 32:
-                        this.reviewCount = x0.readRawVarint64();
-                        this.hasReviewCount = true;
-                        break;
-                    case 42:
-                        this.language = x0.readString();
-                        this.hasLanguage = true;
-                        break;
-                    case 50:
-                        int repeatedFieldArrayLength = WireFormatNano.getRepeatedFieldArrayLength(x0, 50);
-                        int length = this.snippetReviewId == null ? 0 : this.snippetReviewId.length;
-                        String[] strArr = new String[repeatedFieldArrayLength + length];
-                        if (length != 0) {
-                            System.arraycopy(this.snippetReviewId, 0, strArr, 0, length);
-                        }
-                        while (length < strArr.length - 1) {
-                            strArr[length] = x0.readString();
-                            x0.readTag();
-                            length++;
-                        }
-                        strArr[length] = x0.readString();
-                        this.snippetReviewId = strArr;
-                        break;
-                    default:
-                        if (WireFormatNano.parseUnknownField(x0, readTag)) {
-                            break;
-                        } else {
-                            break;
-                        }
-                }
-            }
-            return this;
-        }
 
         public static Tip[] emptyArray() {
             if (_emptyArray == null) {
@@ -372,19 +308,78 @@ public interface Rating {
             if (this.hasLanguage || !this.language.equals("")) {
                 size += CodedOutputByteBufferNano.computeStringSize(5, this.language);
             }
-            if (this.snippetReviewId == null || this.snippetReviewId.length <= 0) {
-                return size;
+            if (this.snippetReviewId != null && this.snippetReviewId.length > 0) {
+                int dataCount = 0;
+                int dataSize = 0;
+                for (int i = 0; i < this.snippetReviewId.length; i++) {
+                    String element = this.snippetReviewId[i];
+                    if (element != null) {
+                        dataCount++;
+                        dataSize += CodedOutputByteBufferNano.computeStringSizeNoTag(element);
+                    }
+                }
+                return size + dataSize + (dataCount * 1);
             }
-            int dataCount = 0;
-            int dataSize = 0;
-            for (int i = 0; i < this.snippetReviewId.length; i++) {
-                String element = this.snippetReviewId[i];
-                if (element != null) {
-                    dataCount++;
-                    dataSize += CodedOutputByteBufferNano.computeStringSizeNoTag(element);
+            return size;
+        }
+
+        @Override // com.google.protobuf.nano.MessageNano
+        public final /* bridge */ /* synthetic */ MessageNano mergeFrom(CodedInputByteBufferNano x0) throws IOException {
+            while (true) {
+                int readTag = x0.readTag();
+                switch (readTag) {
+                    case 0:
+                        break;
+                    case 10:
+                        this.tipId = x0.readString();
+                        this.hasTipId = true;
+                        break;
+                    case 18:
+                        this.text = x0.readString();
+                        this.hasText = true;
+                        break;
+                    case 24:
+                        int readRawVarint32 = x0.readRawVarint32();
+                        switch (readRawVarint32) {
+                            case 0:
+                            case 1:
+                            case 2:
+                                this.polarity = readRawVarint32;
+                                this.hasPolarity = true;
+                                continue;
+                        }
+                    case 32:
+                        this.reviewCount = x0.readRawVarint64();
+                        this.hasReviewCount = true;
+                        break;
+                    case 42:
+                        this.language = x0.readString();
+                        this.hasLanguage = true;
+                        break;
+                    case 50:
+                        int repeatedFieldArrayLength = WireFormatNano.getRepeatedFieldArrayLength(x0, 50);
+                        int length = this.snippetReviewId == null ? 0 : this.snippetReviewId.length;
+                        String[] strArr = new String[repeatedFieldArrayLength + length];
+                        if (length != 0) {
+                            System.arraycopy(this.snippetReviewId, 0, strArr, 0, length);
+                        }
+                        while (length < strArr.length - 1) {
+                            strArr[length] = x0.readString();
+                            x0.readTag();
+                            length++;
+                        }
+                        strArr[length] = x0.readString();
+                        this.snippetReviewId = strArr;
+                        break;
+                    default:
+                        if (!WireFormatNano.parseUnknownField(x0, readTag)) {
+                            break;
+                        } else {
+                            break;
+                        }
                 }
             }
-            return size + dataSize + (dataCount * 1);
+            return this;
         }
     }
 }

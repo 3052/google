@@ -82,6 +82,7 @@ public interface DocDetails {
             super.writeTo(output);
         }
 
+        /* JADX INFO: Access modifiers changed from: protected */
         @Override // com.google.protobuf.nano.MessageNano
         public final int computeSerializedSize() {
             int size = super.computeSerializedSize();
@@ -231,7 +232,7 @@ public interface DocDetails {
                         x0.readMessage(this.bookSeriesDetails);
                         break;
                     default:
-                        if (WireFormatNano.parseUnknownField(x0, readTag)) {
+                        if (!WireFormatNano.parseUnknownField(x0, readTag)) {
                             break;
                         } else {
                             break;
@@ -247,50 +248,6 @@ public interface DocDetails {
         public String title = "";
         public boolean hasTitle = false;
         public ProductDetailsSection[] section = ProductDetailsSection.emptyArray();
-
-        @Override // com.google.protobuf.nano.MessageNano
-        public final /* bridge */ /* synthetic */ MessageNano mergeFrom(CodedInputByteBufferNano x0) throws IOException {
-            int length;
-            while (true) {
-                int readTag = x0.readTag();
-                switch (readTag) {
-                    case 0:
-                        break;
-                    case 10:
-                        this.title = x0.readString();
-                        this.hasTitle = true;
-                        break;
-                    case 18:
-                        int repeatedFieldArrayLength = WireFormatNano.getRepeatedFieldArrayLength(x0, 18);
-                        if (this.section == null) {
-                            length = 0;
-                        } else {
-                            length = this.section.length;
-                        }
-                        ProductDetailsSection[] productDetailsSectionArr = new ProductDetailsSection[repeatedFieldArrayLength + length];
-                        if (length != 0) {
-                            System.arraycopy(this.section, 0, productDetailsSectionArr, 0, length);
-                        }
-                        while (length < productDetailsSectionArr.length - 1) {
-                            productDetailsSectionArr[length] = new ProductDetailsSection();
-                            x0.readMessage(productDetailsSectionArr[length]);
-                            x0.readTag();
-                            length++;
-                        }
-                        productDetailsSectionArr[length] = new ProductDetailsSection();
-                        x0.readMessage(productDetailsSectionArr[length]);
-                        this.section = productDetailsSectionArr;
-                        break;
-                    default:
-                        if (WireFormatNano.parseUnknownField(x0, readTag)) {
-                            break;
-                        } else {
-                            break;
-                        }
-                }
-            }
-            return this;
-        }
 
         public ProductDetails() {
             this.cachedSize = -1;
@@ -312,6 +269,7 @@ public interface DocDetails {
             super.writeTo(output);
         }
 
+        /* JADX INFO: Access modifiers changed from: protected */
         @Override // com.google.protobuf.nano.MessageNano
         public final int computeSerializedSize() {
             int size = super.computeSerializedSize();
@@ -328,18 +286,9 @@ public interface DocDetails {
             }
             return size;
         }
-    }
-
-    /* loaded from: classes.dex */
-    public static final class ProductDetailsSection extends MessageNano {
-        private static volatile ProductDetailsSection[] _emptyArray;
-        public String title = "";
-        public boolean hasTitle = false;
-        public ProductDetailsDescription[] description = ProductDetailsDescription.emptyArray();
 
         @Override // com.google.protobuf.nano.MessageNano
         public final /* bridge */ /* synthetic */ MessageNano mergeFrom(CodedInputByteBufferNano x0) throws IOException {
-            int length;
             while (true) {
                 int readTag = x0.readTag();
                 switch (readTag) {
@@ -349,29 +298,25 @@ public interface DocDetails {
                         this.title = x0.readString();
                         this.hasTitle = true;
                         break;
-                    case 26:
-                        int repeatedFieldArrayLength = WireFormatNano.getRepeatedFieldArrayLength(x0, 26);
-                        if (this.description == null) {
-                            length = 0;
-                        } else {
-                            length = this.description.length;
-                        }
-                        ProductDetailsDescription[] productDetailsDescriptionArr = new ProductDetailsDescription[repeatedFieldArrayLength + length];
+                    case 18:
+                        int repeatedFieldArrayLength = WireFormatNano.getRepeatedFieldArrayLength(x0, 18);
+                        int length = this.section == null ? 0 : this.section.length;
+                        ProductDetailsSection[] productDetailsSectionArr = new ProductDetailsSection[repeatedFieldArrayLength + length];
                         if (length != 0) {
-                            System.arraycopy(this.description, 0, productDetailsDescriptionArr, 0, length);
+                            System.arraycopy(this.section, 0, productDetailsSectionArr, 0, length);
                         }
-                        while (length < productDetailsDescriptionArr.length - 1) {
-                            productDetailsDescriptionArr[length] = new ProductDetailsDescription();
-                            x0.readMessage(productDetailsDescriptionArr[length]);
+                        while (length < productDetailsSectionArr.length - 1) {
+                            productDetailsSectionArr[length] = new ProductDetailsSection();
+                            x0.readMessage(productDetailsSectionArr[length]);
                             x0.readTag();
                             length++;
                         }
-                        productDetailsDescriptionArr[length] = new ProductDetailsDescription();
-                        x0.readMessage(productDetailsDescriptionArr[length]);
-                        this.description = productDetailsDescriptionArr;
+                        productDetailsSectionArr[length] = new ProductDetailsSection();
+                        x0.readMessage(productDetailsSectionArr[length]);
+                        this.section = productDetailsSectionArr;
                         break;
                     default:
-                        if (WireFormatNano.parseUnknownField(x0, readTag)) {
+                        if (!WireFormatNano.parseUnknownField(x0, readTag)) {
                             break;
                         } else {
                             break;
@@ -380,6 +325,14 @@ public interface DocDetails {
             }
             return this;
         }
+    }
+
+    /* loaded from: classes.dex */
+    public static final class ProductDetailsSection extends MessageNano {
+        private static volatile ProductDetailsSection[] _emptyArray;
+        public String title = "";
+        public boolean hasTitle = false;
+        public ProductDetailsDescription[] description = ProductDetailsDescription.emptyArray();
 
         public static ProductDetailsSection[] emptyArray() {
             if (_emptyArray == null) {
@@ -412,6 +365,7 @@ public interface DocDetails {
             super.writeTo(output);
         }
 
+        /* JADX INFO: Access modifiers changed from: protected */
         @Override // com.google.protobuf.nano.MessageNano
         public final int computeSerializedSize() {
             int size = super.computeSerializedSize();
@@ -427,6 +381,45 @@ public interface DocDetails {
                 }
             }
             return size;
+        }
+
+        @Override // com.google.protobuf.nano.MessageNano
+        public final /* bridge */ /* synthetic */ MessageNano mergeFrom(CodedInputByteBufferNano x0) throws IOException {
+            while (true) {
+                int readTag = x0.readTag();
+                switch (readTag) {
+                    case 0:
+                        break;
+                    case 10:
+                        this.title = x0.readString();
+                        this.hasTitle = true;
+                        break;
+                    case 26:
+                        int repeatedFieldArrayLength = WireFormatNano.getRepeatedFieldArrayLength(x0, 26);
+                        int length = this.description == null ? 0 : this.description.length;
+                        ProductDetailsDescription[] productDetailsDescriptionArr = new ProductDetailsDescription[repeatedFieldArrayLength + length];
+                        if (length != 0) {
+                            System.arraycopy(this.description, 0, productDetailsDescriptionArr, 0, length);
+                        }
+                        while (length < productDetailsDescriptionArr.length - 1) {
+                            productDetailsDescriptionArr[length] = new ProductDetailsDescription();
+                            x0.readMessage(productDetailsDescriptionArr[length]);
+                            x0.readTag();
+                            length++;
+                        }
+                        productDetailsDescriptionArr[length] = new ProductDetailsDescription();
+                        x0.readMessage(productDetailsDescriptionArr[length]);
+                        this.description = productDetailsDescriptionArr;
+                        break;
+                    default:
+                        if (!WireFormatNano.parseUnknownField(x0, readTag)) {
+                            break;
+                        } else {
+                            break;
+                        }
+                }
+            }
+            return this;
         }
     }
 
@@ -463,6 +456,7 @@ public interface DocDetails {
             super.writeTo(output);
         }
 
+        /* JADX INFO: Access modifiers changed from: protected */
         @Override // com.google.protobuf.nano.MessageNano
         public final int computeSerializedSize() {
             int size = super.computeSerializedSize();
@@ -493,7 +487,7 @@ public interface DocDetails {
                         this.hasDescription = true;
                         break;
                     default:
-                        if (WireFormatNano.parseUnknownField(x0, readTag)) {
+                        if (!WireFormatNano.parseUnknownField(x0, readTag)) {
                             break;
                         } else {
                             break;
@@ -511,6 +505,34 @@ public interface DocDetails {
         public boolean isGplusUser = true;
         public boolean hasIsGplusUser = false;
 
+        public PersonDetails() {
+            this.cachedSize = -1;
+        }
+
+        @Override // com.google.protobuf.nano.MessageNano
+        public final void writeTo(CodedOutputByteBufferNano output) throws IOException {
+            if (this.hasPersonIsRequester || this.personIsRequester) {
+                output.writeBool(1, this.personIsRequester);
+            }
+            if (this.hasIsGplusUser || !this.isGplusUser) {
+                output.writeBool(2, this.isGplusUser);
+            }
+            super.writeTo(output);
+        }
+
+        /* JADX INFO: Access modifiers changed from: protected */
+        @Override // com.google.protobuf.nano.MessageNano
+        public final int computeSerializedSize() {
+            int size = super.computeSerializedSize();
+            if (this.hasPersonIsRequester || this.personIsRequester) {
+                size += CodedOutputByteBufferNano.computeTagSize(1) + 1;
+            }
+            if (this.hasIsGplusUser || !this.isGplusUser) {
+                return size + CodedOutputByteBufferNano.computeTagSize(2) + 1;
+            }
+            return size;
+        }
+
         @Override // com.google.protobuf.nano.MessageNano
         public final /* bridge */ /* synthetic */ MessageNano mergeFrom(CodedInputByteBufferNano x0) throws IOException {
             while (true) {
@@ -527,7 +549,7 @@ public interface DocDetails {
                         this.hasIsGplusUser = true;
                         break;
                     default:
-                        if (WireFormatNano.parseUnknownField(x0, readTag)) {
+                        if (!WireFormatNano.parseUnknownField(x0, readTag)) {
                             break;
                         } else {
                             break;
@@ -535,33 +557,6 @@ public interface DocDetails {
                 }
             }
             return this;
-        }
-
-        public PersonDetails() {
-            this.cachedSize = -1;
-        }
-
-        @Override // com.google.protobuf.nano.MessageNano
-        public final void writeTo(CodedOutputByteBufferNano output) throws IOException {
-            if (this.hasPersonIsRequester || this.personIsRequester) {
-                output.writeBool(1, this.personIsRequester);
-            }
-            if (this.hasIsGplusUser || !this.isGplusUser) {
-                output.writeBool(2, this.isGplusUser);
-            }
-            super.writeTo(output);
-        }
-
-        @Override // com.google.protobuf.nano.MessageNano
-        public final int computeSerializedSize() {
-            int size = super.computeSerializedSize();
-            if (this.hasPersonIsRequester || this.personIsRequester) {
-                size += CodedOutputByteBufferNano.computeTagSize(1) + 1;
-            }
-            if (this.hasIsGplusUser || !this.isGplusUser) {
-                return size + CodedOutputByteBufferNano.computeTagSize(2) + 1;
-            }
-            return size;
         }
     }
 
@@ -586,6 +581,7 @@ public interface DocDetails {
             super.writeTo(output);
         }
 
+        /* JADX INFO: Access modifiers changed from: protected */
         @Override // com.google.protobuf.nano.MessageNano
         public final int computeSerializedSize() {
             int size = super.computeSerializedSize();
@@ -626,7 +622,7 @@ public interface DocDetails {
                                 continue;
                         }
                     default:
-                        if (WireFormatNano.parseUnknownField(x0, readTag)) {
+                        if (!WireFormatNano.parseUnknownField(x0, readTag)) {
                             break;
                         } else {
                             break;
@@ -643,9 +639,52 @@ public interface DocDetails {
         public Link googlePlusProfileUrl = null;
         public Link youtubeChannelUrl = null;
 
+        public TalentExternalLinks() {
+            this.cachedSize = -1;
+        }
+
+        @Override // com.google.protobuf.nano.MessageNano
+        public final void writeTo(CodedOutputByteBufferNano output) throws IOException {
+            if (this.websiteUrl != null && this.websiteUrl.length > 0) {
+                for (int i = 0; i < this.websiteUrl.length; i++) {
+                    Link element = this.websiteUrl[i];
+                    if (element != null) {
+                        output.writeMessage(1, element);
+                    }
+                }
+            }
+            if (this.googlePlusProfileUrl != null) {
+                output.writeMessage(2, this.googlePlusProfileUrl);
+            }
+            if (this.youtubeChannelUrl != null) {
+                output.writeMessage(3, this.youtubeChannelUrl);
+            }
+            super.writeTo(output);
+        }
+
+        /* JADX INFO: Access modifiers changed from: protected */
+        @Override // com.google.protobuf.nano.MessageNano
+        public final int computeSerializedSize() {
+            int size = super.computeSerializedSize();
+            if (this.websiteUrl != null && this.websiteUrl.length > 0) {
+                for (int i = 0; i < this.websiteUrl.length; i++) {
+                    Link element = this.websiteUrl[i];
+                    if (element != null) {
+                        size += CodedOutputByteBufferNano.computeMessageSize(1, element);
+                    }
+                }
+            }
+            if (this.googlePlusProfileUrl != null) {
+                size += CodedOutputByteBufferNano.computeMessageSize(2, this.googlePlusProfileUrl);
+            }
+            if (this.youtubeChannelUrl != null) {
+                return size + CodedOutputByteBufferNano.computeMessageSize(3, this.youtubeChannelUrl);
+            }
+            return size;
+        }
+
         @Override // com.google.protobuf.nano.MessageNano
         public final /* bridge */ /* synthetic */ MessageNano mergeFrom(CodedInputByteBufferNano x0) throws IOException {
-            int length;
             while (true) {
                 int readTag = x0.readTag();
                 switch (readTag) {
@@ -653,11 +692,7 @@ public interface DocDetails {
                         break;
                     case 10:
                         int repeatedFieldArrayLength = WireFormatNano.getRepeatedFieldArrayLength(x0, 10);
-                        if (this.websiteUrl == null) {
-                            length = 0;
-                        } else {
-                            length = this.websiteUrl.length;
-                        }
+                        int length = this.websiteUrl == null ? 0 : this.websiteUrl.length;
                         Link[] linkArr = new Link[repeatedFieldArrayLength + length];
                         if (length != 0) {
                             System.arraycopy(this.websiteUrl, 0, linkArr, 0, length);
@@ -685,7 +720,7 @@ public interface DocDetails {
                         x0.readMessage(this.youtubeChannelUrl);
                         break;
                     default:
-                        if (WireFormatNano.parseUnknownField(x0, readTag)) {
+                        if (!WireFormatNano.parseUnknownField(x0, readTag)) {
                             break;
                         } else {
                             break;
@@ -693,49 +728,6 @@ public interface DocDetails {
                 }
             }
             return this;
-        }
-
-        public TalentExternalLinks() {
-            this.cachedSize = -1;
-        }
-
-        @Override // com.google.protobuf.nano.MessageNano
-        public final void writeTo(CodedOutputByteBufferNano output) throws IOException {
-            if (this.websiteUrl != null && this.websiteUrl.length > 0) {
-                for (int i = 0; i < this.websiteUrl.length; i++) {
-                    Link element = this.websiteUrl[i];
-                    if (element != null) {
-                        output.writeMessage(1, element);
-                    }
-                }
-            }
-            if (this.googlePlusProfileUrl != null) {
-                output.writeMessage(2, this.googlePlusProfileUrl);
-            }
-            if (this.youtubeChannelUrl != null) {
-                output.writeMessage(3, this.youtubeChannelUrl);
-            }
-            super.writeTo(output);
-        }
-
-        @Override // com.google.protobuf.nano.MessageNano
-        public final int computeSerializedSize() {
-            int size = super.computeSerializedSize();
-            if (this.websiteUrl != null && this.websiteUrl.length > 0) {
-                for (int i = 0; i < this.websiteUrl.length; i++) {
-                    Link element = this.websiteUrl[i];
-                    if (element != null) {
-                        size += CodedOutputByteBufferNano.computeMessageSize(1, element);
-                    }
-                }
-            }
-            if (this.googlePlusProfileUrl != null) {
-                size += CodedOutputByteBufferNano.computeMessageSize(2, this.googlePlusProfileUrl);
-            }
-            if (this.youtubeChannelUrl != null) {
-                return size + CodedOutputByteBufferNano.computeMessageSize(3, this.youtubeChannelUrl);
-            }
-            return size;
         }
     }
 }

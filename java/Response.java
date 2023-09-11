@@ -40,98 +40,6 @@ public interface Response {
         public Targets targets = null;
         public ServerCookies serverCookies = null;
 
-        @Override // com.google.protobuf.nano.MessageNano
-        public final /* bridge */ /* synthetic */ MessageNano mergeFrom(CodedInputByteBufferNano x0) throws IOException {
-            int length;
-            int length2;
-            while (true) {
-                int readTag = x0.readTag();
-                switch (readTag) {
-                    case 0:
-                        break;
-                    case 10:
-                        if (this.payload == null) {
-                            this.payload = new Payload();
-                        }
-                        x0.readMessage(this.payload);
-                        break;
-                    case 18:
-                        if (this.commands == null) {
-                            this.commands = new ServerCommands();
-                        }
-                        x0.readMessage(this.commands);
-                        break;
-                    case 26:
-                        int repeatedFieldArrayLength = WireFormatNano.getRepeatedFieldArrayLength(x0, 26);
-                        if (this.preFetch == null) {
-                            length2 = 0;
-                        } else {
-                            length2 = this.preFetch.length;
-                        }
-                        PreFetch[] preFetchArr = new PreFetch[repeatedFieldArrayLength + length2];
-                        if (length2 != 0) {
-                            System.arraycopy(this.preFetch, 0, preFetchArr, 0, length2);
-                        }
-                        while (length2 < preFetchArr.length - 1) {
-                            preFetchArr[length2] = new PreFetch();
-                            x0.readMessage(preFetchArr[length2]);
-                            x0.readTag();
-                            length2++;
-                        }
-                        preFetchArr[length2] = new PreFetch();
-                        x0.readMessage(preFetchArr[length2]);
-                        this.preFetch = preFetchArr;
-                        break;
-                    case 34:
-                        int repeatedFieldArrayLength2 = WireFormatNano.getRepeatedFieldArrayLength(x0, 34);
-                        if (this.notification == null) {
-                            length = 0;
-                        } else {
-                            length = this.notification.length;
-                        }
-                        Notification[] notificationArr = new Notification[repeatedFieldArrayLength2 + length];
-                        if (length != 0) {
-                            System.arraycopy(this.notification, 0, notificationArr, 0, length);
-                        }
-                        while (length < notificationArr.length - 1) {
-                            notificationArr[length] = new Notification();
-                            x0.readMessage(notificationArr[length]);
-                            x0.readTag();
-                            length++;
-                        }
-                        notificationArr[length] = new Notification();
-                        x0.readMessage(notificationArr[length]);
-                        this.notification = notificationArr;
-                        break;
-                    case 42:
-                        if (this.serverMetadata == null) {
-                            this.serverMetadata = new ServerMetadata();
-                        }
-                        x0.readMessage(this.serverMetadata);
-                        break;
-                    case 50:
-                        if (this.targets == null) {
-                            this.targets = new Targets();
-                        }
-                        x0.readMessage(this.targets);
-                        break;
-                    case 58:
-                        if (this.serverCookies == null) {
-                            this.serverCookies = new ServerCookies();
-                        }
-                        x0.readMessage(this.serverCookies);
-                        break;
-                    default:
-                        if (WireFormatNano.parseUnknownField(x0, readTag)) {
-                            break;
-                        } else {
-                            break;
-                        }
-                }
-            }
-            return this;
-        }
-
         public ResponseWrapper() {
             this.cachedSize = -1;
         }
@@ -212,6 +120,88 @@ public interface Response {
 
         public static ResponseWrapper parseFrom(byte[] data) throws InvalidProtocolBufferNanoException {
             return (ResponseWrapper) MessageNano.mergeFrom$1ec43da(new ResponseWrapper(), data, data.length);
+        }
+
+        @Override // com.google.protobuf.nano.MessageNano
+        public final /* bridge */ /* synthetic */ MessageNano mergeFrom(CodedInputByteBufferNano x0) throws IOException {
+            while (true) {
+                int readTag = x0.readTag();
+                switch (readTag) {
+                    case 0:
+                        break;
+                    case 10:
+                        if (this.payload == null) {
+                            this.payload = new Payload();
+                        }
+                        x0.readMessage(this.payload);
+                        break;
+                    case 18:
+                        if (this.commands == null) {
+                            this.commands = new ServerCommands();
+                        }
+                        x0.readMessage(this.commands);
+                        break;
+                    case 26:
+                        int repeatedFieldArrayLength = WireFormatNano.getRepeatedFieldArrayLength(x0, 26);
+                        int length = this.preFetch == null ? 0 : this.preFetch.length;
+                        PreFetch[] preFetchArr = new PreFetch[repeatedFieldArrayLength + length];
+                        if (length != 0) {
+                            System.arraycopy(this.preFetch, 0, preFetchArr, 0, length);
+                        }
+                        while (length < preFetchArr.length - 1) {
+                            preFetchArr[length] = new PreFetch();
+                            x0.readMessage(preFetchArr[length]);
+                            x0.readTag();
+                            length++;
+                        }
+                        preFetchArr[length] = new PreFetch();
+                        x0.readMessage(preFetchArr[length]);
+                        this.preFetch = preFetchArr;
+                        break;
+                    case 34:
+                        int repeatedFieldArrayLength2 = WireFormatNano.getRepeatedFieldArrayLength(x0, 34);
+                        int length2 = this.notification == null ? 0 : this.notification.length;
+                        Notification[] notificationArr = new Notification[repeatedFieldArrayLength2 + length2];
+                        if (length2 != 0) {
+                            System.arraycopy(this.notification, 0, notificationArr, 0, length2);
+                        }
+                        while (length2 < notificationArr.length - 1) {
+                            notificationArr[length2] = new Notification();
+                            x0.readMessage(notificationArr[length2]);
+                            x0.readTag();
+                            length2++;
+                        }
+                        notificationArr[length2] = new Notification();
+                        x0.readMessage(notificationArr[length2]);
+                        this.notification = notificationArr;
+                        break;
+                    case 42:
+                        if (this.serverMetadata == null) {
+                            this.serverMetadata = new ServerMetadata();
+                        }
+                        x0.readMessage(this.serverMetadata);
+                        break;
+                    case 50:
+                        if (this.targets == null) {
+                            this.targets = new Targets();
+                        }
+                        x0.readMessage(this.targets);
+                        break;
+                    case 58:
+                        if (this.serverCookies == null) {
+                            this.serverCookies = new ServerCookies();
+                        }
+                        x0.readMessage(this.serverCookies);
+                        break;
+                    default:
+                        if (!WireFormatNano.parseUnknownField(x0, readTag)) {
+                            break;
+                        } else {
+                            break;
+                        }
+                }
+            }
+            return this;
         }
     }
 
@@ -1139,7 +1129,7 @@ public interface Response {
                         x0.readMessage(this.moduleDeliveryResponse);
                         break;
                     default:
-                        if (WireFormatNano.parseUnknownField(x0, readTag)) {
+                        if (!WireFormatNano.parseUnknownField(x0, readTag)) {
                             break;
                         } else {
                             break;

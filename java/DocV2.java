@@ -70,304 +70,6 @@ public final class DocV2 extends MessageNano {
     public boolean useWishlistAsPrimaryAction = false;
     public boolean hasUseWishlistAsPrimaryAction = false;
 
-    @Override // com.google.protobuf.nano.MessageNano
-    public final /* bridge */ /* synthetic */ MessageNano mergeFrom(CodedInputByteBufferNano x0) throws IOException {
-        int length;
-        int length2;
-        int length3;
-        int length4;
-        while (true) {
-            int readTag = x0.readTag();
-            switch (readTag) {
-                case 0:
-                    break;
-                case 10:
-                    this.docid = x0.readString();
-                    this.hasDocid = true;
-                    break;
-                case 18:
-                    this.backendDocid = x0.readString();
-                    this.hasBackendDocid = true;
-                    break;
-                case 24:
-                    int readRawVarint32 = x0.readRawVarint32();
-                    switch (readRawVarint32) {
-                        case 1:
-                        case 2:
-                        case 3:
-                        case 4:
-                        case 5:
-                        case 6:
-                        case 7:
-                        case 8:
-                        case 9:
-                        case 10:
-                        case 11:
-                        case 12:
-                        case 13:
-                        case 14:
-                        case 15:
-                        case 16:
-                        case 17:
-                        case 18:
-                        case 19:
-                        case 20:
-                        case 21:
-                        case 22:
-                        case 23:
-                        case 24:
-                        case 25:
-                        case 26:
-                        case 27:
-                        case 28:
-                        case 29:
-                        case 30:
-                        case 31:
-                        case 32:
-                        case 33:
-                        case 34:
-                        case 35:
-                        case 36:
-                        case 37:
-                        case 38:
-                        case 39:
-                        case 40:
-                        case 41:
-                        case 42:
-                        case 43:
-                        case 44:
-                        case 45:
-                        case 46:
-                        case 47:
-                        case 48:
-                        case 49:
-                            this.docType = readRawVarint32;
-                            this.hasDocType = true;
-                            continue;
-                    }
-                case 32:
-                    int readRawVarint322 = x0.readRawVarint32();
-                    switch (readRawVarint322) {
-                        case 0:
-                        case 1:
-                        case 2:
-                        case 3:
-                        case 4:
-                        case 5:
-                        case 6:
-                        case 7:
-                        case 9:
-                        case 10:
-                        case 11:
-                        case 12:
-                        case 13:
-                            this.backendId = readRawVarint322;
-                            this.hasBackendId = true;
-                            continue;
-                    }
-                case 42:
-                    this.title = x0.readString();
-                    this.hasTitle = true;
-                    break;
-                case 50:
-                    this.creator = x0.readString();
-                    this.hasCreator = true;
-                    break;
-                case 58:
-                    this.descriptionHtml = x0.readString();
-                    this.hasDescriptionHtml = true;
-                    break;
-                case 66:
-                    int repeatedFieldArrayLength = WireFormatNano.getRepeatedFieldArrayLength(x0, 66);
-                    if (this.offer == null) {
-                        length4 = 0;
-                    } else {
-                        length4 = this.offer.length;
-                    }
-                    Common.Offer[] offerArr = new Common.Offer[repeatedFieldArrayLength + length4];
-                    if (length4 != 0) {
-                        System.arraycopy(this.offer, 0, offerArr, 0, length4);
-                    }
-                    while (length4 < offerArr.length - 1) {
-                        offerArr[length4] = new Common.Offer();
-                        x0.readMessage(offerArr[length4]);
-                        x0.readTag();
-                        length4++;
-                    }
-                    offerArr[length4] = new Common.Offer();
-                    x0.readMessage(offerArr[length4]);
-                    this.offer = offerArr;
-                    break;
-                case 74:
-                    if (this.availability == null) {
-                        this.availability = new FilterRules.Availability();
-                    }
-                    x0.readMessage(this.availability);
-                    break;
-                case 82:
-                    int repeatedFieldArrayLength2 = WireFormatNano.getRepeatedFieldArrayLength(x0, 82);
-                    if (this.image == null) {
-                        length3 = 0;
-                    } else {
-                        length3 = this.image.length;
-                    }
-                    Common.Image[] imageArr = new Common.Image[repeatedFieldArrayLength2 + length3];
-                    if (length3 != 0) {
-                        System.arraycopy(this.image, 0, imageArr, 0, length3);
-                    }
-                    while (length3 < imageArr.length - 1) {
-                        imageArr[length3] = new Common.Image();
-                        x0.readMessage(imageArr[length3]);
-                        x0.readTag();
-                        length3++;
-                    }
-                    imageArr[length3] = new Common.Image();
-                    x0.readMessage(imageArr[length3]);
-                    this.image = imageArr;
-                    break;
-                case 90:
-                    int repeatedFieldArrayLength3 = WireFormatNano.getRepeatedFieldArrayLength(x0, 90);
-                    if (this.child == null) {
-                        length2 = 0;
-                    } else {
-                        length2 = this.child.length;
-                    }
-                    DocV2[] docV2Arr = new DocV2[repeatedFieldArrayLength3 + length2];
-                    if (length2 != 0) {
-                        System.arraycopy(this.child, 0, docV2Arr, 0, length2);
-                    }
-                    while (length2 < docV2Arr.length - 1) {
-                        docV2Arr[length2] = new DocV2();
-                        x0.readMessage(docV2Arr[length2]);
-                        x0.readTag();
-                        length2++;
-                    }
-                    docV2Arr[length2] = new DocV2();
-                    x0.readMessage(docV2Arr[length2]);
-                    this.child = docV2Arr;
-                    break;
-                case 98:
-                    if (this.containerMetadata == null) {
-                        this.containerMetadata = new Containers.ContainerMetadata();
-                    }
-                    x0.readMessage(this.containerMetadata);
-                    break;
-                case 106:
-                    if (this.details == null) {
-                        this.details = new DocDetails.DocumentDetails();
-                    }
-                    x0.readMessage(this.details);
-                    break;
-                case 114:
-                    if (this.aggregateRating == null) {
-                        this.aggregateRating = new Rating.AggregateRating();
-                    }
-                    x0.readMessage(this.aggregateRating);
-                    break;
-                case 122:
-                    if (this.annotations == null) {
-                        this.annotations = new Annotations();
-                    }
-                    x0.readMessage(this.annotations);
-                    break;
-                case 130:
-                    this.detailsUrl = x0.readString();
-                    this.hasDetailsUrl = true;
-                    break;
-                case 138:
-                    this.shareUrl = x0.readString();
-                    this.hasShareUrl = true;
-                    break;
-                case 146:
-                    this.reviewsUrl = x0.readString();
-                    this.hasReviewsUrl = true;
-                    break;
-                case 154:
-                    this.backendUrl = x0.readString();
-                    this.hasBackendUrl = true;
-                    break;
-                case 162:
-                    this.purchaseDetailsUrl = x0.readString();
-                    this.hasPurchaseDetailsUrl = true;
-                    break;
-                case 168:
-                    this.detailsReusable = x0.readBool();
-                    this.hasDetailsReusable = true;
-                    break;
-                case 178:
-                    this.subtitle = x0.readString();
-                    this.hasSubtitle = true;
-                    break;
-                case 186:
-                    this.translatedDescriptionHtml = x0.readString();
-                    this.hasTranslatedDescriptionHtml = true;
-                    break;
-                case 194:
-                    this.serverLogsCookie = x0.readBytes();
-                    this.hasServerLogsCookie = true;
-                    break;
-                case 202:
-                    if (this.productDetails == null) {
-                        this.productDetails = new DocDetails.ProductDetails();
-                    }
-                    x0.readMessage(this.productDetails);
-                    break;
-                case 208:
-                    this.mature = x0.readBool();
-                    this.hasMature = true;
-                    break;
-                case 218:
-                    this.promotionalDescription = x0.readString();
-                    this.hasPromotionalDescription = true;
-                    break;
-                case 232:
-                    this.availableForPreregistration = x0.readBool();
-                    this.hasAvailableForPreregistration = true;
-                    break;
-                case 242:
-                    int repeatedFieldArrayLength4 = WireFormatNano.getRepeatedFieldArrayLength(x0, 242);
-                    if (this.tip == null) {
-                        length = 0;
-                    } else {
-                        length = this.tip.length;
-                    }
-                    ReviewTip[] reviewTipArr = new ReviewTip[repeatedFieldArrayLength4 + length];
-                    if (length != 0) {
-                        System.arraycopy(this.tip, 0, reviewTipArr, 0, length);
-                    }
-                    while (length < reviewTipArr.length - 1) {
-                        reviewTipArr[length] = new ReviewTip();
-                        x0.readMessage(reviewTipArr[length]);
-                        x0.readTag();
-                        length++;
-                    }
-                    reviewTipArr[length] = new ReviewTip();
-                    x0.readMessage(reviewTipArr[length]);
-                    this.tip = reviewTipArr;
-                    break;
-                case 250:
-                    this.snippetsUrl = x0.readString();
-                    this.hasSnippetsUrl = true;
-                    break;
-                case 256:
-                    this.forceShareability = x0.readBool();
-                    this.hasForceShareability = true;
-                    break;
-                case 264:
-                    this.useWishlistAsPrimaryAction = x0.readBool();
-                    this.hasUseWishlistAsPrimaryAction = true;
-                    break;
-                default:
-                    if (WireFormatNano.parseUnknownField(x0, readTag)) {
-                        break;
-                    } else {
-                        break;
-                    }
-            }
-        }
-        return this;
-    }
-
     public static DocV2[] emptyArray() {
         if (_emptyArray == null) {
             synchronized (InternalNano.LAZY_INIT_LOCK) {
@@ -504,6 +206,7 @@ public final class DocV2 extends MessageNano {
         super.writeTo(output);
     }
 
+    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.google.protobuf.nano.MessageNano
     public final int computeSerializedSize() {
         int size = super.computeSerializedSize();
@@ -624,5 +327,283 @@ public final class DocV2 extends MessageNano {
             return size + CodedOutputByteBufferNano.computeTagSize(33) + 1;
         }
         return size;
+    }
+
+    @Override // com.google.protobuf.nano.MessageNano
+    public final /* bridge */ /* synthetic */ MessageNano mergeFrom(CodedInputByteBufferNano x0) throws IOException {
+        while (true) {
+            int readTag = x0.readTag();
+            switch (readTag) {
+                case 0:
+                    break;
+                case 10:
+                    this.docid = x0.readString();
+                    this.hasDocid = true;
+                    break;
+                case 18:
+                    this.backendDocid = x0.readString();
+                    this.hasBackendDocid = true;
+                    break;
+                case 24:
+                    int readRawVarint32 = x0.readRawVarint32();
+                    switch (readRawVarint32) {
+                        case 1:
+                        case 2:
+                        case 3:
+                        case 4:
+                        case 5:
+                        case 6:
+                        case 7:
+                        case 8:
+                        case 9:
+                        case 10:
+                        case 11:
+                        case 12:
+                        case 13:
+                        case 14:
+                        case 15:
+                        case 16:
+                        case 17:
+                        case 18:
+                        case 19:
+                        case 20:
+                        case 21:
+                        case 22:
+                        case 23:
+                        case 24:
+                        case 25:
+                        case 26:
+                        case 27:
+                        case 28:
+                        case 29:
+                        case 30:
+                        case 31:
+                        case 32:
+                        case 33:
+                        case 34:
+                        case 35:
+                        case 36:
+                        case 37:
+                        case 38:
+                        case 39:
+                        case 40:
+                        case 41:
+                        case 42:
+                        case 43:
+                        case 44:
+                        case 45:
+                        case 46:
+                        case 47:
+                        case 48:
+                        case 49:
+                            this.docType = readRawVarint32;
+                            this.hasDocType = true;
+                            continue;
+                    }
+                case 32:
+                    int readRawVarint322 = x0.readRawVarint32();
+                    switch (readRawVarint322) {
+                        case 0:
+                        case 1:
+                        case 2:
+                        case 3:
+                        case 4:
+                        case 5:
+                        case 6:
+                        case 7:
+                        case 9:
+                        case 10:
+                        case 11:
+                        case 12:
+                        case 13:
+                            this.backendId = readRawVarint322;
+                            this.hasBackendId = true;
+                            continue;
+                    }
+                case 42:
+                    this.title = x0.readString();
+                    this.hasTitle = true;
+                    break;
+                case 50:
+                    this.creator = x0.readString();
+                    this.hasCreator = true;
+                    break;
+                case 58:
+                    this.descriptionHtml = x0.readString();
+                    this.hasDescriptionHtml = true;
+                    break;
+                case 66:
+                    int repeatedFieldArrayLength = WireFormatNano.getRepeatedFieldArrayLength(x0, 66);
+                    int length = this.offer == null ? 0 : this.offer.length;
+                    Common.Offer[] offerArr = new Common.Offer[repeatedFieldArrayLength + length];
+                    if (length != 0) {
+                        System.arraycopy(this.offer, 0, offerArr, 0, length);
+                    }
+                    while (length < offerArr.length - 1) {
+                        offerArr[length] = new Common.Offer();
+                        x0.readMessage(offerArr[length]);
+                        x0.readTag();
+                        length++;
+                    }
+                    offerArr[length] = new Common.Offer();
+                    x0.readMessage(offerArr[length]);
+                    this.offer = offerArr;
+                    break;
+                case 74:
+                    if (this.availability == null) {
+                        this.availability = new FilterRules.Availability();
+                    }
+                    x0.readMessage(this.availability);
+                    break;
+                case 82:
+                    int repeatedFieldArrayLength2 = WireFormatNano.getRepeatedFieldArrayLength(x0, 82);
+                    int length2 = this.image == null ? 0 : this.image.length;
+                    Common.Image[] imageArr = new Common.Image[repeatedFieldArrayLength2 + length2];
+                    if (length2 != 0) {
+                        System.arraycopy(this.image, 0, imageArr, 0, length2);
+                    }
+                    while (length2 < imageArr.length - 1) {
+                        imageArr[length2] = new Common.Image();
+                        x0.readMessage(imageArr[length2]);
+                        x0.readTag();
+                        length2++;
+                    }
+                    imageArr[length2] = new Common.Image();
+                    x0.readMessage(imageArr[length2]);
+                    this.image = imageArr;
+                    break;
+                case 90:
+                    int repeatedFieldArrayLength3 = WireFormatNano.getRepeatedFieldArrayLength(x0, 90);
+                    int length3 = this.child == null ? 0 : this.child.length;
+                    DocV2[] docV2Arr = new DocV2[repeatedFieldArrayLength3 + length3];
+                    if (length3 != 0) {
+                        System.arraycopy(this.child, 0, docV2Arr, 0, length3);
+                    }
+                    while (length3 < docV2Arr.length - 1) {
+                        docV2Arr[length3] = new DocV2();
+                        x0.readMessage(docV2Arr[length3]);
+                        x0.readTag();
+                        length3++;
+                    }
+                    docV2Arr[length3] = new DocV2();
+                    x0.readMessage(docV2Arr[length3]);
+                    this.child = docV2Arr;
+                    break;
+                case 98:
+                    if (this.containerMetadata == null) {
+                        this.containerMetadata = new Containers.ContainerMetadata();
+                    }
+                    x0.readMessage(this.containerMetadata);
+                    break;
+                case 106:
+                    if (this.details == null) {
+                        this.details = new DocDetails.DocumentDetails();
+                    }
+                    x0.readMessage(this.details);
+                    break;
+                case 114:
+                    if (this.aggregateRating == null) {
+                        this.aggregateRating = new Rating.AggregateRating();
+                    }
+                    x0.readMessage(this.aggregateRating);
+                    break;
+                case 122:
+                    if (this.annotations == null) {
+                        this.annotations = new Annotations();
+                    }
+                    x0.readMessage(this.annotations);
+                    break;
+                case 130:
+                    this.detailsUrl = x0.readString();
+                    this.hasDetailsUrl = true;
+                    break;
+                case 138:
+                    this.shareUrl = x0.readString();
+                    this.hasShareUrl = true;
+                    break;
+                case 146:
+                    this.reviewsUrl = x0.readString();
+                    this.hasReviewsUrl = true;
+                    break;
+                case 154:
+                    this.backendUrl = x0.readString();
+                    this.hasBackendUrl = true;
+                    break;
+                case 162:
+                    this.purchaseDetailsUrl = x0.readString();
+                    this.hasPurchaseDetailsUrl = true;
+                    break;
+                case 168:
+                    this.detailsReusable = x0.readBool();
+                    this.hasDetailsReusable = true;
+                    break;
+                case 178:
+                    this.subtitle = x0.readString();
+                    this.hasSubtitle = true;
+                    break;
+                case 186:
+                    this.translatedDescriptionHtml = x0.readString();
+                    this.hasTranslatedDescriptionHtml = true;
+                    break;
+                case 194:
+                    this.serverLogsCookie = x0.readBytes();
+                    this.hasServerLogsCookie = true;
+                    break;
+                case 202:
+                    if (this.productDetails == null) {
+                        this.productDetails = new DocDetails.ProductDetails();
+                    }
+                    x0.readMessage(this.productDetails);
+                    break;
+                case 208:
+                    this.mature = x0.readBool();
+                    this.hasMature = true;
+                    break;
+                case 218:
+                    this.promotionalDescription = x0.readString();
+                    this.hasPromotionalDescription = true;
+                    break;
+                case 232:
+                    this.availableForPreregistration = x0.readBool();
+                    this.hasAvailableForPreregistration = true;
+                    break;
+                case 242:
+                    int repeatedFieldArrayLength4 = WireFormatNano.getRepeatedFieldArrayLength(x0, 242);
+                    int length4 = this.tip == null ? 0 : this.tip.length;
+                    ReviewTip[] reviewTipArr = new ReviewTip[repeatedFieldArrayLength4 + length4];
+                    if (length4 != 0) {
+                        System.arraycopy(this.tip, 0, reviewTipArr, 0, length4);
+                    }
+                    while (length4 < reviewTipArr.length - 1) {
+                        reviewTipArr[length4] = new ReviewTip();
+                        x0.readMessage(reviewTipArr[length4]);
+                        x0.readTag();
+                        length4++;
+                    }
+                    reviewTipArr[length4] = new ReviewTip();
+                    x0.readMessage(reviewTipArr[length4]);
+                    this.tip = reviewTipArr;
+                    break;
+                case 250:
+                    this.snippetsUrl = x0.readString();
+                    this.hasSnippetsUrl = true;
+                    break;
+                case 256:
+                    this.forceShareability = x0.readBool();
+                    this.hasForceShareability = true;
+                    break;
+                case 264:
+                    this.useWishlistAsPrimaryAction = x0.readBool();
+                    this.hasUseWishlistAsPrimaryAction = true;
+                    break;
+                default:
+                    if (!WireFormatNano.parseUnknownField(x0, readTag)) {
+                        break;
+                    } else {
+                        break;
+                    }
+            }
+        }
+        return this;
     }
 }

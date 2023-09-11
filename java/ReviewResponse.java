@@ -15,6 +15,52 @@ public final class ReviewResponse extends MessageNano {
     public String suggestionsListUrl = "";
     public boolean hasSuggestionsListUrl = false;
 
+    public ReviewResponse() {
+        this.cachedSize = -1;
+    }
+
+    @Override // com.google.protobuf.nano.MessageNano
+    public final void writeTo(CodedOutputByteBufferNano output) throws IOException {
+        if (this.getResponse != null) {
+            output.writeMessage(1, this.getResponse);
+        }
+        if (this.hasNextPageUrl || !this.nextPageUrl.equals("")) {
+            output.writeString(2, this.nextPageUrl);
+        }
+        if (this.updatedReview != null) {
+            output.writeMessage(3, this.updatedReview);
+        }
+        if (this.hasSuggestionsListUrl || !this.suggestionsListUrl.equals("")) {
+            output.writeString(4, this.suggestionsListUrl);
+        }
+        if (this.criticReviewsResponse != null) {
+            output.writeMessage(5, this.criticReviewsResponse);
+        }
+        super.writeTo(output);
+    }
+
+    /* JADX INFO: Access modifiers changed from: protected */
+    @Override // com.google.protobuf.nano.MessageNano
+    public final int computeSerializedSize() {
+        int size = super.computeSerializedSize();
+        if (this.getResponse != null) {
+            size += CodedOutputByteBufferNano.computeMessageSize(1, this.getResponse);
+        }
+        if (this.hasNextPageUrl || !this.nextPageUrl.equals("")) {
+            size += CodedOutputByteBufferNano.computeStringSize(2, this.nextPageUrl);
+        }
+        if (this.updatedReview != null) {
+            size += CodedOutputByteBufferNano.computeMessageSize(3, this.updatedReview);
+        }
+        if (this.hasSuggestionsListUrl || !this.suggestionsListUrl.equals("")) {
+            size += CodedOutputByteBufferNano.computeStringSize(4, this.suggestionsListUrl);
+        }
+        if (this.criticReviewsResponse != null) {
+            return size + CodedOutputByteBufferNano.computeMessageSize(5, this.criticReviewsResponse);
+        }
+        return size;
+    }
+
     @Override // com.google.protobuf.nano.MessageNano
     public final /* bridge */ /* synthetic */ MessageNano mergeFrom(CodedInputByteBufferNano x0) throws IOException {
         while (true) {
@@ -49,7 +95,7 @@ public final class ReviewResponse extends MessageNano {
                     x0.readMessage(this.criticReviewsResponse);
                     break;
                 default:
-                    if (WireFormatNano.parseUnknownField(x0, readTag)) {
+                    if (!WireFormatNano.parseUnknownField(x0, readTag)) {
                         break;
                     } else {
                         break;
@@ -57,50 +103,5 @@ public final class ReviewResponse extends MessageNano {
             }
         }
         return this;
-    }
-
-    public ReviewResponse() {
-        this.cachedSize = -1;
-    }
-
-    @Override // com.google.protobuf.nano.MessageNano
-    public final void writeTo(CodedOutputByteBufferNano output) throws IOException {
-        if (this.getResponse != null) {
-            output.writeMessage(1, this.getResponse);
-        }
-        if (this.hasNextPageUrl || !this.nextPageUrl.equals("")) {
-            output.writeString(2, this.nextPageUrl);
-        }
-        if (this.updatedReview != null) {
-            output.writeMessage(3, this.updatedReview);
-        }
-        if (this.hasSuggestionsListUrl || !this.suggestionsListUrl.equals("")) {
-            output.writeString(4, this.suggestionsListUrl);
-        }
-        if (this.criticReviewsResponse != null) {
-            output.writeMessage(5, this.criticReviewsResponse);
-        }
-        super.writeTo(output);
-    }
-
-    @Override // com.google.protobuf.nano.MessageNano
-    public final int computeSerializedSize() {
-        int size = super.computeSerializedSize();
-        if (this.getResponse != null) {
-            size += CodedOutputByteBufferNano.computeMessageSize(1, this.getResponse);
-        }
-        if (this.hasNextPageUrl || !this.nextPageUrl.equals("")) {
-            size += CodedOutputByteBufferNano.computeStringSize(2, this.nextPageUrl);
-        }
-        if (this.updatedReview != null) {
-            size += CodedOutputByteBufferNano.computeMessageSize(3, this.updatedReview);
-        }
-        if (this.hasSuggestionsListUrl || !this.suggestionsListUrl.equals("")) {
-            size += CodedOutputByteBufferNano.computeStringSize(4, this.suggestionsListUrl);
-        }
-        if (this.criticReviewsResponse != null) {
-            return size + CodedOutputByteBufferNano.computeMessageSize(5, this.criticReviewsResponse);
-        }
-        return size;
     }
 }

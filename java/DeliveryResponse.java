@@ -66,7 +66,7 @@ public final class DeliveryResponse extends MessageNano {
                     x0.readMessage(this.appDeliveryData);
                     break;
                 default:
-                    if (WireFormatNano.parseUnknownField(x0, readTag)) {
+                    if (!WireFormatNano.parseUnknownField(x0, readTag)) {
                         break;
                     } else {
                         break;

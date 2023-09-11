@@ -23,54 +23,6 @@ public final class SplitDeliveryData extends MessageNano {
     public boolean hasGzippedDownloadUrl = false;
     public AndroidAppPatchData patchData = null;
 
-    @Override // com.google.protobuf.nano.MessageNano
-    public final /* bridge */ /* synthetic */ MessageNano mergeFrom(CodedInputByteBufferNano x0) throws IOException {
-        while (true) {
-            int readTag = x0.readTag();
-            switch (readTag) {
-                case 0:
-                    break;
-                case 10:
-                    this.id = x0.readString();
-                    this.hasId = true;
-                    break;
-                case 16:
-                    this.downloadSize = x0.readRawVarint64();
-                    this.hasDownloadSize = true;
-                    break;
-                case 24:
-                    this.gzippedDownloadSize = x0.readRawVarint64();
-                    this.hasGzippedDownloadSize = true;
-                    break;
-                case 34:
-                    this.signature = x0.readString();
-                    this.hasSignature = true;
-                    break;
-                case 42:
-                    this.downloadUrl = x0.readString();
-                    this.hasDownloadUrl = true;
-                    break;
-                case 50:
-                    this.gzippedDownloadUrl = x0.readString();
-                    this.hasGzippedDownloadUrl = true;
-                    break;
-                case 58:
-                    if (this.patchData == null) {
-                        this.patchData = new AndroidAppPatchData();
-                    }
-                    x0.readMessage(this.patchData);
-                    break;
-                default:
-                    if (WireFormatNano.parseUnknownField(x0, readTag)) {
-                        break;
-                    } else {
-                        break;
-                    }
-            }
-        }
-        return this;
-    }
-
     public static SplitDeliveryData[] emptyArray() {
         if (_emptyArray == null) {
             synchronized (InternalNano.LAZY_INIT_LOCK) {
@@ -138,5 +90,53 @@ public final class SplitDeliveryData extends MessageNano {
             return size + CodedOutputByteBufferNano.computeMessageSize(7, this.patchData);
         }
         return size;
+    }
+
+    @Override // com.google.protobuf.nano.MessageNano
+    public final /* bridge */ /* synthetic */ MessageNano mergeFrom(CodedInputByteBufferNano x0) throws IOException {
+        while (true) {
+            int readTag = x0.readTag();
+            switch (readTag) {
+                case 0:
+                    break;
+                case 10:
+                    this.id = x0.readString();
+                    this.hasId = true;
+                    break;
+                case 16:
+                    this.downloadSize = x0.readRawVarint64();
+                    this.hasDownloadSize = true;
+                    break;
+                case 24:
+                    this.gzippedDownloadSize = x0.readRawVarint64();
+                    this.hasGzippedDownloadSize = true;
+                    break;
+                case 34:
+                    this.signature = x0.readString();
+                    this.hasSignature = true;
+                    break;
+                case 42:
+                    this.downloadUrl = x0.readString();
+                    this.hasDownloadUrl = true;
+                    break;
+                case 50:
+                    this.gzippedDownloadUrl = x0.readString();
+                    this.hasGzippedDownloadUrl = true;
+                    break;
+                case 58:
+                    if (this.patchData == null) {
+                        this.patchData = new AndroidAppPatchData();
+                    }
+                    x0.readMessage(this.patchData);
+                    break;
+                default:
+                    if (!WireFormatNano.parseUnknownField(x0, readTag)) {
+                        break;
+                    } else {
+                        break;
+                    }
+            }
+        }
+        return this;
     }
 }

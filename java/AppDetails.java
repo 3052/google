@@ -62,248 +62,6 @@ public final class AppDetails extends MessageNano {
     public boolean hasPreregistrationPromoCode = false;
     public InstallDetails installDetails = null;
 
-    @Override // com.google.protobuf.nano.MessageNano
-    public final /* bridge */ /* synthetic */ MessageNano mergeFrom(CodedInputByteBufferNano x0) throws IOException {
-        int length;
-        int length2;
-        while (true) {
-            int readTag = x0.readTag();
-            switch (readTag) {
-                case 0:
-                    break;
-                case 10:
-                    this.developerName = x0.readString();
-                    this.hasDeveloperName = true;
-                    break;
-                case 16:
-                    this.majorVersionNumber = x0.readRawVarint32();
-                    this.hasMajorVersionNumber = true;
-                    break;
-                case 24:
-                    this.versionCode = x0.readRawVarint32();
-                    this.hasVersionCode = true;
-                    break;
-                case 34:
-                    this.versionString = x0.readString();
-                    this.hasVersionString = true;
-                    break;
-                case 42:
-                    this.title = x0.readString();
-                    this.hasTitle = true;
-                    break;
-                case 58:
-                    int repeatedFieldArrayLength = WireFormatNano.getRepeatedFieldArrayLength(x0, 58);
-                    int length3 = this.appCategory == null ? 0 : this.appCategory.length;
-                    String[] strArr = new String[repeatedFieldArrayLength + length3];
-                    if (length3 != 0) {
-                        System.arraycopy(this.appCategory, 0, strArr, 0, length3);
-                    }
-                    while (length3 < strArr.length - 1) {
-                        strArr[length3] = x0.readString();
-                        x0.readTag();
-                        length3++;
-                    }
-                    strArr[length3] = x0.readString();
-                    this.appCategory = strArr;
-                    break;
-                case 64:
-                    this.contentRating = x0.readRawVarint32();
-                    this.hasContentRating = true;
-                    break;
-                case 72:
-                    this.installationSize = x0.readRawVarint64();
-                    this.hasInstallationSize = true;
-                    break;
-                case 82:
-                    int repeatedFieldArrayLength2 = WireFormatNano.getRepeatedFieldArrayLength(x0, 82);
-                    int length4 = this.permission == null ? 0 : this.permission.length;
-                    String[] strArr2 = new String[repeatedFieldArrayLength2 + length4];
-                    if (length4 != 0) {
-                        System.arraycopy(this.permission, 0, strArr2, 0, length4);
-                    }
-                    while (length4 < strArr2.length - 1) {
-                        strArr2[length4] = x0.readString();
-                        x0.readTag();
-                        length4++;
-                    }
-                    strArr2[length4] = x0.readString();
-                    this.permission = strArr2;
-                    break;
-                case 90:
-                    this.developerEmail = x0.readString();
-                    this.hasDeveloperEmail = true;
-                    break;
-                case 98:
-                    this.developerWebsite = x0.readString();
-                    this.hasDeveloperWebsite = true;
-                    break;
-                case 106:
-                    this.numDownloads = x0.readString();
-                    this.hasNumDownloads = true;
-                    break;
-                case 114:
-                    this.packageName = x0.readString();
-                    this.hasPackageName = true;
-                    break;
-                case 122:
-                    this.recentChangesHtml = x0.readString();
-                    this.hasRecentChangesHtml = true;
-                    break;
-                case 130:
-                    this.uploadDate = x0.readString();
-                    this.hasUploadDate = true;
-                    break;
-                case 138:
-                    int repeatedFieldArrayLength3 = WireFormatNano.getRepeatedFieldArrayLength(x0, 138);
-                    if (this.file == null) {
-                        length2 = 0;
-                    } else {
-                        length2 = this.file.length;
-                    }
-                    FileMetadata[] fileMetadataArr = new FileMetadata[repeatedFieldArrayLength3 + length2];
-                    if (length2 != 0) {
-                        System.arraycopy(this.file, 0, fileMetadataArr, 0, length2);
-                    }
-                    while (length2 < fileMetadataArr.length - 1) {
-                        fileMetadataArr[length2] = new FileMetadata();
-                        x0.readMessage(fileMetadataArr[length2]);
-                        x0.readTag();
-                        length2++;
-                    }
-                    fileMetadataArr[length2] = new FileMetadata();
-                    x0.readMessage(fileMetadataArr[length2]);
-                    this.file = fileMetadataArr;
-                    break;
-                case 146:
-                    this.appType = x0.readString();
-                    this.hasAppType = true;
-                    break;
-                case 154:
-                    int repeatedFieldArrayLength4 = WireFormatNano.getRepeatedFieldArrayLength(x0, 154);
-                    int length5 = this.certificateHash == null ? 0 : this.certificateHash.length;
-                    String[] strArr3 = new String[repeatedFieldArrayLength4 + length5];
-                    if (length5 != 0) {
-                        System.arraycopy(this.certificateHash, 0, strArr3, 0, length5);
-                    }
-                    while (length5 < strArr3.length - 1) {
-                        strArr3[length5] = x0.readString();
-                        x0.readTag();
-                        length5++;
-                    }
-                    strArr3[length5] = x0.readString();
-                    this.certificateHash = strArr3;
-                    break;
-                case 168:
-                    this.variesByAccount = x0.readBool();
-                    this.hasVariesByAccount = true;
-                    break;
-                case 178:
-                    int repeatedFieldArrayLength5 = WireFormatNano.getRepeatedFieldArrayLength(x0, 178);
-                    if (this.certificateSet == null) {
-                        length = 0;
-                    } else {
-                        length = this.certificateSet.length;
-                    }
-                    CertificateSet[] certificateSetArr = new CertificateSet[repeatedFieldArrayLength5 + length];
-                    if (length != 0) {
-                        System.arraycopy(this.certificateSet, 0, certificateSetArr, 0, length);
-                    }
-                    while (length < certificateSetArr.length - 1) {
-                        certificateSetArr[length] = new CertificateSet();
-                        x0.readMessage(certificateSetArr[length]);
-                        x0.readTag();
-                        length++;
-                    }
-                    certificateSetArr[length] = new CertificateSet();
-                    x0.readMessage(certificateSetArr[length]);
-                    this.certificateSet = certificateSetArr;
-                    break;
-                case 186:
-                    int repeatedFieldArrayLength6 = WireFormatNano.getRepeatedFieldArrayLength(x0, 186);
-                    int length6 = this.autoAcquireFreeAppIfHigherVersionAvailableTag == null ? 0 : this.autoAcquireFreeAppIfHigherVersionAvailableTag.length;
-                    String[] strArr4 = new String[repeatedFieldArrayLength6 + length6];
-                    if (length6 != 0) {
-                        System.arraycopy(this.autoAcquireFreeAppIfHigherVersionAvailableTag, 0, strArr4, 0, length6);
-                    }
-                    while (length6 < strArr4.length - 1) {
-                        strArr4[length6] = x0.readString();
-                        x0.readTag();
-                        length6++;
-                    }
-                    strArr4[length6] = x0.readString();
-                    this.autoAcquireFreeAppIfHigherVersionAvailableTag = strArr4;
-                    break;
-                case 192:
-                    this.declaresIab = x0.readBool();
-                    this.hasDeclaresIab = true;
-                    break;
-                case 202:
-                    int repeatedFieldArrayLength7 = WireFormatNano.getRepeatedFieldArrayLength(x0, 202);
-                    int length7 = this.splitId == null ? 0 : this.splitId.length;
-                    String[] strArr5 = new String[repeatedFieldArrayLength7 + length7];
-                    if (length7 != 0) {
-                        System.arraycopy(this.splitId, 0, strArr5, 0, length7);
-                    }
-                    while (length7 < strArr5.length - 1) {
-                        strArr5[length7] = x0.readString();
-                        x0.readTag();
-                        length7++;
-                    }
-                    strArr5[length7] = x0.readString();
-                    this.splitId = strArr5;
-                    break;
-                case 208:
-                    this.gamepadRequired = x0.readBool();
-                    this.hasGamepadRequired = true;
-                    break;
-                case 216:
-                    this.externallyHosted = x0.readBool();
-                    this.hasExternallyHosted = true;
-                    break;
-                case 224:
-                    this.everExternallyHosted = x0.readBool();
-                    this.hasEverExternallyHosted = true;
-                    break;
-                case 242:
-                    this.installNotes = x0.readString();
-                    this.hasInstallNotes = true;
-                    break;
-                case 248:
-                    int readRawVarint32 = x0.readRawVarint32();
-                    switch (readRawVarint32) {
-                        case 0:
-                        case 1:
-                        case 2:
-                        case 3:
-                            this.installLocation = readRawVarint32;
-                            this.hasInstallLocation = true;
-                            continue;
-                    }
-                case 256:
-                    this.targetSdkVersion = x0.readRawVarint32();
-                    this.hasTargetSdkVersion = true;
-                    break;
-                case 266:
-                    this.preregistrationPromoCode = x0.readString();
-                    this.hasPreregistrationPromoCode = true;
-                    break;
-                case 274:
-                    if (this.installDetails == null) {
-                        this.installDetails = new InstallDetails();
-                    }
-                    x0.readMessage(this.installDetails);
-                    break;
-                default:
-                    if (WireFormatNano.parseUnknownField(x0, readTag)) {
-                        break;
-                    } else {
-                        break;
-                    }
-            }
-        }
-        return this;
-    }
-
     public AppDetails() {
         this.cachedSize = -1;
     }
@@ -441,6 +199,7 @@ public final class AppDetails extends MessageNano {
         super.writeTo(output);
     }
 
+    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.google.protobuf.nano.MessageNano
     public final int computeSerializedSize() {
         int size = super.computeSerializedSize();
@@ -593,5 +352,237 @@ public final class AppDetails extends MessageNano {
             return size + CodedOutputByteBufferNano.computeMessageSize(34, this.installDetails);
         }
         return size;
+    }
+
+    @Override // com.google.protobuf.nano.MessageNano
+    public final /* bridge */ /* synthetic */ MessageNano mergeFrom(CodedInputByteBufferNano x0) throws IOException {
+        while (true) {
+            int readTag = x0.readTag();
+            switch (readTag) {
+                case 0:
+                    break;
+                case 10:
+                    this.developerName = x0.readString();
+                    this.hasDeveloperName = true;
+                    break;
+                case 16:
+                    this.majorVersionNumber = x0.readRawVarint32();
+                    this.hasMajorVersionNumber = true;
+                    break;
+                case 24:
+                    this.versionCode = x0.readRawVarint32();
+                    this.hasVersionCode = true;
+                    break;
+                case 34:
+                    this.versionString = x0.readString();
+                    this.hasVersionString = true;
+                    break;
+                case 42:
+                    this.title = x0.readString();
+                    this.hasTitle = true;
+                    break;
+                case 58:
+                    int repeatedFieldArrayLength = WireFormatNano.getRepeatedFieldArrayLength(x0, 58);
+                    int length = this.appCategory == null ? 0 : this.appCategory.length;
+                    String[] strArr = new String[repeatedFieldArrayLength + length];
+                    if (length != 0) {
+                        System.arraycopy(this.appCategory, 0, strArr, 0, length);
+                    }
+                    while (length < strArr.length - 1) {
+                        strArr[length] = x0.readString();
+                        x0.readTag();
+                        length++;
+                    }
+                    strArr[length] = x0.readString();
+                    this.appCategory = strArr;
+                    break;
+                case 64:
+                    this.contentRating = x0.readRawVarint32();
+                    this.hasContentRating = true;
+                    break;
+                case 72:
+                    this.installationSize = x0.readRawVarint64();
+                    this.hasInstallationSize = true;
+                    break;
+                case 82:
+                    int repeatedFieldArrayLength2 = WireFormatNano.getRepeatedFieldArrayLength(x0, 82);
+                    int length2 = this.permission == null ? 0 : this.permission.length;
+                    String[] strArr2 = new String[repeatedFieldArrayLength2 + length2];
+                    if (length2 != 0) {
+                        System.arraycopy(this.permission, 0, strArr2, 0, length2);
+                    }
+                    while (length2 < strArr2.length - 1) {
+                        strArr2[length2] = x0.readString();
+                        x0.readTag();
+                        length2++;
+                    }
+                    strArr2[length2] = x0.readString();
+                    this.permission = strArr2;
+                    break;
+                case 90:
+                    this.developerEmail = x0.readString();
+                    this.hasDeveloperEmail = true;
+                    break;
+                case 98:
+                    this.developerWebsite = x0.readString();
+                    this.hasDeveloperWebsite = true;
+                    break;
+                case 106:
+                    this.numDownloads = x0.readString();
+                    this.hasNumDownloads = true;
+                    break;
+                case 114:
+                    this.packageName = x0.readString();
+                    this.hasPackageName = true;
+                    break;
+                case 122:
+                    this.recentChangesHtml = x0.readString();
+                    this.hasRecentChangesHtml = true;
+                    break;
+                case 130:
+                    this.uploadDate = x0.readString();
+                    this.hasUploadDate = true;
+                    break;
+                case 138:
+                    int repeatedFieldArrayLength3 = WireFormatNano.getRepeatedFieldArrayLength(x0, 138);
+                    int length3 = this.file == null ? 0 : this.file.length;
+                    FileMetadata[] fileMetadataArr = new FileMetadata[repeatedFieldArrayLength3 + length3];
+                    if (length3 != 0) {
+                        System.arraycopy(this.file, 0, fileMetadataArr, 0, length3);
+                    }
+                    while (length3 < fileMetadataArr.length - 1) {
+                        fileMetadataArr[length3] = new FileMetadata();
+                        x0.readMessage(fileMetadataArr[length3]);
+                        x0.readTag();
+                        length3++;
+                    }
+                    fileMetadataArr[length3] = new FileMetadata();
+                    x0.readMessage(fileMetadataArr[length3]);
+                    this.file = fileMetadataArr;
+                    break;
+                case 146:
+                    this.appType = x0.readString();
+                    this.hasAppType = true;
+                    break;
+                case 154:
+                    int repeatedFieldArrayLength4 = WireFormatNano.getRepeatedFieldArrayLength(x0, 154);
+                    int length4 = this.certificateHash == null ? 0 : this.certificateHash.length;
+                    String[] strArr3 = new String[repeatedFieldArrayLength4 + length4];
+                    if (length4 != 0) {
+                        System.arraycopy(this.certificateHash, 0, strArr3, 0, length4);
+                    }
+                    while (length4 < strArr3.length - 1) {
+                        strArr3[length4] = x0.readString();
+                        x0.readTag();
+                        length4++;
+                    }
+                    strArr3[length4] = x0.readString();
+                    this.certificateHash = strArr3;
+                    break;
+                case 168:
+                    this.variesByAccount = x0.readBool();
+                    this.hasVariesByAccount = true;
+                    break;
+                case 178:
+                    int repeatedFieldArrayLength5 = WireFormatNano.getRepeatedFieldArrayLength(x0, 178);
+                    int length5 = this.certificateSet == null ? 0 : this.certificateSet.length;
+                    CertificateSet[] certificateSetArr = new CertificateSet[repeatedFieldArrayLength5 + length5];
+                    if (length5 != 0) {
+                        System.arraycopy(this.certificateSet, 0, certificateSetArr, 0, length5);
+                    }
+                    while (length5 < certificateSetArr.length - 1) {
+                        certificateSetArr[length5] = new CertificateSet();
+                        x0.readMessage(certificateSetArr[length5]);
+                        x0.readTag();
+                        length5++;
+                    }
+                    certificateSetArr[length5] = new CertificateSet();
+                    x0.readMessage(certificateSetArr[length5]);
+                    this.certificateSet = certificateSetArr;
+                    break;
+                case 186:
+                    int repeatedFieldArrayLength6 = WireFormatNano.getRepeatedFieldArrayLength(x0, 186);
+                    int length6 = this.autoAcquireFreeAppIfHigherVersionAvailableTag == null ? 0 : this.autoAcquireFreeAppIfHigherVersionAvailableTag.length;
+                    String[] strArr4 = new String[repeatedFieldArrayLength6 + length6];
+                    if (length6 != 0) {
+                        System.arraycopy(this.autoAcquireFreeAppIfHigherVersionAvailableTag, 0, strArr4, 0, length6);
+                    }
+                    while (length6 < strArr4.length - 1) {
+                        strArr4[length6] = x0.readString();
+                        x0.readTag();
+                        length6++;
+                    }
+                    strArr4[length6] = x0.readString();
+                    this.autoAcquireFreeAppIfHigherVersionAvailableTag = strArr4;
+                    break;
+                case 192:
+                    this.declaresIab = x0.readBool();
+                    this.hasDeclaresIab = true;
+                    break;
+                case 202:
+                    int repeatedFieldArrayLength7 = WireFormatNano.getRepeatedFieldArrayLength(x0, 202);
+                    int length7 = this.splitId == null ? 0 : this.splitId.length;
+                    String[] strArr5 = new String[repeatedFieldArrayLength7 + length7];
+                    if (length7 != 0) {
+                        System.arraycopy(this.splitId, 0, strArr5, 0, length7);
+                    }
+                    while (length7 < strArr5.length - 1) {
+                        strArr5[length7] = x0.readString();
+                        x0.readTag();
+                        length7++;
+                    }
+                    strArr5[length7] = x0.readString();
+                    this.splitId = strArr5;
+                    break;
+                case 208:
+                    this.gamepadRequired = x0.readBool();
+                    this.hasGamepadRequired = true;
+                    break;
+                case 216:
+                    this.externallyHosted = x0.readBool();
+                    this.hasExternallyHosted = true;
+                    break;
+                case 224:
+                    this.everExternallyHosted = x0.readBool();
+                    this.hasEverExternallyHosted = true;
+                    break;
+                case 242:
+                    this.installNotes = x0.readString();
+                    this.hasInstallNotes = true;
+                    break;
+                case 248:
+                    int readRawVarint32 = x0.readRawVarint32();
+                    switch (readRawVarint32) {
+                        case 0:
+                        case 1:
+                        case 2:
+                        case 3:
+                            this.installLocation = readRawVarint32;
+                            this.hasInstallLocation = true;
+                            continue;
+                    }
+                case 256:
+                    this.targetSdkVersion = x0.readRawVarint32();
+                    this.hasTargetSdkVersion = true;
+                    break;
+                case 266:
+                    this.preregistrationPromoCode = x0.readString();
+                    this.hasPreregistrationPromoCode = true;
+                    break;
+                case 274:
+                    if (this.installDetails == null) {
+                        this.installDetails = new InstallDetails();
+                    }
+                    x0.readMessage(this.installDetails);
+                    break;
+                default:
+                    if (!WireFormatNano.parseUnknownField(x0, readTag)) {
+                        break;
+                    } else {
+                        break;
+                    }
+            }
+        }
+        return this;
     }
 }

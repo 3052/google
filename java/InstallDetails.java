@@ -15,65 +15,6 @@ public final class InstallDetails extends MessageNano {
     public int targetSdkVersion = 0;
     public boolean hasTargetSdkVersion = false;
 
-    @Override // com.google.protobuf.nano.MessageNano
-    public final /* bridge */ /* synthetic */ MessageNano mergeFrom(CodedInputByteBufferNano x0) throws IOException {
-        int length;
-        while (true) {
-            int readTag = x0.readTag();
-            switch (readTag) {
-                case 0:
-                    break;
-                case 8:
-                    int readRawVarint32 = x0.readRawVarint32();
-                    switch (readRawVarint32) {
-                        case 0:
-                        case 1:
-                        case 2:
-                        case 3:
-                            this.installLocation = readRawVarint32;
-                            this.hasInstallLocation = true;
-                            continue;
-                    }
-                case 16:
-                    this.size = x0.readRawVarint64();
-                    this.hasSize = true;
-                    break;
-                case 26:
-                    int repeatedFieldArrayLength = WireFormatNano.getRepeatedFieldArrayLength(x0, 26);
-                    if (this.dependency == null) {
-                        length = 0;
-                    } else {
-                        length = this.dependency.length;
-                    }
-                    Dependency[] dependencyArr = new Dependency[repeatedFieldArrayLength + length];
-                    if (length != 0) {
-                        System.arraycopy(this.dependency, 0, dependencyArr, 0, length);
-                    }
-                    while (length < dependencyArr.length - 1) {
-                        dependencyArr[length] = new Dependency();
-                        x0.readMessage(dependencyArr[length]);
-                        x0.readTag();
-                        length++;
-                    }
-                    dependencyArr[length] = new Dependency();
-                    x0.readMessage(dependencyArr[length]);
-                    this.dependency = dependencyArr;
-                    break;
-                case 32:
-                    this.targetSdkVersion = x0.readRawVarint32();
-                    this.hasTargetSdkVersion = true;
-                    break;
-                default:
-                    if (WireFormatNano.parseUnknownField(x0, readTag)) {
-                        break;
-                    } else {
-                        break;
-                    }
-            }
-        }
-        return this;
-    }
-
     public InstallDetails() {
         this.cachedSize = -1;
     }
@@ -100,6 +41,7 @@ public final class InstallDetails extends MessageNano {
         super.writeTo(output);
     }
 
+    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.google.protobuf.nano.MessageNano
     public final int computeSerializedSize() {
         int size = super.computeSerializedSize();
@@ -121,5 +63,59 @@ public final class InstallDetails extends MessageNano {
             return size + CodedOutputByteBufferNano.computeInt32Size(4, this.targetSdkVersion);
         }
         return size;
+    }
+
+    @Override // com.google.protobuf.nano.MessageNano
+    public final /* bridge */ /* synthetic */ MessageNano mergeFrom(CodedInputByteBufferNano x0) throws IOException {
+        while (true) {
+            int readTag = x0.readTag();
+            switch (readTag) {
+                case 0:
+                    break;
+                case 8:
+                    int readRawVarint32 = x0.readRawVarint32();
+                    switch (readRawVarint32) {
+                        case 0:
+                        case 1:
+                        case 2:
+                        case 3:
+                            this.installLocation = readRawVarint32;
+                            this.hasInstallLocation = true;
+                            continue;
+                    }
+                case 16:
+                    this.size = x0.readRawVarint64();
+                    this.hasSize = true;
+                    break;
+                case 26:
+                    int repeatedFieldArrayLength = WireFormatNano.getRepeatedFieldArrayLength(x0, 26);
+                    int length = this.dependency == null ? 0 : this.dependency.length;
+                    Dependency[] dependencyArr = new Dependency[repeatedFieldArrayLength + length];
+                    if (length != 0) {
+                        System.arraycopy(this.dependency, 0, dependencyArr, 0, length);
+                    }
+                    while (length < dependencyArr.length - 1) {
+                        dependencyArr[length] = new Dependency();
+                        x0.readMessage(dependencyArr[length]);
+                        x0.readTag();
+                        length++;
+                    }
+                    dependencyArr[length] = new Dependency();
+                    x0.readMessage(dependencyArr[length]);
+                    this.dependency = dependencyArr;
+                    break;
+                case 32:
+                    this.targetSdkVersion = x0.readRawVarint32();
+                    this.hasTargetSdkVersion = true;
+                    break;
+                default:
+                    if (!WireFormatNano.parseUnknownField(x0, readTag)) {
+                        break;
+                    } else {
+                        break;
+                    }
+            }
+        }
+        return this;
     }
 }

@@ -15,58 +15,6 @@ public final class ServerCommands extends MessageNano {
     public boolean hasLogErrorStacktrace = false;
     public UserSettingDirtyData[] userSettingDirtyData = UserSettingDirtyData.emptyArray();
 
-    @Override // com.google.protobuf.nano.MessageNano
-    public final /* bridge */ /* synthetic */ MessageNano mergeFrom(CodedInputByteBufferNano x0) throws IOException {
-        int length;
-        while (true) {
-            int readTag = x0.readTag();
-            switch (readTag) {
-                case 0:
-                    break;
-                case 8:
-                    this.clearCache = x0.readBool();
-                    this.hasClearCache = true;
-                    break;
-                case 18:
-                    this.displayErrorMessage = x0.readString();
-                    this.hasDisplayErrorMessage = true;
-                    break;
-                case 26:
-                    this.logErrorStacktrace = x0.readString();
-                    this.hasLogErrorStacktrace = true;
-                    break;
-                case 34:
-                    int repeatedFieldArrayLength = WireFormatNano.getRepeatedFieldArrayLength(x0, 34);
-                    if (this.userSettingDirtyData == null) {
-                        length = 0;
-                    } else {
-                        length = this.userSettingDirtyData.length;
-                    }
-                    UserSettingDirtyData[] userSettingDirtyDataArr = new UserSettingDirtyData[repeatedFieldArrayLength + length];
-                    if (length != 0) {
-                        System.arraycopy(this.userSettingDirtyData, 0, userSettingDirtyDataArr, 0, length);
-                    }
-                    while (length < userSettingDirtyDataArr.length - 1) {
-                        userSettingDirtyDataArr[length] = new UserSettingDirtyData();
-                        x0.readMessage(userSettingDirtyDataArr[length]);
-                        x0.readTag();
-                        length++;
-                    }
-                    userSettingDirtyDataArr[length] = new UserSettingDirtyData();
-                    x0.readMessage(userSettingDirtyDataArr[length]);
-                    this.userSettingDirtyData = userSettingDirtyDataArr;
-                    break;
-                default:
-                    if (WireFormatNano.parseUnknownField(x0, readTag)) {
-                        break;
-                    } else {
-                        break;
-                    }
-            }
-        }
-        return this;
-    }
-
     public ServerCommands() {
         this.cachedSize = -1;
     }
@@ -115,5 +63,52 @@ public final class ServerCommands extends MessageNano {
             }
         }
         return size;
+    }
+
+    @Override // com.google.protobuf.nano.MessageNano
+    public final /* bridge */ /* synthetic */ MessageNano mergeFrom(CodedInputByteBufferNano x0) throws IOException {
+        while (true) {
+            int readTag = x0.readTag();
+            switch (readTag) {
+                case 0:
+                    break;
+                case 8:
+                    this.clearCache = x0.readBool();
+                    this.hasClearCache = true;
+                    break;
+                case 18:
+                    this.displayErrorMessage = x0.readString();
+                    this.hasDisplayErrorMessage = true;
+                    break;
+                case 26:
+                    this.logErrorStacktrace = x0.readString();
+                    this.hasLogErrorStacktrace = true;
+                    break;
+                case 34:
+                    int repeatedFieldArrayLength = WireFormatNano.getRepeatedFieldArrayLength(x0, 34);
+                    int length = this.userSettingDirtyData == null ? 0 : this.userSettingDirtyData.length;
+                    UserSettingDirtyData[] userSettingDirtyDataArr = new UserSettingDirtyData[repeatedFieldArrayLength + length];
+                    if (length != 0) {
+                        System.arraycopy(this.userSettingDirtyData, 0, userSettingDirtyDataArr, 0, length);
+                    }
+                    while (length < userSettingDirtyDataArr.length - 1) {
+                        userSettingDirtyDataArr[length] = new UserSettingDirtyData();
+                        x0.readMessage(userSettingDirtyDataArr[length]);
+                        x0.readTag();
+                        length++;
+                    }
+                    userSettingDirtyDataArr[length] = new UserSettingDirtyData();
+                    x0.readMessage(userSettingDirtyDataArr[length]);
+                    this.userSettingDirtyData = userSettingDirtyDataArr;
+                    break;
+                default:
+                    if (!WireFormatNano.parseUnknownField(x0, readTag)) {
+                        break;
+                    } else {
+                        break;
+                    }
+            }
+        }
+        return this;
     }
 }

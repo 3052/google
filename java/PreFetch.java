@@ -21,44 +21,6 @@ public final class PreFetch extends MessageNano {
     public long softTtl = 0;
     public boolean hasSoftTtl = false;
 
-    @Override // com.google.protobuf.nano.MessageNano
-    public final /* bridge */ /* synthetic */ MessageNano mergeFrom(CodedInputByteBufferNano x0) throws IOException {
-        while (true) {
-            int readTag = x0.readTag();
-            switch (readTag) {
-                case 0:
-                    break;
-                case 10:
-                    this.url = x0.readString();
-                    this.hasUrl = true;
-                    break;
-                case 18:
-                    this.response = x0.readBytes();
-                    this.hasResponse = true;
-                    break;
-                case 26:
-                    this.etag = x0.readString();
-                    this.hasEtag = true;
-                    break;
-                case 32:
-                    this.ttl = x0.readRawVarint64();
-                    this.hasTtl = true;
-                    break;
-                case 40:
-                    this.softTtl = x0.readRawVarint64();
-                    this.hasSoftTtl = true;
-                    break;
-                default:
-                    if (WireFormatNano.parseUnknownField(x0, readTag)) {
-                        break;
-                    } else {
-                        break;
-                    }
-            }
-        }
-        return this;
-    }
-
     public static PreFetch[] emptyArray() {
         if (_emptyArray == null) {
             synchronized (InternalNano.LAZY_INIT_LOCK) {
@@ -114,5 +76,43 @@ public final class PreFetch extends MessageNano {
             return size + CodedOutputByteBufferNano.computeInt64Size(5, this.softTtl);
         }
         return size;
+    }
+
+    @Override // com.google.protobuf.nano.MessageNano
+    public final /* bridge */ /* synthetic */ MessageNano mergeFrom(CodedInputByteBufferNano x0) throws IOException {
+        while (true) {
+            int readTag = x0.readTag();
+            switch (readTag) {
+                case 0:
+                    break;
+                case 10:
+                    this.url = x0.readString();
+                    this.hasUrl = true;
+                    break;
+                case 18:
+                    this.response = x0.readBytes();
+                    this.hasResponse = true;
+                    break;
+                case 26:
+                    this.etag = x0.readString();
+                    this.hasEtag = true;
+                    break;
+                case 32:
+                    this.ttl = x0.readRawVarint64();
+                    this.hasTtl = true;
+                    break;
+                case 40:
+                    this.softTtl = x0.readRawVarint64();
+                    this.hasSoftTtl = true;
+                    break;
+                default:
+                    if (!WireFormatNano.parseUnknownField(x0, readTag)) {
+                        break;
+                    } else {
+                        break;
+                    }
+            }
+        }
+        return this;
     }
 }

@@ -21,72 +21,6 @@ public final class FileMetadata extends MessageNano {
     public String splitId = "";
     public boolean hasSplitId = false;
 
-    @Override // com.google.protobuf.nano.MessageNano
-    public final /* bridge */ /* synthetic */ MessageNano mergeFrom(CodedInputByteBufferNano x0) throws IOException {
-        int length;
-        while (true) {
-            int readTag = x0.readTag();
-            switch (readTag) {
-                case 0:
-                    break;
-                case 8:
-                    int readRawVarint32 = x0.readRawVarint32();
-                    switch (readRawVarint32) {
-                        case 0:
-                        case 1:
-                        case 2:
-                            this.fileType = readRawVarint32;
-                            this.hasFileType = true;
-                            continue;
-                    }
-                case 16:
-                    this.versionCode = x0.readRawVarint32();
-                    this.hasVersionCode = true;
-                    break;
-                case 24:
-                    this.size = x0.readRawVarint64();
-                    this.hasSize = true;
-                    break;
-                case 34:
-                    this.splitId = x0.readString();
-                    this.hasSplitId = true;
-                    break;
-                case 40:
-                    this.compressedSize = x0.readRawVarint64();
-                    this.hasCompressedSize = true;
-                    break;
-                case 50:
-                    int repeatedFieldArrayLength = WireFormatNano.getRepeatedFieldArrayLength(x0, 50);
-                    if (this.patchDetails == null) {
-                        length = 0;
-                    } else {
-                        length = this.patchDetails.length;
-                    }
-                    PatchDetails[] patchDetailsArr = new PatchDetails[repeatedFieldArrayLength + length];
-                    if (length != 0) {
-                        System.arraycopy(this.patchDetails, 0, patchDetailsArr, 0, length);
-                    }
-                    while (length < patchDetailsArr.length - 1) {
-                        patchDetailsArr[length] = new PatchDetails();
-                        x0.readMessage(patchDetailsArr[length]);
-                        x0.readTag();
-                        length++;
-                    }
-                    patchDetailsArr[length] = new PatchDetails();
-                    x0.readMessage(patchDetailsArr[length]);
-                    this.patchDetails = patchDetailsArr;
-                    break;
-                default:
-                    if (WireFormatNano.parseUnknownField(x0, readTag)) {
-                        break;
-                    } else {
-                        break;
-                    }
-            }
-        }
-        return this;
-    }
-
     public static FileMetadata[] emptyArray() {
         if (_emptyArray == null) {
             synchronized (InternalNano.LAZY_INIT_LOCK) {
@@ -158,5 +92,66 @@ public final class FileMetadata extends MessageNano {
             }
         }
         return size;
+    }
+
+    @Override // com.google.protobuf.nano.MessageNano
+    public final /* bridge */ /* synthetic */ MessageNano mergeFrom(CodedInputByteBufferNano x0) throws IOException {
+        while (true) {
+            int readTag = x0.readTag();
+            switch (readTag) {
+                case 0:
+                    break;
+                case 8:
+                    int readRawVarint32 = x0.readRawVarint32();
+                    switch (readRawVarint32) {
+                        case 0:
+                        case 1:
+                        case 2:
+                            this.fileType = readRawVarint32;
+                            this.hasFileType = true;
+                            continue;
+                    }
+                case 16:
+                    this.versionCode = x0.readRawVarint32();
+                    this.hasVersionCode = true;
+                    break;
+                case 24:
+                    this.size = x0.readRawVarint64();
+                    this.hasSize = true;
+                    break;
+                case 34:
+                    this.splitId = x0.readString();
+                    this.hasSplitId = true;
+                    break;
+                case 40:
+                    this.compressedSize = x0.readRawVarint64();
+                    this.hasCompressedSize = true;
+                    break;
+                case 50:
+                    int repeatedFieldArrayLength = WireFormatNano.getRepeatedFieldArrayLength(x0, 50);
+                    int length = this.patchDetails == null ? 0 : this.patchDetails.length;
+                    PatchDetails[] patchDetailsArr = new PatchDetails[repeatedFieldArrayLength + length];
+                    if (length != 0) {
+                        System.arraycopy(this.patchDetails, 0, patchDetailsArr, 0, length);
+                    }
+                    while (length < patchDetailsArr.length - 1) {
+                        patchDetailsArr[length] = new PatchDetails();
+                        x0.readMessage(patchDetailsArr[length]);
+                        x0.readTag();
+                        length++;
+                    }
+                    patchDetailsArr[length] = new PatchDetails();
+                    x0.readMessage(patchDetailsArr[length]);
+                    this.patchDetails = patchDetailsArr;
+                    break;
+                default:
+                    if (!WireFormatNano.parseUnknownField(x0, readTag)) {
+                        break;
+                    } else {
+                        break;
+                    }
+            }
+        }
+        return this;
     }
 }

@@ -42,6 +42,135 @@ public final class Review extends MessageNano {
     public String authorName = "";
     public boolean hasAuthorName = false;
 
+    public static Review[] emptyArray() {
+        if (_emptyArray == null) {
+            synchronized (InternalNano.LAZY_INIT_LOCK) {
+                if (_emptyArray == null) {
+                    _emptyArray = new Review[0];
+                }
+            }
+        }
+        return _emptyArray;
+    }
+
+    public Review() {
+        this.cachedSize = -1;
+    }
+
+    @Override // com.google.protobuf.nano.MessageNano
+    public final void writeTo(CodedOutputByteBufferNano output) throws IOException {
+        if (this.hasAuthorName || !this.authorName.equals("")) {
+            output.writeString(1, this.authorName);
+        }
+        if (this.hasUrl || !this.url.equals("")) {
+            output.writeString(2, this.url);
+        }
+        if (this.hasSource || !this.source.equals("")) {
+            output.writeString(3, this.source);
+        }
+        if (this.hasDocumentVersion || !this.documentVersion.equals("")) {
+            output.writeString(4, this.documentVersion);
+        }
+        if (this.hasTimestampMsec || this.timestampMsec != 0) {
+            output.writeInt64(5, this.timestampMsec);
+        }
+        if (this.hasStarRating || this.starRating != 0) {
+            output.writeInt32(6, this.starRating);
+        }
+        if (this.hasTitle || !this.title.equals("")) {
+            output.writeString(7, this.title);
+        }
+        if (this.hasComment || !this.comment.equals("")) {
+            output.writeString(8, this.comment);
+        }
+        if (this.hasCommentId || !this.commentId.equals("")) {
+            output.writeString(9, this.commentId);
+        }
+        if (this.hasDeviceName || !this.deviceName.equals("")) {
+            output.writeString(19, this.deviceName);
+        }
+        if (this.hasReplyText || !this.replyText.equals("")) {
+            output.writeString(29, this.replyText);
+        }
+        if (this.hasReplyTimestampMsec || this.replyTimestampMsec != 0) {
+            output.writeInt64(30, this.replyTimestampMsec);
+        }
+        if (this.oBSOLETEPlusProfile != null) {
+            output.writeMessage(31, this.oBSOLETEPlusProfile);
+        }
+        if (this.author != null) {
+            output.writeMessage(33, this.author);
+        }
+        if (this.sentiment != null) {
+            output.writeMessage(34, this.sentiment);
+        }
+        if (this.hasHelpfulCount || this.helpfulCount != 0) {
+            output.writeInt32(35, this.helpfulCount);
+        }
+        if (this.hasThumbsUpCount || this.thumbsUpCount != 0) {
+            output.writeUInt64(38, this.thumbsUpCount);
+        }
+        super.writeTo(output);
+    }
+
+    /* JADX INFO: Access modifiers changed from: protected */
+    @Override // com.google.protobuf.nano.MessageNano
+    public final int computeSerializedSize() {
+        int size = super.computeSerializedSize();
+        if (this.hasAuthorName || !this.authorName.equals("")) {
+            size += CodedOutputByteBufferNano.computeStringSize(1, this.authorName);
+        }
+        if (this.hasUrl || !this.url.equals("")) {
+            size += CodedOutputByteBufferNano.computeStringSize(2, this.url);
+        }
+        if (this.hasSource || !this.source.equals("")) {
+            size += CodedOutputByteBufferNano.computeStringSize(3, this.source);
+        }
+        if (this.hasDocumentVersion || !this.documentVersion.equals("")) {
+            size += CodedOutputByteBufferNano.computeStringSize(4, this.documentVersion);
+        }
+        if (this.hasTimestampMsec || this.timestampMsec != 0) {
+            size += CodedOutputByteBufferNano.computeInt64Size(5, this.timestampMsec);
+        }
+        if (this.hasStarRating || this.starRating != 0) {
+            size += CodedOutputByteBufferNano.computeInt32Size(6, this.starRating);
+        }
+        if (this.hasTitle || !this.title.equals("")) {
+            size += CodedOutputByteBufferNano.computeStringSize(7, this.title);
+        }
+        if (this.hasComment || !this.comment.equals("")) {
+            size += CodedOutputByteBufferNano.computeStringSize(8, this.comment);
+        }
+        if (this.hasCommentId || !this.commentId.equals("")) {
+            size += CodedOutputByteBufferNano.computeStringSize(9, this.commentId);
+        }
+        if (this.hasDeviceName || !this.deviceName.equals("")) {
+            size += CodedOutputByteBufferNano.computeStringSize(19, this.deviceName);
+        }
+        if (this.hasReplyText || !this.replyText.equals("")) {
+            size += CodedOutputByteBufferNano.computeStringSize(29, this.replyText);
+        }
+        if (this.hasReplyTimestampMsec || this.replyTimestampMsec != 0) {
+            size += CodedOutputByteBufferNano.computeInt64Size(30, this.replyTimestampMsec);
+        }
+        if (this.oBSOLETEPlusProfile != null) {
+            size += CodedOutputByteBufferNano.computeMessageSize(31, this.oBSOLETEPlusProfile);
+        }
+        if (this.author != null) {
+            size += CodedOutputByteBufferNano.computeMessageSize(33, this.author);
+        }
+        if (this.sentiment != null) {
+            size += CodedOutputByteBufferNano.computeMessageSize(34, this.sentiment);
+        }
+        if (this.hasHelpfulCount || this.helpfulCount != 0) {
+            size += CodedOutputByteBufferNano.computeInt32Size(35, this.helpfulCount);
+        }
+        if (this.hasThumbsUpCount || this.thumbsUpCount != 0) {
+            return size + CodedOutputByteBufferNano.computeUInt64Size(38, this.thumbsUpCount);
+        }
+        return size;
+    }
+
     @Override // com.google.protobuf.nano.MessageNano
     public final /* bridge */ /* synthetic */ MessageNano mergeFrom(CodedInputByteBufferNano x0) throws IOException {
         while (true) {
@@ -124,7 +253,7 @@ public final class Review extends MessageNano {
                     this.hasThumbsUpCount = true;
                     break;
                 default:
-                    if (WireFormatNano.parseUnknownField(x0, readTag)) {
+                    if (!WireFormatNano.parseUnknownField(x0, readTag)) {
                         break;
                     } else {
                         break;
@@ -132,133 +261,5 @@ public final class Review extends MessageNano {
             }
         }
         return this;
-    }
-
-    public static Review[] emptyArray() {
-        if (_emptyArray == null) {
-            synchronized (InternalNano.LAZY_INIT_LOCK) {
-                if (_emptyArray == null) {
-                    _emptyArray = new Review[0];
-                }
-            }
-        }
-        return _emptyArray;
-    }
-
-    public Review() {
-        this.cachedSize = -1;
-    }
-
-    @Override // com.google.protobuf.nano.MessageNano
-    public final void writeTo(CodedOutputByteBufferNano output) throws IOException {
-        if (this.hasAuthorName || !this.authorName.equals("")) {
-            output.writeString(1, this.authorName);
-        }
-        if (this.hasUrl || !this.url.equals("")) {
-            output.writeString(2, this.url);
-        }
-        if (this.hasSource || !this.source.equals("")) {
-            output.writeString(3, this.source);
-        }
-        if (this.hasDocumentVersion || !this.documentVersion.equals("")) {
-            output.writeString(4, this.documentVersion);
-        }
-        if (this.hasTimestampMsec || this.timestampMsec != 0) {
-            output.writeInt64(5, this.timestampMsec);
-        }
-        if (this.hasStarRating || this.starRating != 0) {
-            output.writeInt32(6, this.starRating);
-        }
-        if (this.hasTitle || !this.title.equals("")) {
-            output.writeString(7, this.title);
-        }
-        if (this.hasComment || !this.comment.equals("")) {
-            output.writeString(8, this.comment);
-        }
-        if (this.hasCommentId || !this.commentId.equals("")) {
-            output.writeString(9, this.commentId);
-        }
-        if (this.hasDeviceName || !this.deviceName.equals("")) {
-            output.writeString(19, this.deviceName);
-        }
-        if (this.hasReplyText || !this.replyText.equals("")) {
-            output.writeString(29, this.replyText);
-        }
-        if (this.hasReplyTimestampMsec || this.replyTimestampMsec != 0) {
-            output.writeInt64(30, this.replyTimestampMsec);
-        }
-        if (this.oBSOLETEPlusProfile != null) {
-            output.writeMessage(31, this.oBSOLETEPlusProfile);
-        }
-        if (this.author != null) {
-            output.writeMessage(33, this.author);
-        }
-        if (this.sentiment != null) {
-            output.writeMessage(34, this.sentiment);
-        }
-        if (this.hasHelpfulCount || this.helpfulCount != 0) {
-            output.writeInt32(35, this.helpfulCount);
-        }
-        if (this.hasThumbsUpCount || this.thumbsUpCount != 0) {
-            output.writeUInt64(38, this.thumbsUpCount);
-        }
-        super.writeTo(output);
-    }
-
-    @Override // com.google.protobuf.nano.MessageNano
-    public final int computeSerializedSize() {
-        int size = super.computeSerializedSize();
-        if (this.hasAuthorName || !this.authorName.equals("")) {
-            size += CodedOutputByteBufferNano.computeStringSize(1, this.authorName);
-        }
-        if (this.hasUrl || !this.url.equals("")) {
-            size += CodedOutputByteBufferNano.computeStringSize(2, this.url);
-        }
-        if (this.hasSource || !this.source.equals("")) {
-            size += CodedOutputByteBufferNano.computeStringSize(3, this.source);
-        }
-        if (this.hasDocumentVersion || !this.documentVersion.equals("")) {
-            size += CodedOutputByteBufferNano.computeStringSize(4, this.documentVersion);
-        }
-        if (this.hasTimestampMsec || this.timestampMsec != 0) {
-            size += CodedOutputByteBufferNano.computeInt64Size(5, this.timestampMsec);
-        }
-        if (this.hasStarRating || this.starRating != 0) {
-            size += CodedOutputByteBufferNano.computeInt32Size(6, this.starRating);
-        }
-        if (this.hasTitle || !this.title.equals("")) {
-            size += CodedOutputByteBufferNano.computeStringSize(7, this.title);
-        }
-        if (this.hasComment || !this.comment.equals("")) {
-            size += CodedOutputByteBufferNano.computeStringSize(8, this.comment);
-        }
-        if (this.hasCommentId || !this.commentId.equals("")) {
-            size += CodedOutputByteBufferNano.computeStringSize(9, this.commentId);
-        }
-        if (this.hasDeviceName || !this.deviceName.equals("")) {
-            size += CodedOutputByteBufferNano.computeStringSize(19, this.deviceName);
-        }
-        if (this.hasReplyText || !this.replyText.equals("")) {
-            size += CodedOutputByteBufferNano.computeStringSize(29, this.replyText);
-        }
-        if (this.hasReplyTimestampMsec || this.replyTimestampMsec != 0) {
-            size += CodedOutputByteBufferNano.computeInt64Size(30, this.replyTimestampMsec);
-        }
-        if (this.oBSOLETEPlusProfile != null) {
-            size += CodedOutputByteBufferNano.computeMessageSize(31, this.oBSOLETEPlusProfile);
-        }
-        if (this.author != null) {
-            size += CodedOutputByteBufferNano.computeMessageSize(33, this.author);
-        }
-        if (this.sentiment != null) {
-            size += CodedOutputByteBufferNano.computeMessageSize(34, this.sentiment);
-        }
-        if (this.hasHelpfulCount || this.helpfulCount != 0) {
-            size += CodedOutputByteBufferNano.computeInt32Size(35, this.helpfulCount);
-        }
-        if (this.hasThumbsUpCount || this.thumbsUpCount != 0) {
-            return size + CodedOutputByteBufferNano.computeUInt64Size(38, this.thumbsUpCount);
-        }
-        return size;
     }
 }
