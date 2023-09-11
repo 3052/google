@@ -24,7 +24,6 @@ sources\com\google\android\finsky\protos\DeviceConfiguration.java
 sources\com\google\android\finsky\protos\DocDetails.java
 sources\com\google\android\finsky\protos\DocV2.java
 sources\com\google\android\finsky\protos\FileMetadata.java
-sources\com\google\android\finsky\protos\GetReviewsResponse.java
 sources\com\google\android\finsky\protos\InstallDetails.java
 sources\com\google\android\finsky\protos\ListResponse.java
 sources\com\google\android\finsky\protos\PreFetch.java
