@@ -8,13 +8,13 @@ import (
    "net/http"
 )
 
-// androidId
-func (d Device) id() (uint64, error) {
-   v, ok := d.m.Fixed64(7)
+
+func (d Device) android_ID() (uint64, error) {
+   v, ok := d.m.Fixed64(7) // long androidId_
    if ok {
       return v, nil
    }
-   return 0, errors.New("androidId not found")
+   return 0, errors.New("androidId_")
 }
 
 // Checkin$AndroidCheckinResponse

@@ -13,6 +13,14 @@ import (
    "strings"
 )
 
+func (c checkin) android_ID() (string, error) {
+   v, ok := c.m.Fixed64(7)
+   if ok {
+      return strconv.FormatUint(v, 16), nil
+   }
+   return "", errors.New("androidId_")
+}
+
 var checkin_body = protobuf.Message{
    protobuf.Field{Number: 4, Type: 2, Value: protobuf.Prefix{
       protobuf.Field{Number: 1, Type: 2, Value: protobuf.Prefix{
@@ -152,7 +160,7 @@ func NewClientWithDeviceInfo(email, aasToken string) (*_GooglePlayClient, error)
    if err != nil {
       return nil, err
    }
-   client.AuthData.GsfID, err = checkInResp.id()
+   client.AuthData.GsfID, err = checkInResp.android_ID()
    if err != nil {
       return nil, err
    }
@@ -166,14 +174,6 @@ func NewClientWithDeviceInfo(email, aasToken string) (*_GooglePlayClient, error)
    }
    authData._AuthToken = token
    return &client, nil
-}
-
-func (c checkin) id() (string, error) {
-   id, err := c.m.Fixed64(7)
-   if err != nil {
-      return "", err
-   }
-   return strconv.FormatUint(id, 16), nil
 }
 
 type checkin struct {

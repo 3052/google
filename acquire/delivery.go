@@ -34,26 +34,23 @@ func New_Delivery(h *play.Header, doc string, vc uint64) error {
    if err != nil {
       return err
    }
-   // ResponseWrapper
-   mes, err := protobuf.Consume(data)
+   mes, err := protobuf.Consume(data) // ResponseWrapper
    if err != nil {
       return err
    }
-   // payload
-   mes, _ = mes.Message(1)
-   // deliveryResponse
-   mes, _ = mes.Message(21)
-   status, err := mes.Varint(1)
-   if err != nil {
-      return err
+   mes, _ = mes.Message(1) // payload
+   mes, _ = mes.Message(21) // deliveryResponse
+   status, ok := mes.Varint(1)
+   if ok {
+      switch status {
+      case 3:
+         return errors.New("purchase required")
+      case 5:
+         return errors.New("invalid version")
+      }
    }
-   switch status {
-   case 3:
-      return errors.New("purchase required")
-   case 5:
-      return errors.New("invalid version")
-   }
-   if _, err := mes.Message(2); err != nil {
+   mes, ok = mes.Message(2)
+   if !ok {
       return errors.New("appDeliveryData not found")
    }
    fmt.Printf("%#v\n", mes)

@@ -57,6 +57,7 @@ func (f File) OBB(file_type uint64) string {
    b = append(b, ".obb"...)
    return string(b)
 }
+
 func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
    req, err := http.NewRequest(
       "GET", "https://play-fe.googleapis.com/fdfe/delivery", nil,
@@ -80,15 +81,12 @@ func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
    if err != nil {
       return nil, err
    }
-   // ResponseWrapper
-   mes, err := protobuf.Consume(data)
+   mes, err := protobuf.Consume(data) // ResponseWrapper
    if err != nil {
       return nil, err
    }
-   // payload
-   mes, _ = mes.Message(1)
-   // deliveryResponse
-   mes, _ = mes.Message(21)
+   mes, _ = mes.Message(1) // payload
+   mes, _ = mes.Message(21) // deliveryResponse
    status, ok := mes.Varint(1)
    if ok {
       switch status {
@@ -99,10 +97,10 @@ func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
       }
    }
    mes, ok = mes.Message(2)
-   if ok {
-      return &Delivery{mes}, nil
+   if !ok {
+      return nil, errors.New("appDeliveryData not found")
    }
-   return nil, errors.New("appDeliveryData not found")
+   return &Delivery{mes}, nil
 }
 
 func (s Split_Delivery_Data) Download_URL() (string, error) {
