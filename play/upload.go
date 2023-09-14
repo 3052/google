@@ -24,38 +24,109 @@ type Config struct {
 }
 
 func (h Header) upload_device(c Config) error {
-   var m protobuf.Message
-   m.Add(1, func(m *protobuf.Message) {
-      //protobuf.Field{Number: 1, Type: 0, Value: protobuf.Varint(3)},
-      m.Add_Varint(1, c.Touch_Screen)
-      //protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(1)},
-      m.Add_Varint(2, c.Keyboard)
-      //protobuf.Field{Number: 3, Type: 0, Value: protobuf.Varint(1)},
-      m.Add_Varint(3, c.Navigation)
-      //protobuf.Field{Number: 4, Type: 0, Value: protobuf.Varint(2)},
-      m.Add_Varint(4, c.Screen_Layout)
-      //protobuf.Field{Number: 5, Type: 0, Value: protobuf.Varint(0)},
-      m.Add_Bool(5, c.Has_Hard_Keyboard)
-      //protobuf.Field{Number: 6, Type: 0, Value: protobuf.Varint(0)},
-      m.Add_Bool(6, c.Has_Five_Way_Navigation)
-      //protobuf.Field{Number: 7, Type: 0, Value: protobuf.Varint(490)},
-      m.Add_Varint(7, c.Screen_Density)
-      //protobuf.Field{Number: 8, Type: 0, Value: protobuf.Varint(196610)},
-      m.Add_Varint(8, c.GL_ES_Version)
-      for _, library := range c.System_Shared_Library {
-         m.Add_String(9, library)
-      }
-      m.Add_String(11, c.Platform)
-      for _, extension := range c.GL_Extension {
-         m.Add_String(15, extension)
-      }
-      // you cannot swap the next two lines:
-      for _, name := range c.System_Available_Feature {
-         m.Add(26, func(m *protobuf.Message) {
-            m.Add_String(1, name)
-         })
-      }
-   })
+   var upload_body = protobuf.Message{
+      protobuf.Field{Number: 1, Type: 2, Value: protobuf.Prefix{
+         protobuf.Field{Number: 1, Type: 0, Value: protobuf.Varint(3)},
+         protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(1)},
+         protobuf.Field{Number: 3, Type: 0, Value: protobuf.Varint(1)},
+         protobuf.Field{Number: 4, Type: 0, Value: protobuf.Varint(2)},
+         protobuf.Field{Number: 5, Type: 0, Value: protobuf.Varint(0)},
+         protobuf.Field{Number: 6, Type: 0, Value: protobuf.Varint(0)},
+         protobuf.Field{Number: 7, Type: 0, Value: protobuf.Varint(490)},
+         protobuf.Field{Number: 8, Type: 0, Value: protobuf.Varint(196610)},
+         // com.amctve.amcfullepisodes
+         protobuf.Field{Number: 9, Type: 2, Value: protobuf.Bytes("org.apache.http.legacy")},
+         // com.binance.dev
+         protobuf.Field{Number: 9, Type: 2, Value: protobuf.Bytes("android.test.runner")},
+         protobuf.Field{Number: 11, Type: 2, Value: protobuf.Bytes("x86")},
+         // com.instagram.android
+         protobuf.Field{Number: 15, Type: 2, Value: protobuf.Bytes("GL_OES_compressed_ETC1_RGB8_texture")},
+         // com.kakaogames.twodin
+         protobuf.Field{Number: 15, Type: 2, Value: protobuf.Bytes("GL_KHR_texture_compression_astc_ldr")},
+         // app.source.getcontact
+         protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
+            protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.location.gps")},
+         }},
+         // br.com.rodrigokolb.realdrum
+         protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
+            protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.software.midi")},
+         }},
+         // com.app.xt
+         protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
+            protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.camera.front")},
+         }},
+         // com.cabify.rider
+         protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
+            protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.camera.flash")},
+         }},
+         // com.clearchannel.iheartradio.controller
+         protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
+            protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.microphone")},
+         }},
+         // com.google.android.apps.walletnfcrel
+         protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
+            protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.software.device_admin")},
+         }},
+         // com.google.android.youtube
+         protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
+            protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.touchscreen")},
+         }},
+         protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
+            protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.wifi")},
+         }},
+         // com.madhead.tos.zh
+         protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
+            protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.sensor.accelerometer")},
+         }},
+         // com.miHoYo.GenshinImpact
+         protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
+            protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.opengles.aep")},
+         }},
+         // com.pinterest
+         protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
+            protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.camera")},
+         }},
+         protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
+            protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.location")},
+         }},
+         protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
+            protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.screen.portrait")},
+         }},
+         // com.supercell.brawlstars
+         protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
+            protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.touchscreen.multitouch")},
+         }},
+         // com.sygic.aura
+         protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
+            protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.location.network")},
+         }},
+         // com.xiaomi.smarthome
+         protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
+            protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.bluetooth")},
+         }},
+         protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
+            protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.bluetooth_le")},
+         }},
+         protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
+            protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.camera.autofocus")},
+         }},
+         protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
+            protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.usb.host")},
+         }},
+         // kr.sira.metal
+         protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
+            protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.sensor.compass")},
+         }},
+         // org.thoughtcrime.securesms
+         protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
+            protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.telephony")},
+         }},
+         // org.videolan.vlc
+         protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
+            protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.screen.landscape")},
+         }},
+      }},
+   }
    r, _ := http.NewRequest(
       "POST",
       "https://android.clients.google.com/fdfe/uploadDeviceConfig",
