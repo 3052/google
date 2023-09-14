@@ -98,6 +98,7 @@ var Phone = Config{
 }
 
 func (c Config) Checkin() ([]byte, error) {
+   // Checkin$AndroidCheckinRequest
    var m protobuf.Message
    // Logs$AndroidCheckinProto checkin_
    m.Add(4, func(m *protobuf.Message) {

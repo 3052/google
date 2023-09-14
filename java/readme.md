@@ -17,7 +17,6 @@ sources\com\google\android\finsky\protos\AndroidAppDeliveryData.java
 sources\com\google\android\finsky\protos\AppDetails.java
 sources\com\google\android\finsky\protos\AppFileMetadata.java
 sources\com\google\android\finsky\protos\Common.java
-sources\com\google\android\finsky\protos\Containers.java
 sources\com\google\android\finsky\protos\DeliveryResponse.java
 sources\com\google\android\finsky\protos\Details.java
 sources\com\google\android\finsky\protos\DeviceConfiguration.java
