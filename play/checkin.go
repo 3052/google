@@ -141,16 +141,17 @@ func (c Config) Checkin() ([]byte, error) {
          m.Add_String(15, extension)
       }
       // you cannot swap the next two lines:
-      for _, name := range c.System_Available_Feature {
+      for _, feature := range c.System_Available_Feature {
          m.Add(26, func(m *protobuf.Message) {
-            m.Add_String(1, name)
+            // String[] systemAvailableFeature
+            m.Add_String(1, feature)
          })
       }
    })
    // r.Header.Set("User-Agent", "GoogleAuth/1.4 sargo PQ3B.190705.003")
    res, err := http.Post(
       "https://android.googleapis.com/checkin", "application/x-protobuffer",
-      bytes.NewReader(checkin_body.Append(nil)),
+      bytes.NewReader(m.Append(nil)),
    )
    if err != nil {
       return nil, err
