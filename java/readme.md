@@ -34,6 +34,7 @@ sources\com\google\android\finsky\protos\ReviewResponse.java
 sources\com\google\android\finsky\protos\SearchSuggest.java
 sources\com\google\android\finsky\protos\ServerCommands.java
 sources\com\google\android\finsky\protos\SplitDeliveryData.java
+sources\com\google\android\finsky\protos\UploadDeviceConfig.java
 ~~~
 
 ## Google Services Framework

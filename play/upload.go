@@ -9,7 +9,7 @@ import (
 
 func (h Header) upload_device(c Config) error {
    var m protobuf.Message
-   protobuf.Field{Number: 1, Type: 2, Value: protobuf.Prefix{
+   m.Add(1, func(m *protobuf.Message) {
       protobuf.Field{Number: 1, Type: 0, Value: protobuf.Varint(3)},
       protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(1)},
       protobuf.Field{Number: 3, Type: 0, Value: protobuf.Varint(1)},
@@ -109,6 +109,10 @@ func (h Header) upload_device(c Config) error {
       protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.screen.landscape")},
       }},
+   })
+   
+   
+   protobuf.Field{Number: 1, Type: 2, Value: protobuf.Prefix{
    }},
    r, _ := http.NewRequest(
       "POST",
