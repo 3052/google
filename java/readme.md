@@ -57,6 +57,21 @@ finsky\protos\Response.java
    1 finsky\protos\Response.java
       2 finsky\protos\Details.java
          4 finsky\protos\DocV2.java
+            8 finsky\protos\Common.java
+            13 finsky\protos\DocDetails.java
+               1 finsky\protos\AppDetails.java
+                  17 finsky\protos\FileMetadata.java
+~~~
+
+## /fdfe/delivery
+
+response:
+
+~~~
+finsky\protos\Response.java
+   1 finsky\protos\Response.java
+      21 finsky\protos\DeliveryResponse.java
+         2 finsky\protos\AndroidAppDeliveryData.java
 ~~~
 
 ## Google Play Store
