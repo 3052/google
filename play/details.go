@@ -8,45 +8,6 @@ import (
    "net/http"
 )
 
-func (f File_Metadata) File_Type() (uint64, error) {
-   v, ok := f.m.Varint(1) // int fileType
-   if ok {
-      return v, nil
-   }
-   return 0, fmt.Errorf("file metadata, file type")
-}
-
-func (d Details) File() []File_Metadata {
-   d.m, _ = d.m.Message(13) // DocDetails.DocumentDetails details
-   d.m, _ = d.m.Message(1) // AppDetails appDetails
-   var files []File_Metadata
-   for _, f := range d.m {
-      if f.Number == 17 { // FileMetadata[] file
-         if file, ok := f.Message(); ok {
-            files = append(files, File_Metadata{file})
-         }
-      }
-   }
-   return files
-}
-
-func (d Details) Creator() (string, error) {
-   v, ok := d.m.String(6)
-   if ok {
-      return v, nil
-   }
-   return "", fmt.Errorf("details, creator")
-}
-
-func (d Details) Currency_Code() (string, error) {
-   if v, ok := d.m.Message(8); ok { // Common.Offer[] offer
-      if v, ok := v.String(2); ok { // String currencyCode
-         return v, nil
-      }
-   }
-   return "", fmt.Errorf("details, currency")
-}
-
 func (h Header) Details(doc string) (*Details, error) {
    req, err := http.NewRequest(
       "GET", "https://android.clients.google.com/fdfe/details?doc=" + doc, nil,
@@ -81,37 +42,6 @@ func (h Header) Details(doc string) (*Details, error) {
 
 type Details struct { // DocV2
    m protobuf.Message
-}
-
-func (d Details) Installation_Size() (uint64, error) {
-   d.m, _ = d.m.Message(13) // DocDetails.DocumentDetails details
-   d.m, _ = d.m.Message(1) // AppDetails appDetails
-   v, ok := d.m.Varint(9) // long installationSize
-   if ok {
-      return v, nil
-   }
-   return 0, fmt.Errorf("details, installation size")
-}
-func (d Details) Micros() (uint64, error) {
-   d.m, _ = d.m.Message(8) // Common.Offer[] offer
-   v, ok := d.m.Varint(1) // long micros
-   if ok {
-      return v, nil
-   }
-   return 0, fmt.Errorf("details, micros")
-}
-func (d Details) Num_Downloads() (uint64, error) {
-   // DocDetails.DocumentDetails details
-   d.m, _ = d.m.Message(13)
-   // AppDetails appDetails
-   d.m, _ = d.m.Message(1)
-   // I dont know the name of field 70, but the similar field 13 is called
-   // numDownloads
-   v, ok := d.m.Varint(70)
-   if ok {
-      return v, nil
-   }
-   return 0, fmt.Errorf("details, num downloads")
 }
 
 func (d Details) String() string {
@@ -172,6 +102,47 @@ func (d Details) String() string {
    return string(b)
 }
 
+// FileMetadata
+// This is similar to AppFileMetadata, but notably field 4 is different.
+type File_Metadata struct {
+   m protobuf.Message
+}
+
+/////////////////////////////////////////////////////////
+
+func (d Details) Installation_Size() (uint64, error) {
+   d.m, _ = d.m.Message(13) // DocDetails.DocumentDetails details
+   d.m, _ = d.m.Message(1) // AppDetails appDetails
+   v, ok := d.m.Varint(9) // long installationSize
+   if ok {
+      return v, nil
+   }
+   return 0, fmt.Errorf("details, installation size")
+}
+
+func (d Details) Micros() (uint64, error) {
+   d.m, _ = d.m.Message(8) // Common.Offer[] offer
+   v, ok := d.m.Varint(1) // long micros
+   if ok {
+      return v, nil
+   }
+   return 0, fmt.Errorf("details, micros")
+}
+
+func (d Details) Num_Downloads() (uint64, error) {
+   // DocDetails.DocumentDetails details
+   d.m, _ = d.m.Message(13)
+   // AppDetails appDetails
+   d.m, _ = d.m.Message(1)
+   // I dont know the name of field 70, but the similar field 13 is called
+   // numDownloads
+   v, ok := d.m.Varint(70)
+   if ok {
+      return v, nil
+   }
+   return 0, fmt.Errorf("details, num downloads")
+}
+
 func (d Details) Title() (string, error) {
    v, ok := d.m.String(5) // String title
    if ok {
@@ -210,8 +181,41 @@ func (d Details) Version_Code() (uint64, error) {
    return 0, fmt.Errorf("details, version code")
 }
 
-// FileMetadata
-// This is similar to AppFileMetadata, but notably field 4 is different.
-type File_Metadata struct {
-   m protobuf.Message
+func (f File_Metadata) File_Type() (uint64, error) {
+   v, ok := f.m.Varint(1) // int fileType
+   if ok {
+      return v, nil
+   }
+   return 0, fmt.Errorf("file metadata, file type")
+}
+
+func (d Details) File() []File_Metadata {
+   d.m, _ = d.m.Message(13) // DocDetails.DocumentDetails details
+   d.m, _ = d.m.Message(1) // AppDetails appDetails
+   var files []File_Metadata
+   for _, f := range d.m {
+      if f.Number == 17 { // FileMetadata[] file
+         if file, ok := f.Message(); ok {
+            files = append(files, File_Metadata{file})
+         }
+      }
+   }
+   return files
+}
+
+func (d Details) Creator() (string, error) {
+   v, ok := d.m.String(6)
+   if ok {
+      return v, nil
+   }
+   return "", fmt.Errorf("details, creator")
+}
+
+func (d Details) Currency_Code() (string, error) {
+   if v, ok := d.m.Message(8); ok { // Common.Offer[] offer
+      if v, ok := v.String(2); ok { // String currencyCode
+         return v, nil
+      }
+   }
+   return "", fmt.Errorf("details, currency")
 }

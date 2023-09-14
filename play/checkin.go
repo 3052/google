@@ -74,6 +74,7 @@ func (c Config) Checkin() ([]byte, error) {
    }
    return io.ReadAll(res.Body)
 }
+
 func (d Device) android_ID() (uint64, error) {
    v, ok := d.m.Fixed64(7) // long androidId_
    if ok {

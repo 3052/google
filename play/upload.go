@@ -110,10 +110,6 @@ func (h Header) upload_device(c Config) error {
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.screen.landscape")},
       }},
    })
-   
-   
-   protobuf.Field{Number: 1, Type: 2, Value: protobuf.Prefix{
-   }},
    r, _ := http.NewRequest(
       "POST",
       "https://android.clients.google.com/fdfe/uploadDeviceConfig",
