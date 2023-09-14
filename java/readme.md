@@ -1,24 +1,5 @@
 # Java
 
-~~~
-finsky\protos\AndroidAppDeliveryData.java
-finsky\protos\AppDetails.java
-finsky\protos\AppFileMetadata.java
-finsky\protos\Common.java
-finsky\protos\DeliveryResponse.java
-finsky\protos\Details.java
-finsky\protos\DeviceConfiguration.java
-finsky\protos\DocDetails.java
-finsky\protos\DocV2.java
-finsky\protos\FileMetadata.java
-finsky\protos\InstallDetails.java
-finsky\protos\ListResponse.java
-finsky\protos\PreFetch.java
-finsky\protos\Response.java
-finsky\protos\ServerCommands.java
-finsky\protos\SplitDeliveryData.java
-~~~
-
 last working versions below. decompiled using JADX 1.4.7. check under
 `sources\com\google\android`.
 
@@ -39,13 +20,17 @@ response:
 gsf\checkin\proto\Checkin$AndroidCheckinResponse.java
 ~~~
 
-## /fdfe/uploadDeviceConfig
+## /fdfe/delivery
 
-request:
+response:
 
 ~~~
-finsky\protos\UploadDeviceConfig.java
-   1 finsky\protos\DeviceConfiguration.java
+finsky\protos\Response.java
+   1 finsky\protos\Response.java
+      21 finsky\protos\DeliveryResponse.java
+         2 finsky\protos\AndroidAppDeliveryData.java
+            4 finsky\protos\AppFileMetadata.java
+            15 finsky\protos\SplitDeliveryData.java
 ~~~
 
 ## /fdfe/details
@@ -63,15 +48,13 @@ finsky\protos\Response.java
                   17 finsky\protos\FileMetadata.java
 ~~~
 
-## /fdfe/delivery
+## /fdfe/uploadDeviceConfig
 
-response:
+request:
 
 ~~~
-finsky\protos\Response.java
-   1 finsky\protos\Response.java
-      21 finsky\protos\DeliveryResponse.java
-         2 finsky\protos\AndroidAppDeliveryData.java
+finsky\protos\UploadDeviceConfig.java
+   1 finsky\protos\DeviceConfiguration.java
 ~~~
 
 ## Google Play Store

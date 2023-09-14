@@ -140,13 +140,10 @@ func (f File) OBB(file_type uint64) string {
    return string(b)
 }
 
-/////////////////////////////////////////////////////////////////
-
 func (d Delivery) Additional_File() []App_File_Metadata {
    var files []App_File_Metadata
-   // AppFileMetadata[] additionalFile
    for _, f := range d.m {
-      if f.Number == 4 {
+      if f.Number == 4 { // AppFileMetadata[] additionalFile
          if file, ok := f.Message(); ok {
             files = append(files, App_File_Metadata{file})
          }
