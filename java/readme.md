@@ -3,6 +3,22 @@
 last working versions below. decompiled using JADX 1.4.7. check under
 `sources\com\google\android`.
 
+key         | value
+------------|-----------------------
+package     | com.google.android.gsf
+versionCode | 25
+versionName | 7.1.2
+
+https://apkmirror.com/apk/google-inc/google-services-framework
+
+key             | value
+----------------|--------------------
+package         | com.android.vending
+versionCode     | 80441400
+versionName     | 6.1.14
+
+https://apkmirror.com/apk/google-inc/google-play-store
+
 ## /checkin
 
 request:
@@ -56,23 +72,3 @@ request:
 finsky\protos\UploadDeviceConfig.java
    1 finsky\protos\DeviceConfiguration.java
 ~~~
-
-## Google Play Store
-
-https://apkmirror.com/apk/google-inc/google-play-store
-
-key             | value
-----------------|--------------------
-package         | com.android.vending
-versionCode     | 80441400
-versionName     | 6.1.14
-
-## Google Services Framework
-
-https://apkmirror.com/apk/google-inc/google-services-framework
-
-key         | value
-------------|-----------------------
-package     | com.google.android.gsf
-versionCode | 25
-versionName | 7.1.2
