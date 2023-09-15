@@ -25,7 +25,7 @@ func main() {
    if err != nil {
       panic(err)
    }
-   c, err := acquire.NewClientWithDeviceInfo("srpen6@gmail.com", token)
+   c, err := acquire.NewClientWithDeviceInfo(token)
    if err != nil {
       panic(err)
    }

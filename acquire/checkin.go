@@ -8,9 +8,7 @@ import (
    "io"
    "net/http"
    "net/http/httputil"
-   "net/url"
    "strconv"
-   "strings"
 )
 
 func (c checkin) android_ID() (string, error) {
@@ -152,11 +150,8 @@ func (client *_GooglePlayClient) checkIn() (*checkin, error) {
          })
       }
    })
-   b = m.Append(nil)
-   r, _ := http.NewRequest("POST", _UrlCheckIn, bytes.NewReader(b))
-   r.Header.Set("User-Agent", "GoogleAuth/1.4 sargo PQ3B.190705.003")
+   r, _ := http.NewRequest("POST", _UrlCheckIn, bytes.NewReader(m.Append(nil)))
    r.Header.Set("Content-Type", "application/x-protobuffer")
-   r.Header.Set("Host", "android.clients.google.com")
    b, _, err := doReq(r)
    if err != nil {
       return nil, err
@@ -169,12 +164,8 @@ func (client *_GooglePlayClient) checkIn() (*checkin, error) {
    return &check, nil
 }
 
-func NewClientWithDeviceInfo(email, aasToken string) (*_GooglePlayClient, error) {
-   authData := &_AuthData{
-      _Email:    email,
-      _AASToken: aasToken,
-      _Locale:   "en_GB",
-   }
+func NewClientWithDeviceInfo(aasToken string) (*_GooglePlayClient, error) {
+   authData := &_AuthData{_AASToken: aasToken}
    client := _GooglePlayClient{AuthData: authData}
    checkInResp, err := client.checkIn()
    if err != nil {
@@ -188,11 +179,6 @@ func NewClientWithDeviceInfo(email, aasToken string) (*_GooglePlayClient, error)
    if err != nil {
       return nil, err
    }
-   token, err := client._GenerateGPToken()
-   if err != nil {
-      return nil, err
-   }
-   authData._AuthToken = token
    return &client, nil
 }
 
@@ -203,9 +189,6 @@ type checkin struct {
 type _AuthData struct {
    GsfID                          string
    _AASToken                      string
-   _AuthToken                     string
-   _Email                         string
-   _Locale                        string
 }
 
 type _GooglePlayClient struct {
@@ -232,44 +215,15 @@ func doReq(r *http.Request) ([]byte, int, error) {
    return b, res.StatusCode, err
 }
 
-func parseResponse(res string) map[string]string {
-   ret := map[string]string{}
-   for _, ln := range strings.Split(res, "\n") {
-      keyVal := strings.SplitN(ln, "=", 2)
-      if len(keyVal) >= 2 {
-         ret[keyVal[0]] = keyVal[1]
-      }
-   }
-   return ret
-}
-
-func (client *_GooglePlayClient) _GenerateGPToken() (string, error) {
-   params := &url.Values{}
-   params.Set("Token", client.AuthData._AASToken)
-   params.Set("app", "com.android.vending")
-   params.Set("client_sig", "38918a453d07199354f8b19af05ec6562ced5788")
-   params.Set("service", "oauth2:https://www.googleapis.com/auth/googleplay")
-   r, _ := http.NewRequest("POST", _UrlAuth+"?"+params.Encode(), nil)
-   b, _, err := doReq(r)
-   if err != nil {
-      return "", nil
-   }
-   resp := parseResponse(string(b))
-   token, ok := resp["Auth"]
-   if ok {
-      return token, nil
-   }
-   return "", errors.New("authentication failed: could not generate oauth token")
-}
-
 const _UrlBase = "https://android.clients.google.com"
+
 const _UrlFdfe = _UrlBase + "/fdfe"
-const _UrlAuth = _UrlBase + "/auth"
+
 const _UrlCheckIn = _UrlBase + "/checkin"
+
 const _UrlUploadDeviceConfig = _UrlFdfe + "/uploadDeviceConfig"
 
 var (
    err_GPTokenExpired = errors.New("unauthorized, gp token expired")
-
    httpClient = &http.Client{}
 )
