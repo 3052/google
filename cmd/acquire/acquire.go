@@ -3,11 +3,21 @@ package main
 import (
    "154.pages.dev/google/play"
    "154.pages.dev/http/option"
+   "flag"
    "fmt"
    "net/http"
    "os"
+   "strings"
    "time"
 )
+
+func (f flags) do_acquire(platform string) error {
+   head, err := f.do_header(dir, platform)
+   if err != nil {
+      return err
+   }
+   return head.Acquire(f.doc)
+}
 
 func (f flags) do_device(dir, platform string) error {
    data, err := play.Phone.Checkin()
@@ -112,4 +122,3 @@ func (f flags) do_auth(dir string) error {
    }
    return os.WriteFile(dir + "/token.txt", text, 0666)
 }
-

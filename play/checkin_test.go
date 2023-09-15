@@ -13,7 +13,7 @@ func checkin_create(id int64) error {
    }
    home += "/google/play/"
    // checkin
-   data, err := Checkin()
+   data, err := Phone.Checkin()
    if err != nil {
       return err
    }
@@ -27,19 +27,19 @@ func checkin_create(id int64) error {
       }
       head.Set_Authorization(b)
    }
-   Phone.Platform = Platforms[id]
+   Phone.Native_Platform = Platforms[id]
    {
-      b, err := os.ReadFile(home + Phone.Platform + ".bin")
+      b, err := os.ReadFile(home + Phone.Native_Platform + ".bin")
       if err != nil {
          return err
       }
       head.Set_Device(b)
    }
-   if err := head.upload_device(Phone); err != nil {
+   if err := head.Upload(Phone); err != nil {
       return err
    }
    // write
-   os.WriteFile(home + Phone.Platform + ".bin", data, 0666)
+   os.WriteFile(home + Phone.Native_Platform + ".bin", data, 0666)
    time.Sleep(9*time.Second)
    return nil
 }

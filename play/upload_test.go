@@ -29,14 +29,14 @@ func Test_Upload(t *testing.T) {
    }
    // device
    {
-      b, err := Checkin()
+      b, err := Phone.Checkin()
       if err != nil {
          t.Fatal(err)
       }
       head.Set_Device(b)
    }
-   Phone.Platform = "x86"
-   if err := head.upload_device(Phone); err != nil {
+   Phone.Native_Platform = "x86"
+   if err := head.Upload(Phone); err != nil {
       t.Fatal(err)
    }
    fmt.Println(head.Device())

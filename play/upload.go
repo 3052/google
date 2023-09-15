@@ -7,7 +7,7 @@ import (
    "net/http"
 )
 
-func (h Header) upload_device(c Config) error {
+func (h Header) Upload(c Config) error {
    // class UploadDeviceConfigRequest
    var m protobuf.Message
    // DeviceConfiguration.DeviceConfigurationProto deviceConfiguration
@@ -46,18 +46,20 @@ func (h Header) upload_device(c Config) error {
          })
       }
    })
-   r, _ := http.NewRequest(
-      "POST",
-      "https://android.clients.google.com/fdfe/uploadDeviceConfig",
-      bytes.NewReader(upload_body.Append(nil)),
+   req, err := http.NewRequest(
+      "POST", "https://android.clients.google.com/fdfe/uploadDeviceConfig",
+      bytes.NewReader(m.Append(nil)),
    )
+   if err != nil {
+      return err
+   }
    // seems like we need this, what the fuck:
-   r.Header.Set("X-DFE-Client-Id", "am-android-google")
-   r.Header.Set(h.Authorization())
-   r.Header.Set(h.Device())
-   //r.Header.Set("User-Agent", "Android-Finsky/15.8.23-all [0] [PR] 259261889 (api=3,versionCode=81582300,sdk=28,device=sargo,hardware=sargo,product=sargo,platformVersionRelease=9,model=Pixel 3a,buildId=PQ3B.190705.003,isWideScreen=0,supportedAbis=arm64-v8a;armeabi-v7a;armeabi)")
-   r.Header.Set(h.Agent())
-   res, err := http.DefaultClient.Do(r)
+   req.Header.Set("X-DFE-Client-Id", "am-android-google")
+   req.Header.Set(h.Authorization())
+   req.Header.Set(h.Device())
+   // req.Header.Set("User-Agent", "Android-Finsky/15.8.23-all [0] [PR] 259261889 (api=3,versionCode=81582300,sdk=28,device=sargo,hardware=sargo,product=sargo,platformVersionRelease=9,model=Pixel 3a,buildId=PQ3B.190705.003,isWideScreen=0,supportedAbis=arm64-v8a;armeabi-v7a;armeabi)")
+   req.Header.Set(h.Agent())
+   res, err := http.DefaultClient.Do(req)
    if err != nil {
       return err
    }
