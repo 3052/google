@@ -28,12 +28,3 @@ func (h Header) Purchase(doc string) error {
    }
    return nil
 }
-
-var Native_Platforms = map[string]string{
-   // com.google.android.youtube
-   "0": "x86",
-   // com.miui.weather2
-   "1": "armeabi-v7a",
-   // com.kakaogames.twodin
-   "2": "arm64-v8a",
-}

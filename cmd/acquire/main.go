@@ -38,10 +38,13 @@ func main() {
    }
    flag.StringVar(&f.doc, "d", "", "doc")
    flag.BoolVar(&f.device, "device", false, "create device")
-   flag.Func("p", fmt.Sprint(play.Native_Platforms), func(s string) error {
-      play.Phone.Native_Platform = play.Native_Platforms[s]
-      return nil
-   })
+   {
+      play.Phone.Native_Platform = "x86"
+      flag.Func("p", fmt.Sprint(play.Native_Platforms), func(s string) error {
+         play.Phone.Native_Platform = play.Native_Platforms[s]
+         return nil
+      })
+   }
    flag.BoolVar(&f.single, "s", false, "single APK")
    flag.Uint64Var(&f.vc, "v", 0, "version code")
    flag.Parse()

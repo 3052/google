@@ -150,4 +150,3 @@ func (h *Header) Set_Authorization(token []byte) error {
    }
    return nil
 }
-
