@@ -14,10 +14,8 @@ type flags struct {
    device bool
    doc string
    single bool
-   trace bool
    vc uint64
    acquire bool
-   platform string
    home string
 }
 
@@ -30,8 +28,7 @@ func main() {
    if err != nil {
       panic(err)
    }
-   f.home += "/google/play"
-   os.MkdirAll(f.home, os.ModePerm)
+   f.home += "/google/play/"
    flag.BoolVar(&f.acquire, "a", false, "acquire")
    {
       var b strings.Builder
@@ -42,46 +39,42 @@ func main() {
    flag.StringVar(&f.doc, "d", "", "doc")
    flag.BoolVar(&f.device, "device", false, "create device")
    flag.Func("p", fmt.Sprint(play.Native_Platforms), func(s string) error {
-      f.platform = play.Native_Platforms[s]
+      play.Phone.Native_Platform = play.Native_Platforms[s]
       return nil
    })
    flag.BoolVar(&f.single, "s", false, "single APK")
-   flag.BoolVar(&f.trace, "t", false, "print full HTTP requests")
    flag.Uint64Var(&f.vc, "v", 0, "version code")
    flag.Parse()
    option.No_Location()
-   if f.trace {
-      option.Trace()
-   } else {
-      option.Verbose()
-   }
+   option.Trace()
    switch {
-   case f.acquire:
-      err := f.do_acquire()
+   case f.code != "":
+      err := f.do_auth()
       if err != nil {
          panic(err)
       }
-   case f.code != "":
-      err := f.do_auth(dir)
+   case f.device:
+      err := f.do_device()
       if err != nil {
          panic(err)
       }
    case f.doc != "":
-      if f.vc >= 1 {
+      switch {
+      case f.acquire:
+         err := f.do_acquire()
+         if err != nil {
+            panic(err)
+         }
+      case f.vc >= 1:
          err := f.do_delivery()
          if err != nil {
             panic(err)
          }
-      } else {
+      default:
          err := f.do_details()
          if err != nil {
             panic(err)
          }
-      }
-   case f.device:
-      err := f.do_device(dir)
-      if err != nil {
-         panic(err)
       }
    default:
       flag.Usage()

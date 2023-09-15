@@ -28,6 +28,9 @@ func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
       return nil, err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return errors.New(res.Status)
+   }
    data, err := io.ReadAll(res.Body)
    if err != nil {
       return nil, err

@@ -2,73 +2,13 @@ package play
 
 import (
    "154.pages.dev/encoding/protobuf"
+   "errors"
    "io"
    "net/http"
    "net/url"
    "strconv"
    "strings"
 )
-
-func (h *Header) Set_Device(device []byte) error {
-   var (
-      dev Device
-      err error
-   )
-   dev.m, err = protobuf.Consume(device)
-   if err != nil {
-      return err
-   }
-   id, err := dev.android_ID()
-   if err != nil {
-      return err
-   }
-   h.Device = func() (string, string) {
-      return "X-DFE-Device-ID", strconv.FormatUint(id, 16)
-   }
-   return nil
-}
-
-type Refresh_Token map[string]string
-
-func (r Refresh_Token) token() string {
-   return r["Token"]
-}
-
-func (h *Header) Set_Authorization(token []byte) error {
-   refresh, err := func() (Refresh_Token, error) {
-      return parse_query(string(token))
-   }()
-   if err != nil {
-      return err
-   }
-   // Google Services Framework 21 
-   res, err := http.PostForm(
-      "https://android.googleapis.com/auth", url.Values{
-         "Token": {refresh.token()},
-         "app": {"com.android.vending"},
-         "client_sig": {"38918a453d07199354f8b19af05ec6562ced5788"},
-         "service": {"oauth2:https://www.googleapis.com/auth/googleplay"},
-      },
-   )
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   access, err := func() (Access_Token, error) {
-      b, err := io.ReadAll(res.Body)
-      if err != nil {
-         return nil, err
-      }
-      return parse_query(string(b))
-   }()
-   if err != nil {
-      return err
-   }
-   h.Authorization = func() (string, string) {
-      return "Authorization", "Bearer " + access.auth()
-   }
-   return nil
-}
 
 // accounts.google.com/embedded/setup/android
 // the authorization code (oauth_token) looks like this:
@@ -88,6 +28,9 @@ func New_Refresh_Token(code string) ([]byte, error) {
       return nil, err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errors.New(res.Status)
+   }
    return io.ReadAll(res.Body)
 }
 
@@ -142,5 +85,69 @@ func (h *Header) Set_Agent(single bool) {
    h.Agent = func() (string, string) {
       return "User-Agent", string(b)
    }
+}
+
+func (h *Header) Set_Device(device []byte) error {
+   var (
+      dev Device
+      err error
+   )
+   dev.m, err = protobuf.Consume(device)
+   if err != nil {
+      return err
+   }
+   id, err := dev.android_ID()
+   if err != nil {
+      return err
+   }
+   h.Device = func() (string, string) {
+      return "X-DFE-Device-ID", strconv.FormatUint(id, 16)
+   }
+   return nil
+}
+
+type Refresh_Token map[string]string
+
+func (r Refresh_Token) token() string {
+   return r["Token"]
+}
+
+func (h *Header) Set_Authorization(token []byte) error {
+   refresh, err := func() (Refresh_Token, error) {
+      return parse_query(string(token))
+   }()
+   if err != nil {
+      return err
+   }
+   // Google Services Framework 21 
+   res, err := http.PostForm(
+      "https://android.googleapis.com/auth", url.Values{
+         "Token": {refresh.token()},
+         "app": {"com.android.vending"},
+         "client_sig": {"38918a453d07199354f8b19af05ec6562ced5788"},
+         "service": {"oauth2:https://www.googleapis.com/auth/googleplay"},
+      },
+   )
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return errors.New(res.Status)
+   }
+   access, err := func() (Access_Token, error) {
+      b, err := io.ReadAll(res.Body)
+      if err != nil {
+         return nil, err
+      }
+      return parse_query(string(b))
+   }()
+   if err != nil {
+      return err
+   }
+   h.Authorization = func() (string, string) {
+      return "Authorization", "Bearer " + access.auth()
+   }
+   return nil
 }
 

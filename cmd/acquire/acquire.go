@@ -9,8 +9,54 @@ import (
    "time"
 )
 
+func (f flags) do_device() error {
+   data, err := play.Phone.Checkin()
+   if err != nil {
+      return err
+   }
+   os.WriteFile(f.home + play.Phone.Native_Platform + ".bin", data, 0666)
+   head, err := f.do_header()
+   if err != nil {
+      return err
+   }
+   fmt.Println("Sleep(9*time.Second)")
+   time.Sleep(9*time.Second)
+   if err := head.Upload(play.Phone); err != nil {
+      return err
+   }
+   fmt.Println("Sleep(9*time.Second)")
+   time.Sleep(9*time.Second)
+   return nil
+}
+
+func (f flags) do_acquire() error {
+   head, err := f.do_header()
+   if err != nil {
+      return err
+   }
+   return head.Acquire(f.doc)
+}
+
+func (f flags) download(ref, name string) error {
+   res, err := http.Get(ref)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   file, err := os.Create(name)
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   pro := option.Progress_Length(res.ContentLength)
+   if _, err := file.ReadFrom(pro.Reader(res)); err != nil {
+      return err
+   }
+   return nil
+}
+
 func (f flags) do_delivery() error {
-   head, err := f.do_header(dir)
+   head, err := f.do_header()
    if err != nil {
       return err
    }
@@ -53,16 +99,16 @@ func (f flags) do_delivery() error {
    return f.download(ref, file.APK(""))
 }
 
-func (f flags) do_auth(dir string) error {
+func (f flags) do_auth() error {
    text, err := play.New_Refresh_Token(f.code)
    if err != nil {
       return err
    }
-   return os.WriteFile(dir + "/token.txt", text, 0666)
+   return os.WriteFile(f.home + "token.txt", text, 0666)
 }
 
 func (f flags) do_details() error {
-   head, err := f.do_header(dir)
+   head, err := f.do_header()
    if err != nil {
       return err
    }
@@ -74,25 +120,11 @@ func (f flags) do_details() error {
    return nil
 }
 
-func (f flags) do_device(dir) error {
-   data, err := play.Phone.Checkin()
-   if err != nil {
-      return err
-   }
-   err = os.WriteFile(dir + "/" + f.platform + ".bin", data, 0666)
-   if err != nil {
-      return err
-   }
-   fmt.Println("Sleep(9*time.Second)")
-   time.Sleep(9*time.Second)
-   return nil
-}
-
-func (f flags) do_header(dir) (*play.Header, error) {
+func (f flags) do_header() (*play.Header, error) {
    var head play.Header
    head.Set_Agent(f.single)
    {
-      b, err := os.ReadFile(dir + "/token.txt")
+      b, err := os.ReadFile(f.home + "token.txt")
       if err != nil {
          return nil, err
       }
@@ -101,7 +133,7 @@ func (f flags) do_header(dir) (*play.Header, error) {
       }
    }
    {
-      b, err := os.ReadFile(dir + "/" + f.platform + ".bin")
+      b, err := os.ReadFile(f.home + play.Phone.Native_Platform + ".bin")
       if err != nil {
          return nil, err
       }
@@ -111,30 +143,3 @@ func (f flags) do_header(dir) (*play.Header, error) {
    }
    return &head, nil
 }
-
-func (f flags) do_acquire() error {
-   head, err := f.do_header(dir)
-   if err != nil {
-      return err
-   }
-   return head.Acquire(f.doc)
-}
-
-func (f flags) download(ref, name string) error {
-   res, err := http.Get(ref)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   file, err := os.Create(name)
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   pro := option.Progress_Length(res.ContentLength)
-   if _, err := file.ReadFrom(pro.Reader(res)); err != nil {
-      return err
-   }
-   return nil
-}
-

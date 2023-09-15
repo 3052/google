@@ -60,11 +60,18 @@ func (c Config) Checkin() ([]byte, error) {
          })
       }
    })
-   // r.Header.Set("User-Agent", "GoogleAuth/1.4 sargo PQ3B.190705.003")
-   res, err := http.Post(
-      "https://android.googleapis.com/checkin", "application/x-protobuffer",
+   req, err := http.NewRequest(
+      "POST", "https://android.googleapis.com/checkin",
       bytes.NewReader(m.Append(nil)),
    )
+   if err != nil {
+      return nil, err
+   }
+   req.Header = http.Header{
+      "Content-Type": {"application/x-protobuffer"},
+      "User-Agent": {"GoogleAuth/1.4 sargo PQ3B.190705.003"},
+   }
+   res, err := http.DefaultClient.Do(req)
    if err != nil {
       return nil, err
    }
