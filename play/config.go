@@ -1,5 +1,14 @@
 package play
 
+var Native_Platforms = map[string]string{
+   // com.google.android.youtube
+   "0": "x86",
+   // com.miui.weather2
+   "1": "armeabi-v7a",
+   // com.kakaogames.twodin
+   "2": "arm64-v8a",
+}
+
 // These can use default values, but they must all be included
 type Config struct {
    Touch_Screen uint64 // 1
@@ -14,15 +23,6 @@ type Config struct {
    Native_Platform string // 11
    GL_Extension []string // 15
    System_Available_Feature []string // 26
-}
-
-var Native_Platforms = map[string]string{
-   // com.google.android.youtube
-   "0": "x86",
-   // com.miui.weather2
-   "1": "armeabi-v7a",
-   // com.kakaogames.twodin
-   "2": "arm64-v8a",
 }
 
 var Phone = Config{

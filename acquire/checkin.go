@@ -21,118 +21,138 @@ func (c checkin) android_ID() (string, error) {
    return "", errors.New("androidId_")
 }
 
-var checkin_body = protobuf.Message{
-   protobuf.Field{Number: 4, Type: 2, Value: protobuf.Prefix{
-      protobuf.Field{Number: 1, Type: 2, Value: protobuf.Prefix{
-         protobuf.Field{Number: 10, Type: 0, Value: protobuf.Varint(28)},
-      }},
-   }},
-   protobuf.Field{Number: 14, Type: 0, Value: protobuf.Varint(3)},
-   protobuf.Field{Number: 18, Type: 2, Value: protobuf.Prefix{
-      protobuf.Field{Number: 1, Type: 0, Value: protobuf.Varint(3)},
-      protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(1)},
-      protobuf.Field{Number: 3, Type: 0, Value: protobuf.Varint(1)},
-      protobuf.Field{Number: 4, Type: 0, Value: protobuf.Varint(2)},
-      protobuf.Field{Number: 5, Type: 0, Value: protobuf.Varint(0)},
-      protobuf.Field{Number: 6, Type: 0, Value: protobuf.Varint(0)},
-      protobuf.Field{Number: 7, Type: 0, Value: protobuf.Varint(490)},
-      protobuf.Field{Number: 8, Type: 0, Value: protobuf.Varint(196610)},
-      // com.amctve.amcfullepisodes
-      protobuf.Field{Number: 9, Type: 2, Value: protobuf.Bytes("org.apache.http.legacy")},
-      // com.binance.dev
-      protobuf.Field{Number: 9, Type: 2, Value: protobuf.Bytes("android.test.runner")},
-      protobuf.Field{Number: 11, Type: 2, Value: protobuf.Bytes("x86")},
-      // com.instagram.android
-      protobuf.Field{Number: 15, Type: 2, Value: protobuf.Bytes("GL_OES_compressed_ETC1_RGB8_texture")},
-      // com.kakaogames.twodin
-      protobuf.Field{Number: 15, Type: 2, Value: protobuf.Bytes("GL_KHR_texture_compression_astc_ldr")},
+// These can use default values, but they must all be included
+type Config struct {
+   Touch_Screen uint64 // 1
+   Keyboard uint64 // 2
+   Navigation uint64 // 3
+   Screen_Layout uint64 // 4
+   Has_Hard_Keyboard bool // 5
+   Has_Five_Way_Navigation bool // 6
+   Screen_Density uint64 // 7
+   GL_ES_Version uint64 // 8
+   System_Shared_Library []string // 9
+   Native_Platform string // 11
+   GL_Extension []string // 15
+   System_Available_Feature []string // 26
+}
+
+var Phone = Config{
+   System_Available_Feature: []string{
       // app.source.getcontact
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
-         protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.location.gps")},
-      }},
+      "android.hardware.location.gps",
       // br.com.rodrigokolb.realdrum
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
-         protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.software.midi")},
-      }},
+      "android.software.midi",
       // com.app.xt
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
-         protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.camera.front")},
-      }},
+      "android.hardware.camera.front",
       // com.cabify.rider
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
-         protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.camera.flash")},
-      }},
+      "android.hardware.camera.flash",
       // com.clearchannel.iheartradio.controller
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
-         protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.microphone")},
-      }},
+      "android.hardware.microphone",
       // com.google.android.apps.walletnfcrel
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
-         protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.software.device_admin")},
-      }},
+      "android.software.device_admin",
       // com.google.android.youtube
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
-         protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.touchscreen")},
-      }},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
-         protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.wifi")},
-      }},
+      "android.hardware.touchscreen",
+      "android.hardware.wifi",
       // com.madhead.tos.zh
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
-         protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.sensor.accelerometer")},
-      }},
+      "android.hardware.sensor.accelerometer",
       // com.miHoYo.GenshinImpact
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
-         protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.opengles.aep")},
-      }},
+      "android.hardware.opengles.aep",
       // com.pinterest
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
-         protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.camera")},
-      }},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
-         protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.location")},
-      }},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
-         protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.screen.portrait")},
-      }},
+      "android.hardware.camera",
+      "android.hardware.location",
+      "android.hardware.screen.portrait",
       // com.supercell.brawlstars
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
-         protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.touchscreen.multitouch")},
-      }},
+      "android.hardware.touchscreen.multitouch",
       // com.sygic.aura
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
-         protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.location.network")},
-      }},
+      "android.hardware.location.network",
       // com.xiaomi.smarthome
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
-         protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.bluetooth")},
-      }},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
-         protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.bluetooth_le")},
-      }},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
-         protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.camera.autofocus")},
-      }},
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
-         protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.usb.host")},
-      }},
+      "android.hardware.bluetooth",
+      "android.hardware.bluetooth_le",
+      "android.hardware.camera.autofocus",
+      "android.hardware.usb.host",
       // kr.sira.metal
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
-         protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.sensor.compass")},
-      }},
+      "android.hardware.sensor.compass",
       // org.thoughtcrime.securesms
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
-         protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.telephony")},
-      }},
+      "android.hardware.telephony",
       // org.videolan.vlc
-      protobuf.Field{Number: 26, Type: 2, Value: protobuf.Prefix{
-         protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("android.hardware.screen.landscape")},
-      }},
-   }},
+      "android.hardware.screen.landscape",
+   },
+   System_Shared_Library: []string{
+      // com.amctve.amcfullepisodes
+      "org.apache.http.legacy",
+      // com.binance.dev
+      "android.test.runner",
+      // com.miui.weather2
+      "global-miui11-empty.jar",
+   },
+   GL_Extension: []string{
+      // com.instagram.android
+      "GL_OES_compressed_ETC1_RGB8_texture",
+      // com.kakaogames.twodin
+      "GL_KHR_texture_compression_astc_ldr",
+   },
+   // com.axis.drawingdesk.v3
+   // valid range 0x03_00_01 - math.MaxInt32
+   GL_ES_Version: 0xFF_FF_FF,
 }
 
 func (client *_GooglePlayClient) checkIn() (*checkin, error) {
-   b := checkin_body.Append(nil)
+   c := Phone
+   c.Native_Platform = "x86"
+   // Checkin$AndroidCheckinRequest
+   var m protobuf.Message
+   // Logs$AndroidCheckinProto checkin_
+   m.Add(4, func(m *protobuf.Message) {
+      // Logs$AndroidBuildProto build_
+      m.Add(1, func(m *protobuf.Message) {
+         // int sdkVersion_
+         // single APK valid range 14 - 28
+         // multiple APK valid range 14 - math.MaxInt32
+         m.Add_Varint(10, 28)
+      })
+      m.Add_Varint(18, 1)
+   })
+   // int version
+   // valid range 2 - 3
+   m.Add_Varint(14, 3)
+   // Config$DeviceConfigurationProto deviceConfiguration_
+   m.Add(18, func(m *protobuf.Message) {
+      // int touchScreen
+      m.Add_Varint(1, c.Touch_Screen)
+      // int keyboard
+      m.Add_Varint(2, c.Keyboard)
+      // int navigation
+      m.Add_Varint(3, c.Navigation)
+      // int screenLayout
+      m.Add_Varint(4, c.Screen_Layout)
+      // boolean hasHardKeyboard
+      m.Add_Bool(5, c.Has_Hard_Keyboard)
+      // boolean hasFiveWayNavigation
+      m.Add_Bool(6, c.Has_Five_Way_Navigation)
+      // int screenDensity
+      m.Add_Varint(7, c.Screen_Density)
+      // int glEsVersion
+      m.Add_Varint(8, c.GL_ES_Version)
+      for _, library := range c.System_Shared_Library {
+         // String[] systemSharedLibrary
+         m.Add_String(9, library)
+      }
+      // String[] nativePlatform
+      m.Add_String(11, c.Native_Platform)
+      for _, extension := range c.GL_Extension {
+         // String[] glExtension
+         m.Add_String(15, extension)
+      }
+      // you cannot swap the next two lines:
+      for _, feature := range c.System_Available_Feature {
+         m.Add(26, func(m *protobuf.Message) {
+            // String[] systemAvailableFeature
+            m.Add_String(1, feature)
+         })
+      }
+   })
+   b = m.Append(nil)
    r, _ := http.NewRequest("POST", _UrlCheckIn, bytes.NewReader(b))
    r.Header.Set("User-Agent", "GoogleAuth/1.4 sargo PQ3B.190705.003")
    r.Header.Set("Content-Type", "application/x-protobuffer")
