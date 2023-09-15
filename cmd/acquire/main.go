@@ -5,10 +5,8 @@ import (
    "154.pages.dev/http/option"
    "flag"
    "fmt"
-   "net/http"
    "os"
    "strings"
-   "time"
 )
 
 type flags struct {
@@ -19,14 +17,21 @@ type flags struct {
    trace bool
    vc uint64
    acquire bool
-   platform struct {
-      k int64
-      v string
-   }
+   platform string
+   home string
 }
 
 func main() {
-   var f flags
+   var (
+      f flags
+      err error
+   )
+   f.home, err = os.UserHomeDir()
+   if err != nil {
+      panic(err)
+   }
+   f.home += "/google/play"
+   os.MkdirAll(f.home, os.ModePerm)
    flag.BoolVar(&f.acquire, "a", false, "acquire")
    {
       var b strings.Builder
@@ -36,29 +41,23 @@ func main() {
    }
    flag.StringVar(&f.doc, "d", "", "doc")
    flag.BoolVar(&f.device, "device", false, "create device")
-   flag.Int64Var(&f.platform, "p", 0, play.Platforms.String())
+   flag.Func("p", fmt.Sprint(play.Native_Platforms), func(s string) error {
+      f.platform = play.Native_Platforms[s]
+      return nil
+   })
    flag.BoolVar(&f.single, "s", false, "single APK")
    flag.BoolVar(&f.trace, "t", false, "print full HTTP requests")
    flag.Uint64Var(&f.vc, "v", 0, "version code")
    flag.Parse()
-   dir, err := os.UserHomeDir()
-   if err != nil {
-      panic(err)
-   }
-   dir += "/google/play"
-   if err := os.MkdirAll(dir, os.ModePerm); err != nil {
-      panic(err)
-   }
    option.No_Location()
    if f.trace {
       option.Trace()
    } else {
       option.Verbose()
    }
-   platform := play.Platforms[f.platform]
    switch {
    case f.acquire:
-      err := f.do_acquire(platform)
+      err := f.do_acquire()
       if err != nil {
          panic(err)
       }
@@ -67,21 +66,20 @@ func main() {
       if err != nil {
          panic(err)
       }
-   case f.doc != ""
+   case f.doc != "":
       if f.vc >= 1 {
-         err := f.do_delivery(head)
+         err := f.do_delivery()
          if err != nil {
             panic(err)
          }
       } else {
-         detail, err := head.Details(f.doc)
+         err := f.do_details()
          if err != nil {
             panic(err)
          }
-         fmt.Println(detail)
       }
    case f.device:
-      err := f.do_device(dir, platform)
+      err := f.do_device(dir)
       if err != nil {
          panic(err)
       }

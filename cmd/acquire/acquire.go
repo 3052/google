@@ -3,79 +3,17 @@ package main
 import (
    "154.pages.dev/google/play"
    "154.pages.dev/http/option"
-   "flag"
    "fmt"
    "net/http"
    "os"
-   "strings"
    "time"
 )
 
-func (f flags) do_acquire(platform string) error {
-   head, err := f.do_header(dir, platform)
+func (f flags) do_delivery() error {
+   head, err := f.do_header(dir)
    if err != nil {
       return err
    }
-   return head.Acquire(f.doc)
-}
-
-func (f flags) do_device(dir, platform string) error {
-   data, err := play.Phone.Checkin()
-   if err != nil {
-      return err
-   }
-   err = os.WriteFile(dir + "/" + platform + ".bin", data, 0666)
-   if err != nil {
-      return err
-   }
-   fmt.Printf("Sleeping %v for server to process\n", play.Sleep)
-   time.Sleep(play.Sleep)
-   return nil
-}
-
-func (f flags) do_header(dir, platform string) (*play.Header, error) {
-   var head play.Header
-   head.Set_Agent(f.single)
-   {
-      b, err := os.ReadFile(dir + "/token.txt")
-      if err != nil {
-         return nil, err
-      }
-      if err := head.Set_Authorization(b); err != nil {
-         return nil, err
-      }
-   }
-   {
-      b, err := os.ReadFile(dir + "/" + platform + ".bin")
-      if err != nil {
-         return nil, err
-      }
-      if err := head.Set_Device(b); err != nil {
-         return nil, err
-      }
-   }
-   return &head, nil
-}
-
-func (f flags) download(ref, name string) error {
-   res, err := http.Get(ref)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   file, err := os.Create(name)
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   pro := option.Progress_Length(res.ContentLength)
-   if _, err := file.ReadFrom(pro.Reader(res)); err != nil {
-      return err
-   }
-   return nil
-}
-
-func (f flags) do_delivery(head *play.Header) error {
    deliver, err := head.Delivery(f.doc, f.vc)
    if err != nil {
       return err
@@ -122,3 +60,81 @@ func (f flags) do_auth(dir string) error {
    }
    return os.WriteFile(dir + "/token.txt", text, 0666)
 }
+
+func (f flags) do_details() error {
+   head, err := f.do_header(dir)
+   if err != nil {
+      return err
+   }
+   detail, err := head.Details(f.doc)
+   if err != nil {
+      return err
+   }
+   fmt.Println(detail)
+   return nil
+}
+
+func (f flags) do_device(dir) error {
+   data, err := play.Phone.Checkin()
+   if err != nil {
+      return err
+   }
+   err = os.WriteFile(dir + "/" + f.platform + ".bin", data, 0666)
+   if err != nil {
+      return err
+   }
+   fmt.Println("Sleep(9*time.Second)")
+   time.Sleep(9*time.Second)
+   return nil
+}
+
+func (f flags) do_header(dir) (*play.Header, error) {
+   var head play.Header
+   head.Set_Agent(f.single)
+   {
+      b, err := os.ReadFile(dir + "/token.txt")
+      if err != nil {
+         return nil, err
+      }
+      if err := head.Set_Authorization(b); err != nil {
+         return nil, err
+      }
+   }
+   {
+      b, err := os.ReadFile(dir + "/" + f.platform + ".bin")
+      if err != nil {
+         return nil, err
+      }
+      if err := head.Set_Device(b); err != nil {
+         return nil, err
+      }
+   }
+   return &head, nil
+}
+
+func (f flags) do_acquire() error {
+   head, err := f.do_header(dir)
+   if err != nil {
+      return err
+   }
+   return head.Acquire(f.doc)
+}
+
+func (f flags) download(ref, name string) error {
+   res, err := http.Get(ref)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   file, err := os.Create(name)
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   pro := option.Progress_Length(res.ContentLength)
+   if _, err := file.ReadFrom(pro.Reader(res)); err != nil {
+      return err
+   }
+   return nil
+}
+
