@@ -15,7 +15,7 @@ func (f flags) do_device() error {
       return err
    }
    os.WriteFile(f.home + play.Phone.Native_Platform + ".bin", data, 0666)
-   head, err := f.do_header()
+   head, err := f.do_header(false)
    if err != nil {
       return err
    }
@@ -30,7 +30,7 @@ func (f flags) do_device() error {
 }
 
 func (f flags) do_acquire() error {
-   head, err := f.do_header()
+   head, err := f.do_header(true)
    if err != nil {
       return err
    }
@@ -56,7 +56,7 @@ func (f flags) download(ref, name string) error {
 }
 
 func (f flags) do_delivery() error {
-   head, err := f.do_header()
+   head, err := f.do_header(true)
    if err != nil {
       return err
    }
@@ -108,7 +108,7 @@ func (f flags) do_auth() error {
 }
 
 func (f flags) do_details() error {
-   head, err := f.do_header()
+   head, err := f.do_header(true)
    if err != nil {
       return err
    }
@@ -120,10 +120,10 @@ func (f flags) do_details() error {
    return nil
 }
 
-func (f flags) do_header() (*play.Header, error) {
+func (f flags) do_header(auth bool) (*play.Header, error) {
    var head play.Header
    head.Set_Agent(f.single)
-   {
+   if auth {
       b, err := os.ReadFile(f.home + "token.txt")
       if err != nil {
          return nil, err

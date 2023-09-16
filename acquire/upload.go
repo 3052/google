@@ -49,16 +49,13 @@ func (client *_GooglePlayClient) uploadDeviceConfig() error {
    })
    b := m.Append(nil)
    r, _ := http.NewRequest("POST", _UrlUploadDeviceConfig, bytes.NewReader(b))
-   r.Header.Set("User-Agent", "Android-Finsky/15.8.23-all [0] [PR] 259261889 (api=3,versionCode=81582300,sdk=28,device=sargo,hardware=sargo,product=sargo,platformVersionRelease=9,model=Pixel 3a,buildId=PQ3B.190705.003,isWideScreen=0,supportedAbis=arm64-v8a;armeabi-v7a;armeabi)")
-   r.Header.Set("X-DFE-Device-Id", client.AuthData.GsfID)
    // seems like we need this, what the fuck:
    r.Header.Set("X-DFE-Client-Id", "am-android-google")
-   _, status, err := doReq(r)
+   r.Header.Set("X-DFE-Device-Id", client.AuthData.GsfID)
+   r.Header.Set("User-Agent", "Android-Finsky (sdk=9,versionCode=99999999)")
+   _, _, err := doReq(r)
    if err != nil {
       return err
-   }
-   if status == 401 {
-      return err_GPTokenExpired
    }
    return nil
 }

@@ -55,10 +55,9 @@ func (h Header) Upload(c Config) error {
    }
    // seems like we need this, what the fuck:
    req.Header.Set("X-DFE-Client-Id", "am-android-google")
-   req.Header.Set(h.Authorization())
    req.Header.Set(h.Device())
-   // req.Header.Set("User-Agent", "Android-Finsky/15.8.23-all [0] [PR] 259261889 (api=3,versionCode=81582300,sdk=28,device=sargo,hardware=sargo,product=sargo,platformVersionRelease=9,model=Pixel 3a,buildId=PQ3B.190705.003,isWideScreen=0,supportedAbis=arm64-v8a;armeabi-v7a;armeabi)")
    req.Header.Set(h.Agent())
+   //req.Header.Set(h.Authorization())
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return err
