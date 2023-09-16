@@ -164,8 +164,8 @@ func (client *_GooglePlayClient) checkIn() (*checkin, error) {
    return &check, nil
 }
 
-func NewClientWithDeviceInfo(aasToken string) (*_GooglePlayClient, error) {
-   authData := &_AuthData{_AASToken: aasToken}
+func NewClientWithDeviceInfo() (*_GooglePlayClient, error) {
+   authData := &_AuthData{}
    client := _GooglePlayClient{AuthData: authData}
    checkInResp, err := client.checkIn()
    if err != nil {
@@ -217,9 +217,9 @@ func doReq(r *http.Request) ([]byte, int, error) {
 
 const _UrlBase = "https://android.clients.google.com"
 
-const _UrlFdfe = _UrlBase + "/fdfe"
-
 const _UrlCheckIn = _UrlBase + "/checkin"
+
+const _UrlFdfe = _UrlBase + "/fdfe"
 
 const _UrlUploadDeviceConfig = _UrlFdfe + "/uploadDeviceConfig"
 

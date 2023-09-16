@@ -8,11 +8,11 @@ import (
    "net/http"
 )
 
-type aurora_OSS struct {
+type Aurora_OSS struct {
    Auth_Token string `json:"authToken"`
 }
 
-func (aurora_OSS) Marshal() ([]byte, error) {
+func (Aurora_OSS) Marshal() ([]byte, error) {
    body, err := func() ([]byte, error) {
       m := map[string]string{
          "Build.BOOTLOADER": "unknown",
@@ -71,6 +71,6 @@ func (aurora_OSS) Marshal() ([]byte, error) {
    return io.ReadAll(res.Body)
 }
 
-func (a *aurora_OSS) Unmarshal(text []byte) error {
+func (a *Aurora_OSS) Unmarshal(text []byte) error {
    return json.Unmarshal(text, a)
 }

@@ -2,6 +2,7 @@ package main
 
 import (
    "154.pages.dev/google/acquire"
+   "154.pages.dev/google/aurora"
    "154.pages.dev/google/play"
    "154.pages.dev/http/option"
    "flag"
@@ -11,16 +12,8 @@ import (
 )
 
 func main() {
-   var doc string
-   flag.StringVar(&doc, "d", "", "doc")
-   var version_code uint64
    flag.StringVar(&acquire.Device_ID, "id", "", "device ID")
-   flag.Uint64Var(&version_code, "v", 0, "version code")
    flag.Parse()
-   if doc == "" {
-      flag.Usage()
-      return
-   }
    if acquire.Device_ID == "" {
       flag.Usage()
       return
@@ -30,26 +23,57 @@ func main() {
    option.No_Location()
    option.Trace()
    {
-      s, err := os.UserHomeDir()
+      b, err := os.ReadFile("aurora.json")
       if err != nil {
          panic(err)
       }
-      b, err := os.ReadFile(s + "/google/play/token.txt")
+      var v aurora.Aurora_OSS
+      if err := v.Unmarshal(b); err != nil {
+         panic(err)
+      }
+      head.Authorization = func() (string, string) {
+         return "Authorization", "Bearer " + v.Auth_Token
+      }
+   }
+   for _, test := range x86_tests {
+      err := acquire.New_Delivery(head, test.doc, test.version)
+      if err == nil {
+         continue
+      }
+      if err.Error() != "acquire" {
+         continue
+      }
+      fmt.Println("ACQUIRE NEEDED, TRYING NOW:")
+      time.Sleep(time.Second)
+      if err := acquire.Acquire(head, test.doc); err != nil {
+         panic(err)
+      }
+      fmt.Println("sleep")
+      time.Sleep(9 * time.Second)
+      err = acquire.New_Delivery(head, test.doc, test.version)
       if err != nil {
          panic(err)
       }
-      if err := head.Set_Authorization(b); err != nil {
-         panic(err)
-      }
+      fmt.Println("ACQUIRE SUCCESS")
+      return
    }
-   fmt.Println("sleep")
-   time.Sleep(9 * time.Second)
-   if err := acquire.Acquire(head, doc); err != nil {
-      panic(err)
-   }
-   fmt.Println("sleep")
-   time.Sleep(9 * time.Second)
-   if err := acquire.New_Delivery(head, doc, version_code); err != nil {
-      panic(err)
-   }
+   fmt.Println("all apps acquired, run auth again")
+}
+
+var x86_tests = []struct{
+   doc string
+   version uint64
+}{
+   {"app.source.getcontact", 2739},
+   {"br.com.rodrigokolb.realdrum", 317},
+   {"com.amctve.amcfullepisodes", 28021790},
+   {"com.cabify.rider", 17144463},
+   {"com.clearchannel.iheartradio.controller", 710310201},
+   {"com.google.android.apps.walletnfcrel", 930739964},
+   {"com.google.android.youtube", 1539962304},
+   {"com.instagram.android", 370010808},
+   {"com.pinterest", 11338030},
+   {"kr.sira.metal", 74},
+   {"org.thoughtcrime.securesms", 132708},
+   {"org.videolan.vlc", 13050405},
 }

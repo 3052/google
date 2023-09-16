@@ -44,9 +44,9 @@ func New_Delivery(h *play.Header, doc string, vc uint64) error {
    if ok {
       switch status {
       case 3:
-         return errors.New("purchase required")
+         return errors.New("acquire")
       case 5:
-         return errors.New("invalid version")
+         return errors.New("version")
       }
    }
    mes, ok = mes.Message(2)
