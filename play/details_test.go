@@ -9,16 +9,6 @@ import (
    "time"
 )
 
-type app_type struct {
-   date string
-   platform string // X-DFE-Device-ID
-   size uint64
-   downloads uint64
-   doc string
-}
-
-// min size {2023-07-28 0 5785991 22473050 kr.sira.metal}
-// max downloads {2023-08-21 0 88255721 14594265118 com.google.android.youtube}
 var apps = []app_type{
 {date:"2023-02-01",platform:"1",size:18708178,downloads:1563645747,doc:"com.miui.weather2"},
 {date:"2023-02-20",platform:"0",size:37564028,downloads:347934672,doc:"org.videolan.vlc"},
@@ -42,6 +32,14 @@ var apps = []app_type{
 {date:"2023-08-22",platform:"0",size:61406761,downloads:127162129,doc:"org.thoughtcrime.securesms"},
 {date:"2023-08-22",platform:"0",size:32784749,downloads:921326697,doc:"com.pinterest"},
 {date:"2023-08-24",platform:"1",size:110846862,downloads:17990819,doc:"com.axis.drawingdesk.v3"},
+}
+
+type app_type struct {
+   date string
+   platform string // X-DFE-Device-ID
+   size uint64
+   downloads uint64
+   doc string
 }
 
 func (a app_type) GoString() string {
