@@ -57,6 +57,8 @@ EncryptedPasswd
 
 <http://dl.google.com/android/repository/sys-img/google_apis/x86-21_r20.zip>
 
+with earlier versions, remount or reboot fails.
+
 ~~~
 package: name='com.google.android.gms' versionCode='11055270'
 versionName='11.0.55 (270-156917137)' platformBuildVersionName='O'
