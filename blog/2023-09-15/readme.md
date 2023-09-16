@@ -2,9 +2,10 @@
 
 https://f-droid.org/en/packages/com.aurora.store
 
-HTTP/2.0 429 Too Many Requests
+if you get this:
 
 ~~~
-32 minute fail
-1 hour pass
+HTTP/2.0 429 Too Many Requests
 ~~~
+
+you will probably need to wait about an hour to try again.

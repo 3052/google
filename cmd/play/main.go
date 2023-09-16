@@ -10,13 +10,14 @@ import (
 )
 
 type flags struct {
+   acquire bool
    code string
    device bool
    doc string
-   single bool
-   vc uint64
-   acquire bool
    home string
+   single bool
+   trace bool
+   vc uint64
 }
 
 func main() {
@@ -46,10 +47,15 @@ func main() {
       })
    }
    flag.BoolVar(&f.single, "s", false, "single APK")
+   flag.BoolVar(&f.trace, "t", false, "trace")
    flag.Uint64Var(&f.vc, "v", 0, "version code")
    flag.Parse()
    option.No_Location()
-   option.Verbose()
+   if f.trace {
+      option.Trace()
+   } else {
+      option.Verbose()
+   }
    switch {
    case f.code != "":
       err := f.do_auth()
