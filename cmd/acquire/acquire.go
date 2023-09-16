@@ -9,52 +9,6 @@ import (
    "time"
 )
 
-func (f flags) do_device() error {
-   data, err := play.Phone.Checkin()
-   if err != nil {
-      return err
-   }
-   os.WriteFile(f.home + play.Phone.Native_Platform + ".bin", data, 0666)
-   head, err := f.do_header(false)
-   if err != nil {
-      return err
-   }
-   fmt.Println("Sleep(9*time.Second)")
-   time.Sleep(9*time.Second)
-   if err := head.Upload(play.Phone); err != nil {
-      return err
-   }
-   fmt.Println("Sleep(9*time.Second)")
-   time.Sleep(9*time.Second)
-   return nil
-}
-
-func (f flags) do_acquire() error {
-   head, err := f.do_header(true)
-   if err != nil {
-      return err
-   }
-   return head.Acquire(f.doc)
-}
-
-func (f flags) download(ref, name string) error {
-   res, err := http.Get(ref)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   file, err := os.Create(name)
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   pro := option.Progress_Length(res.ContentLength)
-   if _, err := file.ReadFrom(pro.Reader(res)); err != nil {
-      return err
-   }
-   return nil
-}
-
 func (f flags) do_delivery() error {
    head, err := f.do_header(true)
    if err != nil {
@@ -142,4 +96,49 @@ func (f flags) do_header(auth bool) (*play.Header, error) {
       }
    }
    return &head, nil
+}
+func (f flags) do_device() error {
+   data, err := play.Phone.Checkin()
+   if err != nil {
+      return err
+   }
+   os.WriteFile(f.home + play.Phone.Native_Platform + ".bin", data, 0666)
+   head, err := f.do_header(false)
+   if err != nil {
+      return err
+   }
+   fmt.Println("Sleep(9*time.Second)")
+   time.Sleep(9*time.Second)
+   if err := head.Upload(play.Phone); err != nil {
+      return err
+   }
+   fmt.Println("Sleep(9*time.Second)")
+   time.Sleep(9*time.Second)
+   return nil
+}
+
+func (f flags) do_acquire() error {
+   head, err := f.do_header(true)
+   if err != nil {
+      return err
+   }
+   return head.Acquire(f.doc)
+}
+
+func (f flags) download(ref, name string) error {
+   res, err := http.Get(ref)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   file, err := os.Create(name)
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   pro := option.Progress_Length(res.ContentLength)
+   if _, err := file.ReadFrom(pro.Reader(res)); err != nil {
+      return err
+   }
+   return nil
 }
