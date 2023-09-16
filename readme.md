@@ -63,10 +63,10 @@ version: 18.20.34
 version code: 1537856960
 ~~~
 
-Purchase app. Only needs to be done once per Google account:
+Acquire app. Only needs to be done once per Google account:
 
 ~~~
-play -d com.google.android.youtube -purchase
+play -d com.google.android.youtube -a
 ~~~
 
 Download APK. You need to specify any valid version code. The latest code is

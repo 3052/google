@@ -6,7 +6,7 @@ import (
    "time"
 )
 
-func checkin_create(id int64) error {
+func checkin_create(id string) error {
    home, err := os.UserHomeDir()
    if err != nil {
       return err
@@ -27,7 +27,7 @@ func checkin_create(id int64) error {
       }
       head.Set_Authorization(b)
    }
-   Phone.Native_Platform = Platforms[id]
+   Phone.Native_Platform = Native_Platforms[id]
    {
       b, err := os.ReadFile(home + Phone.Native_Platform + ".bin")
       if err != nil {
@@ -45,21 +45,21 @@ func checkin_create(id int64) error {
 }
 
 func Test_Checkin_X86(t *testing.T) {
-   err := checkin_create(0)
+   err := checkin_create("0")
    if err != nil {
       t.Fatal(err)
    }
 }
 
 func Test_Checkin_ARMEABI(t *testing.T) {
-   err := checkin_create(1)
+   err := checkin_create("1")
    if err != nil {
       t.Fatal(err)
    }
 }
 
 func Test_Checkin_ARM64(t *testing.T) {
-   err := checkin_create(2)
+   err := checkin_create("2")
    if err != nil {
       t.Fatal(err)
    }

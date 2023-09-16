@@ -45,9 +45,9 @@ func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
    if ok {
       switch status {
       case 3:
-         return nil, errors.New("purchase required")
+         return nil, errors.New("acquire")
       case 5:
-         return nil, errors.New("invalid version")
+         return nil, errors.New("version")
       }
    }
    mes, ok = mes.Message(2)

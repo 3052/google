@@ -49,7 +49,7 @@ func main() {
    flag.Uint64Var(&f.vc, "v", 0, "version code")
    flag.Parse()
    option.No_Location()
-   option.Trace()
+   option.Verbose()
    switch {
    case f.code != "":
       err := f.do_auth()
