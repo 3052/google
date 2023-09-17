@@ -1,39 +1,47 @@
 package main
 
 import (
-   "154.pages.dev/encoding/protobuf"
-   "bytes"
+   "154.pages.dev/protobuf"
+   "fmt"
    "io"
    "net/http"
    "net/http/httputil"
    "net/url"
    "os"
+   "strings"
 )
 
 func main() {
    body := protobuf.Message{
-      protobuf.Field{Number: 1, Type: 2,  Value: protobuf.Prefix{
-         protobuf.Field{Number: 1, Type: 2,  Value: protobuf.Prefix{
-            protobuf.Field{Number: 1, Type: 2, Omit: false, Value: protobuf.Bytes("com.duolingo")},
-            protobuf.Field{Number: 2, Type: 0, Omit: false, Value: protobuf.Varint(1)},
-            protobuf.Field{Number: 3, Type: 0, Omit: false, Value: protobuf.Varint(3)},
+      protobuf.Field{Number: 1, Type: 2, Value: protobuf.Prefix{
+         protobuf.Field{Number: 1, Type: 2, Value: protobuf.Prefix{
+            protobuf.Field{Number: 1, Type: 2,  Value: protobuf.Bytes("com.duolingo")},
+            protobuf.Field{Number: 2, Type: 0,  Value: protobuf.Varint(1)},
+            protobuf.Field{Number: 3, Type: 0,  Value: protobuf.Varint(3)},
          }},
-         protobuf.Field{Number: 2, Type: 0, Omit: false, Value: protobuf.Varint(1)},
-         protobuf.Field{Number: 3, Type: 2, Omit: false, Value: protobuf.Bytes("")},
-         protobuf.Field{Number: 7, Type: 0, Omit: false, Value: protobuf.Varint(1)},
+         protobuf.Field{Number: 2, Type: 0,  Value: protobuf.Varint(1)},
+         protobuf.Field{Number: 3, Type: 2,  Value: protobuf.Bytes("")},
       }},
-      protobuf.Field{Number: 12, Type: 2,  Value: protobuf.Prefix{
-         protobuf.Field{Number: 1, Type: 0, Omit: false, Value: protobuf.Varint(1700)},
+      protobuf.Field{Number: 8, Type: 2,  Value: protobuf.Bytes("")},
+      /*
+      protobuf.Field{Number: 12, Type: 2, Value: protobuf.Prefix{
+         protobuf.Field{Number: 1, Type: 0,  Value: protobuf.Varint(1700)},
+         protobuf.Field{Number: 3, Type: 0,  Value: protobuf.Varint(0)},
       }},
-      protobuf.Field{Number: 13, Type: 0, Omit: false, Value: protobuf.Varint(1)},
-      protobuf.Field{Number: 22, Type: 2, Omit: false, Value: protobuf.Bytes("nonce=Op6ue4gbbxuuPG5SQV1pAgVP4MG4mpK8Y9jySzRSHFGmdDuF8fYQV2eitbvCmS8hJIvRpCUl7SMtloFIPLFPRmPXnBU2bBJIc5INXjyakfpYoHl1oyQgQtUZZ4QQ-GkS23VyyEUsSwVzqTZlTLpI3x3oE09rCaBsPVNxAcFuPHuR8FQusQAKvyeLfLP8yz2onmOWfjTmyj1pydd2TY629TSXRhaWrFK3poAAXJHE9kCK13ugR8cbOMETcc-22_4sQLdsftFn6wrSCfsBf8r9W72g4pTlmy2zxHxhN6BJv5v7oMFZ1E4aaiH5IQRGR_ckM7et9qXMNsSXs0lwU52xVQ")},
-      protobuf.Field{Number: 25, Type: 0, Omit: false, Value: protobuf.Varint(1)},
+      */
+      protobuf.Field{Number: 13, Type: 0,  Value: protobuf.Varint(1)},
+      protobuf.Field{Number: 15, Type: 0,  Value: protobuf.Varint(0)},
+      //protobuf.Field{Number: 22, Type: 2,  Value: protobuf.Bytes("nonce=z5qVwhnscgbdxNrBx-AsOD1TMGRpF_ohur_MQmR3JCYgaVqP8frLtCofKjPGpBbvbCERVPb7iMFt4entym6eKzsOICEX07ls-7wEITG51SaAa7GCgKXPkLd79hyFhI1FDWVZu5VPpdI9Oxlp_0WvMSVFwI6F5_sHpvI-tQEmOgB9YvTdfRJeyEXHG1da1nzzfAzE7_I38dLEmrHqwhSasb_td4qAceSkpvqvW8dv6NCarUL_Uf_yqJa_UoAjeAgSqKl4-1IgnE0_wQUbJt5CYyeUIrjVx4eSDN23uopFiV0bLR4uALifadia2Df53Fa04SVkwX23TB8T0M-K_L0GyA")},
+      protobuf.Field{Number: 25, Type: 0,  Value: protobuf.Varint(2)},
+      protobuf.Field{Number: 30, Type: 2, Value: protobuf.Prefix{
+         protobuf.Field{Number: 1, Type: 0,  Value: protobuf.Varint(2)},
+      }},
    }
    var req http.Request
    req.Header = make(http.Header)
-   req.Header["Authorization"] = []string{"Bearer ya29.a0AfB_byAoIBf1zus62HhiNeCeeYzfjMoCQrePnesbbnHIE41u1IRfZji2NpjwiUKKa7mUvH473sS5ykvBSAGItOK2lqPTenL5CCimJrE7Se-ZublD7J0ij_O7je5ENbAMj6RWonqKeKv9gchIMCKOsDoRYd-htrKEjJdwadqEKzbhWaZuD3eoehbts6ltNxs4pbI7YT4KQDIRMa-2teUL2jEd8CxNkXi3jMd4YUdUsnCreuwg2nHyuig6Rdgi6eKpDHpvSK9N3HpUP8yEDNFZeiRC58raFlLwvj8rM0CmyUltRHxdKQkyZ39kBjvajOFH70J7-gaCgYKARISARESFQGOcNnC9DFuvWMX4eHk3QpVJ7AQfQ0333"}
+   req.Header["Authorization"] = []string{"Bearer ya29.a0AfB_byAXBBcOb0E6BfWrnUzWf1rR7aJGW_jElONLMcws3JhdOrPAX5Zt8wzkD_fcodkBwxeofxtK5htEp4xOX10hf_MQiPN9_AagkzndyraqPp39XY-qDMzqaTi-mR4ZIEGvaYaLRo27cZTKg8MpenWG2TxN12igV3VVOFtOHK-Igf-SX4XHiF2-tyF62Zg6hQoZKBelr_kERd4haLboTznh67syvGB6ElnH8j4QwQZdTyxWNycrC9qaSJz14LPWYW7XwhfFS08JL2i57JaiFdflXd4eIM69UMjABgPWn_DGAnpg-dKVMZmJUAvHBNZ5A8Bc3waCgYKAaISARESFQGOcNnCuty79iAXfjU2kIxMjHf-nw0333"}
    req.Header["Content-Type"] = []string{"application/x-protobuf"}
-   req.Header["X-Dfe-Device-Id"] = []string{"39f20681ab4baadb"}
+   req.Header["X-Dfe-Device-Id"] = []string{"344d67278408e17a"}
    req.Method = "POST"
    req.ProtoMajor = 1
    req.ProtoMinor = 1
@@ -41,7 +49,7 @@ func main() {
    req.URL.Host = "play-fe.googleapis.com"
    req.URL.Path = "/fdfe/acquire"
    val := make(url.Values)
-   val["theme"] = []string{"1"}
+   val["theme"] = []string{"2"}
    req.URL.RawQuery = val.Encode()
    req.URL.Scheme = "https"
    req.Body = io.NopCloser(bytes.NewReader(body.Append(nil)))

@@ -1,7 +1,7 @@
 package play
 
 import (
-   "154.pages.dev/encoding/protobuf"
+   "154.pages.dev/protobuf"
    "bytes"
    "errors"
    "io"

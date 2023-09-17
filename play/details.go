@@ -1,7 +1,7 @@
 package play
 
 import (
-   "154.pages.dev/encoding/protobuf"
+   "154.pages.dev/protobuf"
    "154.pages.dev/strconv"
    "fmt"
    "io"
@@ -185,8 +185,6 @@ func (f File_Metadata) File_Type() (uint64, error) {
    }
    return 0, fmt.Errorf("file metadata, file type")
 }
-
-///////////////////////////////////////////////////
 
 func (h Header) Details(doc string) (*Details, error) {
    req, err := http.NewRequest(

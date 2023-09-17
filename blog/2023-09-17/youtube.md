@@ -39,43 +39,14 @@ this:
 > This app isn't compatible with your device anymore. Contact the developers for
 > more info.
 
-what about Google Services Framework 27? using these:
+what about Google Services Framework 27? newest version:
 
-~~~
-dl.google.com/android/repository/sys-img/google_apis/x86-27_r11.zip
-com.android.vending_14.9.76
-~~~
+<http://dl.google.com/android/repository/sys-img/google_apis/x86-27_r11.zip>
 
-> Google Play Store keeps stopping
-
-same with:
-
-http://apkmirror.com/apk/google-inc/google-play-store/google-play-store-15-9-26-release
-
-same with:
-
-http://apkmirror.com/apk/google-inc/google-play-store/google-play-store-16-9-11-release
-
-same with:
-
-http://apkmirror.com/apk/google-inc/google-play-store/google-play-store-17-9-19-release
-
-same with:
-
-http://apkmirror.com/apk/google-inc/google-play-store/google-play-store-18-9-22-release
-
-same with:
-
-http://apkmirror.com/apk/google-inc/google-play-store/google-play-store-19-9-23-release
-
-same with:
-
-http://apkmirror.com/apk/google-inc/google-play-store/google-play-store-20-9-20-release
-
-same with:
-
-http://apkmirror.com/apk/google-inc/google-play-store/google-play-store-21-9-50-release
-
-what about:
+need at least this Google Play Store:
 
 http://apkmirror.com/apk/google-inc/google-play-store/google-play-store-22-8-44-release
+
+with previous versions you get:
+
+> Google Play Store keeps stopping
