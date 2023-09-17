@@ -28,9 +28,6 @@ func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
       return nil, err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
    data, err := io.ReadAll(res.Body)
    if err != nil {
       return nil, err
@@ -57,6 +54,10 @@ func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
    return &Delivery{mes}, nil
 }
 
+type Split_Delivery_Data struct {
+   m protobuf.Message
+}
+
 func (s Split_Delivery_Data) Download_URL() (string, error) {
    v, ok := s.m.String(5)
    if ok {
@@ -73,20 +74,19 @@ func (s Split_Delivery_Data) ID() (string, error) {
    return "", errors.New("split delivery data, ID")
 }
 
-func (a App_File_Metadata) Download_URL() (string, error) {
-   v, ok := a.m.String(4)
-   if ok {
-      return v, nil
-   }
-   return "", errors.New("app file metadata, download URL")
+// AppFileMetadata
+type App_File_Metadata struct {
+   m protobuf.Message
 }
 
+// downloadUrl
+func (a App_File_Metadata) Download_URL() (string, error) {
+   return a.m.String(4)
+}
+
+// fileType
 func (a App_File_Metadata) File_Type() (uint64, error) {
-   v, ok := a.m.Varint(1)
-   if ok {
-      return v, nil
-   }
-   return 0, errors.New("app file metadata, file type")
+   return a.m.Varint(1)
 }
 
 // AndroidAppDeliveryData
@@ -94,20 +94,27 @@ type Delivery struct {
    m protobuf.Message
 }
 
-type App_File_Metadata struct {
-   m protobuf.Message
+func (d Delivery) Additional_File() []App_File_Metadata {
+   var files []App_File_Metadata
+   // additionalFile
+   d.m.Messages(4, func(file protobuf.Message) {
+      files = append(files, App_File_Metadata{file})
+   })
+   return files
 }
 
+// downloadUrl
 func (d Delivery) Download_URL() (string, error) {
-   v, ok := d.m.String(3)
-   if ok {
-      return v, nil
-   }
-   return "", errors.New("delivery, download URL")
+   return d.m.String(3)
 }
 
-type Split_Delivery_Data struct {
-   m protobuf.Message
+func (d Delivery) Split() []Split_Delivery_Data {
+   var splits []Split_Delivery_Data
+   // splitDeliveryData
+   d.m.Messages(15, func(split protobuf.Message) {
+      splits = append(splits, Split_Delivery_Data{split})
+   })
+   return splits
 }
 
 type File struct {
@@ -141,28 +148,4 @@ func (f File) OBB(file_type uint64) string {
    b = append(b, f.Package_Name...)
    b = append(b, ".obb"...)
    return string(b)
-}
-
-func (d Delivery) Additional_File() []App_File_Metadata {
-   var files []App_File_Metadata
-   for _, f := range d.m {
-      if f.Number == 4 { // AppFileMetadata[] additionalFile
-         if file, ok := f.Message(); ok {
-            files = append(files, App_File_Metadata{file})
-         }
-      }
-   }
-   return files
-}
-
-func (d Delivery) Split() []Split_Delivery_Data {
-   var splits []Split_Delivery_Data
-   for _, f := range d.m {
-      if f.Number == 15 {
-         if split, ok := f.Message(); ok {
-            splits = append(splits, Split_Delivery_Data{split})
-         }
-      }
-   }
-   return splits
 }

@@ -10,27 +10,18 @@ import (
 )
 
 type flags struct {
-   acquire bool
    code string
    device bool
    doc string
-   home string
+   platform int64
+   purchase bool
    single bool
    trace bool
    vc uint64
 }
 
 func main() {
-   var (
-      f flags
-      err error
-   )
-   f.home, err = os.UserHomeDir()
-   if err != nil {
-      panic(err)
-   }
-   f.home += "/google/play/"
-   flag.BoolVar(&f.acquire, "a", false, "acquire")
+   var f flags
    {
       var b strings.Builder
       b.WriteString("oauth_token from ")
@@ -39,53 +30,64 @@ func main() {
    }
    flag.StringVar(&f.doc, "d", "", "doc")
    flag.BoolVar(&f.device, "device", false, "create device")
-   {
-      play.Phone.Native_Platform = "x86"
-      flag.Func("p", fmt.Sprint(play.Native_Platforms), func(s string) error {
-         play.Phone.Native_Platform = play.Native_Platforms[s]
-         return nil
-      })
-   }
+   flag.Int64Var(&f.platform, "p", 0, play.Platforms.String())
+   flag.BoolVar(&f.purchase, "purchase", false, "purchase request")
    flag.BoolVar(&f.single, "s", false, "single APK")
-   flag.BoolVar(&f.trace, "t", false, "trace")
+   flag.BoolVar(&f.trace, "t", false, "print full HTTP requests")
    flag.Uint64Var(&f.vc, "v", 0, "version code")
    flag.Parse()
+   dir, err := os.UserHomeDir()
+   if err != nil {
+      panic(err)
+   }
+   dir += "/google/play"
+   if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+      panic(err)
+   }
    option.No_Location()
    if f.trace {
       option.Trace()
    } else {
       option.Verbose()
    }
-   switch {
-   case f.code != "":
-      err := f.do_auth()
+   if f.code != "" {
+      err := f.do_auth(dir)
       if err != nil {
          panic(err)
       }
-   case f.device:
-      err := f.do_device()
-      if err != nil {
-         panic(err)
-      }
-   case f.doc != "":
+   } else {
+      platform := play.Platforms[f.platform]
       switch {
-      case f.acquire:
-         err := f.do_acquire()
+      case f.device:
+         err := f.do_device(dir, platform)
          if err != nil {
             panic(err)
          }
-      case f.vc >= 1:
-         err := f.do_delivery()
+      case f.doc != "":
+         head, err := f.do_header(dir, platform)
          if err != nil {
             panic(err)
+         }
+         switch {
+         case f.purchase:
+            err := head.Purchase(f.doc)
+            if err != nil {
+               panic(err)
+            }
+         case f.vc >= 1:
+            err := f.do_delivery(head)
+            if err != nil {
+               panic(err)
+            }
+         default:
+            detail, err := head.Details(f.doc)
+            if err != nil {
+               panic(err)
+            }
+            fmt.Println(detail)
          }
       default:
-         err := f.do_details()
-         if err != nil {
-            panic(err)
-         }
+         flag.Usage()
       }
-   default:
-      flag.Usage()
    }
 }

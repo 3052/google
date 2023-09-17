@@ -8,43 +8,55 @@ import (
    "net/http"
 )
 
-func (h Header) Details(doc string) (*Details, error) {
-   req, err := http.NewRequest(
-      "GET", "https://android.clients.google.com/fdfe/details?doc=" + doc, nil,
-   )
-   if err != nil {
-      return nil, err
-   }
-   req.Header.Set(h.Agent())
-   req.Header.Set(h.Authorization())
-   req.Header.Set(h.Device())
-   res, err := http.DefaultClient.Do(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, fmt.Errorf(res.Status)
-   }
-   data, err := io.ReadAll(res.Body)
-   if err != nil {
-      return nil, err
-   }
-   response_wrapper, err := protobuf.Consume(data) // ResponseWrapper
-   if err != nil {
-      return nil, err
-   }
-   mes, ok := response_wrapper.Message(1) // Payload payload
-   if !ok {
-      return nil, fmt.Errorf("payload not found")
-   }
-   mes, _ = mes.Message(2) // Details.DetailsResponse detailsResponse
-   mes, _ = mes.Message(4) // DocV2 docV2
-   return &Details{mes}, nil
+type Details struct {
+   m protobuf.Message
 }
 
-type Details struct { // DocV2
-   m protobuf.Message
+func (d Details) Creator() (string, error) {
+   return d.m.String(6)
+}
+
+func (d Details) Currency_Code() (string, error) {
+   // offer
+   d.m, _ = d.m.Message(8)
+   return d.m.String(2)
+}
+
+func (d Details) File() []File_Metadata {
+   // details
+   d.m, _ = d.m.Message(13)
+   // appDetails
+   d.m, _ = d.m.Message(1)
+   var files []File_Metadata
+   d.m.Messages(17, func(file protobuf.Message) {
+      files = append(files, File_Metadata{file})
+   })
+   return files
+}
+
+func (d Details) Installation_Size() (uint64, error) {
+   // details
+   d.m, _ = d.m.Message(13)
+   // appDetails
+   d.m, _ = d.m.Message(1)
+   // installationSize
+   return d.m.Varint(9)
+}
+
+func (d Details) Micros() (uint64, error) {
+   // offer
+   d.m, _ = d.m.Message(8)
+   return d.m.Varint(1)
+}
+
+func (d Details) Num_Downloads() (uint64, error) {
+   // details
+   d.m, _ = d.m.Message(13)
+   // appDetails
+   d.m, _ = d.m.Message(1)
+   // I dont know the name of field 70, but the similar field 13 is called
+   // numDownloads
+   return d.m.Varint(70)
 }
 
 func (d Details) String() string {
@@ -105,118 +117,77 @@ func (d Details) String() string {
    return string(b)
 }
 
+func (d Details) Title() (string, error) {
+   return d.m.String(5)
+}
+
+func (d Details) Upload_Date() (string, error) {
+   // details
+   d.m, _ = d.m.Message(13)
+   // appDetails
+   d.m, _ = d.m.Message(1)
+   return d.m.String(16)
+}
+
+func (d Details) Version() (string, error) {
+   // details
+   d.m, _ = d.m.Message(13)
+   // appDetails
+   d.m, _ = d.m.Message(1)
+   // versionString
+   return d.m.String(4)
+}
+
+func (d Details) Version_Code() (uint64, error) {
+   // details
+   d.m, _ = d.m.Message(13)
+   // appDetails
+   d.m, _ = d.m.Message(1)
+   return d.m.Varint(3)
+}
+
 // FileMetadata
 // This is similar to AppFileMetadata, but notably field 4 is different.
 type File_Metadata struct {
    m protobuf.Message
 }
 
-func (d Details) Installation_Size() (uint64, error) {
-   d.m, _ = d.m.Message(13) // DocDetails.DocumentDetails details
-   d.m, _ = d.m.Message(1) // AppDetails appDetails
-   v, ok := d.m.Varint(9) // long installationSize
-   if ok {
-      return v, nil
-   }
-   return 0, fmt.Errorf("details, installation size")
-}
-
-func (d Details) Micros() (uint64, error) {
-   d.m, _ = d.m.Message(8) // Common.Offer[] offer
-   v, ok := d.m.Varint(1) // long micros
-   if ok {
-      return v, nil
-   }
-   return 0, fmt.Errorf("details, micros")
-}
-
-func (d Details) Num_Downloads() (uint64, error) {
-   // DocDetails.DocumentDetails details
-   d.m, _ = d.m.Message(13)
-   // AppDetails appDetails
-   d.m, _ = d.m.Message(1)
-   // I dont know the name of field 70, but the similar field 13 is called
-   // numDownloads
-   v, ok := d.m.Varint(70)
-   if ok {
-      return v, nil
-   }
-   return 0, fmt.Errorf("details, num downloads")
-}
-
-func (d Details) Title() (string, error) {
-   v, ok := d.m.String(5) // String title
-   if ok {
-      return v, nil
-   }
-   return "", fmt.Errorf("details, title")
-}
-
+// fileType
 func (f File_Metadata) File_Type() (uint64, error) {
-   v, ok := f.m.Varint(1) // int fileType
-   if ok {
-      return v, nil
-   }
-   return 0, fmt.Errorf("file metadata, file type")
+   return f.m.Varint(1)
 }
 
-func (d Details) Creator() (string, error) {
-   v, ok := d.m.String(6)
-   if ok {
-      return v, nil
+func (h Header) Details(doc string) (*Details, error) {
+   req, err := http.NewRequest(
+      "GET", "https://android.clients.google.com/fdfe/details?doc=" + doc, nil,
+   )
+   if err != nil {
+      return nil, err
    }
-   return "", fmt.Errorf("details, creator")
-}
-
-func (d Details) Currency_Code() (string, error) {
-   if v, ok := d.m.Message(8); ok { // Common.Offer[] offer
-      if v, ok := v.String(2); ok { // String currencyCode
-         return v, nil
-      }
+   req.Header.Set(h.Agent())
+   req.Header.Set(h.Authorization())
+   req.Header.Set(h.Device())
+   res, err := http.DefaultClient.Do(req)
+   if err != nil {
+      return nil, err
    }
-   return "", fmt.Errorf("details, currency")
-}
-
-func (d Details) Version_Code() (uint64, error) {
-   d.m, _ = d.m.Message(13) // DocDetails.DocumentDetails details
-   d.m, _ = d.m.Message(1) // AppDetails appDetails
-   v, ok := d.m.Varint(3) // int versionCode
-   if ok {
-      return v, nil
+   defer res.Body.Close()
+   data, err := io.ReadAll(res.Body)
+   if err != nil {
+      return nil, err
    }
-   return 0, fmt.Errorf("details, version code")
-}
-
-func (d Details) Version() (string, error) {
-   d.m, _ = d.m.Message(13) // DocDetails.DocumentDetails details
-   d.m, _ = d.m.Message(1) // AppDetails appDetails
-   v, ok := d.m.String(4) // String versionString
-   if ok {
-      return v, nil
+   // ResponseWrapper
+   mes, err := protobuf.Consume(data)
+   if err != nil {
+      return nil, err
    }
-   return "", fmt.Errorf("details, version")
-}
-
-func (d Details) Upload_Date() (string, error) {
-   d.m, _ = d.m.Message(13) // DocDetails.DocumentDetails details
-   d.m, _ = d.m.Message(1) // AppDetails appDetails
-   v, ok := d.m.String(16) // String uploadDate
-   if ok {
-      return v, nil
+   mes, err = mes.Message(1)
+   if err != nil {
+      return nil, fmt.Errorf("payload not found")
    }
-   return "", fmt.Errorf("details, upload date")
-}
-
-func (d Details) File() []File_Metadata {
-   d.m, _ = d.m.Message(13) // DocDetails.DocumentDetails details
-   d.m, _ = d.m.Message(1) // AppDetails appDetails
-   var files []File_Metadata
-   for _, f := range d.m {
-      if f.Number == 17 { // FileMetadata[] file
-         if file, ok := f.Message(); ok {
-            files = append(files, File_Metadata{file})
-         }
-      }
-   }
-   return files
+   // detailsResponse
+   mes, _ = mes.Message(2)
+   // docV2
+   mes, _ = mes.Message(4)
+   return &Details{mes}, nil
 }

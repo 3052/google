@@ -9,18 +9,70 @@ import (
    "time"
 )
 
-func (f flags) do_delivery() error {
-   head, err := f.do_header(true)
+func (f flags) do_device(dir, platform string) error {
+   data, err := play.Phone.Checkin(platform)
    if err != nil {
       return err
    }
+   err = os.WriteFile(dir + "/" + platform + ".bin", data, 0666)
+   if err != nil {
+      return err
+   }
+   fmt.Printf("Sleeping %v for server to process\n", play.Sleep)
+   time.Sleep(play.Sleep)
+   return nil
+}
+
+func (f flags) do_header(dir, platform string) (*play.Header, error) {
+   var head play.Header
+   head.Set_Agent(f.single)
+   {
+      b, err := os.ReadFile(dir + "/token.txt")
+      if err != nil {
+         return nil, err
+      }
+      if err := head.Set_Authorization(b); err != nil {
+         return nil, err
+      }
+   }
+   {
+      b, err := os.ReadFile(dir + "/" + platform + ".bin")
+      if err != nil {
+         return nil, err
+      }
+      if err := head.Set_Device(b); err != nil {
+         return nil, err
+      }
+   }
+   return &head, nil
+}
+
+func (f flags) download(ref, name string) error {
+   res, err := http.Get(ref)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   file, err := os.Create(name)
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   pro := option.Progress_Length(res.ContentLength)
+   if _, err := file.ReadFrom(pro.Reader(res)); err != nil {
+      return err
+   }
+   return nil
+}
+
+func (f flags) do_delivery(head *play.Header) error {
    deliver, err := head.Delivery(f.doc, f.vc)
    if err != nil {
       return err
    }
    file := play.File{f.doc, f.vc}
    option.Location()
-   for _, split := range deliver.Split() {
+   for _, split := range deliver.Split_Data() {
       ref, err := split.Download_URL()
       if err != nil {
          return err
@@ -53,92 +105,10 @@ func (f flags) do_delivery() error {
    return f.download(ref, file.APK(""))
 }
 
-func (f flags) do_auth() error {
+func (f flags) do_auth(dir string) error {
    text, err := play.New_Refresh_Token(f.code)
    if err != nil {
       return err
    }
-   return os.WriteFile(f.home + "token.txt", text, 0666)
-}
-
-func (f flags) do_details() error {
-   head, err := f.do_header(true)
-   if err != nil {
-      return err
-   }
-   detail, err := head.Details(f.doc)
-   if err != nil {
-      return err
-   }
-   fmt.Println(detail)
-   return nil
-}
-
-func (f flags) do_header(auth bool) (*play.Header, error) {
-   var head play.Header
-   head.Set_Agent(f.single)
-   if auth {
-      b, err := os.ReadFile(f.home + "token.txt")
-      if err != nil {
-         return nil, err
-      }
-      if err := head.Set_Authorization(b); err != nil {
-         return nil, err
-      }
-   }
-   {
-      b, err := os.ReadFile(f.home + play.Phone.Native_Platform + ".bin")
-      if err != nil {
-         return nil, err
-      }
-      if err := head.Set_Device(b); err != nil {
-         return nil, err
-      }
-   }
-   return &head, nil
-}
-func (f flags) do_device() error {
-   data, err := play.Phone.Checkin()
-   if err != nil {
-      return err
-   }
-   os.WriteFile(f.home + play.Phone.Native_Platform + ".bin", data, 0666)
-   head, err := f.do_header(false)
-   if err != nil {
-      return err
-   }
-   fmt.Println("Sleep(9*time.Second)")
-   time.Sleep(9*time.Second)
-   if err := head.Upload(play.Phone); err != nil {
-      return err
-   }
-   fmt.Println("Sleep(9*time.Second)")
-   time.Sleep(9*time.Second)
-   return nil
-}
-
-func (f flags) do_acquire() error {
-   head, err := f.do_header(true)
-   if err != nil {
-      return err
-   }
-   return head.Acquire(f.doc)
-}
-
-func (f flags) download(ref, name string) error {
-   res, err := http.Get(ref)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   file, err := os.Create(name)
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   pro := option.Progress_Length(res.ContentLength)
-   if _, err := file.ReadFrom(pro.Reader(res)); err != nil {
-      return err
-   }
-   return nil
+   return os.WriteFile(dir + "/token.txt", text, 0666)
 }

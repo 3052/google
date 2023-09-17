@@ -1,44 +1,33 @@
 package play
 
 import (
-   "154.pages.dev/http/option"
    "fmt"
+   "net/url"
    "os"
+   "strings"
    "testing"
-   "time"
 )
 
 func Test_Upload(t *testing.T) {
-   option.No_Location()
-   option.Verbose()
-   home, err := os.UserHomeDir()
+   token, err := new_token()
    if err != nil {
-      t.Fatal(err)
+      panic(err)
    }
-   home += "/google/play/"
-   var head Header
-   // agent
-   head.Set_Agent(false)
-   // authorization
-   {
-      b, err := os.ReadFile(home + "token.txt")
-      if err != nil {
-         t.Fatal(err)
-      }
-      head.Set_Authorization(b)
+   c, err := gplayapi.NewClientWithDeviceInfo("srpen6@gmail.com", token)
+   if err != nil {
+      panic(err)
    }
-   // device
-   {
-      b, err := Phone.Checkin()
-      if err != nil {
-         t.Fatal(err)
-      }
-      head.Set_Device(b)
+   fmt.Printf("%+v\n", c.AuthData.GsfID)
+}
+
+func new_token() (string, error) {
+   b, err := os.ReadFile(`C:\Users\Steven\google\play\token.txt`)
+   if err != nil {
+      return "", err
    }
-   Phone.Native_Platform = "x86"
-   if err := head.Upload(Phone); err != nil {
-      t.Fatal(err)
+   v, err := url.ParseQuery(strings.ReplaceAll(string(b), "\n", "&"))
+   if err != nil {
+      return "", err
    }
-   fmt.Println(head.Device())
-   time.Sleep(9*time.Second)
+   return v.Get("Token"), nil
 }
