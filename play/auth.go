@@ -128,7 +128,7 @@ func (h *Header) Set_Device(device []byte) error {
    if err != nil {
       return err
    }
-   id, err := dev.ID()
+   id, err := dev.android_ID()
    if err != nil {
       return err
    }

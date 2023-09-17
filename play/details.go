@@ -13,35 +13,47 @@ type Details struct {
 }
 
 func (d Details) Creator() (string, error) {
-   return d.m.String(6)
+   v, ok := d.m.String(6)
+   if ok {
+      return v, nil
+   }
+   return "", fmt.Errorf("details, creator")
 }
 
 func (d Details) Currency_Code() (string, error) {
-   // offer
-   d.m, _ = d.m.Message(8)
-   return d.m.String(2)
+   if v, ok := d.m.Message(8); ok { // Common.Offer[] offer
+      if v, ok := v.String(2); ok { // String currencyCode
+         return v, nil
+      }
+   }
+   return "", fmt.Errorf("details, currency")
 }
 
 func (d Details) File() []File_Metadata {
-   // details
-   d.m, _ = d.m.Message(13)
-   // appDetails
-   d.m, _ = d.m.Message(1)
+   d.m, _ = d.m.Message(13) // DocDetails.DocumentDetails details
+   d.m, _ = d.m.Message(1) // AppDetails appDetails
    var files []File_Metadata
-   d.m.Messages(17, func(file protobuf.Message) {
-      files = append(files, File_Metadata{file})
-   })
+   for _, f := range d.m {
+      if f.Number == 17 { // FileMetadata[] file
+         if file, ok := f.Message(); ok {
+            files = append(files, File_Metadata{file})
+         }
+      }
+   }
    return files
 }
 
 func (d Details) Installation_Size() (uint64, error) {
-   // details
-   d.m, _ = d.m.Message(13)
-   // appDetails
-   d.m, _ = d.m.Message(1)
-   // installationSize
-   return d.m.Varint(9)
+   d.m, _ = d.m.Message(13) // DocDetails.DocumentDetails details
+   d.m, _ = d.m.Message(1) // AppDetails appDetails
+   v, ok := d.m.Varint(9) // long installationSize
+   if ok {
+      return v, nil
+   }
+   return 0, fmt.Errorf("details, installation size")
 }
+
+///////////////////////////////////////////////////
 
 func (d Details) Micros() (uint64, error) {
    // offer

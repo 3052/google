@@ -3,6 +3,7 @@ package play
 import (
    "154.pages.dev/encoding/protobuf"
    "bytes"
+   "errors"
    "io"
    "net/http"
 )
@@ -87,9 +88,12 @@ type Device struct {
    m protobuf.Message
 }
 
-// androidId
-func (d Device) ID() (uint64, error) {
-   return d.m.Fixed64(7)
+func (d Device) android_ID() (uint64, error) {
+   v, ok := d.m.Fixed64(7) // long androidId_
+   if ok {
+      return v, nil
+   }
+   return 0, errors.New("androidId_")
 }
 
 // A Sleep is needed after this.
