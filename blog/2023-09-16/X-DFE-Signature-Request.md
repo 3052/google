@@ -20,23 +20,9 @@ using either of these:
 - <http://dl.google.com/android/repository/sys-img/google_apis/x86-21_r32.zip>
 
 ~~~
-apkmirror.com/apk/google-inc/google-play-store/google-play-store-20-9-20-release
+apkmirror.com/apk/google-inc/google-play-store/google-play-store-14-9-76-release
 pass
 
-19
-
-18
-
-17
-
-apkmirror.com/apk/google-inc/google-play-store/google-play-store-16-9-11-release
-
-15
-
-14
-
-13
-
-apkmirror.com/apk/google-inc/google-play-store/google-play-store-12-9-30-release
+apkmirror.com/apk/google-inc/google-play-store/google-play-store-13-9-40-release
 fail
 ~~~

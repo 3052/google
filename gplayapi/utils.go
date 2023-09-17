@@ -4,10 +4,10 @@ import (
 	"io"
 	"net/http"
 	"strings"
-
-	"github.com/Juby210/gplayapi-go/gpproto"
 	"google.golang.org/protobuf/proto"
 )
+
+import "154.pages.dev/google/gplayapi/gpproto"
 
 func ptrBool(b bool) *bool {
 	return &b
@@ -49,7 +49,7 @@ func (client *GooglePlayClient) _doAuthedReq(r *http.Request) (_ *gpproto.Payloa
 		return
 	}
 	if status == 401 {
-		return nil, GPTokenExpired
+		return nil, err_GPTokenExpired
 	}
 	resp := &gpproto.ResponseWrapper{}
 	err = proto.Unmarshal(b, resp)
@@ -61,7 +61,7 @@ func (client *GooglePlayClient) _doAuthedReq(r *http.Request) (_ *gpproto.Payloa
 
 func (client *GooglePlayClient) doAuthedReq(r *http.Request) (res *gpproto.Payload, err error) {
 	res, err = client._doAuthedReq(r)
-	if err == GPTokenExpired {
+	if err == err_GPTokenExpired {
 		err = client.RegenerateGPToken()
 		if err != nil {
 			return

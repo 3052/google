@@ -16,7 +16,7 @@ type GooglePlayClient struct {
 }
 
 var (
-	GPTokenExpired = errors.New("unauthorized, gp token expired")
+	err_GPTokenExpired = errors.New("unauthorized, gp token expired")
 
 	httpClient = &http.Client{}
 )

@@ -2,8 +2,7 @@ package gplayapi
 
 import (
 	"net/http"
-
-	"github.com/Juby210/gplayapi-go/gpproto"
+	"154.pages.dev/google/gplayapi/gpproto"
 )
 
 type (
