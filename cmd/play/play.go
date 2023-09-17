@@ -72,7 +72,7 @@ func (f flags) do_delivery(head *play.Header) error {
    }
    file := play.File{f.doc, f.vc}
    option.Location()
-   for _, split := range deliver.Split_Data() {
+   for _, split := range deliver.Split() {
       ref, err := split.Download_URL()
       if err != nil {
          return err

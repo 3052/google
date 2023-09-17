@@ -53,22 +53,27 @@ func (d Details) Installation_Size() (uint64, error) {
    return 0, fmt.Errorf("details, installation size")
 }
 
-///////////////////////////////////////////////////
-
 func (d Details) Micros() (uint64, error) {
-   // offer
-   d.m, _ = d.m.Message(8)
-   return d.m.Varint(1)
+   d.m, _ = d.m.Message(8) // Common.Offer[] offer
+   v, ok := d.m.Varint(1) // long micros
+   if ok {
+      return v, nil
+   }
+   return 0, fmt.Errorf("details, micros")
 }
 
 func (d Details) Num_Downloads() (uint64, error) {
-   // details
+   // DocDetails.DocumentDetails details
    d.m, _ = d.m.Message(13)
-   // appDetails
+   // AppDetails appDetails
    d.m, _ = d.m.Message(1)
    // I dont know the name of field 70, but the similar field 13 is called
    // numDownloads
-   return d.m.Varint(70)
+   v, ok := d.m.Varint(70)
+   if ok {
+      return v, nil
+   }
+   return 0, fmt.Errorf("details, num downloads")
 }
 
 func (d Details) String() string {
@@ -130,32 +135,41 @@ func (d Details) String() string {
 }
 
 func (d Details) Title() (string, error) {
-   return d.m.String(5)
+   v, ok := d.m.String(5) // String title
+   if ok {
+      return v, nil
+   }
+   return "", fmt.Errorf("details, title")
 }
 
 func (d Details) Upload_Date() (string, error) {
-   // details
-   d.m, _ = d.m.Message(13)
-   // appDetails
-   d.m, _ = d.m.Message(1)
-   return d.m.String(16)
+   d.m, _ = d.m.Message(13) // DocDetails.DocumentDetails details
+   d.m, _ = d.m.Message(1) // AppDetails appDetails
+   v, ok := d.m.String(16) // String uploadDate
+   if ok {
+      return v, nil
+   }
+   return "", fmt.Errorf("details, upload date")
 }
 
 func (d Details) Version() (string, error) {
-   // details
-   d.m, _ = d.m.Message(13)
-   // appDetails
-   d.m, _ = d.m.Message(1)
-   // versionString
-   return d.m.String(4)
+   d.m, _ = d.m.Message(13) // DocDetails.DocumentDetails details
+   d.m, _ = d.m.Message(1) // AppDetails appDetails
+   v, ok := d.m.String(4) // String versionString
+   if ok {
+      return v, nil
+   }
+   return "", fmt.Errorf("details, version")
 }
 
 func (d Details) Version_Code() (uint64, error) {
-   // details
-   d.m, _ = d.m.Message(13)
-   // appDetails
-   d.m, _ = d.m.Message(1)
-   return d.m.Varint(3)
+   d.m, _ = d.m.Message(13) // DocDetails.DocumentDetails details
+   d.m, _ = d.m.Message(1) // AppDetails appDetails
+   v, ok := d.m.Varint(3) // int versionCode
+   if ok {
+      return v, nil
+   }
+   return 0, fmt.Errorf("details, version code")
 }
 
 // FileMetadata
@@ -164,10 +178,15 @@ type File_Metadata struct {
    m protobuf.Message
 }
 
-// fileType
 func (f File_Metadata) File_Type() (uint64, error) {
-   return f.m.Varint(1)
+   v, ok := f.m.Varint(1) // int fileType
+   if ok {
+      return v, nil
+   }
+   return 0, fmt.Errorf("file metadata, file type")
 }
+
+///////////////////////////////////////////////////
 
 func (h Header) Details(doc string) (*Details, error) {
    req, err := http.NewRequest(
@@ -188,18 +207,15 @@ func (h Header) Details(doc string) (*Details, error) {
    if err != nil {
       return nil, err
    }
-   // ResponseWrapper
-   mes, err := protobuf.Consume(data)
+   response_wrapper, err := protobuf.Consume(data) // ResponseWrapper
    if err != nil {
       return nil, err
    }
-   mes, err = mes.Message(1)
-   if err != nil {
+   mes, ok := response_wrapper.Message(1) // Payload payload
+   if !ok {
       return nil, fmt.Errorf("payload not found")
    }
-   // detailsResponse
-   mes, _ = mes.Message(2)
-   // docV2
-   mes, _ = mes.Message(4)
+   mes, _ = mes.Message(2) // Details.DetailsResponse detailsResponse
+   mes, _ = mes.Message(4) // DocV2 docV2
    return &Details{mes}, nil
 }
