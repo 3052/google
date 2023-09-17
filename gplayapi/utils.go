@@ -10,7 +10,7 @@ import (
 import "154.pages.dev/google/gplayapi/gpproto"
 
 func doReq(r *http.Request) ([]byte, int, error) {
-   res, err := httpClient.Do(r)
+   res, err := http.DefaultClient.Do(r)
    if err != nil {
       return nil, 0, err
    }

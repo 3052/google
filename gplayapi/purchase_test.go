@@ -27,6 +27,8 @@ func Test_Acquire(t *testing.T) {
       },
       DeviceInfo: Pixel3a,
    }
+   option.No_Location()
+   option.Trace()
    for _, test := range x86_tests {
       deliver, err := client.GetDeliveryResponse(test.doc, test.version)
       if err != nil {
