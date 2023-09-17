@@ -1,9 +1,9 @@
 # september 17 2023
 
-first bad version:
+~~~
+63515a0fa60afc480485e9c39d8068b448ceaef9
+fail
 
-https://github.com/1268/google/commit/b28c07f377e5816b93d8aff8f0354f5d89e5401d
-
-last working version:
-
-https://github.com/1268/google/tree/1e7086633c7c952b5fcd8b7d78d3028b3b3242a0
+ab2c02d99f27420865b18ef493f63d6ab41d918d
+pass
+~~~

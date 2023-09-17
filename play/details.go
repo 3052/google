@@ -13,44 +13,50 @@ type Details struct {
 }
 
 func (d Details) Creator() (string, error) {
-   v, ok := d.m.String(6)
-   if ok {
-      return v, nil
-   }
-   return "", fmt.Errorf("details, creator")
+   return d.m.String(6)
 }
 
 func (d Details) Currency_Code() (string, error) {
-   if v, ok := d.m.Message(8); ok { // Common.Offer[] offer
-      if v, ok := v.String(2); ok { // String currencyCode
-         return v, nil
-      }
-   }
-   return "", fmt.Errorf("details, currency")
+   // offer
+   d.m, _ = d.m.Message(8)
+   return d.m.String(2)
 }
 
 func (d Details) File() []File_Metadata {
-   d.m, _ = d.m.Message(13) // DocDetails.DocumentDetails details
-   d.m, _ = d.m.Message(1) // AppDetails appDetails
+   // details
+   d.m, _ = d.m.Message(13)
+   // appDetails
+   d.m, _ = d.m.Message(1)
    var files []File_Metadata
-   for _, f := range d.m {
-      if f.Number == 17 { // FileMetadata[] file
-         if file, ok := f.Message(); ok {
-            files = append(files, File_Metadata{file})
-         }
-      }
-   }
+   d.m.Messages(17, func(file protobuf.Message) {
+      files = append(files, File_Metadata{file})
+   })
    return files
 }
 
 func (d Details) Installation_Size() (uint64, error) {
-   d.m, _ = d.m.Message(13) // DocDetails.DocumentDetails details
-   d.m, _ = d.m.Message(1) // AppDetails appDetails
-   v, ok := d.m.Varint(9) // long installationSize
-   if ok {
-      return v, nil
-   }
-   return 0, fmt.Errorf("details, installation size")
+   // details
+   d.m, _ = d.m.Message(13)
+   // appDetails
+   d.m, _ = d.m.Message(1)
+   // installationSize
+   return d.m.Varint(9)
+}
+
+func (d Details) Micros() (uint64, error) {
+   // offer
+   d.m, _ = d.m.Message(8)
+   return d.m.Varint(1)
+}
+
+func (d Details) Num_Downloads() (uint64, error) {
+   // details
+   d.m, _ = d.m.Message(13)
+   // appDetails
+   d.m, _ = d.m.Message(1)
+   // I dont know the name of field 70, but the similar field 13 is called
+   // numDownloads
+   return d.m.Varint(70)
 }
 
 func (d Details) String() string {
@@ -111,54 +117,17 @@ func (d Details) String() string {
    return string(b)
 }
 
-// FileMetadata
-// This is similar to AppFileMetadata, but notably field 4 is different.
-type File_Metadata struct {
-   m protobuf.Message
-}
-
-func (d Details) Micros() (uint64, error) {
-   d.m, _ = d.m.Message(8) // Common.Offer[] offer
-   v, ok := d.m.Varint(1) // long micros
-   if ok {
-      return v, nil
-   }
-   return 0, fmt.Errorf("details, micros")
-}
-
-func (d Details) Num_Downloads() (uint64, error) {
-   // DocDetails.DocumentDetails details
-   d.m, _ = d.m.Message(13)
-   // AppDetails appDetails
-   d.m, _ = d.m.Message(1)
-   // I dont know the name of field 70, but the similar field 13 is called
-   // numDownloads
-   v, ok := d.m.Varint(70)
-   if ok {
-      return v, nil
-   }
-   return 0, fmt.Errorf("details, num downloads")
-}
-
 func (d Details) Title() (string, error) {
-   v, ok := d.m.String(5) // String title
-   if ok {
-      return v, nil
-   }
-   return "", fmt.Errorf("details, title")
+   return d.m.String(5)
 }
 
 func (d Details) Upload_Date() (string, error) {
-   d.m, _ = d.m.Message(13) // DocDetails.DocumentDetails details
-   d.m, _ = d.m.Message(1) // AppDetails appDetails
-   v, ok := d.m.String(16) // String uploadDate
-   if ok {
-      return v, nil
-   }
-   return "", fmt.Errorf("details, upload date")
+   // details
+   d.m, _ = d.m.Message(13)
+   // appDetails
+   d.m, _ = d.m.Message(1)
+   return d.m.String(16)
 }
-
-////////////////////////////////////////////////
 
 func (d Details) Version() (string, error) {
    // details
@@ -175,6 +144,12 @@ func (d Details) Version_Code() (uint64, error) {
    // appDetails
    d.m, _ = d.m.Message(1)
    return d.m.Varint(3)
+}
+
+// FileMetadata
+// This is similar to AppFileMetadata, but notably field 4 is different.
+type File_Metadata struct {
+   m protobuf.Message
 }
 
 // fileType
