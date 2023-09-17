@@ -9,8 +9,7 @@ import (
    "time"
 )
 
-// min size {2023-07-28 0 5785991 22473050 kr.sira.metal}
-// max downloads {2023-08-21 0 88255721 14594265118 com.google.android.youtube}
+// max downloads {2023-09-07 0 88744335 14731057925 com.google.android.youtube}
 var apps = []app_type{
 {date:"2023-02-01",platform:1,size:18708178,downloads:1563645747,doc:"com.miui.weather2"},
 {date:"2023-02-20",platform:0,size:37564028,downloads:347934672,doc:"org.videolan.vlc"},
@@ -51,16 +50,15 @@ func (a app_type) GoString() string {
    b = append(b, '}')
    return string(b)
 }
-
 func Test_Details(t *testing.T) {
    home, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
    }
-   home += "/google/play"
+   home += "/google/play/"
    var head Header
    {
-      b, err := os.ReadFile(home + "/token.txt")
+      b, err := os.ReadFile(home + "token.txt")
       if err != nil {
          t.Fatal(err)
       }
@@ -69,7 +67,7 @@ func Test_Details(t *testing.T) {
    head.Set_Agent(false)
    for i, app := range apps {
       {
-         b, err := os.ReadFile(home + "/" + Platforms[app.platform] + ".bin")
+         b, err := os.ReadFile(home + Platforms[app.platform] + ".bin")
          if err != nil {
             t.Fatal(err)
          }
