@@ -2,13 +2,12 @@ package main
 
 import (
    "154.pages.dev/protobuf"
-   "fmt"
+   "bytes"
    "io"
    "net/http"
    "net/http/httputil"
    "net/url"
    "os"
-   "strings"
 )
 
 func main() {
