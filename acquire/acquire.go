@@ -1,6 +1,11 @@
 package main
 
 import (
+   "154.pages.dev/google/play"
+   "154.pages.dev/protobuf"
+   "bytes"
+   "errors"
+   "fmt"
    "io"
    "net/http"
    "net/http/httputil"
@@ -9,12 +14,35 @@ import (
    "strings"
 )
 
-func main() {
+func Acquire(h play.Header, doc string, version uint64) error {
+   body := protobuf.Message{
+      protobuf.Field{Number: 1, Type: 2, Value: protobuf.Prefix{
+         protobuf.Field{Number: 1, Type: 2, Value: protobuf.Prefix{
+            protobuf.Field{Number: 1, Type: 2,  Value: protobuf.Bytes("com.duolingo")},
+            protobuf.Field{Number: 2, Type: 0,  Value: protobuf.Varint(1)},
+            protobuf.Field{Number: 3, Type: 0,  Value: protobuf.Varint(3)},
+         }},
+         protobuf.Field{Number: 2, Type: 0,  Value: protobuf.Varint(1)},
+         protobuf.Field{Number: 3, Type: 2,  Value: protobuf.Bytes("")},
+      }},
+      protobuf.Field{Number: 4, Type: 2, Value: protobuf.Prefix{
+         protobuf.Field{Number: 1, Type: 0,  Value: protobuf.Varint(10)},
+      }},
+      protobuf.Field{Number: 8, Type: 2,  Value: protobuf.Bytes("")},
+      protobuf.Field{Number: 12, Type: 2, Value: protobuf.Prefix{
+         protobuf.Field{Number: 1, Type: 0,  Value: protobuf.Varint(1700)},
+         protobuf.Field{Number: 3, Type: 0,  Value: protobuf.Varint(0)},
+      }},
+      protobuf.Field{Number: 13, Type: 0,  Value: protobuf.Varint(1)},
+      protobuf.Field{Number: 15, Type: 0,  Value: protobuf.Varint(0)},
+      protobuf.Field{Number: 22, Type: 2,  Value: protobuf.Bytes("nonce=LHEvHQSIv40zqfHYASj1rKZuAlwtyacUe2pe1tNd9mNv0suSHagkp-88-WaZC48Ev8JTtj9AsH_w6waS7IMFUlrOtxQ70udW-oUjACf7qMlgGnoMLTS2h5pOb_n327LSWmX2lnOoSIMjw6Z1bi5DkPGPrxzPDCnJQfxjke_XvsScFbFqoAdDegtrxKViI0r6dOC3KtcaavBPnNBOZa8DH6RY8Dg83QxzAgIvm7zyUSgrAJIBPErFoR3uDnnb_6nKPV5w-PFat1BgOupbCWAoaO0HTmHaAuE51PcafSGP0DC-D_dlDiJrwbHq8J2F8-3MeHWUwxHmJ1NVhTXYM_njvQ")},
+      protobuf.Field{Number: 25, Type: 0,  Value: protobuf.Varint(2)},
+   }
    var req http.Request
    req.Header = make(http.Header)
    req.Header["Accept-Encoding"] = []string{"gzip"}
    req.Header["Accept-Language"] = []string{"en-US"}
-   req.Header["Authorization"] = []string{"Bearer ya29.a0AfB_byBFbblkPw8axrrH36QfGChD59B98T9SvEHUyT9qlXvp3_9bo2eo8o1xSNorKLE2Bow0nDFeMeUTkBNZH2e52N1ptv-2gCb0siAmzhONjHiBe7XvmkrszKepFqLHlE8NJuuSEQcGcpoxlZAh4x0WjhsgjqBwlV1svV3-CqjPm44kwH_yiWGWenAcHfM1KY9wgVXYst-VopZ1VZqYz_wfggktAZrjPSardJZ5t8lUoNr3DFZGNajTo_dVZ_ydlzr3pUMR1HGYfbIRxKtGpXKP29lKBBj-G_0hiSIOP0g8_21UHrjH7kGwYE84iDPNB4sRqAaCgYKAXUSARESFQGOcNnC64WSRP9UZTgXivBtLHHlpg0333"}
+   //req.Header["Authorization"] = []string{"Bearer ya29.a0AfB_byBFbblkPw8axrrH36QfGChD59B98T9SvEHUyT9qlXvp3_9bo2eo8o1xSNorKLE2Bow0nDFeMeUTkBNZH2e52N1ptv-2gCb0siAmzhONjHiBe7XvmkrszKepFqLHlE8NJuuSEQcGcpoxlZAh4x0WjhsgjqBwlV1svV3-CqjPm44kwH_yiWGWenAcHfM1KY9wgVXYst-VopZ1VZqYz_wfggktAZrjPSardJZ5t8lUoNr3DFZGNajTo_dVZ_ydlzr3pUMR1HGYfbIRxKtGpXKP29lKBBj-G_0hiSIOP0g8_21UHrjH7kGwYE84iDPNB4sRqAaCgYKAXUSARESFQGOcNnC64WSRP9UZTgXivBtLHHlpg0333"}
    req.Header["Connection"] = []string{"Keep-Alive"}
    req.Header["Content-Length"] = []string{"398"}
    req.Header["Content-Type"] = []string{"application/x-protobuf"}
@@ -42,16 +70,36 @@ func main() {
    req.URL.RawQuery = val.Encode()
    req.URL.Scheme = "https"
    req.Body = io.NopCloser(req_body)
-   res, err := new(http.Transport).RoundTrip(&req)
+   req.Header.Set(h.Authorization())
+   res, err := http.DefaultClient.Do(req)
    if err != nil {
-      panic(err)
+      return err
    }
    defer res.Body.Close()
-   res_body, err := httputil.DumpResponse(res, true)
-   if err != nil {
-      panic(err)
+   if res.StatusCode != http.StatusOK {
+      return errors.New(res.Status)
    }
-   os.Stdout.Write(res_body)
+   {
+      b, err := io.ReadAll(res.Body)
+      if err != nil {
+         return err
+      }
+      s := string(b)
+      for _, err := range acquire_errors {
+         if strings.Contains(s, err) {
+            return new_error(err)
+         }
+      }
+   }
+   return nil
 }
 
-var req_body = strings.NewReader("\n\x18\n\x12\n\fcom.duolingo\x10\x01\x18\x03\x10\x01\x1a\x00\"\x02\b\nB\x00b\x05\b\xa4\r\x18\x00h\x01x\x00\xb2\x01\xdc\x02nonce=LHEvHQSIv40zqfHYASj1rKZuAlwtyacUe2pe1tNd9mNv0suSHagkp-88-WaZC48Ev8JTtj9AsH_w6waS7IMFUlrOtxQ70udW-oUjACf7qMlgGnoMLTS2h5pOb_n327LSWmX2lnOoSIMjw6Z1bi5DkPGPrxzPDCnJQfxjke_XvsScFbFqoAdDegtrxKViI0r6dOC3KtcaavBPnNBOZa8DH6RY8Dg83QxzAgIvm7zyUSgrAJIBPErFoR3uDnnb_6nKPV5w-PFat1BgOupbCWAoaO0HTmHaAuE51PcafSGP0DC-D_dlDiJrwbHq8J2F8-3MeHWUwxHmJ1NVhTXYM_njvQ\xc8\x01\x02")
+var acquire_errors = []string{
+   "Please open my apps to establish a connection with the server.",
+   "Error",
+}
+
+func new_error(s string) error {
+   s = strings.TrimSuffix(s, ".")
+   return errors.New(strings.ToLower(s))
+}
