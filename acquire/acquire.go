@@ -1,16 +1,13 @@
-package main
+package acquire
 
 import (
    "154.pages.dev/google/play"
    "154.pages.dev/protobuf"
    "bytes"
    "errors"
-   "fmt"
    "io"
    "net/http"
-   "net/http/httputil"
    "net/url"
-   "os"
    "strings"
 )
 
@@ -69,9 +66,9 @@ func Acquire(h play.Header, doc string, version uint64) error {
    val["theme"] = []string{"2"}
    req.URL.RawQuery = val.Encode()
    req.URL.Scheme = "https"
-   req.Body = io.NopCloser(req_body)
+   req.Body = io.NopCloser(bytes.NewReader(body.Append(nil)))
    req.Header.Set(h.Authorization())
-   res, err := http.DefaultClient.Do(req)
+   res, err := http.DefaultClient.Do(&req)
    if err != nil {
       return err
    }
