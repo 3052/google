@@ -37,15 +37,17 @@ func (h Header) Acquire(doc string) error {
       return err
    }
    defer res.Body.Close()
-   data, err := io.ReadAll(res.Body)
-   if err != nil {
-      return err
-   }
-   if strings.Contains(string(data), connection) {
-      return new_error(connection)
-   }
    if res.StatusCode != http.StatusOK {
       return errors.New(res.Status)
+   }
+   {
+      b, err := io.ReadAll(res.Body)
+      if err != nil {
+         return err
+      }
+      if strings.Contains(string(b), connection) {
+         return new_error(connection)
+      }
    }
    return nil
 }

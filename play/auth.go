@@ -16,7 +16,7 @@ func (h *Header) Set_Authorization(token []byte) error {
    if err != nil {
       return err
    }
-   // Google Services Framework 21 
+   // Google Services Framework 5
    res, err := http.PostForm(
       "https://android.googleapis.com/auth", url.Values{
          "Token": {refresh.token()},
@@ -51,7 +51,7 @@ func (h *Header) Set_Authorization(token []byte) error {
 // but it should be supplied here with the prefix:
 // oauth2_4/0Adeu5B...
 func New_Refresh_Token(code string) ([]byte, error) {
-   // Android API 21
+   // Google Services Framework 5
    res, err := http.PostForm(
       "https://android.googleapis.com/auth", url.Values{
          "ACCESS_TOKEN": {"1"},

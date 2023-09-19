@@ -1,16 +1,18 @@
-package main
+package acquire
 
 import (
+   "154.pages.dev/google/play"
+   "154.pages.dev/protobuf"
+   "errors"
+   "io"
    "net/http"
-   "net/http/httputil"
    "net/url"
-   "os"
+   "strconv"
 )
 
-func main() {
-   var req http.Request
+func Delivery(h *play.Header, doc string, version uint64) error {
+   req := new(http.Request)
    req.Header = make(http.Header)
-   req.Header["Authorization"] = []string{"Bearer ya29.a0AfB_byAXBBcOb0E6BfWrnUzWf1rR7aJGW_jElONLMcws3JhdOrPAX5Zt8wzkD_fcodkBwxeofxtK5htEp4xOX10hf_MQiPN9_AagkzndyraqPp39XY-qDMzqaTi-mR4ZIEGvaYaLRo27cZTKg8MpenWG2TxN12igV3VVOFtOHK-Igf-SX4XHiF2-tyF62Zg6hQoZKBelr_kERd4haLboTznh67syvGB6ElnH8j4QwQZdTyxWNycrC9qaSJz14LPWYW7XwhfFS08JL2i57JaiFdflXd4eIM69UMjABgPWn_DGAnpg-dKVMZmJUAvHBNZ5A8Bc3waCgYKAaISARESFQGOcNnCuty79iAXfjU2kIxMjHf-nw0333"}
    req.Header["User-Agent"] = []string{"Android-Finsky/22.8.44-21%20%5B0%5D%20%5BPR%5D%20342964500 (api=3,versionCode=82284410,sdk=27,device=generic_x86,hardware=ranchu,product=sdk_gphone_x86,platformVersionRelease=8.1.0,model=Android%20SDK%20built%20for%20x86,buildId=OSM1.180201.037,isWideScreen=0,supportedAbis=x86)"}
    req.Header["X-Dfe-Device-Id"] = []string{"344d67278408e17a"}
    req.ProtoMajor = 1
@@ -20,23 +22,43 @@ func main() {
    req.URL.Path = "/fdfe/delivery"
    val := make(url.Values)
    val["da"] = []string{"3"}
-   val["doc"] = []string{"com.duolingo"}
    val["fdcf"] = []string{"1", "2"}
    val["ia"] = []string{"false"}
    val["isid"] = []string{"oLHwp38pRtqEky5tTkuimg"}
    val["ot"] = []string{"1"}
    val["st"] = []string{"EMbEnagGGdo8npHYQdlB"}
-   val["vc"] = []string{"1700"}
-   req.URL.RawQuery = val.Encode()
    req.URL.Scheme = "https"
-   res, err := new(http.Transport).RoundTrip(&req)
+   req.Header.Set(h.Authorization())
+   val["doc"] = []string{doc}
+   val["vc"] = []string{strconv.FormatUint(version, 10)}
+   req.URL.RawQuery = val.Encode()
+   res, err := http.DefaultClient.Do(req)
    if err != nil {
-      panic(err)
+      return err
    }
    defer res.Body.Close()
-   res_body, err := httputil.DumpResponse(res, true)
+   data, err := io.ReadAll(res.Body)
    if err != nil {
-      panic(err)
+      return err
    }
-   os.Stdout.Write(res_body)
+   mes, err := protobuf.Consume(data) // ResponseWrapper
+   if err != nil {
+      return err
+   }
+   mes, _ = mes.Message(1) // payload
+   mes, _ = mes.Message(21) // deliveryResponse
+   status, ok := mes.Varint(1)
+   if ok {
+      switch status {
+      case 3:
+         return errors.New("acquire")
+      case 5:
+         return errors.New("version")
+      }
+   }
+   _, ok = mes.Message(2)
+   if !ok {
+      return errors.New("appDeliveryData not found")
+   }
+   return nil
 }
