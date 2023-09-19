@@ -10,7 +10,7 @@ import (
 func Test_Marshal(t *testing.T) {
    option.No_Location()
    option.Verbose()
-   text, err := new(aurora_OSS).Marshal()
+   text, err := new(Aurora_OSS).Marshal()
    if err != nil {
       t.Fatal(err)
    }
@@ -22,7 +22,7 @@ func Test_Unmarshal(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   var aurora aurora_OSS
+   var aurora Aurora_OSS
    if err := aurora.Unmarshal(text); err != nil {
       t.Fatal(err)
    }

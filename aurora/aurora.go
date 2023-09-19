@@ -10,6 +10,7 @@ import (
 
 type Aurora_OSS struct {
    Auth_Token string `json:"authToken"`
+   GSF_ID string `json:"gsfId"`
 }
 
 func (Aurora_OSS) Marshal() ([]byte, error) {

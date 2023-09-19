@@ -11,7 +11,18 @@ import (
    "strings"
 )
 
-func AAAAAAAAAcquire(h *play.Header, doc string, version uint64) error {
+const (
+   // android studio
+   // device_ID = "344d67278408e17a"
+   
+   // mine
+   device_ID = "30d95bf31df29aac"
+   
+   // aurora
+   //device_ID = "35cd340885ec81f3"
+)
+
+func Acquire(h *play.Header, doc string, version uint64) error {
    body := protobuf.Message{
       protobuf.Field{Number: 1, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Prefix{
@@ -38,7 +49,7 @@ func AAAAAAAAAcquire(h *play.Header, doc string, version uint64) error {
    req := new(http.Request)
    req.Header = make(http.Header)
    req.Header["Content-Type"] = []string{"application/x-protobuf"}
-   req.Header["X-Dfe-Device-Id"] = []string{"344d67278408e17a"}
+   req.Header["X-Dfe-Device-Id"] = []string{device_ID}
    req.Method = "POST"
    req.ProtoMajor = 1
    req.ProtoMinor = 1
