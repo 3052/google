@@ -1,6 +1,6 @@
 package gplayapi
 
-import "github.com/Juby210/gplayapi-go/gpproto"
+import "154.pages.dev/google/gplayapi/gpproto"
 
 var (
 	unknown               = ptrStr("unknown")

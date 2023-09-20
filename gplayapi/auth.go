@@ -7,8 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
-
-	"github.com/Juby210/gplayapi-go/gpproto"
+	"154.pages.dev/google/gplayapi/gpproto"
 	"google.golang.org/protobuf/proto"
 )
 
