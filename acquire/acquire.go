@@ -15,7 +15,7 @@ func Acquire(h play.Header, doc string, version uint64) error {
    body := protobuf.Message{
       protobuf.Field{Number: 1, Type: 2, Value: protobuf.Prefix{
          protobuf.Field{Number: 1, Type: 2, Value: protobuf.Prefix{
-            protobuf.Field{Number: 1, Type: 2,  Value: protobuf.Bytes("com.duolingo")},
+            protobuf.Field{Number: 1, Type: 2,  Value: protobuf.Bytes(doc)},
             protobuf.Field{Number: 2, Type: 0,  Value: protobuf.Varint(1)},
             protobuf.Field{Number: 3, Type: 0,  Value: protobuf.Varint(3)},
          }},
@@ -27,7 +27,7 @@ func Acquire(h play.Header, doc string, version uint64) error {
       }},
       protobuf.Field{Number: 8, Type: 2,  Value: protobuf.Bytes("")},
       protobuf.Field{Number: 12, Type: 2, Value: protobuf.Prefix{
-         protobuf.Field{Number: 1, Type: 0,  Value: protobuf.Varint(1700)},
+         protobuf.Field{Number: 1, Type: 0,  Value: protobuf.Varint(version)},
          protobuf.Field{Number: 3, Type: 0,  Value: protobuf.Varint(0)},
       }},
       protobuf.Field{Number: 13, Type: 0,  Value: protobuf.Varint(1)},

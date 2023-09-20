@@ -34,28 +34,11 @@ func Test_Acquire(t *testing.T) {
    }
    fmt.Println("sleep")
    time.Sleep(9 * time.Second)
-   if err := Delivery(&head, app.doc, app.version); err != nil {
+   if err := Delivery(head, app.doc, app.version); err != nil {
       t.Fatal(err)
    }
 }
 
-/*
-Authorization aurora
-X-Dfe-Device-Id mine
-pass
-
-Authorization aurora
-X-Dfe-Device-Id studio
-fail
-
-Authorization mine
-X-Dfe-Device-Id studio
-fail
-
-Authorization mine
-X-Dfe-Device-Id aurora
-fail
-*/
 func Test_Delivery(t *testing.T) {
    var auth aurora.Aurora_OSS
    {
@@ -74,7 +57,7 @@ func Test_Delivery(t *testing.T) {
    option.No_Location()
    option.Verbose()
    for _, app := range x86_apps {
-      err := Delivery(&head, app.doc, app.version)
+      err := Delivery(head, app.doc, app.version)
       if err != nil {
          t.Fatal(err)
       }
