@@ -11,6 +11,7 @@ import (
 
 func (g GooglePlayClient) Acquire(doc string, version uint64) error {
    var req http.Request
+   req.Header = make(http.Header)
    req.Header["X-Dfe-Device-Id"] = []string{g.AuthData.GsfID}
    req.Header["Authorization"] = []string{"Bearer " + g.AuthData.AuthToken}
    acquire_body := protobuf.Message{
@@ -42,7 +43,6 @@ func (g GooglePlayClient) Acquire(doc string, version uint64) error {
          protobuf.Field{Number: 2, Type: 0,  Value: protobuf.Varint(361000000)},
       }},
    }
-   req.Header = make(http.Header)
    req.Header["Content-Type"] = []string{"application/x-protobuf"}
    req.Method = "POST"
    req.ProtoMajor = 1
