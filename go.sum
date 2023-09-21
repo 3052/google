@@ -1,11 +1,13 @@
-154.pages.dev/http v1.1.4 h1:mK7AUiTzndRLOTpDM64Wn7PnnC3Xwf4mxmXO4Szn7hg=
-154.pages.dev/http v1.1.4/go.mod h1:ZTqoOYeukWZ4IqTp01EtccVWZQVAoAyHkB7lEzeqUwA=
+154.pages.dev/http v1.1.5 h1:LpnK0Mhxu0+dQy+pBe7Vke53lsrYASwIj2I2QPrX6r0=
+154.pages.dev/http v1.1.5/go.mod h1:YvwFuIy0H9S22MiqTF5c6BJI74uJ8HvmTEIte8uf0VI=
 154.pages.dev/protobuf v1.0.0 h1:UdYjKpfVptyy4L7dcdMWRoTGkISC8sqcZ2l0OasHB20=
 154.pages.dev/protobuf v1.0.0/go.mod h1:NDDaN/avhls0mBQT6u7oJQMI1PWt11v7fD9bxAWubH4=
-154.pages.dev/strconv v1.0.4 h1:zPObc9UEerZD8lX7NINR2nDNbwPUAA+M63G/+OBy5GI=
-154.pages.dev/strconv v1.0.4/go.mod h1:HPQpZS7s8hlNlF5X2DNlT3qft3mN4rluNJW+GjbTf9I=
+154.pages.dev/strconv v1.0.5 h1:XnhdAZ5f7Iv0KuUcBQvrUvIFWHKbFmsFi+K0tdaFjqs=
+154.pages.dev/strconv v1.0.5/go.mod h1:HPQpZS7s8hlNlF5X2DNlT3qft3mN4rluNJW+GjbTf9I=
 github.com/golang/protobuf v1.5.0/go.mod h1:FsONVRAS9T7sI+LIUmWTfcYkHO4aIWwzhcaSAoJOfIk=
+github.com/google/go-cmp v0.5.5 h1:Khx7svrCpmxxtHBq5j2mp/xVjsi8hQMfNLvJFAlrGgU=
 github.com/google/go-cmp v0.5.5/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
+golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543 h1:E7g+9GITq07hpfrRu66IVDexMakfv52eLZ2CXBWiKr4=
 golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
 google.golang.org/protobuf v1.26.0-rc.1/go.mod h1:jlhhOSvTdKEhbULTjvd4ARK9grFBp09yW+WbY/TyQbw=
 google.golang.org/protobuf v1.31.0 h1:g0LDEJHgrBl9N9r17Ru3sqWhkIx2NB67okBHPwC7hs8=
