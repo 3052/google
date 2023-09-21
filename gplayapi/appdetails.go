@@ -1,8 +1,8 @@
 package gplayapi
 
 import (
-	"net/http"
 	"154.pages.dev/google/gplayapi/gpproto"
+	"net/http"
 )
 
 type (
