@@ -45,27 +45,6 @@ func (h *Header) Set_Authorization(token []byte) error {
    return nil
 }
 
-// accounts.google.com/embedded/setup/android
-// the authorization code (oauth_token) looks like this:
-// 4/0Adeu5B...
-// but it should be supplied here with the prefix:
-// oauth2_4/0Adeu5B...
-func New_Refresh_Token(code string) ([]byte, error) {
-   // Google Services Framework 5
-   res, err := http.PostForm(
-      "https://android.googleapis.com/auth", url.Values{
-         "ACCESS_TOKEN": {"1"},
-         "Token": {code},
-         "service": {"ac2dm"},
-      },
-   )
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   return io.ReadAll(res.Body)
-}
-
 func parse_query(query string) (map[string]string, error) {
    values := make(map[string]string)
    for query != "" {
@@ -138,8 +117,29 @@ func (h *Header) Set_Device(device []byte) error {
    return nil
 }
 
-type Refresh_Token map[string]string
-
 func (r Refresh_Token) token() string {
    return r["Token"]
+}
+
+type Refresh_Token map[string]string
+
+// accounts.google.com/embedded/setup/android
+// the authorization code (oauth_token) looks like this:
+// 4/0Adeu5B...
+// but it should be supplied here with the prefix:
+// oauth2_4/0Adeu5B...
+func New_Refresh_Token(code string) ([]byte, error) {
+   // Google Services Framework 5
+   res, err := http.PostForm(
+      "https://android.googleapis.com/auth", url.Values{
+         "ACCESS_TOKEN": {"1"},
+         "Token": {code},
+         "service": {"ac2dm"},
+      },
+   )
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   return io.ReadAll(res.Body)
 }
