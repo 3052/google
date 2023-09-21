@@ -13,21 +13,6 @@ import (
 
 const query = "doc=com.zzkko&vc=818"
 
-func Test_Client(t *testing.T) {
-   client, err := NewClient("srpen6@gmail.com", "")
-   if err != nil {
-      t.Fatal(err)
-   }
-   file, err := os.Create("client.json")
-   if err != nil {
-      t.Fatal(err)
-   }
-   defer file.Close()
-   enc := json.NewEncoder(file)
-   enc.SetIndent("", " ")
-   enc.Encode(client)
-}
-
 func Test_Acquire(t *testing.T) {
    text, err := os.ReadFile("client.json")
    if err != nil {
@@ -64,6 +49,8 @@ func Test_Delivery(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
+   option.No_Location()
+   option.Trace()
    delivery, err := client.GetDeliveryResponse(doc, version)
    if err != nil {
       t.Fatal(err)
@@ -83,4 +70,29 @@ func parse(s string) (string, int, error) {
       return "", 0, err
    }
    return q.Get("doc"), v, nil
+}
+
+func Test_Client(t *testing.T) {
+   token, err := func() (string, error) {
+      b, err := os.ReadFile(`C:\Users\Steven\google\play\token.txt`)
+      if err != nil {
+         return "", err
+      }
+      return parseResponse(string(b))["Token"], nil
+   }()
+   if err != nil {
+      t.Fatal(err)
+   }
+   client, err := NewClientWithDeviceInfo("srpen6@gmail.com", token, Pixel3a)
+   if err != nil {
+      t.Fatal(err)
+   }
+   file, err := os.Create("client.json")
+   if err != nil {
+      t.Fatal(err)
+   }
+   defer file.Close()
+   enc := json.NewEncoder(file)
+   enc.SetIndent("", " ")
+   enc.Encode(client)
 }

@@ -13,7 +13,22 @@ import (
    "strings"
 )
 
-//goland:noinspection GoUnusedConst
+func doReq(r *http.Request) ([]byte, int, error) {
+   res, err := http.DefaultClient.Do(r)
+   if err != nil {
+      return nil, 0, err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, 0, errors.New(res.Status)
+   }
+   b, err := io.ReadAll(res.Body)
+   if err != nil {
+      return nil, 0, err
+   }
+   return b, res.StatusCode, err
+}
+
 const (
    ImageTypeAppScreenshot = iota + 1
    ImageTypePlayStorePageBackground
@@ -48,16 +63,6 @@ func ptrInt32(i int32) *int32 {
    return &i
 }
 
-func doReq(r *http.Request) ([]byte, int, error) {
-   res, err := httpClient.Do(r)
-   if err != nil {
-      return nil, 0, err
-   }
-   defer res.Body.Close()
-   b, err := io.ReadAll(res.Body)
-   return b, res.StatusCode, err
-}
-
 func parseResponse(res string) map[string]string {
    ret := map[string]string{}
    for _, ln := range strings.Split(res, "\n") {
@@ -69,26 +74,6 @@ func parseResponse(res string) map[string]string {
    return ret
 }
 
-func (client *GooglePlayClient) _doAuthedReq(r *http.Request) (_ *gpproto.Payload, err error) {
-   client.setDefaultHeaders(r)
-   b, status, err := doReq(r)
-   if err != nil {
-      return
-   }
-   if status == 401 {
-      return nil, err_GPTokenExpired
-   }
-   resp := &gpproto.ResponseWrapper{}
-   err = proto.Unmarshal(b, resp)
-   if err != nil {
-      return
-   }
-   return resp.Payload, nil
-}
-
-func (client *GooglePlayClient) doAuthedReq(r *http.Request) (res *gpproto.Payload, err error) {
-   return client._doAuthedReq(r)
-}
 func (g GooglePlayClient) Acquire(doc string, version uint64) error {
    var req http.Request
    req.Header = make(http.Header)
@@ -153,4 +138,18 @@ func (g GooglePlayClient) Acquire(doc string, version uint64) error {
       }
    }
    return nil
+}
+
+func (client *GooglePlayClient) doAuthedReq(r *http.Request) (_ *gpproto.Payload, err error) {
+   client.setDefaultHeaders(r)
+   b, _, err := doReq(r)
+   if err != nil {
+      return
+   }
+   resp := &gpproto.ResponseWrapper{}
+   err = proto.Unmarshal(b, resp)
+   if err != nil {
+      return
+   }
+   return resp.Payload, nil
 }
