@@ -11,7 +11,7 @@ import (
    "time"
 )
 
-const query = "doc=com.zzkko&vc=818"
+const query = "doc=com.filemanage.mobile.kkgg&vc=4"
 
 func Test_Acquire(t *testing.T) {
    text, err := os.ReadFile("client.json")
