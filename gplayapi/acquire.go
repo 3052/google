@@ -13,6 +13,80 @@ import (
    "strings"
 )
 
+func (g GooglePlayClient) Acquire(doc string, version uint64) error {
+   var req http.Request
+   req.Header = make(http.Header)
+   req.Header["X-Dfe-Device-Id"] = []string{g.AuthData.GsfID}
+   req.Header["Authorization"] = []string{"Bearer " + g.AuthData.AuthToken}
+   // org.videolan.vlc
+   body := protobuf.Message{
+      protobuf.Field{Number: 1, Type: 2, Value: protobuf.Prefix{
+         protobuf.Field{Number: 1, Type: 2, Value: protobuf.Prefix{
+            protobuf.Field{Number: 1, Type: 2,  Value: protobuf.Bytes(doc)},
+            protobuf.Field{Number: 2, Type: 0,  Value: protobuf.Varint(1)},
+            protobuf.Field{Number: 3, Type: 0,  Value: protobuf.Varint(3)},
+         }},
+         protobuf.Field{Number: 2, Type: 0,  Value: protobuf.Varint(1)},
+         protobuf.Field{Number: 3, Type: 2,  Value: protobuf.Bytes("")},
+      }},
+      protobuf.Field{Number: 8, Type: 2,  Value: protobuf.Bytes("")},
+      protobuf.Field{Number: 12, Type: 2, Value: protobuf.Prefix{
+         protobuf.Field{Number: 1, Type: 0,  Value: protobuf.Varint(version)},
+         protobuf.Field{Number: 3, Type: 0,  Value: protobuf.Varint(0)},
+      }},
+      protobuf.Field{Number: 13, Type: 0,  Value: protobuf.Varint(1)},
+      protobuf.Field{Number: 15, Type: 0,  Value: protobuf.Varint(0)},
+      protobuf.Field{Number: 22, Type: 2,  Value: protobuf.Bytes("nonce=qlIhuESfWlLW7GI7k6fWej7z403Mynf3o0dl5B9RYfWxmHxGGSGqBARF_TxpzL5RfVPW3oFX0zAHhSETtuUBv7TvrzWOx5hEgolPjFDs1lr_Po9lyH1HJ8UskVSkyMe_gImmY0-hA-I0SSaBfUXyInciRuuMtSNiXsMclJwWoW1bPgjYsQKCn5szQnDPlMvSqz4hBCbIGxGKiWe6L9f6IcmfIwlz8eSRQUA02YN633zvXDbptBIKfrpwE9_P_N0sWrOhc3k9LAQlrn4f4kXor4g98ZQ6BN6U3us7US-2ES-xiCaFvdlbIMiMvpp7_AsnLon1KyvxS_rujvoDaUyOOQ")},
+      protobuf.Field{Number: 25, Type: 0,  Value: protobuf.Varint(2)},
+      protobuf.Field{Number: 30, Type: 2, Value: protobuf.Prefix{
+         protobuf.Field{Number: 1, Type: 0,  Value: protobuf.Varint(2)},
+      }},
+   }
+   req.Header["Content-Type"] = []string{"application/x-protobuf"}
+   req.Method = "POST"
+   req.ProtoMajor = 1
+   req.ProtoMinor = 1
+   req.URL = new(url.URL)
+   req.URL.Host = "play-fe.googleapis.com"
+   req.URL.Path = "/fdfe/acquire"
+   val := make(url.Values)
+   val["theme"] = []string{"2"}
+   req.URL.RawQuery = val.Encode()
+   req.URL.Scheme = "https"
+   req.Body = io.NopCloser(bytes.NewReader(body.Append(nil)))
+   res, err := http.DefaultClient.Do(&req)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return fmt.Errorf(res.Status)
+   }
+   {
+      b, err := io.ReadAll(res.Body)
+      if err != nil {
+         return err
+      }
+      if bytes.Contains(b, []byte("Error")) {
+         return fmt.Errorf("%q", b)
+      }
+   }
+   return nil
+}
+
+func (client *GooglePlayClient) doAuthedReq(r *http.Request) (_ *gpproto.Payload, err error) {
+   client.setDefaultHeaders(r)
+   b, _, err := doReq(r)
+   if err != nil {
+      return
+   }
+   resp := &gpproto.ResponseWrapper{}
+   err = proto.Unmarshal(b, resp)
+   if err != nil {
+      return
+   }
+   return resp.Payload, nil
+}
 func doReq(r *http.Request) ([]byte, int, error) {
    res, err := http.DefaultClient.Do(r)
    if err != nil {
@@ -72,84 +146,4 @@ func parseResponse(res string) map[string]string {
       }
    }
    return ret
-}
-
-func (g GooglePlayClient) Acquire(doc string, version uint64) error {
-   var req http.Request
-   req.Header = make(http.Header)
-   req.Header["X-Dfe-Device-Id"] = []string{g.AuthData.GsfID}
-   req.Header["Authorization"] = []string{"Bearer " + g.AuthData.AuthToken}
-   acquire_body := protobuf.Message{
-      protobuf.Field{Number: 1, Type: 2, Value: protobuf.Prefix{
-         protobuf.Field{Number: 1, Type: 2, Value: protobuf.Prefix{
-            protobuf.Field{Number: 1, Type: 2,  Value: protobuf.Bytes(doc)},
-            protobuf.Field{Number: 2, Type: 0,  Value: protobuf.Varint(1)},
-            protobuf.Field{Number: 3, Type: 0,  Value: protobuf.Varint(3)},
-         }},
-         protobuf.Field{Number: 2, Type: 0,  Value: protobuf.Varint(1)},
-         protobuf.Field{Number: 3, Type: 2,  Value: protobuf.Bytes("")},
-         protobuf.Field{Number: 7, Type: 0,  Value: protobuf.Varint(1)},
-      }},
-      protobuf.Field{Number: 8, Type: 2, Value: protobuf.Prefix{
-         protobuf.Field{Number: 20, Type: 0,  Value: protobuf.Varint(0)},
-      }},
-      protobuf.Field{Number: 12, Type: 2, Value: protobuf.Prefix{
-         protobuf.Field{Number: 1, Type: 0,  Value: protobuf.Varint(version)},
-         protobuf.Field{Number: 3, Type: 0,  Value: protobuf.Varint(0)},
-      }},
-      protobuf.Field{Number: 13, Type: 0,  Value: protobuf.Varint(1)},
-      protobuf.Field{Number: 22, Type: 2,  Value: protobuf.Bytes("nonce=EBWK4qj_fNtEs0tox4hbh-G1u4JopnoReuV2oKghIivOHFEeiTi6Sp5RYynfywoaku9lU9HemuJ8qRVxKCCF6jPL1lrWj6i2OGFqYowiAgKzjqPjAgQMFGKYCRWvnxZeQqWjhzLE1yulSwmeFuZ9V380vfBvevWkGK82JemK8cOwWOiYUyYWnKO05ODUrpowvHs8hqFe8HaRM_D3_c9VZYgkMkL-RKsBQ3nn5jvkMDcbNeOt71LZ0INcu28k8lLOaDDJSNb7Ip4aSBLN427tDCnmNFhfKvOJJHwvrSiJCrHTh4GJFOYkfrUI3b1EhcEvA6KVGliLsZMJXJXm8g8mug")},
-      protobuf.Field{Number: 25, Type: 0,  Value: protobuf.Varint(2)},
-      protobuf.Field{Number: 30, Type: 2, Value: protobuf.Prefix{
-         protobuf.Field{Number: 1, Type: 0,  Value: protobuf.Varint(2)},
-      }},
-      protobuf.Field{Number: 31, Type: 2, Value: protobuf.Prefix{
-         protobuf.Field{Number: 1, Type: 0,  Value: protobuf.Varint(1695255934)},
-         protobuf.Field{Number: 2, Type: 0,  Value: protobuf.Varint(361000000)},
-      }},
-   }
-   req.Header["Content-Type"] = []string{"application/x-protobuf"}
-   req.Method = "POST"
-   req.ProtoMajor = 1
-   req.ProtoMinor = 1
-   req.URL = new(url.URL)
-   req.URL.Host = "play-fe.googleapis.com"
-   req.URL.Path = "/fdfe/acquire"
-   val := make(url.Values)
-   val["theme"] = []string{"2"}
-   req.URL.RawQuery = val.Encode()
-   req.URL.Scheme = "https"
-   req.Body = io.NopCloser(bytes.NewReader(acquire_body.Append(nil)))
-   res, err := http.DefaultClient.Do(&req)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return fmt.Errorf(res.Status)
-   }
-   {
-      b, err := io.ReadAll(res.Body)
-      if err != nil {
-         return err
-      }
-      if bytes.Contains(b, []byte("Error")) {
-         return fmt.Errorf("%q", b)
-      }
-   }
-   return nil
-}
-
-func (client *GooglePlayClient) doAuthedReq(r *http.Request) (_ *gpproto.Payload, err error) {
-   client.setDefaultHeaders(r)
-   b, _, err := doReq(r)
-   if err != nil {
-      return
-   }
-   resp := &gpproto.ResponseWrapper{}
-   err = proto.Unmarshal(b, resp)
-   if err != nil {
-      return
-   }
-   return resp.Payload, nil
 }
