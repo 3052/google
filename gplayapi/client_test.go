@@ -11,7 +11,23 @@ import (
    "time"
 )
 
-const query = "doc=com.filemanage.mobile.kkgg&vc=4"
+var tests = []struct{
+   doc string
+   version int
+}{
+   {"org.videolan.vlc", 13050405},
+   {"com.amctve.amcfullepisodes", 28021790},
+   {"br.com.rodrigokolb.realdrum", 317},
+   {"kr.sira.metal", 74},
+   {"com.google.android.apps.walletnfcrel", 930739964},
+   {"com.clearchannel.iheartradio.controller", 710310201},
+   {"app.source.getcontact", 2750},
+   {"com.google.android.youtube", 1540087232},
+   {"com.cabify.rider", 17144463},
+   {"com.instagram.android", 370111362},
+   {"org.thoughtcrime.securesms", 133103},
+   {"com.pinterest", 11348050},
+}
 
 func Test_Acquire(t *testing.T) {
    text, err := os.ReadFile("client.json")
