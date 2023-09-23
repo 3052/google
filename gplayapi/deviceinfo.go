@@ -1,11 +1,11 @@
 package gplayapi
 
 import (
-	"154.pages.dev/google/gplayapi/gpproto"
 	"fmt"
 	"strconv"
 	"strings"
 	"time"
+	"154.pages.dev/google/gplayapi/gpproto"
 )
 
 type (

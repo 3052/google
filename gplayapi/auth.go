@@ -1,14 +1,14 @@
 package gplayapi
 
 import (
-	"154.pages.dev/google/gplayapi/gpproto"
 	"bytes"
 	"errors"
 	"fmt"
-	"google.golang.org/protobuf/proto"
 	"net/http"
 	"net/url"
 	"strconv"
+	"154.pages.dev/google/gplayapi/gpproto"
+	"google.golang.org/protobuf/proto"
 )
 
 type AuthData struct {
