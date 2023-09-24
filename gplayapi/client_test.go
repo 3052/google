@@ -15,29 +15,6 @@ import (
    "time"
 )
 
-var acquire = struct{
-   doc string
-   version uint64
-}{
-   "com.unearby.sayhi", 2044,
-}
-
-func Test_Acquire(t *testing.T) {
-   text, err := os.ReadFile("client.json")
-   if err != nil {
-      t.Fatal(err)
-   }
-   var client GooglePlayClient
-   if err := json.Unmarshal(text, &client); err != nil {
-      t.Fatal(err)
-   }
-   option.No_Location()
-   option.Trace()
-   if err := client.Acquire(acquire.doc, acquire.version); err != nil {
-      t.Fatal(err)
-   }
-}
-
 func (g GooglePlayClient) Acquire(doc string, version uint64) error {
    var req http.Request
    req.Header = make(http.Header)
@@ -145,4 +122,26 @@ func Test_Client(t *testing.T) {
    enc := json.NewEncoder(file)
    enc.SetIndent("", " ")
    enc.Encode(client)
+}
+var acquire = struct{
+   doc string
+   version uint64
+}{
+   "com.unearby.sayhi", 2044,
+}
+
+func Test_Acquire(t *testing.T) {
+   text, err := os.ReadFile("client.json")
+   if err != nil {
+      t.Fatal(err)
+   }
+   var client GooglePlayClient
+   if err := json.Unmarshal(text, &client); err != nil {
+      t.Fatal(err)
+   }
+   option.No_Location()
+   option.Trace()
+   if err := client.Acquire(acquire.doc, acquire.version); err != nil {
+      t.Fatal(err)
+   }
 }

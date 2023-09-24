@@ -21,7 +21,7 @@ func (h Header) Purchase(doc string) error {
    }
    req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
    req.Header.Set(h.Authorization())
-   req.Header.Set(h.Device())
+   req.Header.Set(h.Device_ID())
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return err

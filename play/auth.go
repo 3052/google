@@ -2,12 +2,55 @@ package play
 
 import (
    "154.pages.dev/protobuf"
+   "encoding/base64"
    "io"
    "net/http"
    "net/url"
    "strconv"
    "strings"
+   "time"
 )
+
+type Header struct {
+   Agent func() (string, string)
+   Authorization func() (string, string)
+   Device_Config func() (string, string)
+   Device_ID func() (string, string)
+}
+
+func (h *Header) Set_Device(device []byte) error {
+   var (
+      dev Device
+      err error
+   )
+   dev.m, err = protobuf.Consume(device)
+   if err != nil {
+      return err
+   }
+   id, err := dev.android_ID()
+   if err != nil {
+      return err
+   }
+   h.Device_ID = func() (string, string) {
+      return "X-DFE-Device-ID", strconv.FormatUint(id, 16)
+   }
+   h.Device_Config = func() (string, string) {
+      id := strconv.FormatUint(id, 10)
+      date := strconv.FormatInt(time.Now().UnixMicro(), 10)
+      b := protobuf.Message{
+         protobuf.Field{Number: 1, Type: 2, Value: protobuf.Prefix{
+            protobuf.Field{Number: 3, Type: 2, Value: protobuf.Prefix{
+               protobuf.Field{Number: 1, Type: 2,  Value: protobuf.Bytes(id)},
+               protobuf.Field{Number: 2, Type: 2, Value: protobuf.Prefix{
+                  protobuf.Field{Number: 1, Type: 2,  Value: protobuf.Bytes(date)},
+               }},
+            }},
+         }},
+      }.Append(nil)
+      return "X-DFE-Device-Config-Token", base64.StdEncoding.EncodeToString(b)
+   }
+   return nil
+}
 
 func (h *Header) Set_Authorization(token []byte) error {
    refresh, err := func() (Refresh_Token, error) {
@@ -71,12 +114,6 @@ func (a Access_Token) auth() string {
    return a["Auth"]
 }
 
-type Header struct {
-   Agent func() (string, string)
-   Authorization func() (string, string)
-   Device func() (string, string)
-}
-
 func (h *Header) Set_Agent(single bool) {
    var b []byte
    // `sdk` is needed for `/fdfe/delivery`
@@ -96,25 +133,6 @@ func (h *Header) Set_Agent(single bool) {
    h.Agent = func() (string, string) {
       return "User-Agent", string(b)
    }
-}
-
-func (h *Header) Set_Device(device []byte) error {
-   var (
-      dev Device
-      err error
-   )
-   dev.m, err = protobuf.Consume(device)
-   if err != nil {
-      return err
-   }
-   id, err := dev.android_ID()
-   if err != nil {
-      return err
-   }
-   h.Device = func() (string, string) {
-      return "X-DFE-Device-ID", strconv.FormatUint(id, 16)
-   }
-   return nil
 }
 
 func (r Refresh_Token) token() string {

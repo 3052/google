@@ -112,7 +112,7 @@ func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
    }.Encode()
    req.Header.Set(h.Agent())
    req.Header.Set(h.Authorization())
-   req.Header.Set(h.Device())
+   req.Header.Set(h.Device_ID())
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return nil, err
