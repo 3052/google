@@ -18,6 +18,7 @@ type flags struct {
    single bool
    trace bool
    vc uint64
+   acquire bool
 }
 
 func main() {
@@ -31,10 +32,13 @@ func main() {
    flag.StringVar(&f.doc, "d", "", "doc")
    flag.BoolVar(&f.device, "device", false, "create device")
    flag.Int64Var(&f.platform, "p", 0, play.Platforms.String())
-   flag.BoolVar(&f.purchase, "purchase", false, "purchase request")
    flag.BoolVar(&f.single, "s", false, "single APK")
    flag.BoolVar(&f.trace, "t", false, "print full HTTP requests")
    flag.Uint64Var(&f.vc, "v", 0, "version code")
+   
+   flag.BoolVar(&f.purchase, "purchase", false, "purchase request")
+   flag.BoolVar(&f.acquire, "a", false, "acquire")
+   
    flag.Parse()
    dir, err := os.UserHomeDir()
    if err != nil {
@@ -69,6 +73,11 @@ func main() {
             panic(err)
          }
          switch {
+         case f.acquire:
+            err := head.Acquire(f.doc)
+            if err != nil {
+               panic(err)
+            }
          case f.purchase:
             err := head.Purchase(f.doc)
             if err != nil {
