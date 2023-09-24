@@ -15,6 +15,40 @@ import (
    "time"
 )
 
+func Test_Delivery(t *testing.T) {
+   text, err := os.ReadFile("client.json")
+   if err != nil {
+      t.Fatal(err)
+   }
+   var client GooglePlayClient
+   if err := json.Unmarshal(text, &client); err != nil {
+      t.Fatal(err)
+   }
+   option.No_Location()
+   option.Trace()
+   deliver, err := client.GetDeliveryResponse("kr.sira.metal", 74)
+   if err != nil {
+      t.Fatal(err)
+   }
+   fmt.Println(deliver)
+}
+
+func Test_Acquire(t *testing.T) {
+   text, err := os.ReadFile("client.json")
+   if err != nil {
+      t.Fatal(err)
+   }
+   var client GooglePlayClient
+   if err := json.Unmarshal(text, &client); err != nil {
+      t.Fatal(err)
+   }
+   option.No_Location()
+   option.Trace()
+   if err := client.Acquire("kr.sira.metal", 74); err != nil {
+      t.Fatal(err)
+   }
+}
+
 func (g GooglePlayClient) Acquire(doc string, version uint64) error {
    var req http.Request
    req.Header = make(http.Header)
@@ -95,22 +129,6 @@ func (g GooglePlayClient) Acquire(doc string, version uint64) error {
       }
    }
    return nil
-}
-
-func Test_Acquire(t *testing.T) {
-   text, err := os.ReadFile("client.json")
-   if err != nil {
-      t.Fatal(err)
-   }
-   var client GooglePlayClient
-   if err := json.Unmarshal(text, &client); err != nil {
-      t.Fatal(err)
-   }
-   option.No_Location()
-   option.Trace()
-   if err := client.Acquire("kr.sira.metal", 74); err != nil {
-      t.Fatal(err)
-   }
 }
 
 func Test_Client(t *testing.T) {
