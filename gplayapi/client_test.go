@@ -12,38 +12,27 @@ import (
    "net/url"
    "os"
    "testing"
+   "time"
 )
-
-var cookie_one_out = protobuf.Message{
-   protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(1)},
-   protobuf.Field{Number: 3, Type: 0, Value: protobuf.Varint(0)},
-   protobuf.Field{Number: 4, Type: 2, Value: protobuf.Bytes("US")},
-   //protobuf.Field{Number: 6, Type: 2, Value: protobuf.Bytes("CjgaNgoTNDUzMDYxNDA0NTUzNjAxMzY4MBIfChAxNjk1NTEyMzkzMDE1MTY5EgsIye69qAYQ6OudBw==")},
-   protobuf.Field{Number: 8, Type: 2, Value: protobuf.Prefix{
-      protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("US-TX")},
-      protobuf.Field{Number: 2, Type: 2, Value: protobuf.Prefix{
-         protobuf.Field{Number: 1, Type: 0, Value: protobuf.Varint(1697931593)},
-         protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(191308000)},
-      }},
-   }},
-   protobuf.Field{Number: 9, Type: 2, Value: protobuf.Prefix{
-      protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("US")},
-      protobuf.Field{Number: 2, Type: 2, Value: protobuf.Prefix{
-         protobuf.Field{Number: 1, Type: 0, Value: protobuf.Varint(1697931593)},
-         protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(191373000)},
-      }},
-   }},
-   protobuf.Field{Number: 11, Type: 0, Value: protobuf.Varint(0)},
-}
 
 func (g GooglePlayClient) Acquire(doc string, version uint64) error {
    var req http.Request
    req.Header = make(http.Header)
-   
-   req.Header.Set("X-DFE-Cookie", base64.RawStdEncoding.EncodeToString(
-      cookie_one_out.Append(nil),
-   ))
-   
+   date := fmt.Sprint(time.Now().UnixMicro())
+   token_one := protobuf.Message{
+      protobuf.Field{Number: 1, Type: 2, Value: protobuf.Prefix{
+         protobuf.Field{Number: 3, Type: 2, Value: protobuf.Prefix{
+            protobuf.Field{Number: 1, Type: 2,  Value: protobuf.Bytes(fmt.Sprint(g.AuthData.GsfID))},
+            protobuf.Field{Number: 2, Type: 2, Value: protobuf.Prefix{
+               protobuf.Field{Number: 1, Type: 2,  Value: protobuf.Bytes(date)},
+            }},
+         }},
+      }},
+   }
+   req.Header.Set(
+      "X-DFE-Device-Config-Token",
+      base64.StdEncoding.EncodeToString(token_one.Append(nil)),
+   )
    req.Header["X-Dfe-Device-Id"] = []string{g.AuthData.GsfID}
    req.Header["Authorization"] = []string{"Bearer " + g.AuthData.AuthToken}
    req.Header["Content-Type"] = []string{"application/x-protobuf"}
