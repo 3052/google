@@ -4,6 +4,7 @@ import (
    "154.pages.dev/http/option"
    "154.pages.dev/protobuf"
    "bytes"
+   "encoding/base64"
    "encoding/json"
    "fmt"
    "io"
@@ -13,56 +14,35 @@ import (
    "testing"
 )
 
-// 10 minute fail
-func Test_Acquire(t *testing.T) {
-   text, err := os.ReadFile("client.json")
-   if err != nil {
-      t.Fatal(err)
-   }
-   var client GooglePlayClient
-   if err := json.Unmarshal(text, &client); err != nil {
-      t.Fatal(err)
-   }
-   option.No_Location()
-   option.Trace()
-   if err := client.Acquire("kr.sira.metal", 74); err != nil {
-      t.Fatal(err)
-   }
-}
-
-func Test_Client(t *testing.T) {
-   token, err := func() (string, error) {
-      b, err := os.ReadFile(`C:\Users\Steven\google\play\token.txt`)
-      if err != nil {
-         return "", err
-      }
-      return parseResponse(string(b))["Token"], nil
-   }()
-   if err != nil {
-      t.Fatal(err)
-   }
-   client, err := NewClientWithDeviceInfo(
-      "srpen6@gmail.com", token, Emulator_x86,
-   )
-   if err != nil {
-      t.Fatal(err)
-   }
-   file, err := os.Create("client.json")
-   if err != nil {
-      t.Fatal(err)
-   }
-   defer file.Close()
-   enc := json.NewEncoder(file)
-   enc.SetIndent("", " ")
-   enc.Encode(client)
+var cookie_one_out = protobuf.Message{
+   protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(1)},
+   protobuf.Field{Number: 3, Type: 0, Value: protobuf.Varint(0)},
+   protobuf.Field{Number: 4, Type: 2, Value: protobuf.Bytes("US")},
+   //protobuf.Field{Number: 6, Type: 2, Value: protobuf.Bytes("CjgaNgoTNDUzMDYxNDA0NTUzNjAxMzY4MBIfChAxNjk1NTEyMzkzMDE1MTY5EgsIye69qAYQ6OudBw==")},
+   protobuf.Field{Number: 8, Type: 2, Value: protobuf.Prefix{
+      protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("US-TX")},
+      protobuf.Field{Number: 2, Type: 2, Value: protobuf.Prefix{
+         protobuf.Field{Number: 1, Type: 0, Value: protobuf.Varint(1697931593)},
+         protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(191308000)},
+      }},
+   }},
+   protobuf.Field{Number: 9, Type: 2, Value: protobuf.Prefix{
+      protobuf.Field{Number: 1, Type: 2, Value: protobuf.Bytes("US")},
+      protobuf.Field{Number: 2, Type: 2, Value: protobuf.Prefix{
+         protobuf.Field{Number: 1, Type: 0, Value: protobuf.Varint(1697931593)},
+         protobuf.Field{Number: 2, Type: 0, Value: protobuf.Varint(191373000)},
+      }},
+   }},
+   protobuf.Field{Number: 11, Type: 0, Value: protobuf.Varint(0)},
 }
 
 func (g GooglePlayClient) Acquire(doc string, version uint64) error {
    var req http.Request
    req.Header = make(http.Header)
    
-   req.Header.Set("X-DFE-Cookie", "")
-   req.Header.Set("X-DFE-Device-Config-Token", "")
+   req.Header.Set("X-DFE-Cookie", base64.RawStdEncoding.EncodeToString(
+      cookie_one_out.Append(nil),
+   ))
    
    req.Header["X-Dfe-Device-Id"] = []string{g.AuthData.GsfID}
    req.Header["Authorization"] = []string{"Bearer " + g.AuthData.AuthToken}
@@ -126,4 +106,47 @@ func (g GooglePlayClient) Acquire(doc string, version uint64) error {
       }
    }
    return nil
+}
+
+func Test_Acquire(t *testing.T) {
+   text, err := os.ReadFile("client.json")
+   if err != nil {
+      t.Fatal(err)
+   }
+   var client GooglePlayClient
+   if err := json.Unmarshal(text, &client); err != nil {
+      t.Fatal(err)
+   }
+   option.No_Location()
+   option.Trace()
+   if err := client.Acquire("kr.sira.metal", 74); err != nil {
+      t.Fatal(err)
+   }
+}
+
+func Test_Client(t *testing.T) {
+   token, err := func() (string, error) {
+      b, err := os.ReadFile(`C:\Users\Steven\google\play\token.txt`)
+      if err != nil {
+         return "", err
+      }
+      return parseResponse(string(b))["Token"], nil
+   }()
+   if err != nil {
+      t.Fatal(err)
+   }
+   client, err := NewClientWithDeviceInfo(
+      "srpen6@gmail.com", token, Emulator_x86,
+   )
+   if err != nil {
+      t.Fatal(err)
+   }
+   file, err := os.Create("client.json")
+   if err != nil {
+      t.Fatal(err)
+   }
+   defer file.Close()
+   enc := json.NewEncoder(file)
+   enc.SetIndent("", " ")
+   enc.Encode(client)
 }
