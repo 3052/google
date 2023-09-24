@@ -14,7 +14,6 @@ type flags struct {
    device bool
    doc string
    platform int64
-   purchase bool
    single bool
    trace bool
    vc uint64
@@ -35,10 +34,7 @@ func main() {
    flag.BoolVar(&f.single, "s", false, "single APK")
    flag.BoolVar(&f.trace, "t", false, "print full HTTP requests")
    flag.Uint64Var(&f.vc, "v", 0, "version code")
-   
-   flag.BoolVar(&f.purchase, "purchase", false, "purchase request")
    flag.BoolVar(&f.acquire, "a", false, "acquire")
-   
    flag.Parse()
    dir, err := os.UserHomeDir()
    if err != nil {
@@ -73,11 +69,6 @@ func main() {
          switch {
          case f.acquire:
             err := head.Acquire(f.doc)
-            if err != nil {
-               panic(err)
-            }
-         case f.purchase:
-            err := head.Purchase(f.doc)
             if err != nil {
                panic(err)
             }

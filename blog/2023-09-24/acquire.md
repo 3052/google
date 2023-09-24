@@ -1,5 +1,13 @@
 # /fdfe/acquire
 
+when is `/fdfe/acquire` first seen? here:
+
+~~~
+apkmirror.com/apk/google-inc/google-play-store/google-play-store-11-9-30-release
+~~~
+
+---------------------------------------------------------------------------------
+
 looks like with Google Play Store 11-13, X-DFE-Signature-Request is required
 with the `/fdfe/acquire`. supposedly its just 256 bytes of random, but I cant
 get it to work. looks like the header was dropped in Google Play Store 14, so I
@@ -39,9 +47,6 @@ prevents `/fdfe/acquire` from running, and will just go straight to
 because for testing, we want `/fdfe/acquire` to run every time.
 
 if you block `/fdfe/replicateLibrary` then acquire seems to work as normal.
-
-interestingly, if you block `/fdfe/replicateLibrary`, and acquire, it seems to
-fall back to the old `/fdfe/purchase`
 
 ---------------------------------------------------------------------------------
 

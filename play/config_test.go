@@ -1,6 +1,7 @@
 package play
 
 import (
+   "fmt"
    "os"
    "testing"
    "time"
@@ -17,7 +18,8 @@ func checkin_create(id int64) error {
       return err
    }
    os.WriteFile(home + Platforms[id] + ".bin", data, 0666)
-   time.Sleep(Sleep)
+   fmt.Println("Sleep(9*time.Second)")
+   time.Sleep(9*time.Second)
    return nil
 }
 

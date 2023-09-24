@@ -8,8 +8,6 @@ def request(f: http.HTTPFlow) -> None:
       f.kill()
    if f.request.path.startswith('/fdfe/delivery'):
       f.kill()
-   if f.request.path.startswith('/fdfe/purchase'):
-      f.kill()
    if f.request.path.startswith('/fdfe/replicateLibrary'):
       f.kill()
    if f.request.path.startswith('/play-apps-download-default/download/by-id/'):
