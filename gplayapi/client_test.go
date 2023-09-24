@@ -13,6 +13,7 @@ import (
    "testing"
 )
 
+// 10 minute fail
 func Test_Acquire(t *testing.T) {
    text, err := os.ReadFile("client.json")
    if err != nil {
@@ -55,11 +56,23 @@ func Test_Client(t *testing.T) {
    enc.SetIndent("", " ")
    enc.Encode(client)
 }
+
 func (g GooglePlayClient) Acquire(doc string, version uint64) error {
    var req http.Request
    req.Header = make(http.Header)
+   
+   req.Header.Set("X-DFE-Cookie", "")
+   req.Header.Set("X-DFE-Device-Config-Token", "")
+   
    req.Header["X-Dfe-Device-Id"] = []string{g.AuthData.GsfID}
    req.Header["Authorization"] = []string{"Bearer " + g.AuthData.AuthToken}
+   req.Header["Content-Type"] = []string{"application/x-protobuf"}
+   req.Header["Accept-Language"] = []string{"en-US"}
+   req.Header["Connection"] = []string{"Keep-Alive"}
+   req.Header["X-Dfe-Client-Id"] = []string{"am-unknown"}
+   req.Header["X-Dfe-Mccmnc"] = []string{"310260"}
+   req.Header["X-Dfe-Network-Type"] = []string{"4"}
+   req.Header["X-Dfe-Request-Params"] = []string{"timeoutMs=35000"}
    // org.videolan.vlc
    body := protobuf.Message{
       protobuf.Field{Number: 1, Type: 2, Value: protobuf.Prefix{
@@ -84,7 +97,6 @@ func (g GooglePlayClient) Acquire(doc string, version uint64) error {
          protobuf.Field{Number: 1, Type: 0,  Value: protobuf.Varint(2)},
       }},
    }
-   req.Header["Content-Type"] = []string{"application/x-protobuf"}
    req.Method = "POST"
    req.ProtoMajor = 1
    req.ProtoMinor = 1
