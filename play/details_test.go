@@ -50,6 +50,7 @@ func (a app_type) GoString() string {
    b = append(b, '}')
    return string(b)
 }
+
 func Test_Details(t *testing.T) {
    home, err := os.UserHomeDir()
    if err != nil {
@@ -131,4 +132,3 @@ type app_type struct {
    downloads uint64
    doc string
 }
-

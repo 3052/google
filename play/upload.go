@@ -5,31 +5,7 @@ import (
    "bytes"
    "errors"
    "net/http"
-   "strconv"
 )
-
-type Native_Platform map[int64]string
-
-var Platforms = Native_Platform{
-   // com.google.android.youtube
-   0: "x86",
-   // com.miui.weather2
-   1: "armeabi-v7a",
-   // com.kakaogames.twodin
-   2: "arm64-v8a",
-}
-
-func (n Native_Platform) String() string {
-   var b []byte
-   b = append(b, "native platform"...)
-   for key, value := range n {
-      b = append(b, '\n')
-      b = strconv.AppendInt(b, key, 10)
-      b = append(b, ": "...)
-      b = append(b, value...)
-   }
-   return string(b)
-}
 
 func (h Header) Upload(c Config, platform string) error {
    var m protobuf.Message
