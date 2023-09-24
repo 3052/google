@@ -13,6 +13,48 @@ import (
    "strings"
 )
 
+func NewClientWithDeviceInfo(email, aasToken string, deviceInfo *DeviceInfo) (client *GooglePlayClient, err error) {
+   authData := &AuthData{
+      Email:    email,
+      AASToken: aasToken,
+      Locale:   "en_GB",
+   }
+   client = &GooglePlayClient{AuthData: authData, DeviceInfo: deviceInfo}
+
+   _, err = client.GenerateGsfID()
+   if err != nil {
+      return
+   }
+
+   deviceConfigRes, err := client.uploadDeviceConfig()
+   if err != nil {
+      return
+   }
+   authData.DeviceConfigToken = deviceConfigRes.GetUploadDeviceConfigToken()
+
+   token, err := client.GenerateGPToken()
+   if err != nil {
+      return
+   }
+   authData.AuthToken = token
+
+   _, err = client.toc()
+   return
+}
+
+func doReq(r *http.Request) ([]byte, int, error) {
+   res, err := http.DefaultClient.Do(r)
+   if err != nil {
+      return nil, 0, err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, 0, errors.New(res.Status)
+   }
+   b, err := io.ReadAll(res.Body)
+   return b, res.StatusCode, err
+}
+
 type (
    App struct {
       PackageName        string
@@ -74,40 +116,7 @@ type GooglePlayClient struct {
    SessionFile string
 }
 
-var (
-   err_GPTokenExpired = errors.New("unauthorized, gp token expired")
-
-   httpClient = &http.Client{}
-)
-
-func NewClientWithDeviceInfo(email, aasToken string, deviceInfo *DeviceInfo) (client *GooglePlayClient, err error) {
-   authData := &AuthData{
-      Email:    email,
-      AASToken: aasToken,
-      Locale:   "en_GB",
-   }
-   client = &GooglePlayClient{AuthData: authData, DeviceInfo: deviceInfo}
-
-   _, err = client.GenerateGsfID()
-   if err != nil {
-      return
-   }
-
-   deviceConfigRes, err := client.uploadDeviceConfig()
-   if err != nil {
-      return
-   }
-   authData.DeviceConfigToken = deviceConfigRes.GetUploadDeviceConfigToken()
-
-   token, err := client.GenerateGPToken()
-   if err != nil {
-      return
-   }
-   authData.AuthToken = token
-
-   _, err = client.toc()
-   return
-}
+var err_GPTokenExpired = errors.New("unauthorized, gp token expired")
 
 func (client *GooglePlayClient) SaveSession(file string) error {
    f, err := os.OpenFile(file, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
@@ -177,16 +186,6 @@ func ptrStr(str string) *string {
 
 func ptrInt32(i int32) *int32 {
    return &i
-}
-
-func doReq(r *http.Request) ([]byte, int, error) {
-   res, err := httpClient.Do(r)
-   if err != nil {
-      return nil, 0, err
-   }
-   defer res.Body.Close()
-   b, err := io.ReadAll(res.Body)
-   return b, res.StatusCode, err
 }
 
 func parseResponse(res string) map[string]string {

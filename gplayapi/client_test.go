@@ -15,6 +15,51 @@ import (
    "time"
 )
 
+func Test_Client(t *testing.T) {
+   token, err := func() (string, error) {
+      b, err := os.ReadFile(`C:\Users\Steven\google\play\token.txt`)
+      if err != nil {
+         return "", err
+      }
+      return parseResponse(string(b))["Token"], nil
+   }()
+   if err != nil {
+      t.Fatal(err)
+   }
+   option.No_Location()
+   option.Verbose()
+   client, err := NewClientWithDeviceInfo(
+      "srpen6@gmail.com", token, Emulator_x86,
+   )
+   if err != nil {
+      t.Fatal(err)
+   }
+   file, err := os.Create("client.json")
+   if err != nil {
+      t.Fatal(err)
+   }
+   defer file.Close()
+   enc := json.NewEncoder(file)
+   enc.SetIndent("", " ")
+   enc.Encode(client)
+}
+
+func Test_Acquire(t *testing.T) {
+   text, err := os.ReadFile("client.json")
+   if err != nil {
+      t.Fatal(err)
+   }
+   var client GooglePlayClient
+   if err := json.Unmarshal(text, &client); err != nil {
+      t.Fatal(err)
+   }
+   option.No_Location()
+   option.Trace()
+   if err := client.Acquire(acquire.doc, acquire.version); err != nil {
+      t.Fatal(err)
+   }
+}
+
 func (g GooglePlayClient) Acquire(doc string, version uint64) error {
    var req http.Request
    req.Header = make(http.Header)
@@ -97,51 +142,9 @@ func (g GooglePlayClient) Acquire(doc string, version uint64) error {
    return nil
 }
 
-func Test_Client(t *testing.T) {
-   token, err := func() (string, error) {
-      b, err := os.ReadFile(`C:\Users\Steven\google\play\token.txt`)
-      if err != nil {
-         return "", err
-      }
-      return parseResponse(string(b))["Token"], nil
-   }()
-   if err != nil {
-      t.Fatal(err)
-   }
-   client, err := NewClientWithDeviceInfo(
-      "srpen6@gmail.com", token, Emulator_x86,
-   )
-   if err != nil {
-      t.Fatal(err)
-   }
-   file, err := os.Create("client.json")
-   if err != nil {
-      t.Fatal(err)
-   }
-   defer file.Close()
-   enc := json.NewEncoder(file)
-   enc.SetIndent("", " ")
-   enc.Encode(client)
-}
 var acquire = struct{
    doc string
    version uint64
 }{
    "com.unearby.sayhi", 2044,
-}
-
-func Test_Acquire(t *testing.T) {
-   text, err := os.ReadFile("client.json")
-   if err != nil {
-      t.Fatal(err)
-   }
-   var client GooglePlayClient
-   if err := json.Unmarshal(text, &client); err != nil {
-      t.Fatal(err)
-   }
-   option.No_Location()
-   option.Trace()
-   if err := client.Acquire(acquire.doc, acquire.version); err != nil {
-      t.Fatal(err)
-   }
 }

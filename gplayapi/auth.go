@@ -11,6 +11,25 @@ import (
    "google.golang.org/protobuf/proto"
 )
 
+func (client *GooglePlayClient) toc() (_ *gpproto.TocResponse, err error) {
+   r, _ := http.NewRequest("GET", UrlToc, nil)
+   payload, err := client.doAuthedReq(r)
+   if err != nil {
+      return
+   }
+   tocResp := payload.TocResponse
+   if tocResp.TosContent != nil && tocResp.TosToken != nil {
+      err = client.acceptTos(*tocResp.TosToken)
+      if err != nil {
+         return
+      }
+   }
+   if tocResp.Cookie != nil {
+      client.AuthData.DFECookie = *tocResp.Cookie
+   }
+   return
+}
+
 type AuthData struct {
    Email                         string
    AASToken                      string
@@ -85,25 +104,6 @@ func (client *GooglePlayClient) GenerateGPToken() (string, error) {
       return "", errors.New("authentication failed: could not generate oauth token")
    }
    return token, nil
-}
-
-func (client *GooglePlayClient) toc() (_ *gpproto.TocResponse, err error) {
-   r, _ := http.NewRequest("GET", UrlToc, nil)
-   payload, err := client.doAuthedReq(r)
-   if err != nil {
-      return
-   }
-   tocResp := payload.TocResponse
-   if tocResp.TosContent != nil && tocResp.TosToken != nil {
-      err = client.acceptTos(*tocResp.TosToken)
-      if err != nil {
-         return
-      }
-   }
-   if tocResp.Cookie != nil {
-      client.AuthData.DFECookie = *tocResp.Cookie
-   }
-   return
 }
 
 func (client *GooglePlayClient) acceptTos(tosToken string) error {
