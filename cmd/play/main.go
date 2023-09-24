@@ -45,9 +45,7 @@ func main() {
       panic(err)
    }
    dir += "/google/play"
-   if err := os.MkdirAll(dir, os.ModePerm); err != nil {
-      panic(err)
-   }
+   os.MkdirAll(dir, os.ModePerm)
    option.No_Location()
    if f.trace {
       option.Trace()

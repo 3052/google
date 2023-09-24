@@ -15,33 +15,11 @@ import (
    "time"
 )
 
-func Test_Client(t *testing.T) {
-   token, err := func() (string, error) {
-      b, err := os.ReadFile(`C:\Users\Steven\google\play\token.txt`)
-      if err != nil {
-         return "", err
-      }
-      return parseResponse(string(b))["Token"], nil
-   }()
-   if err != nil {
-      t.Fatal(err)
-   }
-   option.No_Location()
-   option.Verbose()
-   client, err := NewClientWithDeviceInfo(
-      "srpen6@gmail.com", token, Emulator_x86,
-   )
-   if err != nil {
-      t.Fatal(err)
-   }
-   file, err := os.Create("client.json")
-   if err != nil {
-      t.Fatal(err)
-   }
-   defer file.Close()
-   enc := json.NewEncoder(file)
-   enc.SetIndent("", " ")
-   enc.Encode(client)
+var acquire = struct{
+   doc string
+   version uint64
+}{
+   "com.att.personalcloud", 2022128400,
 }
 
 func Test_Acquire(t *testing.T) {
@@ -141,10 +119,32 @@ func (g GooglePlayClient) Acquire(doc string, version uint64) error {
    }
    return nil
 }
-
-var acquire = struct{
-   doc string
-   version uint64
-}{
-   "com.unearby.sayhi", 2044,
+func Test_Client(t *testing.T) {
+   token, err := func() (string, error) {
+      b, err := os.ReadFile(`C:\Users\Steven\google\play\token.txt`)
+      if err != nil {
+         return "", err
+      }
+      return parseResponse(string(b))["Token"], nil
+   }()
+   if err != nil {
+      t.Fatal(err)
+   }
+   option.No_Location()
+   option.Verbose()
+   client, err := NewClientWithDeviceInfo(
+      "srpen6@gmail.com", token, Emulator_x86,
+   )
+   if err != nil {
+      t.Fatal(err)
+   }
+   file, err := os.Create("client.json")
+   if err != nil {
+      t.Fatal(err)
+   }
+   defer file.Close()
+   enc := json.NewEncoder(file)
+   enc.SetIndent("", " ")
+   enc.Encode(client)
 }
+

@@ -9,6 +9,24 @@ import (
    "time"
 )
 
+func (f flags) do_device(dir, platform string) error {
+   data, err := play.Phone.Checkin(platform)
+   if err != nil {
+      return err
+   }
+   os.WriteFile(dir + "/" + platform + ".bin", data, 0666)
+   head, err := f.do_header(dir, platform)
+   if err != nil {
+      return err
+   }
+   if err := head.Upload(play.Phone, platform); err != nil {
+      return err
+   }
+   fmt.Println("Sleep(9*time.Second)")
+   time.Sleep(9*time.Second)
+   return nil
+}
+
 func (f flags) do_delivery(head *play.Header) error {
    deliver, err := head.Delivery(f.doc, f.vc)
    if err != nil {
@@ -55,19 +73,6 @@ func (f flags) do_auth(dir string) error {
       return err
    }
    return os.WriteFile(dir + "/token.txt", text, 0666)
-}
-func (f flags) do_device(dir, platform string) error {
-   data, err := play.Phone.Checkin(platform)
-   if err != nil {
-      return err
-   }
-   err = os.WriteFile(dir + "/" + platform + ".bin", data, 0666)
-   if err != nil {
-      return err
-   }
-   fmt.Printf("Sleeping %v for server to process\n", play.Sleep)
-   time.Sleep(play.Sleep)
-   return nil
 }
 
 func (f flags) do_header(dir, platform string) (*play.Header, error) {
