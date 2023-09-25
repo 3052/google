@@ -11,21 +11,6 @@ import (
    "time"
 )
 
-// These can use default values, but they must all be included
-type Config struct {
-   GL_ES_Version uint64
-   GL_Extension []string
-   Has_Five_Way_Navigation bool
-   Has_Hard_Keyboard bool
-   Keyboard uint64
-   Navigation uint64
-   Screen_Density uint64
-   Screen_Layout uint64
-   System_Available_Feature []string
-   System_Shared_Library []string
-   Touch_Screen uint64
-}
-
 var Phone = Config{
    System_Available_Feature: []string{
       // app.source.getcontact
@@ -82,8 +67,23 @@ var Phone = Config{
       "GL_KHR_texture_compression_astc_ldr",
    },
    // com.axis.drawingdesk.v3
-   // valid range 0x3_0001 - 0x7FFF_FFFF
-   GL_ES_Version: 0xF_FFFF,
+   // valid range 0x03_00_01 - math.MaxInt32  
+   GL_ES_Version: 0xFF_FF_FF,
+}
+
+// These can use default values, but they must all be included
+type Config struct {
+   GL_ES_Version uint64
+   GL_Extension []string
+   Has_Five_Way_Navigation bool
+   Has_Hard_Keyboard bool
+   Keyboard uint64
+   Navigation uint64
+   Screen_Density uint64
+   Screen_Layout uint64
+   System_Available_Feature []string
+   System_Shared_Library []string
+   Touch_Screen uint64
 }
 
 // Checkin$AndroidCheckinResponse

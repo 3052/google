@@ -34,17 +34,17 @@ func (h Header) Acquire(doc string) error {
    if err != nil {
       return err
    }
-   req.Header.Set("Accept-Language", "en-US")
-   req.Header.Set("Connection", "Keep-Alive")
-   req.Header.Set("Content-Type", "application/x-protobuf")
-   req.Header.Set("X-Dfe-Client-Id", "am-unknown")
-   req.Header.Set("X-Dfe-Mccmnc", "310260")
-   req.Header.Set("X-Dfe-Network-Type", "4")
-   req.Header.Set("X-Dfe-Request-Params", "timeoutMs=35000")
+   //req.Header.Set("Accept-Language", "en-US")
+   //req.Header.Set("Connection", "Keep-Alive")
+   //req.Header.Set("Content-Type", "application/x-protobuf")
+   //req.Header.Set("X-Dfe-Client-Id", "am-unknown")
+   //req.Header.Set("X-Dfe-Mccmnc", "310260")
+   //req.Header.Set("X-Dfe-Network-Type", "4")
+   //req.Header.Set("X-Dfe-Request-Params", "timeoutMs=35000")
+   //req.URL.RawQuery = "theme=2"
    req.Header.Set(h.Authorization())
    req.Header.Set(h.Device_Config())
    req.Header.Set(h.Device_ID())
-   req.URL.RawQuery = "theme=2"
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return err
