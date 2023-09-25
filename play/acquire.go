@@ -53,14 +53,44 @@ func (h Header) Acquire(doc string) error {
    if res.StatusCode != http.StatusOK {
       return fmt.Errorf(res.Status)
    }
-   {
+   m, err = func() (protobuf.Message, error) {
       b, err := io.ReadAll(res.Body)
       if err != nil {
-         return err
+         return nil, err
       }
-      if bytes.Contains(b, []byte("Error")) {
-         return fmt.Errorf("%q", b)
-      }
+      return protobuf.Consume(b)
+   }()
+   if err != nil {
+      return err
+   }
+   m, _ = m.Message(1)
+   m, _ = m.Message(94)
+   m, _ = m.Message(1)
+   m, _ = m.Message(2)
+   if m, ok := m.Message(175996169); ok {
+      return acquire_error{m}
    }
    return nil
+}
+
+type acquire_error struct {
+   m protobuf.Message
+}
+
+func (a acquire_error) Error() string {
+   var b []byte
+   for _, f := range a.m {
+      if f.Number == 2 {
+         if m, ok := f.Message(); ok {
+            m, _ = m.Message(20)
+            m, _ = m.Message(1)
+            c, _ := m.Bytes(1)
+            if b != nil {
+               b = append(b, '\n')
+            }
+            b = append(b, c...)
+         }
+      }
+   }
+   return string(b)
 }

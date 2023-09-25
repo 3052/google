@@ -11,6 +11,29 @@ import (
    "time"
 )
 
+type Native_Platform map[int64]string
+
+var Platforms = Native_Platform{
+   // com.google.android.youtube
+   0: "x86",
+   // com.miui.weather2
+   1: "armeabi-v7a",
+   // com.kakaogames.twodin
+   2: "arm64-v8a",
+}
+
+func (n Native_Platform) String() string {
+   var b []byte
+   b = append(b, "native platform"...)
+   for key, value := range n {
+      b = append(b, '\n')
+      b = strconv.AppendInt(b, key, 10)
+      b = append(b, ": "...)
+      b = append(b, value...)
+   }
+   return string(b)
+}
+
 var Phone = Config{
    System_Available_Feature: []string{
       // app.source.getcontact
@@ -97,29 +120,6 @@ func (d Device) android_ID() (uint64, error) {
       return v, nil
    }
    return 0, errors.New("androidId_")
-}
-
-type Native_Platform map[int64]string
-
-var Platforms = Native_Platform{
-   // com.google.android.youtube
-   0: "x86",
-   // com.miui.weather2
-   1: "armeabi-v7a",
-   // com.kakaogames.twodin
-   2: "arm64-v8a",
-}
-
-func (n Native_Platform) String() string {
-   var b []byte
-   b = append(b, "native platform"...)
-   for key, value := range n {
-      b = append(b, '\n')
-      b = strconv.AppendInt(b, key, 10)
-      b = append(b, ": "...)
-      b = append(b, value...)
-   }
-   return string(b)
 }
 
 type Details struct {
