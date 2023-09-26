@@ -58,14 +58,34 @@ API 28:
 
 > Your device isn't compatiblee with this version.
 
-API 29:
+API 29 (Android 10):
 
 ~~~
 adb root
-adb shell avbctl disable-verification
 adb disable-verity
+adb shell avbctl disable-verification
 adb reboot
+
 adb root
 adb remount
-adb push .\com.android.vending_11.9.30.apk /system/priv-app
+adb push com.android.vending_11.9.30.apk /system/priv-app
+adb reboot
 ~~~
+
+reboot fails
+
+~~~
+privileged permissions not in privapp-permissions allowlist
+~~~
+
+more:
+
+~~~
+09-25 20:45:04.874  1550  1550 E AndroidRuntime:
+java.lang.IllegalStateException: Signature|privileged permissions not in
+privapp-permissions allowlist: {com.android.vending
+(/system/priv-app/com.android.vending_22.8.44.apk):
+com.android.permission.USE_INSTALLER_V2, com.android.vending
+~~~
+
+https://source.android.com/docs/core/permissions/perms-allowlist

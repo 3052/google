@@ -19,6 +19,7 @@ func main() {
    if f.name != "" {
       cmd := exec.Command("aapt", "dump", "badging", f.name)
       cmd.Stderr = os.Stderr
+      fmt.Println(cmd.Args)
       text, err := cmd.Output()
       if err != nil {
          panic(err)
