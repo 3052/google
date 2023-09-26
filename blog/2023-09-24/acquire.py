@@ -4,11 +4,15 @@ def running():
    ctx.options.showhost = True
 
 def request(f: http.HTTPFlow) -> None:
+   if 'X-DFE-Device-Id' in f.request.headers:
+      f.request.headers['X-DFE-Device-Id'] = '34db88ddf5f361ab'
    if f.request.path.startswith('/checkin'):
+      return
       f.request.content = f.request.content.replace(
          b"Z\x06x86_64Z\x03x86", b"Z\varmeabi-v7a"
       )
    if f.request.path.startswith('/fdfe/uploadDeviceConfig'):
+      return
       f.request.content = f.request.content.replace(
          b"Z\x06x86_64Z\x03x86", b"Z\varmeabi-v7a"
       )
