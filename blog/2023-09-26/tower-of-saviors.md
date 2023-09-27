@@ -106,28 +106,18 @@ API Level | ABI         | Target
 ----------|-------------|------------------------
 32        | `x86_64`    | Android 12L Google Play
 
----------------------------------------------------------------
-
-here is the next best option:
-
-API Level | ABI         | Target
-----------|-------------|----------------------
-28        | x86         | Android 9 Google Play
-
-this works:
+these both work with device Pixel 2:
 
 ~~~
 adb shell am start -a android.intent.action.VIEW `
 -d https://play.google.com/store/apps/details?id=com.miui.weather2
-~~~
 
-for this:
-
-~~~
 adb shell am start -a android.intent.action.VIEW `
 -d https://play.google.com/store/apps/details?id=com.madhead.tos.zh
 ~~~
 
-we get:
+here is the next best option:
 
-> Your device isn't compatiblee with this version.
+API Level | ABI         | Target
+----------|-------------|------------------------
+32        | `x86_64`    | Android 12L Google APIs
