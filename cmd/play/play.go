@@ -15,6 +15,8 @@ func (f flags) do_device(dir, platform string) error {
       return err
    }
    os.WriteFile(dir + "/" + platform + ".bin", data, 0666)
+   fmt.Println("Sleep(9*time.Second)")
+   time.Sleep(9*time.Second)
    head, err := f.do_header(dir, platform)
    if err != nil {
       return err
@@ -22,8 +24,6 @@ func (f flags) do_device(dir, platform string) error {
    if err := head.Upload(play.Phone, platform); err != nil {
       return err
    }
-   fmt.Println("Sleep(9*time.Second)")
-   time.Sleep(9*time.Second)
    return nil
 }
 
