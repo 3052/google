@@ -62,8 +62,9 @@ API 29 (Android 10):
 
 ~~~
 adb root
-adb disable-verity
 adb shell avbctl disable-verification
+adb shell avbctl disable-verity
+adb disable-verity
 adb reboot
 
 adb root
