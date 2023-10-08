@@ -111,5 +111,7 @@ considering, but making it work cross platform is difficult.
 
 ## Money
 
+<https://paypal.com/donate?hosted_button_id=UEJBQQTU3VYDY>
+
 Software is not licensed for commercial use. If you wish to purchase a
 commercial license, or for other business questions, contact me.
