@@ -1,7 +1,7 @@
 package play
 
 import (
-   "154.pages.dev/strconv"
+   "154.pages.dev/encoding"
    "fmt"
 )
 
@@ -9,7 +9,7 @@ func (d Details) String() string {
    var b []byte
    b = append(b, "downloads:"...)
    if v, ok := d.Downloads(); ok {
-      b = fmt.Append(b, " ", strconv.Cardinal(v))
+      b = fmt.Append(b, " ", encoding.Cardinal(v))
    }
    b = append(b, "\nfiles:"...)
    for _, file := range d.Files() {
@@ -40,7 +40,7 @@ func (d Details) String() string {
    }
    b = append(b, "\nsize:"...)
    if v, ok := d.Size(); ok {
-      b = fmt.Append(b, " ", strconv.Size(v))
+      b = fmt.Append(b, " ", encoding.Size(v))
    }
    b = append(b, "\nupdated on:"...)
    if v, ok := d.Updated_On(); ok {
