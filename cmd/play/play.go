@@ -2,11 +2,11 @@ package main
 
 import (
    "154.pages.dev/google/play"
-   "154.pages.dev/http/option"
    "fmt"
    "net/http"
    "os"
    "time"
+   option "154.pages.dev/http"
 )
 
 func (f flags) do_delivery(head *play.Header) error {
