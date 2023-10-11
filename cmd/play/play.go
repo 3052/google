@@ -9,6 +9,23 @@ import (
    option "154.pages.dev/http"
 )
 
+func (f flags) do_device(dir string) error {
+   data, err := play.New_Checkin(play.Phone)
+   if err != nil {
+      return err
+   }
+   os.WriteFile(dir + "/" + play.Phone.Platform + ".bin", data, 0666)
+   fmt.Println("Sleep(9*time.Second)")
+   time.Sleep(9*time.Second)
+   var head play.Header
+   head.Set_Agent(f.single)
+   if err := head.Set_Device(data); err != nil {
+      return err
+   }
+   //return head.Sync(play.Phone)
+   return head.Upload(play.Phone)
+}
+
 func (f flags) do_delivery(head *play.Header) error {
    deliver, err := head.Delivery(f.doc, f.version)
    if err != nil {
@@ -97,20 +114,4 @@ func (f flags) download(ref, name string) error {
       return err
    }
    return nil
-}
-
-func (f flags) do_device(dir string) error {
-   data, err := play.New_Checkin(play.Phone)
-   if err != nil {
-      return err
-   }
-   os.WriteFile(dir + "/" + play.Phone.Platform + ".bin", data, 0666)
-   fmt.Println("Sleep(9*time.Second)")
-   time.Sleep(9*time.Second)
-   var head play.Header
-   head.Set_Agent(f.single)
-   if err := head.Set_Device(data); err != nil {
-      return err
-   }
-   return head.Sync(play.Phone)
 }
