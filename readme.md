@@ -86,8 +86,7 @@ currently possible. Up to Google Services Framework 4.4 (2013), the login is
 protected with TLS fingerprinting, which is difficult but possible to bypass.
 Since Google Services Framework 5 (2014), Google uses bot-guard via JavaScript
 to protect the login. I do not know how to reverse that, and I did not find any
-implementations online. A workaround would be to use WebView, which I am
-considering, but making it work cross platform is difficult.
+implementations online.
 
 ## Contact
 
