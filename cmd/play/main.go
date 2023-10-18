@@ -2,7 +2,7 @@ package main
 
 import (
    "154.pages.dev/google/play"
-   "154.pages.dev/http"
+   "154.pages.dev/net"
    "flag"
    "fmt"
    "os"
@@ -42,11 +42,11 @@ func main() {
    }
    dir += "/google/play"
    os.MkdirAll(dir, os.ModePerm)
-   http.No_Location()
+   net.No_Location()
    if f.trace {
-      http.Trace()
+      net.Trace()
    } else {
-      http.Verbose()
+      net.Verbose()
    }
    if f.code != "" {
       err := f.do_auth(dir)

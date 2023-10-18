@@ -1,7 +1,6 @@
 package play
 
 import (
-   "154.pages.dev/http"
    "fmt"
    "os"
    "testing"
@@ -16,7 +15,6 @@ func Test_Acquire(t *testing.T) {
    home += "/google/play/"
    var head Header
    head.Set_Agent(true)
-   http.No_Location()
    text, err := os.ReadFile(home + "token.txt")
    if err != nil {
       t.Fatal(err)
