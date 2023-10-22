@@ -22,8 +22,9 @@ func (f flags) do_device(dir string) error {
    if err := head.Set_Device(data); err != nil {
       return err
    }
+   //return head.Upload(play.Phone)
    //return head.Sync(play.Phone)
-   return head.Upload(play.Phone)
+   return head.Sync2(play.Phone)
 }
 
 func (f flags) do_delivery(head *play.Header) error {
