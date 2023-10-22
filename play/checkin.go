@@ -28,6 +28,7 @@ func New_Checkin(d Device) ([]byte, error) {
       m.Add_Varint(5, 1)
       m.Add_Varint(6, 0)
       m.Add_Varint(7, 420)
+      // developer.android.com/guide/topics/manifest/uses-feature-element#glEsVersion
       m.Add_Varint(8, 196609)
       for _, library := range d.Library {
          m.Add_String(9, library)
