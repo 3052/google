@@ -1,4 +1,4 @@
-# /fdfe/sync
+# goals
 
 this seems to be the first version using `/fdfe/sync` only:
 
