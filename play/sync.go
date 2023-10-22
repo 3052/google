@@ -34,9 +34,16 @@ func (h Header) Sync(d Device) error {
          m.Add_String(1, "am-unknown")
       })
    })
+   // Google Play Store version
    m.Add(1, func(m *protobuf.Message) {
       m.Add(19, func(m *protobuf.Message) {
-         m.Add_Varint(2, 82951610) // Google Play Store version
+         m.Add_Varint(2, 82951610)
+      })
+   })
+   // developer.android.com/guide/topics/manifest/uses-feature-element#glEsVersion
+   m.Add(1, func(m *protobuf.Message) {
+      m.Add(21, func(m *protobuf.Message) {
+         m.Add_Varint(6, 196609)
       })
    })
    req, err := http.NewRequest(

@@ -76,13 +76,12 @@ play -d com.google.android.youtube -v 1540222400
 
 ## Goals
 
-1. System Image API 26 (revision 4)
+1. Google Services Framework 8
 2. Google Play Store 29
 
 Non goals:
 
-Supporting older items. sadly this means that email/password login is not
-currently possible. Up to Google Services Framework 4.4 (2013), the login is
+email/password login. Up to Google Services Framework 4.4 (2013), the login is
 protected with TLS fingerprinting, which is difficult but possible to bypass.
 Since Google Services Framework 5 (2014), Google uses bot-guard via JavaScript
 to protect the login. I do not know how to reverse that, and I did not find any
