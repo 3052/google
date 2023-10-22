@@ -77,7 +77,7 @@ play -d com.google.android.youtube -v 1540222400
 ## Goals
 
 1. System Image API 26 (revision 4)
-2. Google Play Store 11
+2. Google Play Store 29
 
 Non goals:
 
