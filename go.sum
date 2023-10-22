@@ -1,7 +1,7 @@
 154.pages.dev/encoding v1.14.3 h1:6BwbaEj7j5SOBBN2B69AXVZ81yDJtNwZIXmgjiYpU0I=
 154.pages.dev/encoding v1.14.3/go.mod h1:KHWBwxsigaRVpDqFu8UgUcJzvEW3qJveq9YfVV90OiY=
-154.pages.dev/net v1.0.1 h1:LGveZRNjx0Msxtn8vtojAEePFmuZ0ocP2bMY0jLCIBc=
-154.pages.dev/net v1.0.1/go.mod h1:YAENzh1m8h8ilWAU5DaIavfj56cS3rDBdKxdHnLwG2Q=
+154.pages.dev/http v1.2.2 h1:HYW96RyAaO9c1lVGpSZlIcc2tIrKj1ktkyvh4eTpRAI=
+154.pages.dev/http v1.2.2/go.mod h1:LS0M9GQvnzME6YmY9gX/hc/mY4HET872ugnRNBeds1A=
 154.pages.dev/protobuf v1.0.2 h1:YvHUJwl1sn21UspsCVnE2gN0stcSyACUrvJI+eta97M=
 154.pages.dev/protobuf v1.0.2/go.mod h1:NDDaN/avhls0mBQT6u7oJQMI1PWt11v7fD9bxAWubH4=
 github.com/golang/protobuf v1.5.0/go.mod h1:FsONVRAS9T7sI+LIUmWTfcYkHO4aIWwzhcaSAoJOfIk=

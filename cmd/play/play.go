@@ -2,11 +2,11 @@ package main
 
 import (
    "154.pages.dev/google/play"
-   "154.pages.dev/net"
    "fmt"
    "net/http"
    "os"
    "time"
+   option "154.pages.dev/http"
 )
 
 func (f flags) do_device(dir string) error {
@@ -32,7 +32,7 @@ func (f flags) do_delivery(head *play.Header) error {
       return err
    }
    file := play.File{f.doc, f.version}
-   net.Location()
+   option.Location()
    for _, apk := range deliver.Config_APKs() {
       ref, err := apk.URL()
       if err != nil {
@@ -109,7 +109,7 @@ func (f flags) download(ref, name string) error {
       return err
    }
    defer file.Close()
-   pro := net.Progress_Length(res.ContentLength)
+   pro := option.Progress_Length(res.ContentLength)
    if _, err := file.ReadFrom(pro.Reader(res)); err != nil {
       return err
    }
