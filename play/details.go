@@ -155,10 +155,10 @@ func (h Header) Details(doc string) (*Details, error) {
       return nil, err
    }
    req.URL.Scheme = "https"
+   req.URL.Host = "android.clients.google.com"
+   req.Header.Set(h.Authorization())
    req.Header.Set(h.Device_ID())
    req.Header.Set(h.Agent())
-   req.Header.Set(h.Authorization())
-   req.URL.Host = "android.clients.google.com"
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return nil, err

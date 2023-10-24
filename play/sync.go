@@ -31,13 +31,12 @@ func (h Header) Sync(d Device) error {
    })
    m.Add(1, func(m *protobuf.Message) {
       m.Add(18, func(m *protobuf.Message) {
-         m.Add_String(1, "am-unknown")
+         m.Add_String(1, "am-unknown") // X-DFE-Client-Id
       })
    })
-   // Google Play Store version
    m.Add(1, func(m *protobuf.Message) {
       m.Add(19, func(m *protobuf.Message) {
-         m.Add_Varint(2, 82951610)
+         m.Add_Varint(2, google_play_store)
       })
    })
    // developer.android.com/guide/topics/manifest/uses-feature-element#glEsVersion

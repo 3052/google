@@ -7,6 +7,33 @@ import (
    "time"
 )
 
+const (
+   google_play_store = 82941300
+   // WARNING 28 is the last version that supports single APK
+   google_services_framework = 28
+)
+
+func (h *Header) Set_Agent(single bool) {
+   var b []byte
+   // `sdk` is needed for `/fdfe/delivery`
+   b = append(b, "Android-Finsky (sdk="...)
+   // with `/fdfe/acquire`, requests will be rejected with certain apps, if the
+   // device was created with too low a version here:
+   b = strconv.AppendInt(b, google_services_framework, 10)
+   b = append(b, ",versionCode="...)
+   // for multiple APKs just tell the truth. for single APK we have to lie.
+   // below value is the last version that works.
+   if single {
+      b = strconv.AppendInt(b, 80919999, 10)
+   } else {
+      b = strconv.AppendInt(b, google_play_store, 10)
+   }
+   b = append(b, ')')
+   h.Agent = func() (string, string) {
+      return "User-Agent", string(b)
+   }
+}
+
 func (h *Header) Set_Device(device []byte) error {
    var (
       check Checkin
@@ -120,28 +147,4 @@ type Header struct {
    Authorization func() (string, string)
    Device_Config func() (string, string)
    Device_ID     func() (string, string)
-}
-
-func (h *Header) Set_Agent(single bool) {
-   var b []byte
-   // `sdk` is needed for `/fdfe/delivery`
-   b = append(b, "Android-Finsky (sdk="...)
-   // valid range 0 - math.MaxInt32
-   // in general this doesnt matter, but with /fdfe/acquire, requests will be
-   // rejected with certain apps, if the device was created with too low a
-   // version here:
-   b = strconv.AppendInt(b, 99, 10)
-   // com.android.vending
-   b = append(b, ",versionCode="...)
-   if single {
-      // valid range 8_03_2_00_00 - 8_09_1_99_99
-      b = strconv.AppendInt(b, 8_09_1_99_99, 10)
-   } else {
-      // valid range 8_09_2_00_00 - math.MaxInt32
-      b = strconv.AppendInt(b, 9_99_9_99_99, 10)
-   }
-   b = append(b, ')')
-   h.Agent = func() (string, string) {
-      return "User-Agent", string(b)
-   }
 }

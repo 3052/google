@@ -9,6 +9,53 @@ import (
    "strconv"
 )
 
+func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
+   req, err := http.NewRequest("GET", "https://android.clients.google.com", nil)
+   if err != nil {
+      return nil, err
+   }
+   req.Header.Set(h.Agent())
+   req.Header.Set(h.Authorization())
+   req.Header.Set(h.Device_ID())
+   req.URL.Path = "/fdfe/delivery"
+   req.URL.RawQuery = url.Values{
+      "doc": {doc},
+      "vc":  {strconv.FormatUint(vc, 10)},
+   }.Encode()
+   res, err := http.DefaultClient.Do(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errors.New(res.Status)
+   }
+   mes, err := func() (protobuf.Message, error) {
+      b, err := io.ReadAll(res.Body)
+      if err != nil {
+         return nil, err
+      }
+      return protobuf.Consume(b)
+   }()
+   if err != nil {
+      return nil, err
+   }
+   mes.Message(1)
+   mes.Message(21)
+   status_code, ok := mes.Varint(1)
+   if !ok {
+      return nil, errors.New("status code")
+   }
+   switch status_code {
+   case 3:
+      return nil, errors.New("acquire")
+   case 5:
+      return nil, errors.New("version code")
+   }
+   mes.Message(2)
+   return &Delivery{mes}, nil
+}
+
 // developer.android.com/guide/app-bundle
 type Config_APK struct {
    m protobuf.Message
@@ -99,53 +146,6 @@ func (f File) OBB(role uint64) string {
    b = append(b, f.Package_Name...)
    b = append(b, ".obb"...)
    return string(b)
-}
-
-func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
-   req, err := http.NewRequest("GET", "https://android.clients.google.com", nil)
-   if err != nil {
-      return nil, err
-   }
-   req.Header.Set(h.Agent())
-   req.Header.Set(h.Authorization())
-   req.Header.Set(h.Device_ID())
-   req.URL.Path = "/fdfe/delivery"
-   req.URL.RawQuery = url.Values{
-      "doc": {doc},
-      "vc":  {strconv.FormatUint(vc, 10)},
-   }.Encode()
-   res, err := http.DefaultClient.Do(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
-   mes, err := func() (protobuf.Message, error) {
-      b, err := io.ReadAll(res.Body)
-      if err != nil {
-         return nil, err
-      }
-      return protobuf.Consume(b)
-   }()
-   if err != nil {
-      return nil, err
-   }
-   mes.Message(1)
-   mes.Message(21)
-   status_code, ok := mes.Varint(1)
-   if !ok {
-      return nil, errors.New("status code")
-   }
-   switch status_code {
-   case 3:
-      return nil, errors.New("acquire")
-   case 5:
-      return nil, errors.New("version code")
-   }
-   mes.Message(2)
-   return &Delivery{mes}, nil
 }
 
 // developer.android.com/google/play/expansion-files

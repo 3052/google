@@ -34,6 +34,36 @@ func (a Access_Token) auth() string {
    return a["Auth"]
 }
 
+type Refresh_Token map[string]string
+
+func (r Refresh_Token) token() string {
+   return r["Token"]
+}
+
+// accounts.google.com/embedded/setup/android
+// Exchange authorization code (oauth_token) for Refresh token
+// the code looks like this:
+// 4/0Adeu5B...
+// but it should be supplied here with the prefix:
+// oauth2_4/0Adeu5B...
+func New_Refresh_Token(oauth_token string) ([]byte, error) {
+   res, err := http.PostForm(
+      "https://android.clients.google.com/auth", url.Values{
+         "ACCESS_TOKEN": {"1"},
+         "Token":        {oauth_token},
+         "service":      {"ac2dm"},
+      },
+   )
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errors.New(res.Status)
+   }
+   return io.ReadAll(res.Body)
+}
+
 // Refresh access token
 func (h *Header) Set_Authorization(token []byte) error {
    refresh, err := func() (Refresh_Token, error) {
@@ -71,34 +101,4 @@ func (h *Header) Set_Authorization(token []byte) error {
       return "Authorization", "Bearer " + access.auth()
    }
    return nil
-}
-
-type Refresh_Token map[string]string
-
-func (r Refresh_Token) token() string {
-   return r["Token"]
-}
-
-// accounts.google.com/embedded/setup/v2/android
-// Exchange authorization code (oauth_token) for Refresh token
-// the code looks like this:
-// 4/0Adeu5B...
-// but it should be supplied here with the prefix:
-// oauth2_4/0Adeu5B...
-func New_Refresh_Token(oauth_token string) ([]byte, error) {
-   res, err := http.PostForm(
-      "https://android.clients.google.com/auth", url.Values{
-         "ACCESS_TOKEN": {"1"},
-         "Token":        {oauth_token},
-         "service":      {"ac2dm"},
-      },
-   )
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
-   return io.ReadAll(res.Body)
 }

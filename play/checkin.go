@@ -14,9 +14,7 @@ func New_Checkin(d Device) ([]byte, error) {
    var m protobuf.Message
    m.Add(4, func(m *protobuf.Message) {
       m.Add(1, func(m *protobuf.Message) {
-         // single APK valid range 14 - 28
-         // multiple APK valid range 14 - math.MaxInt32
-         m.Add_Varint(10, 26)
+         m.Add_Varint(10, google_services_framework)
       })
    })
    m.Add_Varint(14, 3)

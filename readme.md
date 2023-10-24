@@ -35,7 +35,7 @@ authorization code for refresh token (`aas_et`):
 play -c oauth2_4/0Adeu5B...
 ~~~
 
-1. https://accounts.google.com/embedded/setup/v2/android
+1. https://accounts.google.com/embedded/setup/android
 2. <https://firefox-source-docs.mozilla.org/devtools-user/storage_inspector>
 
 Create a file containing `X-DFE-Device-ID` (GSF ID) for future requests:
