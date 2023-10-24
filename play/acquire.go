@@ -28,8 +28,11 @@ func (h Header) Acquire(doc string) error {
    }
    req.Header.Set(h.Authorization())
    req.Header.Set(h.Device_ID())
-   // request will work without this, but then fail with /fdfe/delivery:
-   // req.Header.Set(h.Device_Config())
+   // with a new device, this needs to be included in the first request to
+   // /fdfe/acquire, or you get:
+   // Please open my apps to establish a connection with the server.
+   // on following requests you can omit it
+   req.Header.Set(h.X_PS_RH())
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return err

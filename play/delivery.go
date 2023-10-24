@@ -10,18 +10,18 @@ import (
 )
 
 func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
-   req, err := http.NewRequest("GET", "https://android.clients.google.com", nil)
+   req, err := http.NewRequest("GET", "https://play-fe.googleapis.com", nil)
    if err != nil {
       return nil, err
    }
-   req.Header.Set(h.Agent())
+   req.URL.Path = "/fdfe/delivery"
    req.Header.Set(h.Authorization())
    req.Header.Set(h.Device_ID())
-   req.URL.Path = "/fdfe/delivery"
    req.URL.RawQuery = url.Values{
       "doc": {doc},
       "vc":  {strconv.FormatUint(vc, 10)},
    }.Encode()
+   req.Header.Set(h.Agent())
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return nil, err

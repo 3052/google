@@ -20,7 +20,7 @@ func Test_Details(t *testing.T) {
    }
    head.Set_Authorization(b)
    head.Set_Agent(false)
-   for i, app := range apps {
+   for _, app := range apps {
       b, err := os.ReadFile(home + Platforms[app.platform] + ".bin")
       if err != nil {
          t.Fatal(err)
@@ -63,7 +63,7 @@ func Test_Details(t *testing.T) {
          if err != nil {
             t.Fatal(err)
          }
-         apps[i].date = d.Format("2006-01-02")
+         app.date = d.Format("2006-01-02")
       }
       if _, ok := d.Version_Code(); !ok {
          t.Fatal("version code")

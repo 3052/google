@@ -2,10 +2,72 @@ package play
 
 import (
    "154.pages.dev/protobuf"
+   "bytes"
+   "compress/gzip"
    "encoding/base64"
    "strconv"
    "time"
 )
+
+func (h *Header) Set_Device(device []byte) error {
+   var (
+      check Checkin
+      err   error
+   )
+   check.m, err = protobuf.Consume(device)
+   if err != nil {
+      return err
+   }
+   id, err := check.device_ID()
+   if err != nil {
+      return err
+   }
+   h.Device_ID = func() (string, string) {
+      return "X-DFE-Device-ID", strconv.FormatUint(id, 16)
+   }
+   h.X_PS_RH = func() (string, string) {
+      token, _ := func() (string, error) {
+         var m protobuf.Message
+         m.Add(3, func(m *protobuf.Message) {
+            m.Add_String(1, strconv.FormatUint(id, 10))
+            m.Add(2, func(m *protobuf.Message) {
+               v := time.Now().UnixMicro()
+               m.Add_String(1, strconv.FormatInt(v, 10))
+            })
+         })
+         return compress(m)
+      }()
+      ps_rh, _ := func() (string, error) {
+         var m protobuf.Message
+         m.Add(1, func(m *protobuf.Message) {
+            m.Add_String(1, token)
+         })
+         return compress(m)
+      }()
+      return "X-PS-RH", ps_rh
+   }
+   return nil
+}
+
+func compress(m protobuf.Message) (string, error) {
+   var b bytes.Buffer
+   w := gzip.NewWriter(&b)
+   _, err := w.Write(m.Append(nil))
+   if err != nil {
+      return "", err
+   }
+   if err := w.Close(); err != nil {
+      return "", err
+   }
+   return base64.URLEncoding.EncodeToString(b.Bytes()), nil
+}
+
+type Header struct {
+   Agent         func() (string, string)
+   Authorization func() (string, string)
+   Device_ID     func() (string, string)
+   X_PS_RH func() (string, string)
+}
 
 const (
    google_play_store = 82941300
@@ -32,39 +94,6 @@ func (h *Header) Set_Agent(single bool) {
    h.Agent = func() (string, string) {
       return "User-Agent", string(b)
    }
-}
-
-func (h *Header) Set_Device(device []byte) error {
-   var (
-      check Checkin
-      err   error
-   )
-   check.m, err = protobuf.Consume(device)
-   if err != nil {
-      return err
-   }
-   id, err := check.device_ID()
-   if err != nil {
-      return err
-   }
-   h.Device_Config = func() (string, string) {
-      var m protobuf.Message
-      m.Add(1, func(m *protobuf.Message) {
-         m.Add(3, func(m *protobuf.Message) {
-            m.Add_String(1, strconv.FormatUint(id, 10))
-            m.Add(2, func(m *protobuf.Message) {
-               now := time.Now().UnixMicro()
-               m.Add_String(1, strconv.FormatInt(now, 10))
-            })
-         })
-      })
-      token := base64.StdEncoding.EncodeToString(m.Append(nil))
-      return "X-DFE-Device-Config-Token", token
-   }
-   h.Device_ID = func() (string, string) {
-      return "X-DFE-Device-ID", strconv.FormatUint(id, 16)
-   }
-   return nil
 }
 
 var Platforms = map[int64]string{
@@ -140,11 +169,4 @@ var Phone = Device{
       // org.videolan.vlc
       "android.hardware.screen.landscape",
    },
-}
-
-type Header struct {
-   Agent         func() (string, string)
-   Authorization func() (string, string)
-   Device_Config func() (string, string)
-   Device_ID     func() (string, string)
 }
