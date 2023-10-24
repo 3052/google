@@ -76,7 +76,7 @@ play -d com.google.android.youtube -v 1540222400
 
 ## Goals
 
-1. Google Services Framework 8
+1. Google Services Framework 9
 2. Google Play Store 29
 
 Non goals:

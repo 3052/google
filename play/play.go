@@ -7,6 +7,39 @@ import (
    "time"
 )
 
+func (h *Header) Set_Device(device []byte) error {
+   var (
+      check Checkin
+      err   error
+   )
+   check.m, err = protobuf.Consume(device)
+   if err != nil {
+      return err
+   }
+   id, err := check.device_ID()
+   if err != nil {
+      return err
+   }
+   h.Device_Config = func() (string, string) {
+      var m protobuf.Message
+      m.Add(1, func(m *protobuf.Message) {
+         m.Add(3, func(m *protobuf.Message) {
+            m.Add_String(1, strconv.FormatUint(id, 10))
+            m.Add(2, func(m *protobuf.Message) {
+               now := time.Now().UnixMicro()
+               m.Add_String(1, strconv.FormatInt(now, 10))
+            })
+         })
+      })
+      token := base64.StdEncoding.EncodeToString(m.Append(nil))
+      return "X-DFE-Device-Config-Token", token
+   }
+   h.Device_ID = func() (string, string) {
+      return "X-DFE-Device-ID", strconv.FormatUint(id, 16)
+   }
+   return nil
+}
+
 var Platforms = map[int64]string{
    // com.google.android.youtube
    0: "x86",
@@ -111,37 +144,4 @@ func (h *Header) Set_Agent(single bool) {
    h.Agent = func() (string, string) {
       return "User-Agent", string(b)
    }
-}
-
-func (h *Header) Set_Device(device []byte) error {
-   var (
-      check Checkin
-      err   error
-   )
-   check.m, err = protobuf.Consume(device)
-   if err != nil {
-      return err
-   }
-   id, err := check.device_ID()
-   if err != nil {
-      return err
-   }
-   h.Device_Config = func() (string, string) {
-      var m protobuf.Message
-      m.Add(1, func(m *protobuf.Message) {
-         m.Add(3, func(m *protobuf.Message) {
-            m.Add_String(1, strconv.FormatUint(id, 10))
-            m.Add(2, func(m *protobuf.Message) {
-               now := time.Now().UnixMicro()
-               m.Add_String(1, strconv.FormatInt(now, 10))
-            })
-         })
-      })
-      token := base64.StdEncoding.EncodeToString(m.Append(nil))
-      return "X-DFE-Device-Config-Token", token
-   }
-   h.Device_ID = func() (string, string) {
-      return "X-DFE-Device-ID", strconv.FormatUint(id, 16)
-   }
-   return nil
 }

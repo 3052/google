@@ -8,30 +8,6 @@ import (
    "strings"
 )
 
-// accounts.google.com/embedded/setup/v2/android
-// Exchange authorization code (oauth_token) for Refresh token
-// the code looks like this:
-// 4/0Adeu5B...
-// but it should be supplied here with the prefix:
-// oauth2_4/0Adeu5B...
-func New_Refresh_Token(oauth_token string) ([]byte, error) {
-   res, err := http.PostForm(
-      "https://android.clients.google.com/auth", url.Values{
-         "ACCESS_TOKEN": {"1"},
-         "Token":        {oauth_token},
-         "service":      {"ac2dm"},
-      },
-   )
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
-   return io.ReadAll(res.Body)
-}
-
 func parse_query(query string) (map[string]string, error) {
    values := make(map[string]string)
    for query != "" {
@@ -71,7 +47,7 @@ func (h *Header) Set_Authorization(token []byte) error {
          "Token":      {refresh.token()},
          "app":        {"com.android.vending"},
          "client_sig": {"38918a453d07199354f8b19af05ec6562ced5788"},
-         "service":    {"androidmarket"},
+         "service":    {"oauth2:https://www.googleapis.com/auth/googleplay"},
       },
    )
    if err != nil {
@@ -92,7 +68,7 @@ func (h *Header) Set_Authorization(token []byte) error {
       return err
    }
    h.Authorization = func() (string, string) {
-      return "Authorization", "GoogleLogin auth=" + access.auth()
+      return "Authorization", "Bearer " + access.auth()
    }
    return nil
 }
@@ -101,4 +77,28 @@ type Refresh_Token map[string]string
 
 func (r Refresh_Token) token() string {
    return r["Token"]
+}
+
+// accounts.google.com/embedded/setup/v2/android
+// Exchange authorization code (oauth_token) for Refresh token
+// the code looks like this:
+// 4/0Adeu5B...
+// but it should be supplied here with the prefix:
+// oauth2_4/0Adeu5B...
+func New_Refresh_Token(oauth_token string) ([]byte, error) {
+   res, err := http.PostForm(
+      "https://android.clients.google.com/auth", url.Values{
+         "ACCESS_TOKEN": {"1"},
+         "Token":        {oauth_token},
+         "service":      {"ac2dm"},
+      },
+   )
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errors.New(res.Status)
+   }
+   return io.ReadAll(res.Body)
 }

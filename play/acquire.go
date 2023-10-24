@@ -29,7 +29,7 @@ func (h Header) Acquire(doc string) error {
    req.Header.Set(h.Authorization())
    req.Header.Set(h.Device_ID())
    // request will work without this, but then fail with /fdfe/delivery:
-   req.Header.Set(h.Device_Config())
+   //req.Header.Set(h.Device_Config())
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return err

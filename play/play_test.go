@@ -25,6 +25,7 @@ var apps = []app_type{
    {date: "2023-08-22", requires: 21, platform: 0, doc: "org.thoughtcrime.securesms"},
    {date: "2023-08-22", requires: 24, platform: 0, doc: "com.pinterest"},
    {date: "2023-08-24", requires: 23, platform: 1, doc: "com.axis.drawingdesk.v3"},
+   {date: "2023-10-23", requires: 28, platform: 0, doc: "com.busuu.android.enc"},
 }
 
 func (a app_type) GoString() string {
