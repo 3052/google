@@ -31,5 +31,5 @@ func Test_Delivery(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%+v\n", del)
+   fmt.Printf("%#v\n", del.m)
 }

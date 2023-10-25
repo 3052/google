@@ -10,8 +10,9 @@ Download APK from Google Play or send API requests
 
 ## How to build?
 
-This module works with Windows, macOS or Linux. Download Go [1] and extract
-archive. Then download Google Play Zip and extract archive. Then navigate to:
+This module works with Windows, macOS or Linux. [Download Go](//go.dev/dl) and
+extract archive. Then download Google Play Zip and extract archive. Then
+navigate to:
 
 ~~~
 google-main/cmd/play
@@ -23,20 +24,19 @@ and enter:
 go build
 ~~~
 
-1. https://go.dev/dl
 
 ## Tool examples
 
-Visit this page [1] and sign in. Then get authorization code (`oauth_token`)
-cookie from the browser [2]. Should be valid for 10 minutes. Then exchange
+[Sign in](//accounts.google.com/embedded/setup/android) with your Google
+Account. Then get authorization code (`oauth_token`) cookie from
+[browser storage][1]. Should be valid for 10 minutes. Then exchange
 authorization code for refresh token (`aas_et`):
 
 ~~~
 play -c oauth2_4/0Adeu5B...
 ~~~
 
-1. https://accounts.google.com/embedded/setup/android
-2. <https://firefox-source-docs.mozilla.org/devtools-user/storage_inspector>
+[1]://firefox-source-docs.mozilla.org/devtools-user/storage_inspector
 
 Create a file containing `X-DFE-Device-ID` (GSF ID) for future requests:
 
@@ -76,8 +76,8 @@ play -d com.google.android.youtube -v 1540222400
 
 ## Goals
 
-1. Google Services Framework 9
-2. Google Play Store 29
+1. [Google Services Framework 9](//wikipedia.org/wiki/Android_Pie) (2018)
+2. Google Play Store 29 (2022)
 
 Non goals:
 
