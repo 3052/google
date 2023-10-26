@@ -9,6 +9,40 @@ import (
    "net/http"
 )
 
+func (h Header) Details(doc string) (*Details, error) {
+   req, err := http.NewRequest("GET", "/fdfe/details?doc="+doc, nil)
+   if err != nil {
+      return nil, err
+   }
+   req.URL.Scheme = "https"
+   req.URL.Host = "android.clients.google.com"
+   req.Header.Set(h.Authorization())
+   req.Header.Set(h.Device_ID())
+   req.Header.Set(h.Agent())
+   res, err := http.DefaultClient.Do(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errors.New(res.Status)
+   }
+   mes, err := func() (protobuf.Message, error) {
+      b, err := io.ReadAll(res.Body)
+      if err != nil {
+         return nil, err
+      }
+      return protobuf.Consume(b)
+   }()
+   if err != nil {
+      return nil, err
+   }
+   mes.Message(1)
+   mes.Message(2)
+   mes.Message(4)
+   return &Details{mes}, nil
+}
+
 func (d Details) String() string {
    var b []byte
    b = append(b, "downloads:"...)
@@ -147,38 +181,4 @@ func (d Details) Version_Name() (string, bool) {
    d.m.Message(13)
    d.m.Message(1)
    return d.m.String(4)
-}
-
-func (h Header) Details(doc string) (*Details, error) {
-   req, err := http.NewRequest("GET", "/fdfe/details?doc="+doc, nil)
-   if err != nil {
-      return nil, err
-   }
-   req.URL.Scheme = "https"
-   req.URL.Host = "android.clients.google.com"
-   req.Header.Set(h.Authorization())
-   req.Header.Set(h.Device_ID())
-   req.Header.Set(h.Agent())
-   res, err := http.DefaultClient.Do(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
-   mes, err := func() (protobuf.Message, error) {
-      b, err := io.ReadAll(res.Body)
-      if err != nil {
-         return nil, err
-      }
-      return protobuf.Consume(b)
-   }()
-   if err != nil {
-      return nil, err
-   }
-   mes.Message(1)
-   mes.Message(2)
-   mes.Message(4)
-   return &Details{mes}, nil
 }

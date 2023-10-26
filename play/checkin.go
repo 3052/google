@@ -8,7 +8,7 @@ import (
    "net/http"
 )
 
-// this could be a method, but we want to match the signature of upload.
+// this could be a method, but we want to match the signature of /fdfe/sync.
 // device is Pixel 2
 func New_Checkin(d Device) ([]byte, error) {
    var m protobuf.Message
