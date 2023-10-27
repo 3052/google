@@ -9,39 +9,6 @@ import (
    "strconv"
 )
 
-type Name struct {
-   Package string
-   Version_Code uint64
-}
-
-func (n Name) APK(config string) string {
-   var b []byte
-   b = append(b, n.Package...)
-   b = append(b, '-')
-   if config != "" {
-      b = append(b, config...)
-      b = append(b, '-')
-   }
-   b = strconv.AppendUint(b, n.Version_Code, 10)
-   b = append(b, ".apk"...)
-   return string(b)
-}
-
-func (n Name) OBB(role uint64) string {
-   var b []byte
-   if role >= 1 {
-      b = append(b, "patch"...)
-   } else {
-      b = append(b, "main"...)
-   }
-   b = append(b, '.')
-   b = strconv.AppendUint(b, n.Version_Code, 10)
-   b = append(b, '.')
-   b = append(b, n.Package...)
-   b = append(b, ".obb"...)
-   return string(b)
-}
-
 func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
    req, err := http.NewRequest("GET", "https://play-fe.googleapis.com", nil)
    if err != nil {
@@ -53,8 +20,8 @@ func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
       "vc":  {strconv.FormatUint(vc, 10)},
    }.Encode()
    req.Header.Set(h.Authorization())
-   req.Header.Set(h.User_Agent())
    req.Header.Set(h.X_DFE_Device_ID())
+   req.Header.Set(h.User_Agent())
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return nil, err
@@ -165,4 +132,36 @@ func (o OBB_File) URL() (string, error) {
       return s, nil
    }
    return "", errors.New("URL")
+}
+type Name struct {
+   Package string
+   Version_Code uint64
+}
+
+func (n Name) APK(config string) string {
+   var b []byte
+   b = append(b, n.Package...)
+   b = append(b, '-')
+   if config != "" {
+      b = append(b, config...)
+      b = append(b, '-')
+   }
+   b = strconv.AppendUint(b, n.Version_Code, 10)
+   b = append(b, ".apk"...)
+   return string(b)
+}
+
+func (n Name) OBB(role uint64) string {
+   var b []byte
+   if role >= 1 {
+      b = append(b, "patch"...)
+   } else {
+      b = append(b, "main"...)
+   }
+   b = append(b, '.')
+   b = strconv.AppendUint(b, n.Version_Code, 10)
+   b = append(b, '.')
+   b = append(b, n.Package...)
+   b = append(b, ".obb"...)
+   return string(b)
 }
