@@ -9,28 +9,12 @@ import (
    option "154.pages.dev/http"
 )
 
-func (f flags) do_device(dir string) error {
-   data, err := play.New_Checkin(play.Phone)
-   if err != nil {
-      return err
-   }
-   os.WriteFile(dir + "/" + play.Phone.Platform + ".bin", data, 0666)
-   fmt.Println("Sleep(9*time.Second)")
-   time.Sleep(9*time.Second)
-   var head play.Header
-   head.Set_Agent(f.single)
-   if err := head.Set_Device(data); err != nil {
-      return err
-   }
-   return head.Sync(play.Phone)
-}
-
 func (f flags) do_delivery(head *play.Header) error {
    deliver, err := head.Delivery(f.doc, f.version)
    if err != nil {
       return err
    }
-   file := play.File{f.doc, f.version}
+   name := play.Name{f.doc, f.version}
    option.Location()
    for _, apk := range deliver.Config_APKs() {
       ref, err := apk.URL()
@@ -41,7 +25,7 @@ func (f flags) do_delivery(head *play.Header) error {
       if err != nil {
          return err
       }
-      if err := f.download(ref, file.APK(id)); err != nil {
+      if err := f.download(ref, name.APK(id)); err != nil {
          return err
       }
    }
@@ -54,7 +38,7 @@ func (f flags) do_delivery(head *play.Header) error {
       if err != nil {
          return err
       }
-      if err := f.download(ref, file.OBB(role)); err != nil {
+      if err := f.download(ref, name.OBB(role)); err != nil {
          return err
       }
    }
@@ -62,7 +46,7 @@ func (f flags) do_delivery(head *play.Header) error {
    if err != nil {
       return err
    }
-   return f.download(ref, file.APK(""))
+   return f.download(ref, name.APK(""))
 }
 
 func (f flags) do_auth(dir string) error {
@@ -114,3 +98,19 @@ func (f flags) download(ref, name string) error {
    }
    return nil
 }
+func (f flags) do_device(dir string) error {
+   data, err := play.New_Checkin(play.Phone)
+   if err != nil {
+      return err
+   }
+   os.WriteFile(dir + "/" + play.Phone.Platform + ".bin", data, 0666)
+   fmt.Println("Sleep(9*time.Second)")
+   time.Sleep(9*time.Second)
+   var head play.Header
+   head.Set_Agent(f.single)
+   if err := head.Set_Device(data); err != nil {
+      return err
+   }
+   return head.Sync(play.Phone)
+}
+

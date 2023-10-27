@@ -1,65 +1,74 @@
 package play
 
-import "154.pages.dev/protobuf"
+type Access_Token struct{}
 
-type Access_Token map[string]string
+type Acquire_Header struct{}
 
-func (Access_Token) Auth() string {
-   return ""
-}
-
-type Raw_Refresh_Token string
-
-func (*Raw_Refresh_Token) Post(oauth_token string) error {
+func (Acquire_Header) Do(doc string) error {
    return nil
 }
 
-func (Raw_Refresh_Token) Token() (Refresh_Token, error) {
-   return nil, nil
+type App struct {
+   Doc string
+   VC uint64
 }
 
-type Refresh_Token map[string]string
-
-func (Refresh_Token) Post() (Access_Token, error) {
-   return nil, nil
-}
-
-func (Refresh_Token) Token() string {
+func (App) APK(config string) string {
    return ""
+}
+
+func (App) OBB(role uint64) string {
+   return ""
+}
+
+type Checkin struct{}
+
+type Delivery struct{}
+
+type Delivery_Header struct{}
+
+func (Delivery_Header) Do(App) (*Delivery, error) {
+   return nil, nil
+}
+
+type Details struct{}
+
+type Details_Header struct{}
+
+func (Details_Header) Do(doc string) (*Details, error) {
+   return nil, nil
 }
 
 type Device struct{}
 
-type Raw_Checkin []byte
-
-func (*Raw_Checkin) Post(Device) error {
-   return nil
-}
+type Raw_Checkin struct{}
 
 func (Raw_Checkin) Checkin() (*Checkin, error) {
    return nil, nil
 }
 
-type Checkin struct {
-   Message protobuf.Message
-}
-
-func (Checkin) Device_ID() (uint64, bool) {
-   return 0, false
-}
-
-// 1. to
-// 2. from
-// 3. field/method
-
-type Details struct {
-   Message protobuf.Message
-}
-
-func (*Details) Get(doc string) error {
+func (*Raw_Checkin) Do(Device) error {
    return nil
 }
 
-func (Details) Downloads() (uint64, bool) {
-   return 0, false
+type Raw_Refresh_Token struct{}
+
+func (*Raw_Refresh_Token) Do(oauth_token string) error {
+   return nil
+}
+
+func (Raw_Refresh_Token) Token() (*Refresh_Token, error) {
+   return nil, nil
+}
+
+type Refresh_Token struct{}
+
+func (Refresh_Token) Do() (*Access_Token, error) {
+   return nil, nil
+}
+
+type Sync_Header struct{}
+
+func (Sync_Header) Do(Device) error {
+   return nil
 }

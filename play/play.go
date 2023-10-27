@@ -9,6 +9,13 @@ import (
    "time"
 )
 
+type Header struct {
+   Authorization func() (string, string)
+   User_Agent func() (string, string)
+   X_DFE_Device_ID func() (string, string)
+   X_PS_RH func() (string, string)
+}
+
 func (h *Header) Set_Device(device []byte) error {
    var (
       check Checkin
@@ -22,7 +29,7 @@ func (h *Header) Set_Device(device []byte) error {
    if err != nil {
       return err
    }
-   h.Device_ID = func() (string, string) {
+   h.X_DFE_Device_ID = func() (string, string) {
       return "X-DFE-Device-ID", strconv.FormatUint(id, 16)
    }
    h.X_PS_RH = func() (string, string) {
@@ -62,13 +69,6 @@ func compress(m protobuf.Message) (string, error) {
    return base64.URLEncoding.EncodeToString(b.Bytes()), nil
 }
 
-type Header struct {
-   Agent         func() (string, string)
-   Authorization func() (string, string)
-   Device_ID     func() (string, string)
-   X_PS_RH func() (string, string)
-}
-
 const (
    google_play_store = 82941300
    // WARNING 28 is the last version that supports single APK
@@ -91,7 +91,7 @@ func (h *Header) Set_Agent(single bool) {
       b = strconv.AppendInt(b, google_play_store, 10)
    }
    b = append(b, ')')
-   h.Agent = func() (string, string) {
+   h.User_Agent = func() (string, string) {
       return "User-Agent", string(b)
    }
 }

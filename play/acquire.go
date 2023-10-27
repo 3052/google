@@ -27,7 +27,7 @@ func (h Header) Acquire(doc string) error {
       return err
    }
    req.Header.Set(h.Authorization())
-   req.Header.Set(h.Device_ID())
+   req.Header.Set(h.X_DFE_Device_ID())
    // with a new device, this needs to be included in the first request to
    // /fdfe/acquire, or you get:
    // Please open my apps to establish a connection with the server.

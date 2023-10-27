@@ -9,6 +9,11 @@ import (
    "net/http"
 )
 
+// play.google.com/store/apps/details?id=com.google.android.youtube
+func (d Details) Name() (string, bool) {
+   return d.m.String(5)
+}
+
 func (h Header) Details(doc string) (*Details, error) {
    req, err := http.NewRequest("GET", "/fdfe/details?doc="+doc, nil)
    if err != nil {
@@ -17,8 +22,8 @@ func (h Header) Details(doc string) (*Details, error) {
    req.URL.Scheme = "https"
    req.URL.Host = "android.clients.google.com"
    req.Header.Set(h.Authorization())
-   req.Header.Set(h.Device_ID())
-   req.Header.Set(h.Agent())
+   req.Header.Set(h.User_Agent())
+   req.Header.Set(h.X_DFE_Device_ID())
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return nil, err
@@ -120,11 +125,6 @@ func (d Details) Files() []uint64 {
       }
    }
    return files
-}
-
-// play.google.com/store/apps/details?id=com.google.android.youtube
-func (d Details) Name() (string, bool) {
-   return d.m.String(5)
 }
 
 // play.google.com/store/apps/details?id=com.google.android.youtube
