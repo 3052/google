@@ -5,7 +5,6 @@ import (
    "154.pages.dev/http"
    "flag"
    "fmt"
-   "os"
    "strings"
 )
 
@@ -47,14 +46,14 @@ func main() {
          if err != nil {
             panic(err)
          }
-      case f.doc != "":
+      case f.app.ID != "":
          switch {
          case f.acquire:
             err := f.do_acquire()
             if err != nil {
                panic(err)
             }
-         case f.version >= 1:
+         case f.app.Version >= 1:
             err := f.do_delivery()
             if err != nil {
                panic(err)

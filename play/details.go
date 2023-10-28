@@ -15,7 +15,7 @@ type Details struct {
 
 type Details_Request struct {
    Token Access_Token
-   Checkin Checkin
+   Checkin *Checkin
 }
 
 func (d Details_Request) Do(app string, single bool) (*Details, error) {
@@ -51,8 +51,6 @@ func (d Details_Request) Do(app string, single bool) (*Details, error) {
    mes.Message(4)
    return &Details{mes}, nil
 }
-
-//////////////////////////////////////
 
 // play.google.com/store/apps/details?id=com.google.android.youtube
 func (d Details) Name() (string, bool) {

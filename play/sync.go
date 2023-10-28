@@ -7,6 +7,11 @@ import (
    "net/http"
 )
 
+type Sync_Request struct {
+   Device Device
+   Checkin *Checkin
+}
+
 func (s Sync_Request) Do() error {
    var m protobuf.Message
    m.Add(1, func(m *protobuf.Message) {
@@ -62,9 +67,4 @@ func (s Sync_Request) Do() error {
       return errors.New(res.Status)
    }
    return nil
-}
-
-type Sync_Request struct {
-   Device Device
-   Checkin Checkin
 }

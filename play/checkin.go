@@ -12,7 +12,7 @@ import (
    "time"
 )
 
-func X_DFE_Device_ID(r *http.Request, c Checkin) error {
+func X_DFE_Device_ID(r *http.Request, c *Checkin) error {
    id, err := c.device_ID()
    if err != nil {
       return err
@@ -21,7 +21,7 @@ func X_DFE_Device_ID(r *http.Request, c Checkin) error {
    return nil
 }
 
-func X_PS_RH(r *http.Request, c Checkin) error {
+func X_PS_RH(r *http.Request, c *Checkin) error {
    id, err := c.device_ID()
    if err != nil {
       return err

@@ -35,13 +35,6 @@ func User_Agent(r *http.Request, single bool) {
    r.Header.Set("User-Agent", string(b))
 }
 
-type Header struct {
-   Authorization func() (string, string)
-   User_Agent func() (string, string)
-   X_DFE_Device_ID func() (string, string)
-   X_PS_RH func() (string, string)
-}
-
 const (
    google_play_store = 82941300
    // WARNING 28 is the last version that supports single APK

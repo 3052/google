@@ -10,7 +10,7 @@ import (
 
 type Acquire_Request struct {
    Token Access_Token
-   Checkin Checkin
+   Checkin *Checkin
 }
 
 func (a Acquire_Request) Do(app string) error {
@@ -65,8 +65,6 @@ func (a Acquire_Request) Do(app string) error {
    }
    return nil
 }
-
-/////////////////////////////////////////////////////
 
 type acquire_error struct {
    m protobuf.Message

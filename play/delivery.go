@@ -11,7 +11,7 @@ import (
 
 type Delivery_Request struct {
    Token Access_Token
-   Checkin Checkin
+   Checkin *Checkin
    App Application
 }
 
@@ -61,8 +61,6 @@ func (d Delivery_Request) Do(single bool) (*Delivery, error) {
    mes.Message(2)
    return &Delivery{mes}, nil
 }
-
-//////////////////////////////////////////////////////
 
 // developer.android.com/guide/app-bundle
 type Config_APK struct {
@@ -174,4 +172,3 @@ func (a Application) OBB(role uint64) string {
 type Delivery struct {
    m protobuf.Message
 }
-
