@@ -52,6 +52,8 @@ func (d Details_Request) Do(app string, single bool) (*Details, error) {
    return &Details{mes}, nil
 }
 
+//////////////////////////////////////
+
 // play.google.com/store/apps/details?id=com.google.android.youtube
 func (d Details) Name() (string, bool) {
    return d.m.String(5)

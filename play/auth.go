@@ -14,6 +14,8 @@ func Authorization(r *http.Request, a Access_Token) {
 
 type Access_Token map[string]string
 
+///////////////////////////////////////////////////////////
+
 func parse_query(query string) (map[string]string, error) {
    values := make(map[string]string)
    for query != "" {

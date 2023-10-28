@@ -9,14 +9,47 @@ import (
    "strconv"
 )
 
-type Delivery_Request struct {
-   Token Access_Token
-   Checkin Checkin
-   App Application
+type Application struct {
+   ID string
+   Version uint64
+}
+
+func (a Application) APK(config string) string {
+   var b []byte
+   b = append(b, a.ID...)
+   b = append(b, '-')
+   if config != "" {
+      b = append(b, config...)
+      b = append(b, '-')
+   }
+   b = strconv.AppendUint(b, a.Version, 10)
+   b = append(b, ".apk"...)
+   return string(b)
+}
+
+func (a Application) OBB(role uint64) string {
+   var b []byte
+   if role >= 1 {
+      b = append(b, "patch"...)
+   } else {
+      b = append(b, "main"...)
+   }
+   b = append(b, '.')
+   b = strconv.AppendUint(b, a.Version, 10)
+   b = append(b, '.')
+   b = append(b, a.ID...)
+   b = append(b, ".obb"...)
+   return string(b)
 }
 
 type Delivery struct {
    m protobuf.Message
+}
+
+type Delivery_Request struct {
+   Token Access_Token
+   Checkin Checkin
+   App Application
 }
 
 func (d Delivery_Request) Do(single bool) (*Delivery, error) {
@@ -65,6 +98,8 @@ func (d Delivery_Request) Do(single bool) (*Delivery, error) {
    mes.Message(2)
    return &Delivery{mes}, nil
 }
+
+//////////////////////////////////////////////////////
 
 // developer.android.com/guide/app-bundle
 type Config_APK struct {
@@ -140,35 +175,3 @@ func (o OBB_File) URL() (string, error) {
    return "", errors.New("URL")
 }
 
-type Application struct {
-   ID string
-   Version uint64
-}
-
-func (n Application) APK(config string) string {
-   var b []byte
-   b = append(b, n.ID...)
-   b = append(b, '-')
-   if config != "" {
-      b = append(b, config...)
-      b = append(b, '-')
-   }
-   b = strconv.AppendUint(b, n.Version, 10)
-   b = append(b, ".apk"...)
-   return string(b)
-}
-
-func (n Application) OBB(role uint64) string {
-   var b []byte
-   if role >= 1 {
-      b = append(b, "patch"...)
-   } else {
-      b = append(b, "main"...)
-   }
-   b = append(b, '.')
-   b = strconv.AppendUint(b, n.Version, 10)
-   b = append(b, '.')
-   b = append(b, n.ID...)
-   b = append(b, ".obb"...)
-   return string(b)
-}

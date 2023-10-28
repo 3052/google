@@ -7,6 +7,17 @@ import (
    "time"
 )
 
+type Device struct {
+   // developer.android.com/ndk/guides/abis
+   Platform string
+   // developer.android.com/guide/topics/manifest/supports-gl-texture-element
+   Texture []string
+   // developer.android.com/guide/topics/manifest/uses-library-element
+   Library []string
+   // developer.android.com/guide/topics/manifest/uses-feature-element
+   Feature []string
+}
+
 func User_Agent(r *http.Request, single bool) {
    var b []byte
    // `sdk` is needed for `/fdfe/delivery`
@@ -24,17 +35,6 @@ func User_Agent(r *http.Request, single bool) {
    }
    b = append(b, ')')
    r.Header.Set("User-Agent", string(b))
-}
-
-type Device struct {
-   // developer.android.com/ndk/guides/abis
-   Platform string
-   // developer.android.com/guide/topics/manifest/supports-gl-texture-element
-   Texture []string
-   // developer.android.com/guide/topics/manifest/uses-library-element
-   Library []string
-   // developer.android.com/guide/topics/manifest/uses-feature-element
-   Feature []string
 }
 
 type Header struct {

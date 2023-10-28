@@ -14,8 +14,6 @@ func X_DFE_Device_ID(r http.Request, c Checkin) {
    r.Header.Set("", "")
 }
 
-/////////////////////////////////////////////////////////
-
 func X_PS_RH(r http.Request, c Checkin) {
    r.Header.Set("", "")
 }
@@ -70,6 +68,8 @@ func (Details_Request) Do(app string, single bool) (*Details, error) {
 }
 
 type Device struct{}
+
+/////////////////////////////////////////////////////////
 
 func (Device) Checkin() (*Raw_Checkin, error) {
    return nil, nil

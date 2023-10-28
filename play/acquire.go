@@ -31,13 +31,13 @@ func (a Acquire_Request) Do(app string) error {
    if err != nil {
       return err
    }
+   Authorization(req, a.Token)
+   X_DFE_Device_ID(req, a.Checkin)
    // with a new device, this needs to be included in the first request to
    // /fdfe/acquire, or you get:
    // Please open my apps to establish a connection with the server.
    // on following requests you can omit it
-   req.Header.Set(a.Checkin.X_PS_RH())
-   Authorization(req, a.Token)
-   X_DFE_Device_ID(req, a.Checkin)
+   X_PS_RH(req, a.Checkin)
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return err
@@ -65,6 +65,8 @@ func (a Acquire_Request) Do(app string) error {
    }
    return nil
 }
+
+/////////////////////////////////////////////////////
 
 type acquire_error struct {
    m protobuf.Message

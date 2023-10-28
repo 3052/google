@@ -12,21 +12,60 @@ import (
    "time"
 )
 
-func X_DFE_Device_ID(r *http.Request, c Checkin) bool {
-   id, ok := c.device_ID()
-   if !ok {
-      return false
-   }
-   r.Header.Set("X-DFE-Device-ID", strconv.FormatUint(id, 16))
-   return true
-}
-
 type Checkin struct {
    m protobuf.Message
 }
 
-func (c Checkin) device_ID() (uint64, bool) {
-   return c.m.Fixed64(7)
+/////////////////////////////////////////////////
+
+func (c Checkin) device_ID() (uint64, error) {
+   v, ok := c.m.Fixed64(7)
+   if !ok {
+      return 0, errors.New("device ID")
+   }
+   return v, nil
+}
+
+func X_DFE_Device_ID(r *http.Request, c Checkin) error {
+   id, err := c.device_ID()
+   if err != nil {
+      return err
+   }
+   r.Header.Set("X-DFE-Device-ID", strconv.FormatUint(id, 16))
+   return nil
+}
+
+func X_PS_RH(r *http.Request, c Checkin) error {
+   id, err := c.device_ID()
+   if err != nil {
+      return err
+   }
+   token, err := func() (string, error) {
+      var m protobuf.Message
+      m.Add(3, func(m *protobuf.Message) {
+         m.Add_String(1, strconv.FormatUint(id, 10))
+         m.Add(2, func(m *protobuf.Message) {
+            v := time.Now().UnixMicro()
+            m.Add_String(1, strconv.FormatInt(v, 10))
+         })
+      })
+      return compress(m)
+   }()
+   if err != nil {
+      return err
+   }
+   ps_rh, err := func() (string, error) {
+      var m protobuf.Message
+      m.Add(1, func(m *protobuf.Message) {
+         m.Add_String(1, token)
+      })
+      return compress(m)
+   }()
+   if err != nil {
+      return err
+   }
+   r.Header.Set("X-PS-RH", ps_rh)
+   return nil
 }
 
 func compress(m protobuf.Message) (string, error) {
@@ -40,29 +79,6 @@ func compress(m protobuf.Message) (string, error) {
       return "", err
    }
    return base64.URLEncoding.EncodeToString(b.Bytes()), nil
-}
-
-func (c Checkin) X_PS_RH() (string, string) {
-   id, _ := c.device_ID()
-   token, _ := func() (string, error) {
-      var m protobuf.Message
-      m.Add(3, func(m *protobuf.Message) {
-         m.Add_String(1, strconv.FormatUint(id, 10))
-         m.Add(2, func(m *protobuf.Message) {
-            v := time.Now().UnixMicro()
-            m.Add_String(1, strconv.FormatInt(v, 10))
-         })
-      })
-      return compress(m)
-   }()
-   ps_rh, _ := func() (string, error) {
-      var m protobuf.Message
-      m.Add(1, func(m *protobuf.Message) {
-         m.Add_String(1, token)
-      })
-      return compress(m)
-   }()
-   return "X-PS-RH", ps_rh
 }
 
 // device is Pixel 2
