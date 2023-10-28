@@ -13,15 +13,9 @@ type Acquire_Request struct {
 
 type Checkin struct{}
 
-func (Checkin) X_DFE_Device_ID() (string, string) {
-   return "", ""
-}
-
 func (Acquire_Request) Do(app string) error {
    return nil
 }
-
-////////////////////////////////////////////////////////////
 
 type Application struct {
    ID string
@@ -44,6 +38,14 @@ type Delivery_Request struct {
    Application
 }
 
+func (Checkin) X_DFE_Device_ID() (string, string) {
+   return "", ""
+}
+
+func User_Agent(single bool) (string, string) {
+   return "", ""
+}
+
 func (Delivery_Request) Do(single bool) (*Delivery, error) {
    return nil, nil
 }
@@ -60,6 +62,8 @@ func (Details_Request) Do(app string, single bool) (*Details, error) {
 }
 
 type Device struct{}
+
+////////////////////////////////////////////////////////////
 
 func (Device) Checkin() (*Raw_Checkin, error) {
    return nil, nil

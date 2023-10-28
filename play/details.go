@@ -9,21 +9,25 @@ import (
    "net/http"
 )
 
-// play.google.com/store/apps/details?id=com.google.android.youtube
-func (d Details) Name() (string, bool) {
-   return d.m.String(5)
+type Details struct {
+   m protobuf.Message
 }
 
-func (h Header) Details(doc string) (*Details, error) {
-   req, err := http.NewRequest("GET", "/fdfe/details?doc="+doc, nil)
+type Details_Request struct {
+   Token Access_Token
+   Checkin Checkin
+}
+
+func (d Details_Request) Do(app string, single bool) (*Details, error) {
+   req, err := http.NewRequest("GET", "https://android.clients.google.com", nil)
    if err != nil {
       return nil, err
    }
-   req.URL.Scheme = "https"
-   req.URL.Host = "android.clients.google.com"
-   req.Header.Set(h.Authorization())
-   req.Header.Set(h.User_Agent())
-   req.Header.Set(h.X_DFE_Device_ID())
+   req.URL.Path = "/fdfe/details"
+   req.URL.RawQuery = "doc=" + app
+   req.Header.Set(d.Token.Authorization())
+   req.Header.Set(User_Agent(single))
+   req.Header.Set(d.Checkin.X_DFE_Device_ID())
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return nil, err
@@ -46,6 +50,13 @@ func (h Header) Details(doc string) (*Details, error) {
    mes.Message(2)
    mes.Message(4)
    return &Details{mes}, nil
+}
+
+//////////////////////////////////////////////////////////////////////
+
+// play.google.com/store/apps/details?id=com.google.android.youtube
+func (d Details) Name() (string, bool) {
+   return d.m.String(5)
 }
 
 func (d Details) String() string {
@@ -98,10 +109,6 @@ func (d Details) String() string {
       b = fmt.Append(b, " ", v)
    }
    return string(b)
-}
-
-type Details struct {
-   m protobuf.Message
 }
 
 // play.google.com/store/apps/details?id=com.google.android.youtube

@@ -9,25 +9,25 @@ import (
    "strconv"
 )
 
-type Name struct {
-   Package string
-   Version_Code uint64
+type Application struct {
+   ID string
+   Version uint64
 }
 
-func (n Name) APK(config string) string {
+func (n Application) APK(config string) string {
    var b []byte
-   b = append(b, n.Package...)
+   b = append(b, n.ID...)
    b = append(b, '-')
    if config != "" {
       b = append(b, config...)
       b = append(b, '-')
    }
-   b = strconv.AppendUint(b, n.Version_Code, 10)
+   b = strconv.AppendUint(b, n.Version, 10)
    b = append(b, ".apk"...)
    return string(b)
 }
 
-func (n Name) OBB(role uint64) string {
+func (n Application) OBB(role uint64) string {
    var b []byte
    if role >= 1 {
       b = append(b, "patch"...)
@@ -35,26 +35,36 @@ func (n Name) OBB(role uint64) string {
       b = append(b, "main"...)
    }
    b = append(b, '.')
-   b = strconv.AppendUint(b, n.Version_Code, 10)
+   b = strconv.AppendUint(b, n.Version, 10)
    b = append(b, '.')
-   b = append(b, n.Package...)
+   b = append(b, n.ID...)
    b = append(b, ".obb"...)
    return string(b)
 }
 
-func (h Header) Delivery(doc string, vc uint64) (*Delivery, error) {
+type Delivery struct {
+   m protobuf.Message
+}
+
+type Delivery_Request struct {
+   Token Access_Token
+   Checkin Checkin
+   App Application
+}
+
+func (d Delivery_Request) Do(single bool) (*Delivery, error) {
    req, err := http.NewRequest("GET", "https://play-fe.googleapis.com", nil)
    if err != nil {
       return nil, err
    }
    req.URL.Path = "/fdfe/delivery"
    req.URL.RawQuery = url.Values{
-      "doc": {doc},
-      "vc":  {strconv.FormatUint(vc, 10)},
+      "doc": {d.App.ID},
+      "vc":  {strconv.FormatUint(d.App.Version, 10)},
    }.Encode()
-   req.Header.Set(h.Authorization())
-   req.Header.Set(h.X_DFE_Device_ID())
-   req.Header.Set(h.User_Agent())
+   req.Header.Set(User_Agent(single))
+   req.Header.Set(d.Checkin.X_DFE_Device_ID())
+   req.Header.Set(d.Token.Authorization())
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return nil, err
@@ -108,10 +118,6 @@ func (s Config_APK) URL() (string, error) {
       return s, nil
    }
    return "", errors.New("URL")
-}
-
-type Delivery struct {
-   m protobuf.Message
 }
 
 // developer.android.com/guide/app-bundle

@@ -6,6 +6,59 @@ import (
    "time"
 )
 
+type Device struct {
+   // developer.android.com/ndk/guides/abis
+   Platform string
+   // developer.android.com/guide/topics/manifest/supports-gl-texture-element
+   Texture []string
+   // developer.android.com/guide/topics/manifest/uses-library-element
+   Library []string
+   // developer.android.com/guide/topics/manifest/uses-feature-element
+   Feature []string
+}
+
+func User_Agent(single bool) (string, string) {
+   var b []byte
+   // `sdk` is needed for `/fdfe/delivery`
+   b = append(b, "Android-Finsky (sdk="...)
+   // with `/fdfe/acquire`, requests will be rejected with certain apps, if the
+   // device was created with too low a version here:
+   b = strconv.AppendInt(b, google_services_framework, 10)
+   b = append(b, ",versionCode="...)
+   // for multiple APKs just tell the truth. for single APK we have to lie.
+   // below value is the last version that works.
+   if single {
+      b = strconv.AppendInt(b, 80919999, 10)
+   } else {
+      b = strconv.AppendInt(b, google_play_store, 10)
+   }
+   b = append(b, ')')
+   return "User-Agent", string(b)
+}
+
+//////////////////////////
+
+func (h *Header) Set_Agent(single bool) {
+   var b []byte
+   // `sdk` is needed for `/fdfe/delivery`
+   b = append(b, "Android-Finsky (sdk="...)
+   // with `/fdfe/acquire`, requests will be rejected with certain apps, if the
+   // device was created with too low a version here:
+   b = strconv.AppendInt(b, google_services_framework, 10)
+   b = append(b, ",versionCode="...)
+   // for multiple APKs just tell the truth. for single APK we have to lie.
+   // below value is the last version that works.
+   if single {
+      b = strconv.AppendInt(b, 80919999, 10)
+   } else {
+      b = strconv.AppendInt(b, google_play_store, 10)
+   }
+   b = append(b, ')')
+   h.User_Agent = func() (string, string) {
+      return "User-Agent", string(b)
+   }
+}
+
 type Header struct {
    Authorization func() (string, string)
    User_Agent func() (string, string)
@@ -56,27 +109,6 @@ const (
    google_services_framework = 28
 )
 
-func (h *Header) Set_Agent(single bool) {
-   var b []byte
-   // `sdk` is needed for `/fdfe/delivery`
-   b = append(b, "Android-Finsky (sdk="...)
-   // with `/fdfe/acquire`, requests will be rejected with certain apps, if the
-   // device was created with too low a version here:
-   b = strconv.AppendInt(b, google_services_framework, 10)
-   b = append(b, ",versionCode="...)
-   // for multiple APKs just tell the truth. for single APK we have to lie.
-   // below value is the last version that works.
-   if single {
-      b = strconv.AppendInt(b, 80919999, 10)
-   } else {
-      b = strconv.AppendInt(b, google_play_store, 10)
-   }
-   b = append(b, ')')
-   h.User_Agent = func() (string, string) {
-      return "User-Agent", string(b)
-   }
-}
-
 var Platforms = map[int64]string{
    // com.google.android.youtube
    0: "x86",
@@ -84,17 +116,6 @@ var Platforms = map[int64]string{
    1: "armeabi-v7a",
    // com.kakaogames.twodin
    2: "arm64-v8a",
-}
-
-type Device struct {
-   // developer.android.com/ndk/guides/abis
-   Platform string
-   // developer.android.com/guide/topics/manifest/supports-gl-texture-element
-   Texture []string
-   // developer.android.com/guide/topics/manifest/uses-library-element
-   Library []string
-   // developer.android.com/guide/topics/manifest/uses-feature-element
-   Feature []string
 }
 
 var Phone = Device{
