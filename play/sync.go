@@ -7,31 +7,26 @@ import (
    "net/http"
 )
 
-type Sync_Request struct {
-   Device Device
-   Checkin *Checkin
-}
-
-func (s Sync_Request) Do() error {
+func (c *Checkin) Sync(d Device) error {
    var m protobuf.Message
    m.Add(1, func(m *protobuf.Message) {
       m.Add(10, func(m *protobuf.Message) {
-         for _, feature := range s.Device.Feature {
+         for _, feature := range d.Feature {
             m.Add(1, func(m *protobuf.Message) {
                m.Add_String(1, feature)
             })
          }
-         for _, library := range s.Device.Library {
+         for _, library := range d.Library {
             m.Add_String(2, library)
          }
-         for _, texture := range s.Device.Texture {
+         for _, texture := range d.Texture {
             m.Add_String(4, texture)
          }
       })
    })
    m.Add(1, func(m *protobuf.Message) {
       m.Add(15, func(m *protobuf.Message) {
-         m.Add_String(4, s.Device.Platform)
+         m.Add_String(4, d.Platform)
       })
    })
    m.Add(1, func(m *protobuf.Message) {
@@ -57,7 +52,7 @@ func (s Sync_Request) Do() error {
    if err != nil {
       return err
    }
-   x_dfe_device_id(req, s.Checkin)
+   x_dfe_device_id(req, c)
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return err

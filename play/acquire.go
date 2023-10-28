@@ -8,12 +8,12 @@ import (
    "net/http"
 )
 
-type Acquire_Request struct {
+type Acquire struct {
    Token Access_Token
    Checkin *Checkin
 }
 
-func (a Acquire_Request) Do(app string) error {
+func (a Acquire) Acquire(app string) error {
    var m protobuf.Message
    m.Add(1, func(m *protobuf.Message) {
       m.Add(1, func(m *protobuf.Message) {

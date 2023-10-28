@@ -30,10 +30,6 @@ func (s Config_APK) URL() (string, error) {
    return "", errors.New("URL")
 }
 
-type Delivery struct {
-   m protobuf.Message
-}
-
 // developer.android.com/guide/app-bundle
 func (d Delivery) Config_APKs() []Config_APK {
    var configs []Config_APK
@@ -67,59 +63,6 @@ func (d Delivery) URL() (string, error) {
    return "", errors.New("URL")
 }
 
-type Delivery_Request struct {
-   Token Access_Token
-   Checkin *Checkin
-   App Application
-}
-
-func (d Delivery_Request) Do(single bool) (*Delivery, error) {
-   req, err := http.NewRequest("GET", "https://play-fe.googleapis.com", nil)
-   if err != nil {
-      return nil, err
-   }
-   req.URL.Path = "/fdfe/delivery"
-   req.URL.RawQuery = url.Values{
-      "doc": {d.App.ID},
-      "vc":  {strconv.FormatUint(d.App.Version, 10)},
-   }.Encode()
-   authorization(req, d.Token)
-   user_agent(req, single)
-   x_dfe_device_id(req, d.Checkin)
-   res, err := http.DefaultClient.Do(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
-   mes, err := func() (protobuf.Message, error) {
-      b, err := io.ReadAll(res.Body)
-      if err != nil {
-         return nil, err
-      }
-      return protobuf.Consume(b)
-   }()
-   if err != nil {
-      return nil, err
-   }
-   mes.Message(1)
-   mes.Message(21)
-   status_code, ok := mes.Varint(1)
-   if !ok {
-      return nil, errors.New("status code")
-   }
-   switch status_code {
-   case 3:
-      return nil, errors.New("acquire")
-   case 5:
-      return nil, errors.New("version code")
-   }
-   mes.Message(2)
-   return &Delivery{mes}, nil
-}
-
 // developer.android.com/google/play/expansion-files
 type OBB_File struct {
    m protobuf.Message
@@ -138,4 +81,58 @@ func (o OBB_File) URL() (string, error) {
       return s, nil
    }
    return "", errors.New("URL")
+}
+
+func (d *Delivery) Delivery(single bool) error {
+   req, err := http.NewRequest("GET", "https://play-fe.googleapis.com", nil)
+   if err != nil {
+      return err
+   }
+   req.URL.Path = "/fdfe/delivery"
+   req.URL.RawQuery = url.Values{
+      "doc": {d.App.ID},
+      "vc":  {strconv.FormatUint(d.App.Version, 10)},
+   }.Encode()
+   authorization(req, d.Token)
+   user_agent(req, single)
+   x_dfe_device_id(req, d.Checkin)
+   res, err := http.DefaultClient.Do(req)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return errors.New(res.Status)
+   }
+   d.m, err = func() (protobuf.Message, error) {
+      b, err := io.ReadAll(res.Body)
+      if err != nil {
+         return nil, err
+      }
+      return protobuf.Consume(b)
+   }()
+   if err != nil {
+      return err
+   }
+   d.m.Message(1)
+   d.m.Message(21)
+   status_code, ok := d.m.Varint(1)
+   if !ok {
+      return errors.New("status code")
+   }
+   switch status_code {
+   case 3:
+      return errors.New("acquire")
+   case 5:
+      return errors.New("version code")
+   }
+   d.m.Message(2)
+   return nil
+}
+
+type Delivery struct {
+   App Application
+   Checkin *Checkin
+   Token Access_Token
+   m protobuf.Message
 }
