@@ -9,28 +9,48 @@ import (
 )
 
 func Test_Acquire(t *testing.T) {
+   http.No_Location()
    home, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
    }
-   home += "/google/play/"
-   var head Header
-   head.Set_Agent(true)
-   text, err := os.ReadFile(home + "token.txt")
+   var acq Acquire
+   acq.Token, err = func() (Access_Token, error) {
+      b, err := os.ReadFile(home + "/google/play/token.txt")
+      if err != nil {
+         return nil, err
+      }
+      m, err := Raw_Refresh_Token.Refresh_Token(b)
+      if err != nil {
+         return nil, err
+      }
+      return m.Auth()
+   }()
    if err != nil {
-      t.Fatal(err)
+      return err
    }
-   http.No_Location()
-   head.Set_Authorization(text)
    time.Sleep(time.Second)
    for _, app := range apps {
-      data, err := os.ReadFile(home + Platforms[app.platform] + ".bin")
+      acq.Checkin, err = func() (*play.Checkin, error) {
+         s := func() string {
+            var b strings.Builder
+            b.WriteString(home)
+            b.WriteString("/google/play/")
+            b.WriteString(play.Platforms[f.platform])
+            b.WriteString(".bin")
+            return b.String()
+         }()
+         b, err := os.ReadFile(s)
+         if err != nil {
+            return nil, err
+         }
+         return play.Raw_Checkin.Checkin(b)
+      }()
       if err != nil {
-         t.Fatal(err)
+         return err
       }
-      head.Set_Device(data)
       fmt.Println(app.doc)
-      if err := head.Acquire(app.doc); err != nil {
+      if err := acq.Acquire(f.app.ID); err != nil {
          t.Fatal(err)
       }
       time.Sleep(99 * time.Millisecond)
