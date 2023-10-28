@@ -31,7 +31,7 @@ func (a Acquire_Request) Do(app string) error {
    if err != nil {
       return err
    }
-   Authorization(req, a.Token)
+   authorization(req, a.Token)
    x_dfe_device_id(req, a.Checkin)
    // with a new device, this needs to be included in the first request to
    // /fdfe/acquire, or you get:

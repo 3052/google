@@ -30,6 +30,10 @@ func (s Config_APK) URL() (string, error) {
    return "", errors.New("URL")
 }
 
+type Delivery struct {
+   m protobuf.Message
+}
+
 // developer.android.com/guide/app-bundle
 func (d Delivery) Config_APKs() []Config_APK {
    var configs []Config_APK
@@ -79,8 +83,8 @@ func (d Delivery_Request) Do(single bool) (*Delivery, error) {
       "doc": {d.App.ID},
       "vc":  {strconv.FormatUint(d.App.Version, 10)},
    }.Encode()
-   Authorization(req, d.Token)
-   User_Agent(req, single)
+   authorization(req, d.Token)
+   user_agent(req, single)
    x_dfe_device_id(req, d.Checkin)
    res, err := http.DefaultClient.Do(req)
    if err != nil {
@@ -134,10 +138,4 @@ func (o OBB_File) URL() (string, error) {
       return s, nil
    }
    return "", errors.New("URL")
-}
-
-/////////////////////////////////////////////
-
-type Delivery struct {
-   m protobuf.Message
 }
