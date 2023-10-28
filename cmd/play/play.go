@@ -10,143 +10,13 @@ import (
    option "154.pages.dev/http"
 )
 
-func (f flags) do_acquire() error {
-   home, err := os.UserHomeDir()
-   if err != nil {
-      return err
-   }
-   var req play.Acquire_Request
-   req.Token, err = func() (play.Access_Token, error) {
-      b, err := os.ReadFile(home + "/google/play/token.txt")
-      if err != nil {
-         return nil, err
-      }
-      t, err := play.Raw_Refresh_Token.Token(b)
-      if err != nil {
-         return nil, err
-      }
-      return t.Do()
-   }()
-   if err != nil {
-      return err
-   }
-   req.Checkin, err = func() (*play.Checkin, error) {
-      s := func() string {
-         var b strings.Builder
-         b.WriteString(home)
-         b.WriteString("/google/play/")
-         b.WriteString(play.Platforms[f.platform])
-         b.WriteString(".bin")
-         return b.String()
-      }()
-      b, err := os.ReadFile(s)
-      if err != nil {
-         return nil, err
-      }
-      return play.Raw_Checkin.Checkin(b)
-   }()
-   if err != nil {
-      return err
-   }
-   return req.Do(f.app.ID)
-}
-
-func (f flags) do_auth() error {
-   home, err := os.UserHomeDir()
-   if err != nil {
-      return err
-   }
-   var raw play.Raw_Refresh_Token
-   if err := raw.Do(f.code); err != nil {
-      return err
-   }
-   return os.WriteFile(home + "google/play/token.txt", raw, 0666)
-}
-
-func (f flags) do_delivery() error {
-   home, err := os.UserHomeDir()
-   if err != nil {
-      return err
-   }
-   var req play.Delivery_Request
-   req.Token, err = func() (play.Access_Token, error) {
-      b, err := os.ReadFile(home + "/google/play/token.txt")
-      if err != nil {
-         return nil, err
-      }
-      t, err := play.Raw_Refresh_Token.Token(b)
-      if err != nil {
-         return nil, err
-      }
-      return t.Do()
-   }()
-   if err != nil {
-      return err
-   }
-   req.Checkin, err = func() (*play.Checkin, error) {
-      s := func() string {
-         var b strings.Builder
-         b.WriteString(home)
-         b.WriteString("/google/play/")
-         b.WriteString(play.Platforms[f.platform])
-         b.WriteString(".bin")
-         return b.String()
-      }()
-      b, err := os.ReadFile(s)
-      if err != nil {
-         return nil, err
-      }
-      return play.Raw_Checkin.Checkin(b)
-   }()
-   if err != nil {
-      return err
-   }
-   req.App = f.app
-   deliver, err := req.Do(f.single)
-   if err != nil {
-      return err
-   }
-   option.Location()
-   for _, apk := range deliver.Config_APKs() {
-      ref, err := apk.URL()
-      if err != nil {
-         return err
-      }
-      id, err := apk.Config()
-      if err != nil {
-         return err
-      }
-      if err := f.download(ref, f.app.APK(id)); err != nil {
-         return err
-      }
-   }
-   for _, obb := range deliver.OBB_Files() {
-      ref, err := obb.URL()
-      if err != nil {
-         return err
-      }
-      role, err := obb.Role()
-      if err != nil {
-         return err
-      }
-      if err := f.download(ref, f.app.OBB(role)); err != nil {
-         return err
-      }
-   }
-   ref, err := deliver.URL()
-   if err != nil {
-      return err
-   }
-   return f.download(ref, f.app.APK(""))
-}
-
 func (f flags) do_details() (*play.Details, error) {
    home, err := os.UserHomeDir()
    if err != nil {
       return nil, err
    }
-   var req play.Details_Request
-   req.Token, err = func() (play.Access_Token, error) {
+   var detail play.Details
+   detail.Token, err = func() (play.Access_Token, error) {
       b, err := os.ReadFile(home + "/google/play/token.txt")
       if err != nil {
          return nil, err
@@ -160,7 +30,7 @@ func (f flags) do_details() (*play.Details, error) {
    if err != nil {
       return nil, err
    }
-   req.Checkin, err = func() (*play.Checkin, error) {
+   detail.Checkin, err = func() (*play.Checkin, error) {
       s := func() string {
          var b strings.Builder
          b.WriteString(home)
@@ -178,7 +48,7 @@ func (f flags) do_details() (*play.Details, error) {
    if err != nil {
       return nil, err
    }
-   return req.Do(f.app.ID, f.single)
+   return detail.Do(f.app.ID, f.single)
 }
 
 func (f flags) do_device() error {
@@ -230,3 +100,131 @@ func (f flags) download(ref, name string) error {
    }
    return nil
 }
+func (f flags) do_acquire() error {
+   home, err := os.UserHomeDir()
+   if err != nil {
+      return err
+   }
+   var acquire play.Acquire
+   acquire.Token, err = func() (play.Access_Token, error) {
+      b, err := os.ReadFile(home + "/google/play/token.txt")
+      if err != nil {
+         return nil, err
+      }
+      m, err := play.Raw_Refresh_Token.Refresh_Token(b)
+      if err != nil {
+         return nil, err
+      }
+      return m.Auth()
+   }()
+   if err != nil {
+      return err
+   }
+   acquire.Checkin, err = func() (*play.Checkin, error) {
+      s := func() string {
+         var b strings.Builder
+         b.WriteString(home)
+         b.WriteString("/google/play/")
+         b.WriteString(play.Platforms[f.platform])
+         b.WriteString(".bin")
+         return b.String()
+      }()
+      b, err := os.ReadFile(s)
+      if err != nil {
+         return nil, err
+      }
+      return play.Raw_Checkin.Checkin(b)
+   }()
+   if err != nil {
+      return err
+   }
+   return acquire.Acquire(f.app.ID)
+}
+
+func (f flags) do_auth() error {
+   home, err := os.UserHomeDir()
+   if err != nil {
+      return err
+   }
+   raw, err := play.Auth(f.code)
+   if err != nil {
+      return err
+   }
+   return os.WriteFile(home + "/google/play/token.txt", raw, 0666)
+}
+func (f flags) do_delivery() error {
+   home, err := os.UserHomeDir()
+   if err != nil {
+      return err
+   }
+   var deliver play.Delivery
+   deliver.Token, err = func() (play.Access_Token, error) {
+      b, err := os.ReadFile(home + "/google/play/token.txt")
+      if err != nil {
+         return nil, err
+      }
+      m, err := play.Raw_Refresh_Token.Refresh_Token(b)
+      if err != nil {
+         return nil, err
+      }
+      return m.Auth()
+   }()
+   if err != nil {
+      return err
+   }
+   deliver.Checkin, err = func() (*play.Checkin, error) {
+      s := func() string {
+         var b strings.Builder
+         b.WriteString(home)
+         b.WriteString("/google/play/")
+         b.WriteString(play.Platforms[f.platform])
+         b.WriteString(".bin")
+         return b.String()
+      }()
+      b, err := os.ReadFile(s)
+      if err != nil {
+         return nil, err
+      }
+      return play.Raw_Checkin.Checkin(b)
+   }()
+   if err != nil {
+      return err
+   }
+   deliver.App = f.app
+   if err := deliver.Delivery(f.single); err != nil {
+      return err
+   }
+   option.Location()
+   for _, apk := range deliver.Config_APKs() {
+      ref, err := apk.URL()
+      if err != nil {
+         return err
+      }
+      id, err := apk.Config()
+      if err != nil {
+         return err
+      }
+      if err := f.download(ref, f.app.APK(id)); err != nil {
+         return err
+      }
+   }
+   for _, obb := range deliver.OBB_Files() {
+      ref, err := obb.URL()
+      if err != nil {
+         return err
+      }
+      role, err := obb.Role()
+      if err != nil {
+         return err
+      }
+      if err := f.download(ref, f.app.OBB(role)); err != nil {
+         return err
+      }
+   }
+   ref, err := deliver.URL()
+   if err != nil {
+      return err
+   }
+   return f.download(ref, f.app.APK(""))
+}
+
