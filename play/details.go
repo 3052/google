@@ -9,49 +9,6 @@ import (
    "net/http"
 )
 
-type Details struct {
-   m protobuf.Message
-}
-
-type Details_Request struct {
-   Token Access_Token
-   Checkin *Checkin
-}
-
-func (d Details_Request) Do(app string, single bool) (*Details, error) {
-   req, err := http.NewRequest("GET", "https://android.clients.google.com", nil)
-   if err != nil {
-      return nil, err
-   }
-   req.URL.Path = "/fdfe/details"
-   req.URL.RawQuery = "doc=" + app
-   authorization(req, d.Token)
-   user_agent(req, single)
-   x_dfe_device_id(req, d.Checkin)
-   res, err := http.DefaultClient.Do(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
-   mes, err := func() (protobuf.Message, error) {
-      b, err := io.ReadAll(res.Body)
-      if err != nil {
-         return nil, err
-      }
-      return protobuf.Consume(b)
-   }()
-   if err != nil {
-      return nil, err
-   }
-   mes.Message(1)
-   mes.Message(2)
-   mes.Message(4)
-   return &Details{mes}, nil
-}
-
 // play.google.com/store/apps/details?id=com.google.android.youtube
 func (d Details) Name() (string, bool) {
    return d.m.String(5)
@@ -186,4 +143,44 @@ func (d Details) Version_Name() (string, bool) {
    d.m.Message(13)
    d.m.Message(1)
    return d.m.String(4)
+}
+
+type Details struct {
+   Checkin *Checkin
+   Token Access_Token
+   m protobuf.Message
+}
+
+func (d Details) Details(app string, single bool) error {
+   req, err := http.NewRequest("GET", "https://android.clients.google.com", nil)
+   if err != nil {
+      return err
+   }
+   req.URL.Path = "/fdfe/details"
+   req.URL.RawQuery = "doc=" + app
+   authorization(req, d.Token)
+   user_agent(req, single)
+   x_dfe_device_id(req, d.Checkin)
+   res, err := http.DefaultClient.Do(req)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return errors.New(res.Status)
+   }
+   d.m, err = func() (protobuf.Message, error) {
+      b, err := io.ReadAll(res.Body)
+      if err != nil {
+         return nil, err
+      }
+      return protobuf.Consume(b)
+   }()
+   if err != nil {
+      return err
+   }
+   d.m.Message(1)
+   d.m.Message(2)
+   d.m.Message(4)
+   return nil
 }

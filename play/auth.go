@@ -11,7 +11,7 @@ type Access_Token map[string]string
 
 type Raw_Refresh_Token []byte
 
-func (r *Raw_Refresh_Token) Do(oauth_token string) error {
+func Auth(oauth_token string) (Raw_Refresh_Token, error) {
    res, err := http.PostForm(
       "https://android.clients.google.com/auth", url.Values{
          "ACCESS_TOKEN": {"1"},
@@ -20,27 +20,23 @@ func (r *Raw_Refresh_Token) Do(oauth_token string) error {
       },
    )
    if err != nil {
-      return err
+      return nil, err
    }
    defer res.Body.Close()
    if res.StatusCode != http.StatusOK {
-      return errors.New(res.Status)
+      return nil, errors.New(res.Status)
    }
-   *r, err = io.ReadAll(res.Body)
-   if err != nil {
-      return err
-   }
-   return nil
+   return io.ReadAll(res.Body)
 }
 
-func (r Raw_Refresh_Token) Token() (Refresh_Token, error) {
+func (r Raw_Refresh_Token) Refresh_Token() (Refresh_Token, error) {
    return parse_query(string(r))
 }
 
 type Refresh_Token map[string]string
 
 // Refresh access token
-func (r Refresh_Token) Do() (Access_Token, error) {
+func (r Refresh_Token) Auth() (Access_Token, error) {
    res, err := http.PostForm(
       "https://android.clients.google.com/auth", url.Values{
          "Token":      {r["Token"]},
