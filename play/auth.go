@@ -8,6 +8,14 @@ import (
    "strings"
 )
 
+type Access_Token map[string]string
+
+func (a Access_Token) Authorization() (string, string) {
+   return "Authorization", "Bearer " + a["Auth"]
+}
+
+////////////////////////////////////////////////
+
 func parse_query(query string) (map[string]string, error) {
    values := make(map[string]string)
    for query != "" {
@@ -27,8 +35,6 @@ func parse_query(query string) (map[string]string, error) {
    }
    return values, nil
 }
-
-type Access_Token map[string]string
 
 func (a Access_Token) auth() string {
    return a["Auth"]

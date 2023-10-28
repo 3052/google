@@ -2,14 +2,26 @@ package play
 
 type Access_Token struct{}
 
+func (Access_Token) Authorization() (string, string) {
+   return "", ""
+}
+
 type Acquire_Request struct {
    Access_Token
    Checkin
 }
 
+type Checkin struct{}
+
+func (Checkin) X_DFE_Device_ID() (string, string) {
+   return "", ""
+}
+
 func (Acquire_Request) Do(app string) error {
    return nil
 }
+
+////////////////////////////////////////////////////////////
 
 type Application struct {
    ID string
@@ -23,8 +35,6 @@ func (Application) APK(config string) string {
 func (Application) OBB(role uint64) string {
    return ""
 }
-
-type Checkin struct{}
 
 type Delivery struct{}
 

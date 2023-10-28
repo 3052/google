@@ -3,12 +3,66 @@ package play
 import (
    "154.pages.dev/protobuf"
    "bytes"
+   "compress/gzip"
+   "encoding/base64"
    "errors"
    "io"
    "net/http"
+   "strconv"
+   "time"
 )
 
-// this could be a method, but we want to match the signature of /fdfe/sync.
+type Checkin struct {
+   m protobuf.Message
+}
+
+func (c Checkin) device_ID() (uint64, bool) {
+   return c.m.Fixed64(7)
+}
+
+func (c Checkin) X_DFE_Device_ID() (string, string) {
+   id, _ := c.device_ID()
+   return "X-DFE-Device-ID", strconv.FormatUint(id, 16)
+}
+
+func compress(m protobuf.Message) (string, error) {
+   var b bytes.Buffer
+   w := gzip.NewWriter(&b)
+   _, err := w.Write(m.Append(nil))
+   if err != nil {
+      return "", err
+   }
+   if err := w.Close(); err != nil {
+      return "", err
+   }
+   return base64.URLEncoding.EncodeToString(b.Bytes()), nil
+}
+
+func (c Checkin) X_PS_RH() (string, string) {
+   id, _ := c.device_ID()
+   token, _ := func() (string, error) {
+      var m protobuf.Message
+      m.Add(3, func(m *protobuf.Message) {
+         m.Add_String(1, strconv.FormatUint(id, 10))
+         m.Add(2, func(m *protobuf.Message) {
+            v := time.Now().UnixMicro()
+            m.Add_String(1, strconv.FormatInt(v, 10))
+         })
+      })
+      return compress(m)
+   }()
+   ps_rh, _ := func() (string, error) {
+      var m protobuf.Message
+      m.Add(1, func(m *protobuf.Message) {
+         m.Add_String(1, token)
+      })
+      return compress(m)
+   }()
+   return "X-PS-RH", ps_rh
+}
+
+//////////////////////////////////////////////////
+
 // device is Pixel 2
 func New_Checkin(d Device) ([]byte, error) {
    var m protobuf.Message
@@ -55,15 +109,4 @@ func New_Checkin(d Device) ([]byte, error) {
       return nil, errors.New(res.Status)
    }
    return io.ReadAll(res.Body)
-}
-
-type Checkin struct {
-   m protobuf.Message
-}
-
-func (c Checkin) device_ID() (uint64, error) {
-   if f, ok := c.m.Fixed64(7); ok {
-      return f, nil
-   }
-   return 0, errors.New("device ID")
 }

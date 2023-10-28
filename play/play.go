@@ -2,9 +2,6 @@ package play
 
 import (
    "154.pages.dev/protobuf"
-   "bytes"
-   "compress/gzip"
-   "encoding/base64"
    "strconv"
    "time"
 )
@@ -25,10 +22,7 @@ func (h *Header) Set_Device(device []byte) error {
    if err != nil {
       return err
    }
-   id, err := check.device_ID()
-   if err != nil {
-      return err
-   }
+   id, _ := check.device_ID()
    h.X_DFE_Device_ID = func() (string, string) {
       return "X-DFE-Device-ID", strconv.FormatUint(id, 16)
    }
@@ -54,19 +48,6 @@ func (h *Header) Set_Device(device []byte) error {
       return "X-PS-RH", ps_rh
    }
    return nil
-}
-
-func compress(m protobuf.Message) (string, error) {
-   var b bytes.Buffer
-   w := gzip.NewWriter(&b)
-   _, err := w.Write(m.Append(nil))
-   if err != nil {
-      return "", err
-   }
-   if err := w.Close(); err != nil {
-      return "", err
-   }
-   return base64.URLEncoding.EncodeToString(b.Bytes()), nil
 }
 
 const (
