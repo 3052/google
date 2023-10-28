@@ -12,20 +12,6 @@ import (
    "time"
 )
 
-type Checkin struct {
-   m protobuf.Message
-}
-
-/////////////////////////////////////////////////
-
-func (c Checkin) device_ID() (uint64, error) {
-   v, ok := c.m.Fixed64(7)
-   if !ok {
-      return 0, errors.New("device ID")
-   }
-   return v, nil
-}
-
 func X_DFE_Device_ID(r *http.Request, c Checkin) error {
    id, err := c.device_ID()
    if err != nil {
@@ -81,8 +67,20 @@ func compress(m protobuf.Message) (string, error) {
    return base64.URLEncoding.EncodeToString(b.Bytes()), nil
 }
 
+type Checkin struct {
+   m protobuf.Message
+}
+
+func (c Checkin) device_ID() (uint64, error) {
+   v, ok := c.m.Fixed64(7)
+   if !ok {
+      return 0, errors.New("device ID")
+   }
+   return v, nil
+}
+
 // device is Pixel 2
-func New_Checkin(d Device) ([]byte, error) {
+func (d Device) Checkin() (Raw_Checkin, error) {
    var m protobuf.Message
    m.Add(4, func(m *protobuf.Message) {
       m.Add(1, func(m *protobuf.Message) {
@@ -127,4 +125,16 @@ func New_Checkin(d Device) ([]byte, error) {
       return nil, errors.New(res.Status)
    }
    return io.ReadAll(res.Body)
+}
+
+type Raw_Checkin []byte
+
+func (r Raw_Checkin) Checkin() (*Checkin, error) {
+   var check Checkin
+   var err error
+   check.m, err = protobuf.Consume(r)
+   if err != nil {
+      return nil, err
+   }
+   return &check, nil
 }

@@ -69,13 +69,11 @@ func (Details_Request) Do(app string, single bool) (*Details, error) {
 
 type Device struct{}
 
-/////////////////////////////////////////////////////////
+type Raw_Checkin struct{}
 
 func (Device) Checkin() (*Raw_Checkin, error) {
    return nil, nil
 }
-
-type Raw_Checkin struct{}
 
 func (Raw_Checkin) Checkin() (*Checkin, error) {
    return nil, nil
@@ -87,15 +85,17 @@ func (*Raw_Refresh_Token) Do(oauth_token string) error {
    return nil
 }
 
+type Refresh_Token struct{}
+
 func (Raw_Refresh_Token) Token() (*Refresh_Token, error) {
    return nil, nil
 }
 
-type Refresh_Token struct{}
-
 func (Refresh_Token) Do() (*Access_Token, error) {
    return nil, nil
 }
+
+/////////////////////////////////////////////////////////
 
 type Sync_Request struct {
    Device
