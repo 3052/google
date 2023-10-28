@@ -25,9 +25,9 @@ func (d Details_Request) Do(app string, single bool) (*Details, error) {
    }
    req.URL.Path = "/fdfe/details"
    req.URL.RawQuery = "doc=" + app
-   req.Header.Set(d.Token.Authorization())
-   req.Header.Set(User_Agent(single))
-   req.Header.Set(d.Checkin.X_DFE_Device_ID())
+   Authorization(req, d.Token)
+   User_Agent(req, single)
+   X_DFE_Device_ID(req, d.Checkin)
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return nil, err
@@ -51,8 +51,6 @@ func (d Details_Request) Do(app string, single bool) (*Details, error) {
    mes.Message(4)
    return &Details{mes}, nil
 }
-
-//////////////////////////////////////////////////////////////////////
 
 // play.google.com/store/apps/details?id=com.google.android.youtube
 func (d Details) Name() (string, bool) {

@@ -9,47 +9,14 @@ import (
    "strconv"
 )
 
-type Application struct {
-   ID string
-   Version uint64
-}
-
-func (n Application) APK(config string) string {
-   var b []byte
-   b = append(b, n.ID...)
-   b = append(b, '-')
-   if config != "" {
-      b = append(b, config...)
-      b = append(b, '-')
-   }
-   b = strconv.AppendUint(b, n.Version, 10)
-   b = append(b, ".apk"...)
-   return string(b)
-}
-
-func (n Application) OBB(role uint64) string {
-   var b []byte
-   if role >= 1 {
-      b = append(b, "patch"...)
-   } else {
-      b = append(b, "main"...)
-   }
-   b = append(b, '.')
-   b = strconv.AppendUint(b, n.Version, 10)
-   b = append(b, '.')
-   b = append(b, n.ID...)
-   b = append(b, ".obb"...)
-   return string(b)
-}
-
-type Delivery struct {
-   m protobuf.Message
-}
-
 type Delivery_Request struct {
    Token Access_Token
    Checkin Checkin
    App Application
+}
+
+type Delivery struct {
+   m protobuf.Message
 }
 
 func (d Delivery_Request) Do(single bool) (*Delivery, error) {
@@ -62,9 +29,9 @@ func (d Delivery_Request) Do(single bool) (*Delivery, error) {
       "doc": {d.App.ID},
       "vc":  {strconv.FormatUint(d.App.Version, 10)},
    }.Encode()
-   req.Header.Set(User_Agent(single))
-   req.Header.Set(d.Checkin.X_DFE_Device_ID())
-   req.Header.Set(d.Token.Authorization())
+   Authorization(req, d.Token)
+   User_Agent(req, single)
+   X_DFE_Device_ID(req, d.Checkin)
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return nil, err
@@ -171,4 +138,37 @@ func (o OBB_File) URL() (string, error) {
       return s, nil
    }
    return "", errors.New("URL")
+}
+
+type Application struct {
+   ID string
+   Version uint64
+}
+
+func (n Application) APK(config string) string {
+   var b []byte
+   b = append(b, n.ID...)
+   b = append(b, '-')
+   if config != "" {
+      b = append(b, config...)
+      b = append(b, '-')
+   }
+   b = strconv.AppendUint(b, n.Version, 10)
+   b = append(b, ".apk"...)
+   return string(b)
+}
+
+func (n Application) OBB(role uint64) string {
+   var b []byte
+   if role >= 1 {
+      b = append(b, "patch"...)
+   } else {
+      b = append(b, "main"...)
+   }
+   b = append(b, '.')
+   b = strconv.AppendUint(b, n.Version, 10)
+   b = append(b, '.')
+   b = append(b, n.ID...)
+   b = append(b, ".obb"...)
+   return string(b)
 }

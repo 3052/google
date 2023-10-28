@@ -2,9 +2,29 @@ package play
 
 import (
    "154.pages.dev/protobuf"
+   "net/http"
    "strconv"
    "time"
 )
+
+func User_Agent(r *http.Request, single bool) {
+   var b []byte
+   // `sdk` is needed for `/fdfe/delivery`
+   b = append(b, "Android-Finsky (sdk="...)
+   // with `/fdfe/acquire`, requests will be rejected with certain apps, if the
+   // device was created with too low a version here:
+   b = strconv.AppendInt(b, google_services_framework, 10)
+   b = append(b, ",versionCode="...)
+   // for multiple APKs just tell the truth. for single APK we have to lie.
+   // below value is the last version that works.
+   if single {
+      b = strconv.AppendInt(b, 80919999, 10)
+   } else {
+      b = strconv.AppendInt(b, google_play_store, 10)
+   }
+   b = append(b, ')')
+   r.Header.Set("User-Agent", string(b))
+}
 
 type Device struct {
    // developer.android.com/ndk/guides/abis
@@ -15,48 +35,6 @@ type Device struct {
    Library []string
    // developer.android.com/guide/topics/manifest/uses-feature-element
    Feature []string
-}
-
-func User_Agent(single bool) (string, string) {
-   var b []byte
-   // `sdk` is needed for `/fdfe/delivery`
-   b = append(b, "Android-Finsky (sdk="...)
-   // with `/fdfe/acquire`, requests will be rejected with certain apps, if the
-   // device was created with too low a version here:
-   b = strconv.AppendInt(b, google_services_framework, 10)
-   b = append(b, ",versionCode="...)
-   // for multiple APKs just tell the truth. for single APK we have to lie.
-   // below value is the last version that works.
-   if single {
-      b = strconv.AppendInt(b, 80919999, 10)
-   } else {
-      b = strconv.AppendInt(b, google_play_store, 10)
-   }
-   b = append(b, ')')
-   return "User-Agent", string(b)
-}
-
-//////////////////////////
-
-func (h *Header) Set_Agent(single bool) {
-   var b []byte
-   // `sdk` is needed for `/fdfe/delivery`
-   b = append(b, "Android-Finsky (sdk="...)
-   // with `/fdfe/acquire`, requests will be rejected with certain apps, if the
-   // device was created with too low a version here:
-   b = strconv.AppendInt(b, google_services_framework, 10)
-   b = append(b, ",versionCode="...)
-   // for multiple APKs just tell the truth. for single APK we have to lie.
-   // below value is the last version that works.
-   if single {
-      b = strconv.AppendInt(b, 80919999, 10)
-   } else {
-      b = strconv.AppendInt(b, google_play_store, 10)
-   }
-   b = append(b, ')')
-   h.User_Agent = func() (string, string) {
-      return "User-Agent", string(b)
-   }
 }
 
 type Header struct {

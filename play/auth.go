@@ -8,13 +8,11 @@ import (
    "strings"
 )
 
-type Access_Token map[string]string
-
-func (a Access_Token) Authorization() (string, string) {
-   return "Authorization", "Bearer " + a["Auth"]
+func Authorization(r *http.Request, a Access_Token) {
+   r.Header.Set("Authorization", "Bearer " + a["Auth"])
 }
 
-////////////////////////////////////////////////
+type Access_Token map[string]string
 
 func parse_query(query string) (map[string]string, error) {
    values := make(map[string]string)

@@ -31,13 +31,13 @@ func (a Acquire_Request) Do(app string) error {
    if err != nil {
       return err
    }
-   req.Header.Set(a.Token.Authorization())
-   req.Header.Set(a.Checkin.X_DFE_Device_ID())
    // with a new device, this needs to be included in the first request to
    // /fdfe/acquire, or you get:
    // Please open my apps to establish a connection with the server.
    // on following requests you can omit it
    req.Header.Set(a.Checkin.X_PS_RH())
+   Authorization(req, a.Token)
+   X_DFE_Device_ID(req, a.Checkin)
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return err

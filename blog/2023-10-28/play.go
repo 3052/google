@@ -1,17 +1,31 @@
 package play
 
-type Access_Token struct{}
+import "net/http"
 
-func (Access_Token) Authorization() (string, string) {
-   return "", ""
+func Authorization(r http.Request, a Access_Token) {
+   r.Header.Set("", "")
 }
+
+func User_Agent(r http.Request, single bool) {
+   r.Header.Set("", "")
+}
+
+func X_DFE_Device_ID(r http.Request, c Checkin) {
+   r.Header.Set("", "")
+}
+
+/////////////////////////////////////////////////////////
+
+func X_PS_RH(r http.Request, c Checkin) {
+   r.Header.Set("", "")
+}
+
+type Access_Token struct{}
 
 type Acquire_Request struct {
    Access_Token
    Checkin
 }
-
-type Checkin struct{}
 
 func (Acquire_Request) Do(app string) error {
    return nil
@@ -30,20 +44,14 @@ func (Application) OBB(role uint64) string {
    return ""
 }
 
+type Checkin struct{}
+
 type Delivery struct{}
 
 type Delivery_Request struct {
    Access_Token
    Checkin
    Application
-}
-
-func (Checkin) X_DFE_Device_ID() (string, string) {
-   return "", ""
-}
-
-func User_Agent(single bool) (string, string) {
-   return "", ""
 }
 
 func (Delivery_Request) Do(single bool) (*Delivery, error) {
@@ -62,8 +70,6 @@ func (Details_Request) Do(app string, single bool) (*Details, error) {
 }
 
 type Device struct{}
-
-////////////////////////////////////////////////////////////
 
 func (Device) Checkin() (*Raw_Checkin, error) {
    return nil, nil

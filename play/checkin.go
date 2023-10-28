@@ -12,17 +12,21 @@ import (
    "time"
 )
 
+func X_DFE_Device_ID(r *http.Request, c Checkin) bool {
+   id, ok := c.device_ID()
+   if !ok {
+      return false
+   }
+   r.Header.Set("X-DFE-Device-ID", strconv.FormatUint(id, 16))
+   return true
+}
+
 type Checkin struct {
    m protobuf.Message
 }
 
 func (c Checkin) device_ID() (uint64, bool) {
    return c.m.Fixed64(7)
-}
-
-func (c Checkin) X_DFE_Device_ID() (string, string) {
-   id, _ := c.device_ID()
-   return "X-DFE-Device-ID", strconv.FormatUint(id, 16)
 }
 
 func compress(m protobuf.Message) (string, error) {
@@ -60,8 +64,6 @@ func (c Checkin) X_PS_RH() (string, string) {
    }()
    return "X-PS-RH", ps_rh
 }
-
-//////////////////////////////////////////////////
 
 // device is Pixel 2
 func New_Checkin(d Device) ([]byte, error) {
