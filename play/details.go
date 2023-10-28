@@ -27,7 +27,7 @@ func (d Details_Request) Do(app string, single bool) (*Details, error) {
    req.URL.RawQuery = "doc=" + app
    Authorization(req, d.Token)
    User_Agent(req, single)
-   X_DFE_Device_ID(req, d.Checkin)
+   x_dfe_device_id(req, d.Checkin)
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return nil, err

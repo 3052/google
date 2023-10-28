@@ -12,7 +12,20 @@ import (
    "time"
 )
 
-func X_DFE_Device_ID(r *http.Request, c *Checkin) error {
+func compress(m protobuf.Message) (string, error) {
+   var b bytes.Buffer
+   w := gzip.NewWriter(&b)
+   _, err := w.Write(m.Append(nil))
+   if err != nil {
+      return "", err
+   }
+   if err := w.Close(); err != nil {
+      return "", err
+   }
+   return base64.URLEncoding.EncodeToString(b.Bytes()), nil
+}
+
+func x_dfe_device_id(r *http.Request, c *Checkin) error {
    id, err := c.device_ID()
    if err != nil {
       return err
@@ -21,7 +34,7 @@ func X_DFE_Device_ID(r *http.Request, c *Checkin) error {
    return nil
 }
 
-func X_PS_RH(r *http.Request, c *Checkin) error {
+func x_ps_rh(r *http.Request, c *Checkin) error {
    id, err := c.device_ID()
    if err != nil {
       return err
@@ -52,19 +65,6 @@ func X_PS_RH(r *http.Request, c *Checkin) error {
    }
    r.Header.Set("X-PS-RH", ps_rh)
    return nil
-}
-
-func compress(m protobuf.Message) (string, error) {
-   var b bytes.Buffer
-   w := gzip.NewWriter(&b)
-   _, err := w.Write(m.Append(nil))
-   if err != nil {
-      return "", err
-   }
-   if err := w.Close(); err != nil {
-      return "", err
-   }
-   return base64.URLEncoding.EncodeToString(b.Bytes()), nil
 }
 
 type Checkin struct {
@@ -130,11 +130,9 @@ func (d Device) Checkin() (Raw_Checkin, error) {
 type Raw_Checkin []byte
 
 func (r Raw_Checkin) Checkin() (*Checkin, error) {
-   var check Checkin
-   var err error
-   check.m, err = protobuf.Consume(r)
+   m, err := protobuf.Consume(r)
    if err != nil {
       return nil, err
    }
-   return &check, nil
+   return &Checkin{m}, nil
 }

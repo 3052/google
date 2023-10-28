@@ -5,6 +5,39 @@ import (
    "strconv"
 )
 
+type Application struct {
+   ID string
+   Version uint64
+}
+
+func (a Application) APK(config string) string {
+   var b []byte
+   b = append(b, a.ID...)
+   b = append(b, '-')
+   if config != "" {
+      b = append(b, config...)
+      b = append(b, '-')
+   }
+   b = strconv.AppendUint(b, a.Version, 10)
+   b = append(b, ".apk"...)
+   return string(b)
+}
+
+func (a Application) OBB(role uint64) string {
+   var b []byte
+   if role >= 1 {
+      b = append(b, "patch"...)
+   } else {
+      b = append(b, "main"...)
+   }
+   b = append(b, '.')
+   b = strconv.AppendUint(b, a.Version, 10)
+   b = append(b, '.')
+   b = append(b, a.ID...)
+   b = append(b, ".obb"...)
+   return string(b)
+}
+
 type Device struct {
    // developer.android.com/ndk/guides/abis
    Platform string

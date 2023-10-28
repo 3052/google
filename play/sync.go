@@ -57,7 +57,7 @@ func (s Sync_Request) Do() error {
    if err != nil {
       return err
    }
-   X_DFE_Device_ID(req, s.Checkin)
+   x_dfe_device_id(req, s.Checkin)
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return err
