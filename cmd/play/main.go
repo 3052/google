@@ -13,76 +13,58 @@ type flags struct {
    acquire bool
    code string
    device bool
-   doc string
    platform int64
    single bool
-   version uint64
-   trace bool
+   app play.Application
 }
 
 func main() {
    var f flags
-   {
+   flag.StringVar(&f.code, "c", "", func() string {
       var b strings.Builder
       b.WriteString("oauth_token from ")
       b.WriteString("accounts.google.com/embedded/setup/android")
-      flag.StringVar(&f.code, "c", "", b.String())
-   }
-   flag.StringVar(&f.doc, "d", "", "doc")
+      return b.String()
+   }())
    flag.BoolVar(&f.device, "device", false, "create device")
    flag.Int64Var(&f.platform, "p", 0, fmt.Sprint(play.Platforms))
    flag.BoolVar(&f.single, "s", false, "single APK")
-   flag.BoolVar(&f.trace, "t", false, "trace")
-   flag.Uint64Var(&f.version, "v", 0, "version code")
-   flag.BoolVar(&f.acquire, "a", false, "acquire")
+   flag.BoolVar(&f.acquire, "acquire", false, "acquire application")
+   flag.StringVar(&f.app.ID, "a", "", "application ID")
+   flag.Uint64Var(&f.app.Version, "v", 0, "version code")
    flag.Parse()
-   dir, err := os.UserHomeDir()
-   if err != nil {
-      panic(err)
-   }
-   dir += "/google/play"
-   os.MkdirAll(dir, os.ModePerm)
    http.No_Location()
-   if f.trace {
-      http.Trace()
-   } else {
-      http.Verbose()
-   }
+   http.Verbose()
    if f.code != "" {
-      err := f.do_auth(dir)
+      err := f.do_auth()
       if err != nil {
          panic(err)
       }
    } else {
-      play.Phone.Platform = play.Platforms[f.platform]
       switch {
       case f.device:
-         err := f.do_device(dir)
+         err := f.do_device()
          if err != nil {
             panic(err)
          }
       case f.doc != "":
-         head, err := f.do_header(dir)
-         if err != nil {
-            panic(err)
-         }
          switch {
          case f.acquire:
-            err := head.Acquire(f.doc)
+            err := f.do_acquire()
             if err != nil {
                panic(err)
             }
          case f.version >= 1:
-            err := f.do_delivery(head)
+            err := f.do_delivery()
             if err != nil {
                panic(err)
             }
          default:
-            detail, err := head.Details(f.doc)
+            details, err := f.do_details()
             if err != nil {
                panic(err)
             }
-            fmt.Println(detail)
+            fmt.Println(details)
          }
       default:
          flag.Usage()
