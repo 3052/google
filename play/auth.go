@@ -12,6 +12,26 @@ func Authorization(r *http.Request, a Access_Token) {
    r.Header.Set("Authorization", "Bearer " + a["Auth"])
 }
 
+func parse_query(query string) (map[string]string, error) {
+   values := make(map[string]string)
+   for query != "" {
+      var line string
+      line, query, _ = strings.Cut(query, "\n")
+      key, value, _ := strings.Cut(line, "=")
+      var err error
+      key, err = url.QueryUnescape(key)
+      if err != nil {
+         return nil, err
+      }
+      value, err = url.QueryUnescape(value)
+      if err != nil {
+         return nil, err
+      }
+      values[key] = value
+   }
+   return values, nil
+}
+
 type Access_Token map[string]string
 
 type Raw_Refresh_Token []byte
@@ -38,31 +58,11 @@ func (r *Raw_Refresh_Token) Do(oauth_token string) error {
    return nil
 }
 
-type Refresh_Token map[string]string
-
 func (r Raw_Refresh_Token) Token() (Refresh_Token, error) {
    return parse_query(string(r))
 }
 
-func parse_query(query string) (map[string]string, error) {
-   values := make(map[string]string)
-   for query != "" {
-      var line string
-      line, query, _ = strings.Cut(query, "\n")
-      key, value, _ := strings.Cut(line, "=")
-      var err error
-      key, err = url.QueryUnescape(key)
-      if err != nil {
-         return nil, err
-      }
-      value, err = url.QueryUnescape(value)
-      if err != nil {
-         return nil, err
-      }
-      values[key] = value
-   }
-   return values, nil
-}
+type Refresh_Token map[string]string
 
 // Refresh access token
 func (r Refresh_Token) Do() (Access_Token, error) {
