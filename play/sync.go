@@ -7,26 +7,26 @@ import (
    "net/http"
 )
 
-func (h Header) Sync(d Device) error {
+func (s Sync_Request) Do() error {
    var m protobuf.Message
    m.Add(1, func(m *protobuf.Message) {
       m.Add(10, func(m *protobuf.Message) {
-         for _, feature := range d.Feature {
+         for _, feature := range s.Device.Feature {
             m.Add(1, func(m *protobuf.Message) {
                m.Add_String(1, feature)
             })
          }
-         for _, library := range d.Library {
+         for _, library := range s.Device.Library {
             m.Add_String(2, library)
          }
-         for _, texture := range d.Texture {
+         for _, texture := range s.Device.Texture {
             m.Add_String(4, texture)
          }
       })
    })
    m.Add(1, func(m *protobuf.Message) {
       m.Add(15, func(m *protobuf.Message) {
-         m.Add_String(4, d.Platform)
+         m.Add_String(4, s.Device.Platform)
       })
    })
    m.Add(1, func(m *protobuf.Message) {
@@ -52,7 +52,7 @@ func (h Header) Sync(d Device) error {
    if err != nil {
       return err
    }
-   req.Header.Set(h.X_DFE_Device_ID())
+   X_DFE_Device_ID(req, s.Checkin)
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return err
@@ -62,4 +62,9 @@ func (h Header) Sync(d Device) error {
       return errors.New(res.Status)
    }
    return nil
+}
+
+type Sync_Request struct {
+   Device Device
+   Checkin Checkin
 }
