@@ -49,8 +49,66 @@ func (d *Details) Details(app string, single bool) error {
 }
 
 // play.google.com/store/apps/details?id=com.google.android.youtube
+func (d Details) Downloads() (uint64, bool) {
+   d.m.Message(13)
+   d.m.Message(1)
+   return d.m.Varint(70)
+}
+
+func (d Details) Files() []uint64 {
+   var files []uint64
+   d.m.Message(13)
+   d.m.Message(1)
+   for _, f := range d.m {
+      if f.Number == 17 {
+         if m, ok := f.Message(); ok {
+            if file, ok := m.Varint(1); ok {
+               files = append(files, file)
+            }
+         }
+      }
+   }
+   return files
+}
+
+// play.google.com/store/apps/details?id=com.google.android.youtube
 func (d Details) Name() (string, bool) {
    return d.m.String(5)
+}
+
+// play.google.com/store/apps/details?id=com.google.android.youtube
+func (d Details) Offered_By() (string, bool) {
+   return d.m.String(6)
+}
+
+// play.google.com/store/apps/details?id=com.google.android.youtube
+func (d Details) Price() (float64, bool) {
+   d.m.Message(8)
+   if v, ok := d.m.Varint(1); ok {
+      return float64(v) / 1_000_000, true
+   }
+   return 0, false
+}
+
+// play.google.com/store/apps/details?id=com.google.android.youtube
+func (d Details) Price_Currency() (string, bool) {
+   d.m.Message(8)
+   return d.m.String(2)
+}
+
+// play.google.com/store/apps/details?id=com.google.android.youtube
+func (d Details) Requires() (string, bool) {
+   d.m.Message(13)
+   d.m.Message(1)
+   d.m.Message(82)
+   d.m.Message(1)
+   return d.m.String(1)
+}
+
+func (d Details) Size() (uint64, bool) {
+   d.m.Message(13)
+   d.m.Message(1)
+   return d.m.Varint(9)
 }
 
 func (d Details) String() string {
@@ -103,64 +161,6 @@ func (d Details) String() string {
       b = fmt.Append(b, " ", v)
    }
    return string(b)
-}
-
-// play.google.com/store/apps/details?id=com.google.android.youtube
-func (d Details) Downloads() (uint64, bool) {
-   d.m.Message(13)
-   d.m.Message(1)
-   return d.m.Varint(70)
-}
-
-func (d Details) Files() []uint64 {
-   var files []uint64
-   d.m.Message(13)
-   d.m.Message(1)
-   for _, f := range d.m {
-      if f.Number == 17 {
-         if m, ok := f.Message(); ok {
-            if file, ok := m.Varint(1); ok {
-               files = append(files, file)
-            }
-         }
-      }
-   }
-   return files
-}
-
-// play.google.com/store/apps/details?id=com.google.android.youtube
-func (d Details) Offered_By() (string, bool) {
-   return d.m.String(6)
-}
-
-// play.google.com/store/apps/details?id=com.google.android.youtube
-func (d Details) Price() (float64, bool) {
-   d.m.Message(8)
-   if v, ok := d.m.Varint(1); ok {
-      return float64(v) / 1_000_000, true
-   }
-   return 0, false
-}
-
-// play.google.com/store/apps/details?id=com.google.android.youtube
-func (d Details) Price_Currency() (string, bool) {
-   d.m.Message(8)
-   return d.m.String(2)
-}
-
-// play.google.com/store/apps/details?id=com.google.android.youtube
-func (d Details) Requires() (string, bool) {
-   d.m.Message(13)
-   d.m.Message(1)
-   d.m.Message(82)
-   d.m.Message(1)
-   return d.m.String(1)
-}
-
-func (d Details) Size() (uint64, bool) {
-   d.m.Message(13)
-   d.m.Message(1)
-   return d.m.Varint(9)
 }
 
 // play.google.com/store/apps/details?id=com.google.android.youtube

@@ -31,21 +31,12 @@ func Exchange(oauth_token string) (*Refresh_Token, error) {
    return &token, nil
 }
 
+func parse_query(query string) (url.Values, error) {
+   query = strings.ReplaceAll(query, "\n", "&")
+   return url.ParseQuery(query)
+}
+
 type Access_Token struct {
-   v url.Values
-}
-
-func (r *Refresh_Token) Unmarshal() error {
-   var err error
-   r.v, err = parse_query(string(r.Raw))
-   if err != nil {
-      return err
-   }
-   return nil
-}
-
-type Refresh_Token struct {
-   Raw []byte
    v url.Values
 }
 
@@ -76,7 +67,16 @@ func (a *Access_Token) Refresh(r Refresh_Token) error {
    return nil
 }
 
-func parse_query(query string) (url.Values, error) {
-   query = strings.ReplaceAll(query, "\n", "&")
-   return url.ParseQuery(query)
+type Refresh_Token struct {
+   Raw []byte
+   v url.Values
+}
+
+func (r *Refresh_Token) Unmarshal() error {
+   var err error
+   r.v, err = parse_query(string(r.Raw))
+   if err != nil {
+      return err
+   }
+   return nil
 }

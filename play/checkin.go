@@ -8,6 +8,11 @@ import (
    "net/http"
 )
 
+type Checkin struct {
+   Raw []byte
+   m protobuf.Message
+}
+
 // device is Pixel 2
 func (c *Checkin) Checkin(d Device) error {
    var m protobuf.Message
@@ -60,9 +65,13 @@ func (c *Checkin) Checkin(d Device) error {
    return nil
 }
 
-type Checkin struct {
-   Raw []byte
-   m protobuf.Message
+func (c *Checkin) Unmarshal() error {
+   var err error
+   c.m, err = protobuf.Consume(c.Raw)
+   if err != nil {
+      return err
+   }
+   return nil
 }
 
 func (c Checkin) device_ID() (uint64, error) {
@@ -71,13 +80,4 @@ func (c Checkin) device_ID() (uint64, error) {
       return 0, errors.New("device ID")
    }
    return v, nil
-}
-
-func (c *Checkin) Unmarshal() error {
-   var err error
-   c.m, err = protobuf.Consume(c.Raw)
-   if err != nil {
-      return err
-   }
-   return nil
 }

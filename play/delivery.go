@@ -9,10 +9,44 @@ import (
    "strconv"
 )
 
+// developer.android.com/guide/app-bundle
+type Config_APK struct {
+   m protobuf.Message
+}
+
+// developer.android.com/guide/app-bundle
+func (s Config_APK) Config() (string, error) {
+   if s, ok := s.m.String(1); ok {
+      return s, nil
+   }
+   return "", errors.New("config")
+}
+
+// developer.android.com/guide/app-bundle
+func (s Config_APK) URL() (string, error) {
+   if s, ok := s.m.String(5); ok {
+      return s, nil
+   }
+   return "", errors.New("URL")
+}
+
 type Delivery struct {
    App Application
    Client Client
    m protobuf.Message
+}
+
+// developer.android.com/guide/app-bundle
+func (d Delivery) Config_APKs() []Config_APK {
+   var configs []Config_APK
+   for _, f := range d.m {
+      if f.Number == 15 {
+         if config, ok := f.Message(); ok {
+            configs = append(configs, Config_APK{config})
+         }
+      }
+   }
+   return configs
 }
 
 func (d *Delivery) Delivery(single bool) error {
@@ -62,40 +96,6 @@ func (d *Delivery) Delivery(single bool) error {
    return nil
 }
 
-// developer.android.com/guide/app-bundle
-type Config_APK struct {
-   m protobuf.Message
-}
-
-// developer.android.com/guide/app-bundle
-func (s Config_APK) Config() (string, error) {
-   if s, ok := s.m.String(1); ok {
-      return s, nil
-   }
-   return "", errors.New("config")
-}
-
-// developer.android.com/guide/app-bundle
-func (s Config_APK) URL() (string, error) {
-   if s, ok := s.m.String(5); ok {
-      return s, nil
-   }
-   return "", errors.New("URL")
-}
-
-// developer.android.com/guide/app-bundle
-func (d Delivery) Config_APKs() []Config_APK {
-   var configs []Config_APK
-   for _, f := range d.m {
-      if f.Number == 15 {
-         if config, ok := f.Message(); ok {
-            configs = append(configs, Config_APK{config})
-         }
-      }
-   }
-   return configs
-}
-
 // developer.android.com/google/play/expansion-files
 func (d Delivery) OBB_Files() []OBB_File {
    var files []OBB_File
@@ -135,4 +135,3 @@ func (o OBB_File) URL() (string, error) {
    }
    return "", errors.New("URL")
 }
-

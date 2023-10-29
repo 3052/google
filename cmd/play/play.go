@@ -41,23 +41,35 @@ func (f flags) do_device() error {
    name += "/google/play/" + f.platform + ".bin"
    var check play.Checkin
    play.Phone.Platform = f.platform
-   check.Checkin(play.Phone)
-   os.WriteFile(name, check.Raw, 0666)
+   if err := check.Checkin(play.Phone); err != nil {
+      return err
+   }
+   if err := os.WriteFile(name, check.Raw, 0666); err != nil {
+      return err
+   }
    fmt.Println("Sleep(9*time.Second)")
    time.Sleep(9*time.Second)
-   check.Unmarshal()
+   if err := check.Unmarshal(); err != nil {
+      return err
+   }
    return check.Sync(play.Phone)
 }
 
 func (f flags) do_acquire() error {
    var client play.Client
-   f.client(&client)
+   err := f.client(&client)
+   if err != nil {
+      return err
+   }
    return client.Acquire(f.app.ID)
 }
 
 func (f flags) do_details() (*play.Details, error) {
    var detail play.Details
-   f.client(&detail.Client)
+   err := f.client(&detail.Client)
+   if err != nil {
+      return nil, err
+   }
    if err := detail.Details(f.app.ID, f.single); err != nil {
       return nil, err
    }
@@ -66,7 +78,10 @@ func (f flags) do_details() (*play.Details, error) {
 
 func (f flags) do_delivery() error {
    var deliver play.Delivery
-   f.client(&deliver.Client)
+   err := f.client(&deliver.Client)
+   if err != nil {
+      return err
+   }
    deliver.App = f.app
    if err := deliver.Delivery(f.single); err != nil {
       return err
