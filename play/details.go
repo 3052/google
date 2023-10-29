@@ -146,12 +146,12 @@ func (d Details) Version_Name() (string, bool) {
 }
 
 type Details struct {
-   Checkin *Checkin
+   Checkin Checkin
    Token Access_Token
    m protobuf.Message
 }
 
-func (d Details) Details(app string, single bool) error {
+func (d *Details) Details(app string, single bool) error {
    req, err := http.NewRequest("GET", "https://android.clients.google.com", nil)
    if err != nil {
       return err

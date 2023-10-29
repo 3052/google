@@ -8,6 +8,15 @@ import (
    "net/http"
 )
 
+func (c *Checkin) Unmarshal(r Raw_Checkin) error {
+   var err error
+   c.m, err = protobuf.Consume(r)
+   if err != nil {
+      return err
+   }
+   return nil
+}
+
 // device is Pixel 2
 func (d Device) Checkin() (Raw_Checkin, error) {
    var m protobuf.Message
@@ -58,13 +67,6 @@ func (d Device) Checkin() (Raw_Checkin, error) {
 
 type Raw_Checkin []byte
 
-func (r Raw_Checkin) Checkin() (*Checkin, error) {
-   m, err := protobuf.Consume(r)
-   if err != nil {
-      return nil, err
-   }
-   return &Checkin{m}, nil
-}
 type Checkin struct {
    m protobuf.Message
 }

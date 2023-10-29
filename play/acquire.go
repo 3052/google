@@ -9,8 +9,8 @@ import (
 )
 
 type Acquire struct {
+   Checkin Checkin
    Token Access_Token
-   Checkin *Checkin
 }
 
 func (a Acquire) Acquire(app string) error {

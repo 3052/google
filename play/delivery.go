@@ -83,6 +83,13 @@ func (o OBB_File) URL() (string, error) {
    return "", errors.New("URL")
 }
 
+type Delivery struct {
+   App Application
+   Checkin Checkin
+   Token Access_Token
+   m protobuf.Message
+}
+
 func (d *Delivery) Delivery(single bool) error {
    req, err := http.NewRequest("GET", "https://play-fe.googleapis.com", nil)
    if err != nil {
@@ -128,11 +135,4 @@ func (d *Delivery) Delivery(single bool) error {
    }
    d.m.Message(2)
    return nil
-}
-
-type Delivery struct {
-   App Application
-   Checkin *Checkin
-   Token Access_Token
-   m protobuf.Message
 }
