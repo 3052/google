@@ -7,7 +7,7 @@ import (
    "net/http"
 )
 
-func (d Device) Sync(c *Checkin) error {
+func (c Checkin) Sync(d Device) error {
    var m protobuf.Message
    m.Add(1, func(m *protobuf.Message) {
       m.Add(10, func(m *protobuf.Message) {

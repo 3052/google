@@ -9,6 +9,11 @@ import (
    "net/http"
 )
 
+type Details struct {
+   Client Client
+   m protobuf.Message
+}
+
 func (d *Details) Details(app string, single bool) error {
    req, err := http.NewRequest("GET", "https://android.clients.google.com", nil)
    if err != nil {
@@ -16,9 +21,9 @@ func (d *Details) Details(app string, single bool) error {
    }
    req.URL.Path = "/fdfe/details"
    req.URL.RawQuery = "doc=" + app
-   authorization(req, d.Token)
+   authorization(req, d.Client.Token)
    user_agent(req, single)
-   x_dfe_device_id(req, &d.Checkin)
+   x_dfe_device_id(req, d.Client.Checkin)
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return err
@@ -42,6 +47,7 @@ func (d *Details) Details(app string, single bool) error {
    d.m.Message(4)
    return nil
 }
+
 // play.google.com/store/apps/details?id=com.google.android.youtube
 func (d Details) Name() (string, bool) {
    return d.m.String(5)
@@ -177,10 +183,3 @@ func (d Details) Version_Name() (string, bool) {
    d.m.Message(1)
    return d.m.String(4)
 }
-
-type Details struct {
-   Checkin Checkin
-   Token Access_Token
-   m protobuf.Message
-}
-

@@ -9,7 +9,7 @@ import (
 )
 
 // device is Pixel 2
-func (d Device) Checkin() (*Checkin, error) {
+func (c *Checkin) Checkin(d Device) error {
    var m protobuf.Message
    m.Add(4, func(m *protobuf.Message) {
       m.Add(1, func(m *protobuf.Message) {
@@ -47,18 +47,17 @@ func (d Device) Checkin() (*Checkin, error) {
       bytes.NewReader(m.Append(nil)),
    )
    if err != nil {
-      return nil, err
+      return err
    }
    defer res.Body.Close()
    if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
+      return errors.New(res.Status)
    }
-   var check Checkin
-   check.Raw, err = io.ReadAll(res.Body)
+   c.Raw, err = io.ReadAll(res.Body)
    if err != nil {
-      return nil, err
+      return err
    }
-   return &check, nil
+   return nil
 }
 
 type Checkin struct {
@@ -82,4 +81,3 @@ func (c *Checkin) Unmarshal() error {
    }
    return nil
 }
-

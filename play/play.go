@@ -10,6 +10,57 @@ import (
    "time"
 )
 
+func authorization(r *http.Request, a Access_Token) {
+   r.Header.Set("Authorization", "Bearer " + a.v.Get("Auth"))
+}
+
+func x_ps_rh(r *http.Request, c Checkin) error {
+   id, err := c.device_ID()
+   if err != nil {
+      return err
+   }
+   token, err := func() (string, error) {
+      var m protobuf.Message
+      m.Add(3, func(m *protobuf.Message) {
+         m.Add_String(1, strconv.FormatUint(id, 10))
+         m.Add(2, func(m *protobuf.Message) {
+            v := time.Now().UnixMicro()
+            m.Add_String(1, strconv.FormatInt(v, 10))
+         })
+      })
+      return compress(m)
+   }()
+   if err != nil {
+      return err
+   }
+   ps_rh, err := func() (string, error) {
+      var m protobuf.Message
+      m.Add(1, func(m *protobuf.Message) {
+         m.Add_String(1, token)
+      })
+      return compress(m)
+   }()
+   if err != nil {
+      return err
+   }
+   r.Header.Set("X-PS-RH", ps_rh)
+   return nil
+}
+
+func x_dfe_device_id(r *http.Request, c Checkin) error {
+   id, err := c.device_ID()
+   if err != nil {
+      return err
+   }
+   r.Header.Set("X-DFE-Device-ID", strconv.FormatUint(id, 16))
+   return nil
+}
+
+type Client struct {
+   Checkin Checkin
+   Token Access_Token
+}
+
 var Platforms = map[string]string{
    // com.google.android.youtube
    "0": "x86",
@@ -17,10 +68,6 @@ var Platforms = map[string]string{
    "1": "armeabi-v7a",
    // com.kakaogames.twodin
    "2": "arm64-v8a",
-}
-
-func authorization(r *http.Request, a Access_Token) {
-   r.Header.Set("Authorization", "Bearer " + a.v.Get("Auth"))
 }
 
 func compress(m protobuf.Message) (string, error) {
@@ -158,47 +205,5 @@ var Phone = Device{
       // org.videolan.vlc
       "android.hardware.screen.landscape",
    },
-}
-
-func x_dfe_device_id(r *http.Request, c *Checkin) error {
-   id, err := c.device_ID()
-   if err != nil {
-      return err
-   }
-   r.Header.Set("X-DFE-Device-ID", strconv.FormatUint(id, 16))
-   return nil
-}
-
-func x_ps_rh(r *http.Request, c Checkin) error {
-   id, err := c.device_ID()
-   if err != nil {
-      return err
-   }
-   token, err := func() (string, error) {
-      var m protobuf.Message
-      m.Add(3, func(m *protobuf.Message) {
-         m.Add_String(1, strconv.FormatUint(id, 10))
-         m.Add(2, func(m *protobuf.Message) {
-            v := time.Now().UnixMicro()
-            m.Add_String(1, strconv.FormatInt(v, 10))
-         })
-      })
-      return compress(m)
-   }()
-   if err != nil {
-      return err
-   }
-   ps_rh, err := func() (string, error) {
-      var m protobuf.Message
-      m.Add(1, func(m *protobuf.Message) {
-         m.Add_String(1, token)
-      })
-      return compress(m)
-   }()
-   if err != nil {
-      return err
-   }
-   r.Header.Set("X-PS-RH", ps_rh)
-   return nil
 }
 

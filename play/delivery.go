@@ -9,6 +9,12 @@ import (
    "strconv"
 )
 
+type Delivery struct {
+   App Application
+   Client Client
+   m protobuf.Message
+}
+
 func (d *Delivery) Delivery(single bool) error {
    req, err := http.NewRequest("GET", "https://play-fe.googleapis.com", nil)
    if err != nil {
@@ -19,9 +25,9 @@ func (d *Delivery) Delivery(single bool) error {
       "doc": {d.App.ID},
       "vc":  {strconv.FormatUint(d.App.Version, 10)},
    }.Encode()
-   authorization(req, d.Token)
+   authorization(req, d.Client.Token)
    user_agent(req, single)
-   x_dfe_device_id(req, &d.Checkin)
+   x_dfe_device_id(req, d.Client.Checkin)
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return err
@@ -55,6 +61,7 @@ func (d *Delivery) Delivery(single bool) error {
    d.m.Message(2)
    return nil
 }
+
 // developer.android.com/guide/app-bundle
 type Config_APK struct {
    m protobuf.Message
@@ -127,12 +134,5 @@ func (o OBB_File) URL() (string, error) {
       return s, nil
    }
    return "", errors.New("URL")
-}
-
-type Delivery struct {
-   App Application
-   Checkin Checkin
-   Token Access_Token
-   m protobuf.Message
 }
 
