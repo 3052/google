@@ -67,8 +67,6 @@ func (Device) Sync(*Checkin) error {
    return nil
 }
 
-////////////////////////////
-
 func (*Details) Details(app string, single bool) error {
    return nil
 }

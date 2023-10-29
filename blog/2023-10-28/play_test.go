@@ -6,31 +6,31 @@ import (
 )
 
 func Test_Details(t *testing.T) {
-   var d Details
+   var detail Details
    var err error
-   d.Checkin.Raw, err = os.ReadFile("checkin.txt")
+   detail.Checkin.Raw, err = os.ReadFile("checkin.txt")
    if err != nil {
       t.Fatal(err)
    }
-   d.Checkin.Unmarshal()
-   var r Refresh_Token
-   r.Raw, err = os.ReadFile("token.txt")
+   detail.Checkin.Unmarshal()
+   var token Refresh_Token
+   token.Raw, err = os.ReadFile("token.txt")
    if err != nil {
       t.Fatal(err)
    }
-   r.Unmarshal()
-   d.Access_Token.Refresh(r)
-   if err := d.Details("hello", false); err != nil {
+   token.Unmarshal()
+   detail.Access_Token.Refresh(token)
+   if err := detail.Details("hello", false); err != nil {
       t.Fatal(err)
    }
 }
 
 func Test_Exchange(t *testing.T) {
-   r, err := Exchange("hello")
+   token, err := Exchange("hello")
    if err != nil {
       t.Fatal(err)
    }
-   os.WriteFile("token.txt", r.Raw, 0666)
+   os.WriteFile("token.txt", token.Raw, 0666)
 }
 
 func Test_Sync(t *testing.T) {
