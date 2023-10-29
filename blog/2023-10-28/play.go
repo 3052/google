@@ -9,9 +9,11 @@ var Phone = Device{}
 
 type Access_Token struct{}
 
-func (*Access_Token) Refresh(r Refresh_Token) error {
+func (*Access_Token) Refresh(Refresh_Token) error {
    return nil
 }
+
+////////////////////////////
 
 type Acquire struct {
    Access_Token

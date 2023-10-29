@@ -17,7 +17,7 @@ func (r *Refresh_Token) Unmarshal(t Raw_Refresh_Token) error {
    return nil
 }
 
-func (r Refresh_Token) Refresh(a *Access_Token) error {
+func (a *Access_Token) Refresh(r Refresh_Token) error {
    res, err := http.PostForm(
       "https://android.clients.google.com/auth", url.Values{
          "Token":      {r.v.Get("Token")},
@@ -33,11 +33,11 @@ func (r Refresh_Token) Refresh(a *Access_Token) error {
    if res.StatusCode != http.StatusOK {
       return errors.New(res.Status)
    }
-   text, err := io.ReadAll(res.Body)
+   body, err := io.ReadAll(res.Body)
    if err != nil {
       return err
    }
-   a.v, err = parse_query(string(text))
+   a.v, err = parse_query(string(body))
    if err != nil {
       return err
    }
