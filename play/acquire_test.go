@@ -14,8 +14,9 @@ func Test_Acquire(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
+   home += "/google/play/"
    var token play.Refresh_Token
-   token.Raw, err = os.ReadFile(home + "/google/play/token.txt")
+   token.Raw, err = os.ReadFile(home + "token.txt")
    if err != nil {
       return err
    }

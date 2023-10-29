@@ -9,18 +9,6 @@ import (
    option "154.pages.dev/http"
 )
 
-func (f flags) do_auth() error {
-   home, err := os.UserHomeDir()
-   if err != nil {
-      return err
-   }
-   token, err := play.Exchange(f.code)
-   if err != nil {
-      return err
-   }
-   return os.WriteFile(home + "/google/play/token.txt", token.Raw, 0666)
-}
-
 func (f flags) download(ref, name string) error {
    res, err := http.Get(ref)
    if err != nil {
@@ -39,21 +27,16 @@ func (f flags) download(ref, name string) error {
    return nil
 }
 
-func (f flags) do_device() error {
-   name, err := os.UserHomeDir()
+func (f flags) do_auth() error {
+   home, err := os.UserHomeDir()
    if err != nil {
       return err
    }
-   name += "/google/play/" + play.Phone.Platform + ".bin"
-   check, err := play.Phone.Checkin()
+   token, err := play.Exchange(f.code)
    if err != nil {
       return err
    }
-   os.WriteFile(name, check.Raw, 0666)
-   fmt.Println("Sleep(9*time.Second)")
-   time.Sleep(9*time.Second)
-   check.Unmarshal()
-   return play.Phone.Sync(check)
+   return os.WriteFile(home + "/google/play/token.txt", token.Raw, 0666)
 }
 
 func (f flags) do_acquire() error {
@@ -70,7 +53,7 @@ func (f flags) do_acquire() error {
    token.Unmarshal()
    var acq play.Acquire
    acq.Token.Refresh(token)
-   acq.Checkin.Raw, err = os.ReadFile(home + play.Phone.Platform + ".bin")
+   acq.Checkin.Raw, err = os.ReadFile(home + play.Platforms[f.platform] + ".bin")
    if err != nil {
       return err
    }
@@ -92,7 +75,7 @@ func (f flags) do_details() (*play.Details, error) {
    token.Unmarshal()
    var detail play.Details
    detail.Token.Refresh(token)
-   detail.Checkin.Raw, err = os.ReadFile(home + play.Phone.Platform + ".bin")
+   detail.Checkin.Raw, err = os.ReadFile(home + play.Platforms[f.platform] + ".bin")
    if err != nil {
       return nil, err
    }
@@ -117,7 +100,7 @@ func (f flags) do_delivery() error {
    token.Unmarshal()
    var deliver play.Delivery
    deliver.Token.Refresh(token)
-   deliver.Checkin.Raw, err = os.ReadFile(home + play.Phone.Platform + ".bin")
+   deliver.Checkin.Raw, err = os.ReadFile(home + play.Platforms[f.platform] + ".bin")
    if err != nil {
       return err
    }
@@ -158,4 +141,22 @@ func (f flags) do_delivery() error {
       return err
    }
    return f.download(ref, f.app.APK(""))
+}
+
+func (f flags) do_device() error {
+   name, err := os.UserHomeDir()
+   if err != nil {
+      return err
+   }
+   name += "/google/play/" + play.Platforms[f.platform] + ".bin"
+   play.Phone.Platform = play.Platforms[f.platform]
+   check, err := play.Phone.Checkin()
+   if err != nil {
+      return err
+   }
+   os.WriteFile(name, check.Raw, 0666)
+   fmt.Println("Sleep(9*time.Second)")
+   time.Sleep(9*time.Second)
+   check.Unmarshal()
+   return play.Phone.Sync(check)
 }
