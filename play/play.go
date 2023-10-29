@@ -160,7 +160,7 @@ var Phone = Device{
    },
 }
 
-func x_dfe_device_id(r *http.Request, c Checkin) error {
+func x_dfe_device_id(r *http.Request, c *Checkin) error {
    id, err := c.device_ID()
    if err != nil {
       return err

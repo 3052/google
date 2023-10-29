@@ -32,7 +32,7 @@ func (a Acquire) Acquire(app string) error {
       return err
    }
    authorization(req, a.Token)
-   x_dfe_device_id(req, a.Checkin)
+   x_dfe_device_id(req, &a.Checkin)
    // with a new device, this needs to be included in the first request to
    // /fdfe/acquire, or you get:
    // Please open my apps to establish a connection with the server.

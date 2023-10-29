@@ -8,17 +8,8 @@ import (
    "net/http"
 )
 
-func (c *Checkin) Unmarshal(r Raw_Checkin) error {
-   var err error
-   c.m, err = protobuf.Consume(r)
-   if err != nil {
-      return err
-   }
-   return nil
-}
-
 // device is Pixel 2
-func (d Device) Checkin() (Raw_Checkin, error) {
+func (d Device) Checkin() (*Checkin, error) {
    var m protobuf.Message
    m.Add(4, func(m *protobuf.Message) {
       m.Add(1, func(m *protobuf.Message) {
@@ -62,12 +53,16 @@ func (d Device) Checkin() (Raw_Checkin, error) {
    if res.StatusCode != http.StatusOK {
       return nil, errors.New(res.Status)
    }
-   return io.ReadAll(res.Body)
+   var check Checkin
+   check.Raw, err = io.ReadAll(res.Body)
+   if err != nil {
+      return nil, err
+   }
+   return &check, nil
 }
 
-type Raw_Checkin []byte
-
 type Checkin struct {
+   Raw []byte
    m protobuf.Message
 }
 
@@ -77,5 +72,14 @@ func (c Checkin) device_ID() (uint64, error) {
       return 0, errors.New("device ID")
    }
    return v, nil
+}
+
+func (c *Checkin) Unmarshal() error {
+   var err error
+   c.m, err = protobuf.Consume(c.Raw)
+   if err != nil {
+      return err
+   }
+   return nil
 }
 

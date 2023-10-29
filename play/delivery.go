@@ -9,6 +9,52 @@ import (
    "strconv"
 )
 
+func (d *Delivery) Delivery(single bool) error {
+   req, err := http.NewRequest("GET", "https://play-fe.googleapis.com", nil)
+   if err != nil {
+      return err
+   }
+   req.URL.Path = "/fdfe/delivery"
+   req.URL.RawQuery = url.Values{
+      "doc": {d.App.ID},
+      "vc":  {strconv.FormatUint(d.App.Version, 10)},
+   }.Encode()
+   authorization(req, d.Token)
+   user_agent(req, single)
+   x_dfe_device_id(req, &d.Checkin)
+   res, err := http.DefaultClient.Do(req)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return errors.New(res.Status)
+   }
+   d.m, err = func() (protobuf.Message, error) {
+      b, err := io.ReadAll(res.Body)
+      if err != nil {
+         return nil, err
+      }
+      return protobuf.Consume(b)
+   }()
+   if err != nil {
+      return err
+   }
+   d.m.Message(1)
+   d.m.Message(21)
+   status_code, ok := d.m.Varint(1)
+   if !ok {
+      return errors.New("status code")
+   }
+   switch status_code {
+   case 3:
+      return errors.New("acquire")
+   case 5:
+      return errors.New("version code")
+   }
+   d.m.Message(2)
+   return nil
+}
 // developer.android.com/guide/app-bundle
 type Config_APK struct {
    m protobuf.Message
@@ -90,49 +136,3 @@ type Delivery struct {
    m protobuf.Message
 }
 
-func (d *Delivery) Delivery(single bool) error {
-   req, err := http.NewRequest("GET", "https://play-fe.googleapis.com", nil)
-   if err != nil {
-      return err
-   }
-   req.URL.Path = "/fdfe/delivery"
-   req.URL.RawQuery = url.Values{
-      "doc": {d.App.ID},
-      "vc":  {strconv.FormatUint(d.App.Version, 10)},
-   }.Encode()
-   authorization(req, d.Token)
-   user_agent(req, single)
-   x_dfe_device_id(req, d.Checkin)
-   res, err := http.DefaultClient.Do(req)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return errors.New(res.Status)
-   }
-   d.m, err = func() (protobuf.Message, error) {
-      b, err := io.ReadAll(res.Body)
-      if err != nil {
-         return nil, err
-      }
-      return protobuf.Consume(b)
-   }()
-   if err != nil {
-      return err
-   }
-   d.m.Message(1)
-   d.m.Message(21)
-   status_code, ok := d.m.Varint(1)
-   if !ok {
-      return errors.New("status code")
-   }
-   switch status_code {
-   case 3:
-      return errors.New("acquire")
-   case 5:
-      return errors.New("version code")
-   }
-   d.m.Message(2)
-   return nil
-}
