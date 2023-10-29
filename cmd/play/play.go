@@ -51,14 +51,32 @@ func (f flags) do_acquire() error {
       return err
    }
    token.Unmarshal()
-   var acq play.Acquire
-   acq.Token.Refresh(token)
-   acq.Checkin.Raw, err = os.ReadFile(home + play.Platforms[f.platform] + ".bin")
+   var client play.Acquire
+   client.Token.Refresh(token)
+   client.Checkin.Raw, err = os.ReadFile(home + f.platform + ".bin")
    if err != nil {
       return err
    }
-   acq.Checkin.Unmarshal()
-   return acq.Acquire(f.app.ID)
+   client.Checkin.Unmarshal()
+   return client.Acquire(f.app.ID)
+}
+
+func (f flags) do_device() error {
+   home, err := os.UserHomeDir()
+   if err != nil {
+      return err
+   }
+   home += "/google/play/"
+   play.Phone.Platform = f.platform
+   check, err := play.Phone.Checkin()
+   if err != nil {
+      return err
+   }
+   os.WriteFile(home + f.platform + ".bin", check.Raw, 0666)
+   fmt.Println("Sleep(9*time.Second)")
+   time.Sleep(9*time.Second)
+   check.Unmarshal()
+   return play.Phone.Sync(check)
 }
 
 func (f flags) do_details() (*play.Details, error) {
@@ -73,17 +91,17 @@ func (f flags) do_details() (*play.Details, error) {
       return nil, err
    }
    token.Unmarshal()
-   var detail play.Details
-   detail.Token.Refresh(token)
-   detail.Checkin.Raw, err = os.ReadFile(home + play.Platforms[f.platform] + ".bin")
+   var client play.Details
+   client.Token.Refresh(token)
+   client.Checkin.Raw, err = os.ReadFile(home + f.platform + ".bin")
    if err != nil {
       return nil, err
    }
-   detail.Checkin.Unmarshal()
-   if err := detail.Details(f.app.ID, f.single); err != nil {
+   client.Checkin.Unmarshal()
+   if err := client.Details(f.app.ID, f.single); err != nil {
       return nil, err
    }
-   return &detail, nil
+   return &client, nil
 }
 
 func (f flags) do_delivery() error {
@@ -98,19 +116,19 @@ func (f flags) do_delivery() error {
       return err
    }
    token.Unmarshal()
-   var deliver play.Delivery
-   deliver.Token.Refresh(token)
-   deliver.Checkin.Raw, err = os.ReadFile(home + play.Platforms[f.platform] + ".bin")
+   var client play.Delivery
+   client.Token.Refresh(token)
+   client.Checkin.Raw, err = os.ReadFile(home + f.platform + ".bin")
    if err != nil {
       return err
    }
-   deliver.Checkin.Unmarshal()
-   deliver.App = f.app
-   if err := deliver.Delivery(f.single); err != nil {
+   client.Checkin.Unmarshal()
+   client.App = f.app
+   if err := client.Delivery(f.single); err != nil {
       return err
    }
    option.Location()
-   for _, apk := range deliver.Config_APKs() {
+   for _, apk := range client.Config_APKs() {
       ref, err := apk.URL()
       if err != nil {
          return err
@@ -123,7 +141,7 @@ func (f flags) do_delivery() error {
          return err
       }
    }
-   for _, obb := range deliver.OBB_Files() {
+   for _, obb := range client.OBB_Files() {
       ref, err := obb.URL()
       if err != nil {
          return err
@@ -136,27 +154,9 @@ func (f flags) do_delivery() error {
          return err
       }
    }
-   ref, err := deliver.URL()
+   ref, err := client.URL()
    if err != nil {
       return err
    }
    return f.download(ref, f.app.APK(""))
-}
-
-func (f flags) do_device() error {
-   name, err := os.UserHomeDir()
-   if err != nil {
-      return err
-   }
-   name += "/google/play/" + play.Platforms[f.platform] + ".bin"
-   play.Phone.Platform = play.Platforms[f.platform]
-   check, err := play.Phone.Checkin()
-   if err != nil {
-      return err
-   }
-   os.WriteFile(name, check.Raw, 0666)
-   fmt.Println("Sleep(9*time.Second)")
-   time.Sleep(9*time.Second)
-   check.Unmarshal()
-   return play.Phone.Sync(check)
 }

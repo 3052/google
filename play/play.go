@@ -10,6 +10,15 @@ import (
    "time"
 )
 
+var Platforms = map[string]string{
+   // com.google.android.youtube
+   "0": "x86",
+   // com.miui.weather2
+   "1": "armeabi-v7a",
+   // com.kakaogames.twodin
+   "2": "arm64-v8a",
+}
+
 func authorization(r *http.Request, a Access_Token) {
    r.Header.Set("Authorization", "Bearer " + a.v.Get("Auth"))
 }
@@ -95,15 +104,6 @@ const (
    // WARNING 28 is the last version that supports single APK
    google_services_framework = 28
 )
-
-var Platforms = map[int64]string{
-   // com.google.android.youtube
-   0: "x86",
-   // com.miui.weather2
-   1: "armeabi-v7a",
-   // com.kakaogames.twodin
-   2: "arm64-v8a",
-}
 
 var Phone = Device{
    Texture: []string{

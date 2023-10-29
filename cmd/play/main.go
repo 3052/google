@@ -12,13 +12,14 @@ type flags struct {
    acquire bool
    code string
    device bool
-   platform int64
+   platform string
    single bool
    app play.Application
 }
 
 func main() {
    var f flags
+   f.platform = play.Platforms["0"]
    flag.StringVar(&f.code, "c", "", func() string {
       var b strings.Builder
       b.WriteString("oauth_token from ")
@@ -26,7 +27,10 @@ func main() {
       return b.String()
    }())
    flag.BoolVar(&f.device, "device", false, "create device")
-   flag.Int64Var(&f.platform, "p", 0, fmt.Sprint(play.Platforms))
+   flag.Func("p", fmt.Sprint(play.Platforms), func(s string) error {
+      f.platform = play.Platforms[s]
+      return nil
+   })
    flag.BoolVar(&f.single, "s", false, "single APK")
    flag.BoolVar(&f.acquire, "acquire", false, "acquire application")
    flag.StringVar(&f.app.ID, "a", "", "application ID")
