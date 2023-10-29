@@ -40,6 +40,7 @@ func main() {
          panic(err)
       }
    } else {
+      play.Phone.Platform = play.Platforms[f.platform]
       switch {
       case f.device:
          err := f.do_device()

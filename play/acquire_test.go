@@ -14,21 +14,14 @@ func Test_Acquire(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   var acq Acquire
-   acq.Token, err = func() (Access_Token, error) {
-      b, err := os.ReadFile(home + "/google/play/token.txt")
-      if err != nil {
-         return nil, err
-      }
-      m, err := Raw_Refresh_Token.Refresh_Token(b)
-      if err != nil {
-         return nil, err
-      }
-      return m.Auth()
-   }()
+   var token play.Refresh_Token
+   token.Raw, err = os.ReadFile(home + "/google/play/token.txt")
    if err != nil {
       return err
    }
+   token.Unmarshal()
+   var acq play.Acquire
+   acq.Token.Refresh(token)
    time.Sleep(time.Second)
    for _, app := range apps {
       acq.Checkin, err = func() (*play.Checkin, error) {
