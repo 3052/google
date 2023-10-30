@@ -15,36 +15,30 @@ func Test_Acquire(t *testing.T) {
       t.Fatal(err)
    }
    home += "/google/play/"
-   var token play.Refresh_Token
+   var token Refresh_Token
    token.Raw, err = os.ReadFile(home + "token.txt")
    if err != nil {
-      return err
+      t.Fatal(err)
    }
-   token.Unmarshal()
-   var acq play.Acquire
-   acq.Token.Refresh(token)
+   if err := token.Unmarshal(); err != nil {
+      t.Fatal(err)
+   }
+   var c Client
+   if err := c.Token.Refresh(token); err != nil {
+      t.Fatal(err)
+   }
    time.Sleep(time.Second)
    for _, app := range apps {
-      acq.Checkin, err = func() (*play.Checkin, error) {
-         s := func() string {
-            var b strings.Builder
-            b.WriteString(home)
-            b.WriteString("/google/play/")
-            b.WriteString(play.Platforms[f.platform])
-            b.WriteString(".bin")
-            return b.String()
-         }()
-         b, err := os.ReadFile(s)
-         if err != nil {
-            return nil, err
-         }
-         return play.Raw_Checkin.Checkin(b)
-      }()
+      platform := Platforms[fmt.Sprint(app.platform)]
+      c.Checkin.Raw, err = os.ReadFile(home + platform + ".bin")
       if err != nil {
-         return err
+         t.Fatal(err)
       }
-      fmt.Println(app.doc)
-      if err := acq.Acquire(f.app.ID); err != nil {
+      if err := c.Checkin.Unmarshal(); err != nil {
+         t.Fatal(err)
+      }
+      fmt.Println(app.id)
+      if err := c.Acquire(app.id); err != nil {
          t.Fatal(err)
       }
       time.Sleep(99 * time.Millisecond)

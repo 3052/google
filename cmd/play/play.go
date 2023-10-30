@@ -33,28 +33,6 @@ func (f flags) client(c *play.Client) error {
    return c.Checkin.Unmarshal()
 }
 
-func (f flags) do_device() error {
-   name, err := os.UserHomeDir()
-   if err != nil {
-      return err
-   }
-   name += "/google/play/" + f.platform + ".bin"
-   var check play.Checkin
-   play.Phone.Platform = f.platform
-   if err := check.Checkin(play.Phone); err != nil {
-      return err
-   }
-   if err := os.WriteFile(name, check.Raw, 0666); err != nil {
-      return err
-   }
-   fmt.Println("Sleep(9*time.Second)")
-   time.Sleep(9*time.Second)
-   if err := check.Unmarshal(); err != nil {
-      return err
-   }
-   return check.Sync(play.Phone)
-}
-
 func (f flags) do_acquire() error {
    var client play.Client
    err := f.client(&client)
@@ -64,16 +42,16 @@ func (f flags) do_acquire() error {
    return client.Acquire(f.app.ID)
 }
 
-func (f flags) do_details() (*play.Details, error) {
-   var detail play.Details
-   err := f.client(&detail.Client)
+func (f flags) do_auth() error {
+   home, err := os.UserHomeDir()
    if err != nil {
-      return nil, err
+      return err
    }
-   if err := detail.Details(f.app.ID, f.single); err != nil {
-      return nil, err
+   token, err := play.Exchange(f.code)
+   if err != nil {
+      return err
    }
-   return &detail, nil
+   return os.WriteFile(home + "/google/play/token.txt", token.Raw, 0666)
 }
 
 func (f flags) do_delivery() error {
@@ -120,6 +98,40 @@ func (f flags) do_delivery() error {
    return f.download(ref, f.app.APK(""))
 }
 
+func (f flags) do_details() (*play.Details, error) {
+   var detail play.Details
+   err := f.client(&detail.Client)
+   if err != nil {
+      return nil, err
+   }
+   if err := detail.Details(f.app.ID, f.single); err != nil {
+      return nil, err
+   }
+   return &detail, nil
+}
+
+func (f flags) do_device() error {
+   name, err := os.UserHomeDir()
+   if err != nil {
+      return err
+   }
+   name += "/google/play/" + f.platform + ".bin"
+   var check play.Checkin
+   play.Phone.Platform = f.platform
+   if err := check.Checkin(play.Phone); err != nil {
+      return err
+   }
+   if err := os.WriteFile(name, check.Raw, 0666); err != nil {
+      return err
+   }
+   fmt.Println("Sleep(9*time.Second)")
+   time.Sleep(9*time.Second)
+   if err := check.Unmarshal(); err != nil {
+      return err
+   }
+   return check.Sync(play.Phone)
+}
+
 func (f flags) download(ref, name string) error {
    res, err := http.Get(ref)
    if err != nil {
@@ -136,16 +148,4 @@ func (f flags) download(ref, name string) error {
       return err
    }
    return nil
-}
-
-func (f flags) do_auth() error {
-   home, err := os.UserHomeDir()
-   if err != nil {
-      return err
-   }
-   token, err := play.Exchange(f.code)
-   if err != nil {
-      return err
-   }
-   return os.WriteFile(home + "/google/play/token.txt", token.Raw, 0666)
 }

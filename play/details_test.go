@@ -13,21 +13,28 @@ func Test_Details(t *testing.T) {
       t.Fatal(err)
    }
    home += "/google/play/"
-   var head Header
-   b, err := os.ReadFile(home + "token.txt")
+   var token Refresh_Token
+   token.Raw, err = os.ReadFile(home + "token.txt")
    if err != nil {
       t.Fatal(err)
    }
-   head.Set_Authorization(b)
-   head.Set_Agent(false)
+   if err := token.Unmarshal(); err != nil {
+      t.Fatal(err)
+   }
+   var d Details
+   if err := d.Client.Token.Refresh(token); err != nil {
+      t.Fatal(err)
+   }
    for _, app := range apps {
-      b, err := os.ReadFile(home + Platforms[app.platform] + ".bin")
+      platform := Platforms[fmt.Sprint(app.platform)]
+      d.Client.Checkin.Raw, err = os.ReadFile(home + platform + ".bin")
       if err != nil {
          t.Fatal(err)
       }
-      head.Set_Device(b)
-      d, err := head.Details(app.doc)
-      if err != nil {
+      if err := d.Client.Checkin.Unmarshal(); err != nil {
+         t.Fatal(err)
+      }
+      if err := d.Details(app.id, false); err != nil {
          t.Fatal(err)
       }
       if _, ok := d.Downloads(); !ok {
@@ -54,17 +61,17 @@ func Test_Details(t *testing.T) {
       if _, ok := d.Size(); !ok {
          t.Fatal("size")
       }
-      {
-         s, ok := d.Updated_On()
+      app.date = func() string {
+         u, ok := d.Updated_On()
          if !ok {
             t.Fatal("updated on")
          }
-         d, err := time.Parse("Jan 2, 2006", s)
+         p, err := time.Parse("Jan 2, 2006", u)
          if err != nil {
             t.Fatal(err)
          }
-         app.date = d.Format("2006-01-02")
-      }
+         return p.Format("2006-01-02")
+      }()
       if _, ok := d.Version_Code(); !ok {
          t.Fatal("version code")
       }

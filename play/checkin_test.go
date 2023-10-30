@@ -7,45 +7,29 @@ import (
    "time"
 )
 
-func checkin_create(id int64) error {
+func Test_Sync(t *testing.T) {
    home, err := os.UserHomeDir()
    if err != nil {
-      return err
+      t.Fatal(err)
    }
    home += "/google/play/"
-   Phone.Platform = Platforms[id]
-   data, err := New_Checkin(Phone)
-   if err != nil {
-      return err
-   }
-   os.WriteFile(home+Phone.Platform+".bin", data, 0666)
-   fmt.Println("Sleep(Second)")
-   time.Sleep(time.Second)
-   var head Header
-   head.Set_Agent(false)
-   if err := head.Set_Device(data); err != nil {
-      return err
-   }
-   return head.Sync(Phone)
-}
-
-func Test_Checkin_X86(t *testing.T) {
-   err := checkin_create(0)
-   if err != nil {
-      t.Fatal(err)
-   }
-}
-
-func Test_Checkin_ARMEABI(t *testing.T) {
-   err := checkin_create(1)
-   if err != nil {
-      t.Fatal(err)
-   }
-}
-
-func Test_Checkin_ARM64(t *testing.T) {
-   err := checkin_create(2)
-   if err != nil {
-      t.Fatal(err)
+   for _, platform := range Platforms {
+      var check Checkin
+      Phone.Platform = platform
+      fmt.Println(platform)
+      if err := check.Checkin(Phone); err != nil {
+         t.Fatal(err)
+      }
+      if err := os.WriteFile(home+platform+".bin", check.Raw, 0666); err != nil {
+         t.Fatal(err)
+      }
+      time.Sleep(time.Second)
+      if err := check.Unmarshal(); err != nil {
+         t.Fatal(err)
+      }
+      if err := check.Sync(Phone); err != nil {
+         t.Fatal(err)
+      }
+      time.Sleep(time.Second)
    }
 }

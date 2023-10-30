@@ -11,25 +11,29 @@ func Test_Delivery(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   var head Header
-   head.Set_Agent(true)
-   {
-      b, err := os.ReadFile(home + "/google/play/token.txt")
-      if err != nil {
-         t.Fatal(err)
-      }
-      head.Set_Authorization(b)
-   }
-   {
-      b, err := os.ReadFile(home + "/google/play/x86.bin")
-      if err != nil {
-         t.Fatal(err)
-      }
-      head.Set_Device(b)
-   }
-   del, err := head.Delivery("com.google.android.youtube", 1524221376)
+   home += "/google/play/"
+   var token Refresh_Token
+   token.Raw, err = os.ReadFile(home + "token.txt")
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%#v\n", del.m)
+   if err := token.Unmarshal(); err != nil {
+      t.Fatal(err)
+   }
+   var d Delivery
+   if err := d.Client.Token.Refresh(token); err != nil {
+      t.Fatal(err)
+   }
+   d.Client.Checkin.Raw, err = os.ReadFile(home + "x86.bin")
+   if err != nil {
+      t.Fatal(err)
+   }
+   if err := d.Client.Checkin.Unmarshal(); err != nil {
+      t.Fatal(err)
+   }
+   d.App = Application{"com.google.android.youtube", 1524221376}
+   if err := d.Delivery(false); err != nil {
+      t.Fatal(err)
+   }
+   fmt.Printf("%#v\n", d.m)
 }
