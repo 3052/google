@@ -191,11 +191,6 @@ func (a Application) OBB(role uint64) string {
    return string(b)
 }
 
-type Client struct {
-   Checkin Checkin
-   Token Access_Token
-}
-
 type Device struct {
    // developer.android.com/ndk/guides/abis
    Platform string

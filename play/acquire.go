@@ -8,7 +8,12 @@ import (
    "net/http"
 )
 
-func (c Client) Acquire(app string) error {
+type Acquire struct {
+   Checkin Checkin
+   Token Access_Token
+}
+
+func (a Acquire) Acquire(app string) error {
    var m protobuf.Message
    m.Add(1, func(m *protobuf.Message) {
       m.Add(1, func(m *protobuf.Message) {
@@ -26,13 +31,13 @@ func (c Client) Acquire(app string) error {
    if err != nil {
       return err
    }
-   authorization(req, c.Token)
-   x_dfe_device_id(req, c.Checkin)
+   authorization(req, a.Token)
+   x_dfe_device_id(req, a.Checkin)
    // with a new device, this needs to be included in the first request to
    // /fdfe/acquire, or you get:
    // Please open my apps to establish a connection with the server.
    // on following requests you can omit it
-   x_ps_rh(req, c.Checkin)
+   x_ps_rh(req, a.Checkin)
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return err

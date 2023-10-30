@@ -10,7 +10,8 @@ import (
 )
 
 type Details struct {
-   Client Client
+   Checkin Checkin
+   Token Access_Token
    m protobuf.Message
 }
 
@@ -21,9 +22,9 @@ func (d *Details) Details(app string, single bool) error {
    }
    req.URL.Path = "/fdfe/details"
    req.URL.RawQuery = "doc=" + app
-   authorization(req, d.Client.Token)
+   authorization(req, d.Token)
    user_agent(req, single)
-   x_dfe_device_id(req, d.Client.Checkin)
+   x_dfe_device_id(req, d.Checkin)
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return err

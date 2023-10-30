@@ -33,7 +33,7 @@ Account. Then get authorization code (`oauth_token`) cookie from
 authorization code for refresh token (`aas_et`):
 
 ~~~
-play -c oauth2_4/0Adeu5B...
+play -o oauth2_4/0Adeu5B...
 ~~~
 
 [1]://firefox-source-docs.mozilla.org/devtools-user/storage_inspector
@@ -41,13 +41,13 @@ play -c oauth2_4/0Adeu5B...
 Create a file containing `X-DFE-Device-ID` (GSF ID) for future requests:
 
 ~~~
-play -device
+play -d
 ~~~
 
 Get app details:
 
 ~~~
-> play -d com.google.android.youtube
+> play -a com.google.android.youtube
 creator: Google LLC
 file: APK APK APK APK
 installation size: 89.03 megabyte
@@ -63,7 +63,7 @@ version code: 1540222400
 Acquire app. Only needs to be done once per Google account:
 
 ~~~
-play -d com.google.android.youtube -a
+play -a com.google.android.youtube -acquire
 ~~~
 
 Download APK. You need to specify any valid version code. The latest code is
@@ -71,7 +71,7 @@ provided by the previous details command. If APK is split, all pieces will be
 downloaded:
 
 ~~~
-play -d com.google.android.youtube -v 1540222400
+play -a com.google.android.youtube -v 1540222400
 ~~~
 
 ## Goals

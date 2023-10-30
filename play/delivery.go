@@ -32,7 +32,8 @@ func (s Config_APK) URL() (string, error) {
 
 type Delivery struct {
    App Application
-   Client Client
+   Checkin Checkin
+   Token Access_Token
    m protobuf.Message
 }
 
@@ -59,9 +60,9 @@ func (d *Delivery) Delivery(single bool) error {
       "doc": {d.App.ID},
       "vc":  {strconv.FormatUint(d.App.Version, 10)},
    }.Encode()
-   authorization(req, d.Client.Token)
+   authorization(req, d.Token)
    user_agent(req, single)
-   x_dfe_device_id(req, d.Client.Checkin)
+   x_dfe_device_id(req, d.Checkin)
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return err

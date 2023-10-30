@@ -20,20 +20,20 @@ type flags struct {
 func main() {
    var f flags
    f.platform = play.Platforms["0"]
-   flag.StringVar(&f.code, "c", "", func() string {
+   flag.StringVar(&f.app.ID, "a", "", "application ID")
+   flag.BoolVar(&f.acquire, "acquire", false, "acquire application")
+   flag.BoolVar(&f.device, "d", false, "checkin and sync device")
+   flag.StringVar(&f.code, "o", "", func() string {
       var b strings.Builder
       b.WriteString("oauth_token from ")
       b.WriteString("accounts.google.com/embedded/setup/android")
       return b.String()
    }())
-   flag.BoolVar(&f.device, "device", false, "create device")
    flag.Func("p", fmt.Sprint(play.Platforms), func(s string) error {
       f.platform = play.Platforms[s]
       return nil
    })
    flag.BoolVar(&f.single, "s", false, "single APK")
-   flag.BoolVar(&f.acquire, "acquire", false, "acquire application")
-   flag.StringVar(&f.app.ID, "a", "", "application ID")
    flag.Uint64Var(&f.app.Version, "v", 0, "version code")
    flag.Parse()
    http.No_Location()
