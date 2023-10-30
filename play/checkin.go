@@ -65,6 +65,10 @@ func (c *Checkin) Checkin(d Device) error {
    return nil
 }
 
+func (c Checkin) Device_ID() (uint64, bool) {
+   return c.m.Fixed64(7)
+}
+
 func (c *Checkin) Unmarshal() error {
    var err error
    c.m, err = protobuf.Consume(c.Raw)
@@ -72,12 +76,4 @@ func (c *Checkin) Unmarshal() error {
       return err
    }
    return nil
-}
-
-func (c Checkin) device_ID() (uint64, error) {
-   v, ok := c.m.Fixed64(7)
-   if !ok {
-      return 0, errors.New("device ID")
-   }
-   return v, nil
 }

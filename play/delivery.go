@@ -15,19 +15,13 @@ type Config_APK struct {
 }
 
 // developer.android.com/guide/app-bundle
-func (s Config_APK) Config() (string, error) {
-   if s, ok := s.m.String(1); ok {
-      return s, nil
-   }
-   return "", errors.New("config")
+func (s Config_APK) Config() (string, bool) {
+   return s.m.String(1)
 }
 
 // developer.android.com/guide/app-bundle
-func (s Config_APK) URL() (string, error) {
-   if s, ok := s.m.String(5); ok {
-      return s, nil
-   }
-   return "", errors.New("URL")
+func (s Config_APK) URL() (string, bool) {
+   return s.m.String(5)
 }
 
 type Delivery struct {
@@ -110,11 +104,8 @@ func (d Delivery) OBB_Files() []OBB_File {
    return files
 }
 
-func (d Delivery) URL() (string, error) {
-   if v, ok := d.m.String(3); ok {
-      return v, nil
-   }
-   return "", errors.New("URL")
+func (d Delivery) URL() (string, bool) {
+   return d.m.String(3)
 }
 
 // developer.android.com/google/play/expansion-files
@@ -123,16 +114,10 @@ type OBB_File struct {
 }
 
 // developer.android.com/google/play/expansion-files
-func (o OBB_File) Role() (uint64, error) {
-   if v, ok := o.m.Varint(1); ok {
-      return v, nil
-   }
-   return 0, errors.New("role")
+func (o OBB_File) Role() (uint64, bool) {
+   return o.m.Varint(1)
 }
 
-func (o OBB_File) URL() (string, error) {
-   if s, ok := o.m.String(4); ok {
-      return s, nil
-   }
-   return "", errors.New("URL")
+func (o OBB_File) URL() (string, bool) {
+   return o.m.String(4)
 }

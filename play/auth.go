@@ -43,7 +43,7 @@ type Access_Token struct {
 func (a *Access_Token) Refresh(r Refresh_Token) error {
    res, err := http.PostForm(
       "https://android.clients.google.com/auth", url.Values{
-         "Token":      {r.v.Get("Token")},
+         "Token":      {r.Values.Get("Token")},
          "app":        {"com.android.vending"},
          "client_sig": {"38918a453d07199354f8b19af05ec6562ced5788"},
          "service":    {"oauth2:https://www.googleapis.com/auth/googleplay"},
@@ -69,12 +69,12 @@ func (a *Access_Token) Refresh(r Refresh_Token) error {
 
 type Refresh_Token struct {
    Raw []byte
-   v url.Values
+   Values url.Values
 }
 
 func (r *Refresh_Token) Unmarshal() error {
    var err error
-   r.v, err = parse_query(string(r.Raw))
+   r.Values, err = parse_query(string(r.Raw))
    if err != nil {
       return err
    }

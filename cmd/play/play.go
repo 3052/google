@@ -9,6 +9,97 @@ import (
    option "154.pages.dev/http"
 )
 
+func (f flags) do_delivery() error {
+   var client play.Delivery
+   err := f.client(&client.Token, &client.Checkin)
+   if err != nil {
+      return err
+   }
+   client.App = f.app
+   if err := client.Delivery(f.single); err != nil {
+      return err
+   }
+   option.Location()
+   for _, apk := range client.Config_APKs() {
+      if url, ok := apk.URL(); ok {
+         if config, ok := apk.Config(); ok {
+            err := f.download(url, f.app.APK(config))
+            if err != nil {
+               return err
+            }
+         }
+      }
+   }
+   for _, obb := range client.OBB_Files() {
+      if url, ok := obb.URL(); ok {
+         if role, ok := obb.Role(); ok {
+            err := f.download(url, f.app.OBB(role))
+            if err != nil {
+               return err
+            }
+         }
+      }
+   }
+   if url, ok := client.URL(); ok {
+      err := f.download(url, f.app.APK(""))
+      if err != nil {
+         return err
+      }
+   }
+   return nil
+}
+
+func (f flags) do_details() (*play.Details, error) {
+   var client play.Details
+   err := f.client(&client.Token, &client.Checkin)
+   if err != nil {
+      return nil, err
+   }
+   if err := client.Details(f.app.ID, f.single); err != nil {
+      return nil, err
+   }
+   return &client, nil
+}
+
+func (f flags) do_device() error {
+   name, err := os.UserHomeDir()
+   if err != nil {
+      return err
+   }
+   name += "/google/play/" + f.platform + ".bin"
+   var check play.Checkin
+   play.Phone.Platform = f.platform
+   if err := check.Checkin(play.Phone); err != nil {
+      return err
+   }
+   if err := os.WriteFile(name, check.Raw, 0666); err != nil {
+      return err
+   }
+   fmt.Println("Sleep(9*time.Second)")
+   time.Sleep(9*time.Second)
+   if err := check.Unmarshal(); err != nil {
+      return err
+   }
+   return check.Sync(play.Phone)
+}
+
+func (f flags) download(url, name string) error {
+   res, err := http.Get(url)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   file, err := os.Create(name)
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   pro := option.Progress_Length(res.ContentLength)
+   if _, err := file.ReadFrom(pro.Reader(res)); err != nil {
+      return err
+   }
+   return nil
+}
 func (f flags) client(a *play.Access_Token, c *play.Checkin) error {
    home, err := os.UserHomeDir()
    if err != nil {
@@ -54,98 +145,3 @@ func (f flags) do_auth() error {
    return os.WriteFile(home + "/google/play/token.txt", token.Raw, 0666)
 }
 
-func (f flags) do_delivery() error {
-   var client play.Delivery
-   err := f.client(&client.Token, &client.Checkin)
-   if err != nil {
-      return err
-   }
-   client.App = f.app
-   if err := client.Delivery(f.single); err != nil {
-      return err
-   }
-   option.Location()
-   for _, apk := range client.Config_APKs() {
-      ref, err := apk.URL()
-      if err != nil {
-         return err
-      }
-      id, err := apk.Config()
-      if err != nil {
-         return err
-      }
-      if err := f.download(ref, f.app.APK(id)); err != nil {
-         return err
-      }
-   }
-   for _, obb := range client.OBB_Files() {
-      ref, err := obb.URL()
-      if err != nil {
-         return err
-      }
-      role, err := obb.Role()
-      if err != nil {
-         return err
-      }
-      if err := f.download(ref, f.app.OBB(role)); err != nil {
-         return err
-      }
-   }
-   ref, err := client.URL()
-   if err != nil {
-      return err
-   }
-   return f.download(ref, f.app.APK(""))
-}
-
-func (f flags) do_details() (*play.Details, error) {
-   var client play.Details
-   err := f.client(&client.Token, &client.Checkin)
-   if err != nil {
-      return nil, err
-   }
-   if err := client.Details(f.app.ID, f.single); err != nil {
-      return nil, err
-   }
-   return &client, nil
-}
-
-func (f flags) do_device() error {
-   name, err := os.UserHomeDir()
-   if err != nil {
-      return err
-   }
-   name += "/google/play/" + f.platform + ".bin"
-   var check play.Checkin
-   play.Phone.Platform = f.platform
-   if err := check.Checkin(play.Phone); err != nil {
-      return err
-   }
-   if err := os.WriteFile(name, check.Raw, 0666); err != nil {
-      return err
-   }
-   fmt.Println("Sleep(9*time.Second)")
-   time.Sleep(9*time.Second)
-   if err := check.Unmarshal(); err != nil {
-      return err
-   }
-   return check.Sync(play.Phone)
-}
-
-func (f flags) download(ref, name string) error {
-   res, err := http.Get(ref)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   file, err := os.Create(name)
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   pro := option.Progress_Length(res.ContentLength)
-   if _, err := file.ReadFrom(pro.Reader(res)); err != nil {
-      return err
-   }
-   return nil
-}
