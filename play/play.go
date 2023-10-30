@@ -81,7 +81,7 @@ var Platforms = map[string]string{
 }
 
 func authorization(r *http.Request, a Access_Token) {
-   r.Header.Set("Authorization", "Bearer " + a.v.Get("Auth"))
+   r.Header.Set("Authorization", "Bearer " + a.Values.Get("Auth"))
 }
 
 func compress(m protobuf.Message) (string, error) {

@@ -37,7 +37,7 @@ func parse_query(query string) (url.Values, error) {
 }
 
 type Access_Token struct {
-   v url.Values
+   Values url.Values
 }
 
 func (a *Access_Token) Refresh(r Refresh_Token) error {
@@ -60,7 +60,7 @@ func (a *Access_Token) Refresh(r Refresh_Token) error {
    if err != nil {
       return err
    }
-   a.v, err = parse_query(string(body))
+   a.Values, err = parse_query(string(body))
    if err != nil {
       return err
    }
