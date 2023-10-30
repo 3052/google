@@ -8,5 +8,3 @@ def request(f: http.HTTPFlow) -> None:
       f.kill()
    if f.request.path.startswith('/fdfe/replicateLibrary'):
       f.kill()
-   if not f.request.path.startswith('/fdfe/toc'):
-      f.request.headers.pop('X-PS-RH', None)

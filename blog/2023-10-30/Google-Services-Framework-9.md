@@ -1,4 +1,4 @@
-# goals
+# Google Services Framework 9
 
 here is the current version of System Image API 28:
 
@@ -11,10 +11,4 @@ what is the oldest version?
 ~~~
 package: name='com.google.android.gms' versionCode='16089022'
 versionName='16.0.89 (040700-239467275)' platformBuildVersionName='Q'
-~~~
-
-this seems to be the first version using `/fdfe/sync` only:
-
-~~~
-play -d com.android.vending -v 82941300
 ~~~

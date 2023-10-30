@@ -13,8 +13,7 @@ import (
 
 const (
    google_play_store = 82941300
-   // WARNING 28 is the last version that supports single APK
-   google_services_framework = 28
+   google_services_framework = 29
 )
 
 var Phone = Device{

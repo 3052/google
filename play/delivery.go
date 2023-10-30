@@ -45,7 +45,7 @@ func (d Delivery) Config_APKs() []Config_APK {
 }
 
 func (d *Delivery) Delivery(single bool) error {
-   req, err := http.NewRequest("GET", "https://play-fe.googleapis.com", nil)
+   req, err := http.NewRequest("GET", "https://android.clients.google.com", nil)
    if err != nil {
       return err
    }

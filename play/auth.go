@@ -10,7 +10,7 @@ import (
 
 func Exchange(oauth_token string) (*Refresh_Token, error) {
    res, err := http.PostForm(
-      "https://android.clients.google.com/auth", url.Values{
+      "https://android.googleapis.com/auth", url.Values{
          "ACCESS_TOKEN": {"1"},
          "Token":        {oauth_token},
          "service":      {"ac2dm"},
@@ -42,7 +42,7 @@ type Access_Token struct {
 
 func (a *Access_Token) Refresh(r Refresh_Token) error {
    res, err := http.PostForm(
-      "https://android.clients.google.com/auth", url.Values{
+      "https://android.googleapis.com/auth", url.Values{
          "Token":      {r.Values.Get("Token")},
          "app":        {"com.android.vending"},
          "client_sig": {"38918a453d07199354f8b19af05ec6562ced5788"},
