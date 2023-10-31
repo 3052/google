@@ -12,8 +12,12 @@ import (
 )
 
 const (
+   android_API = 30
    google_play_store = 82941300
-   google_services_framework = 29
+   // developer.android.com/guide/topics/manifest/uses-feature-element#glEsVersion
+   // the device actually uses 0x30000, but some apps require a higher version,
+   // so we need to lie:
+   gl_es_version = 0x30001
 )
 
 var Phone = Device{
@@ -47,8 +51,6 @@ var Phone = Device{
       "android.hardware.wifi",
       // com.madhead.tos.zh
       "android.hardware.sensor.accelerometer",
-      // com.miHoYo.GenshinImpact
-      "android.hardware.opengles.aep",
       // com.pinterest
       "android.hardware.camera",
       "android.hardware.location",
@@ -103,7 +105,7 @@ func user_agent(r *http.Request, single bool) {
    b = append(b, "Android-Finsky (sdk="...)
    // with `/fdfe/acquire`, requests will be rejected with certain apps, if the
    // device was created with too low a version here:
-   b = strconv.AppendInt(b, google_services_framework, 10)
+   b = strconv.AppendInt(b, android_API, 10)
    b = append(b, ",versionCode="...)
    // for multiple APKs just tell the truth. for single APK we have to lie.
    // below value is the last version that works.

@@ -39,10 +39,9 @@ func (c Checkin) Sync(d Device) error {
          m.Add_Varint(2, google_play_store)
       })
    })
-   // developer.android.com/guide/topics/manifest/uses-feature-element#glEsVersion
    m.Add(1, func(m *protobuf.Message) {
       m.Add(21, func(m *protobuf.Message) {
-         m.Add_Varint(6, 196609)
+         m.Add_Varint(6, gl_es_version)
       })
    })
    req, err := http.NewRequest(
