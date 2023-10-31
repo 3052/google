@@ -13,7 +13,11 @@ import (
 
 const (
    google_play_store = 82941300
-   google_services_framework = 29
+   google_services_framework = 30
+   // developer.android.com/guide/topics/manifest/uses-feature-element#glEsVersion
+   // the device actually uses 0x30000, but some apps require a higher version,
+   // so we need to lie:
+   gl_es_version = 0x30001
 )
 
 var Phone = Device{
@@ -47,8 +51,6 @@ var Phone = Device{
       "android.hardware.wifi",
       // com.madhead.tos.zh
       "android.hardware.sensor.accelerometer",
-      // com.miHoYo.GenshinImpact
-      "android.hardware.opengles.aep",
       // com.pinterest
       "android.hardware.camera",
       "android.hardware.location",

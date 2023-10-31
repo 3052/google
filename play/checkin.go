@@ -25,13 +25,12 @@ func (c *Checkin) Checkin(d Device) error {
    m.Add(18, func(m *protobuf.Message) {
       m.Add_Varint(1, 3)
       m.Add_Varint(2, 2)
-      m.Add_Varint(3, 1)
+      m.Add_Varint(3, 2)
       m.Add_Varint(4, 2)
       m.Add_Varint(5, 1)
-      m.Add_Varint(6, 0)
+      m.Add_Varint(6, 1)
       m.Add_Varint(7, 420)
-      // developer.android.com/guide/topics/manifest/uses-feature-element#glEsVersion
-      m.Add_Varint(8, 196609)
+      m.Add_Varint(8, gl_es_version)
       for _, library := range d.Library {
          m.Add_String(9, library)
       }
@@ -47,7 +46,7 @@ func (c *Checkin) Checkin(d Device) error {
       }
    })
    res, err := http.Post(
-      "https://android.clients.google.com/checkin",
+      "https://android.googleapis.com/checkin",
       "application/x-protobuffer",
       bytes.NewReader(m.Append(nil)),
    )
