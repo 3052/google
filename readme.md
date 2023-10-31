@@ -27,7 +27,7 @@ go build
 
 ## Tool examples
 
-[Sign in](//accounts.google.com/embedded/setup/android) with your Google
+[Sign in](//accounts.google.com/embedded/setup/v2/android) with your Google
 Account. Then get authorization code (`oauth_token`) cookie from
 [browser storage][1]. Should be valid for 10 minutes. Then exchange
 authorization code for refresh token (`aas_et`):
@@ -76,8 +76,8 @@ play -a com.google.android.youtube -v 1540222400
 
 ## Goals
 
-1. [Google Services Framework 10](//wikipedia.org/wiki/Android_10) (2019)
-2. Google Play Store 29 (2022)
+1. [Google Services Framework 11](//wikipedia.org/wiki/Android_11) (2020)
+2. [Google Play Store](//wikipedia.org/wiki/Google_Play) 29 (2022)
 
 Non goals:
 

@@ -26,7 +26,7 @@ func main() {
    flag.StringVar(&f.code, "o", "", func() string {
       var b strings.Builder
       b.WriteString("oauth_token from ")
-      b.WriteString("accounts.google.com/embedded/setup/android")
+      b.WriteString("accounts.google.com/embedded/setup/v2/android")
       return b.String()
    }())
    flag.Func("p", fmt.Sprint(play.Platforms), func(s string) error {
