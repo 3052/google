@@ -32,12 +32,16 @@ func (a Acquire) Acquire(app string) error {
       return err
    }
    authorization(req, a.Token)
-   x_dfe_device_id(req, a.Checkin)
+   if err := x_dfe_device_id(req, a.Checkin); err != nil {
+      return err
+   }
    // with a new device, this needs to be included in the first request to
    // /fdfe/acquire, or you get:
    // Please open my apps to establish a connection with the server.
    // on following requests you can omit it
-   x_ps_rh(req, a.Checkin)
+   if err := x_ps_rh(req, a.Checkin); err != nil {
+      return err
+   }
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return err

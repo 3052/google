@@ -5,7 +5,6 @@ import (
    "bytes"
    "compress/gzip"
    "encoding/base64"
-   "errors"
    "net/http"
    "strconv"
    "time"
@@ -118,17 +117,19 @@ func user_agent(r *http.Request, single bool) {
    r.Header.Set("User-Agent", string(b))
 }
 
-func x_dfe_device_id(r *http.Request, c Checkin) {
-   v, ok := c.Device_ID()
-   if ok {
-      r.Header.Set("X-DFE-Device-ID", strconv.FormatUint(v, 16))
+func x_dfe_device_id(r *http.Request, c Checkin) error {
+   id, err := c.Device_ID()
+   if err != nil {
+      return err
    }
+   r.Header.Set("X-DFE-Device-ID", strconv.FormatUint(id, 16))
+   return nil
 }
 
 func x_ps_rh(r *http.Request, c Checkin) error {
-   id, ok := c.Device_ID()
-   if !ok {
-      return errors.New("device ID")
+   id, err := c.Device_ID()
+   if err != nil {
+      return err
    }
    token, err := func() (string, error) {
       var m protobuf.Message

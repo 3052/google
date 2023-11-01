@@ -56,7 +56,9 @@ func (d *Delivery) Delivery(single bool) error {
    }.Encode()
    authorization(req, d.Token)
    user_agent(req, single)
-   x_dfe_device_id(req, d.Checkin)
+   if err := x_dfe_device_id(req, d.Checkin); err != nil {
+      return err
+   }
    res, err := http.DefaultClient.Do(req)
    if err != nil {
       return err
