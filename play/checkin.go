@@ -65,8 +65,7 @@ func (c *Checkin) Checkin(d Device) error {
 }
 
 func (c Checkin) Device_ID() (uint64, error) {
-   v, ok := c.m.Fixed64(7)
-   if ok {
+   if v, ok := c.m.Fixed64(7); ok {
       return v, nil
    }
    return 0, errors.New("device ID")
