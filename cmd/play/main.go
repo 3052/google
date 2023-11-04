@@ -38,39 +38,37 @@ func main() {
    flag.Parse()
    http.No_Location()
    http.Verbose()
-   if f.code != "" {
+   switch {
+   case f.app.ID != "":
+      switch {
+      case f.acquire:
+         err := f.do_acquire()
+         if err != nil {
+            panic(err)
+         }
+      case f.app.Version >= 1:
+         err := f.do_delivery()
+         if err != nil {
+            panic(err)
+         }
+      default:
+         details, err := f.do_details()
+         if err != nil {
+            panic(err)
+         }
+         fmt.Println(details)
+      }
+   case f.code != "":
       err := f.do_auth()
       if err != nil {
          panic(err)
       }
-   } else {
-      switch {
-      case f.device:
-         err := f.do_device()
-         if err != nil {
-            panic(err)
-         }
-      case f.app.ID != "":
-         switch {
-         case f.acquire:
-            err := f.do_acquire()
-            if err != nil {
-               panic(err)
-            }
-         case f.app.Version >= 1:
-            err := f.do_delivery()
-            if err != nil {
-               panic(err)
-            }
-         default:
-            details, err := f.do_details()
-            if err != nil {
-               panic(err)
-            }
-            fmt.Println(details)
-         }
-      default:
-         flag.Usage()
+   case f.device:
+      err := f.do_device()
+      if err != nil {
+         panic(err)
       }
+   default:
+      flag.Usage()
    }
 }
