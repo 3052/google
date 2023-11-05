@@ -9,6 +9,51 @@ import (
    option "154.pages.dev/http"
 )
 
+func (f flags) client(a *play.Access_Token, c *play.Checkin) error {
+   home, err := os.UserHomeDir()
+   if err != nil {
+      return err
+   }
+   home += "/google/play/"
+   var token play.Refresh_Token
+   token.Raw, err = os.ReadFile(home + "token.txt")
+   if err != nil {
+      return err
+   }
+   if err := token.Unmarshal(); err != nil {
+      return err
+   }
+   if err := a.Refresh(token); err != nil {
+      return err
+   }
+   c.Raw, err = os.ReadFile(home + f.platform + ".bin")
+   if err != nil {
+      return err
+   }
+   return c.Unmarshal()
+}
+
+func (f flags) do_acquire() error {
+   var client play.Acquire
+   err := f.client(&client.Token, &client.Checkin)
+   if err != nil {
+      return err
+   }
+   return client.Acquire(f.app.ID)
+}
+
+func (f flags) do_auth() error {
+   home, err := os.UserHomeDir()
+   if err != nil {
+      return err
+   }
+   token, err := play.Exchange(f.code)
+   if err != nil {
+      return err
+   }
+   return os.WriteFile(home + "/google/play/token.txt", token.Raw, 0666)
+}
+
 func (f flags) do_delivery() error {
    var client play.Delivery
    err := f.client(&client.Token, &client.Checkin)
@@ -100,48 +145,3 @@ func (f flags) download(url, name string) error {
    }
    return nil
 }
-func (f flags) client(a *play.Access_Token, c *play.Checkin) error {
-   home, err := os.UserHomeDir()
-   if err != nil {
-      return err
-   }
-   home += "/google/play/"
-   var token play.Refresh_Token
-   token.Raw, err = os.ReadFile(home + "token.txt")
-   if err != nil {
-      return err
-   }
-   if err := token.Unmarshal(); err != nil {
-      return err
-   }
-   if err := a.Refresh(token); err != nil {
-      return err
-   }
-   c.Raw, err = os.ReadFile(home + f.platform + ".bin")
-   if err != nil {
-      return err
-   }
-   return c.Unmarshal()
-}
-
-func (f flags) do_acquire() error {
-   var client play.Acquire
-   err := f.client(&client.Token, &client.Checkin)
-   if err != nil {
-      return err
-   }
-   return client.Acquire(f.app.ID)
-}
-
-func (f flags) do_auth() error {
-   home, err := os.UserHomeDir()
-   if err != nil {
-      return err
-   }
-   token, err := play.Exchange(f.code)
-   if err != nil {
-      return err
-   }
-   return os.WriteFile(home + "/google/play/token.txt", token.Raw, 0666)
-}
-

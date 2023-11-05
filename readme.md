@@ -8,28 +8,21 @@
 
 Download APK from Google Play or send API requests
 
-## How to build?
+## Support
 
-This module works with Windows, macOS or Linux. [Download Go](//go.dev/dl) and
-extract archive. Then download Google Play Zip and extract archive. Then
-navigate to:
+I DONT PROVIDE FREE SUPPORT. IF YOU ARE INTERESTED IN PAID SUPPORT LET ME KNOW.
+IF YOU ARE WANTING MY TIME, IN EXCHANGE FOR NOTHING, THAT IS FREE SUPPORT. IF
+YOU WANT TO KNOW IF SOME BEHAVIOR IS A BUG OR AS INTENDED, THAT IS PAID
+SUPPORT. SOFTWARE IS NOT LICENSED FOR COMMERCIAL USE. IF YOU WISH TO PURCHASE A
+COMMERCIAL LICENSE, OR FOR OTHER BUSINESS QUESTIONS, CONTACT ME.
 
-~~~
-google-main/cmd/play
-~~~
-
-and enter:
-
-~~~
-go build
-~~~
-
+<https://paypal.com/donate?hosted_button_id=UEJBQQTU3VYDY>
 
 ## Tool examples
 
 [Sign in](//accounts.google.com/embedded/setup/v2/android) with your Google
 Account. Then get authorization code (`oauth_token`) cookie from
-[browser storage][1]. Should be valid for 10 minutes. Then exchange
+[browser&nbsp;storage][1]. Should be valid for 10 minutes. Then exchange
 authorization code for refresh token (`aas_et`):
 
 ~~~
@@ -105,10 +98,3 @@ do not know how to reverse that, and I did not find any implementations online.
    https://discord.com/invite/WWq6rFb8Rf
    </dd>
 </dl>
-
-## Money
-
-<https://paypal.com/donate?hosted_button_id=UEJBQQTU3VYDY>
-
-Software is not licensed for commercial use. If you wish to purchase a
-commercial license, or for other business questions, contact me.
