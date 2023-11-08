@@ -10,11 +10,12 @@ import (
 
 type flags struct {
    acquire bool
+   app play.Application
    code string
    device bool
    platform string
    single bool
-   app play.Application
+   trace bool
 }
 
 func main() {
@@ -34,10 +35,15 @@ func main() {
       return nil
    })
    flag.BoolVar(&f.single, "s", false, "single APK")
+   flag.BoolVar(&f.trace, "t", false, "trace")
    flag.Uint64Var(&f.app.Version, "v", 0, "version code")
    flag.Parse()
    http.No_Location()
-   http.Verbose()
+   if f.trace {
+      http.Trace()
+   } else {
+      http.Verbose()
+   }
    switch {
    case f.app.ID != "":
       switch {
