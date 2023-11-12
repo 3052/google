@@ -9,7 +9,7 @@ file, after reboot device will just load forever. this seems to be the first
 version using `/fdfe/sync` only:
 
 ~~~
-play -d com.android.vending -v 82941300
+play -a com.android.vending -v 82941300
 ~~~
 
 oldest:
