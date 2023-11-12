@@ -13,7 +13,7 @@ func main() {
       name string
       verbose bool
    }
-   flag.StringVar(&f.name, "f", "", "file")
+   flag.StringVar(&f.name, "i", "", "input file")
    flag.BoolVar(&f.verbose, "v", false, "verbose")
    flag.Parse()
    if f.name != "" {
