@@ -77,4 +77,29 @@ for (fmo fmoVar : this.f50711w) {
 ~~~
 
 field 26 was introduced with Google Play Services 9.2.55, but it was already
-obfuscated.
+obfuscated. note the same issue exists with other fields. For example field 7 was
+introduced with Google Play Services 3.1.58, but it was already obfuscated.
+
+~~~java
+if (hasTouchScreen()) {
+    output.writeInt32(1, getTouchScreen());
+}
+if (hasKeyboard()) {
+    output.writeInt32(2, getKeyboard());
+}
+if (hasNavigation()) {
+    output.writeInt32(3, getNavigation());
+}
+if (hasScreenLayout()) {
+    output.writeInt32(4, getScreenLayout());
+}
+if (hasHasHardKeyboard()) {
+    output.writeBool(5, getHasHardKeyboard());
+}
+if (hasHasFiveWayNavigation()) {
+    output.writeBool(6, getHasFiveWayNavigation());
+}
+if (hasScreenDensity()) {
+    output.writeInt32(7, getScreenDensity());
+}
+~~~

@@ -15,19 +15,20 @@ func Test_Sync(t *testing.T) {
    home += "/google/play/"
    for _, platform := range Platforms {
       var check Checkin
-      Phone.Platform = platform
       fmt.Println(platform)
-      if err := check.Checkin(Phone); err != nil {
+      Pixel_6.Platform = platform
+      if err := check.Checkin(Pixel_6); err != nil {
          t.Fatal(err)
       }
-      if err := os.WriteFile(home+platform+".bin", check.Raw, 0666); err != nil {
+      err := os.WriteFile(home+platform+".bin", check.Raw, 0666)
+      if err != nil {
          t.Fatal(err)
       }
       time.Sleep(time.Second)
       if err := check.Unmarshal(); err != nil {
          t.Fatal(err)
       }
-      if err := check.Sync(Phone); err != nil {
+      if err := check.Sync(Pixel_6); err != nil {
          t.Fatal(err)
       }
       time.Sleep(time.Second)

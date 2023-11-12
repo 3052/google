@@ -75,8 +75,9 @@ play -a com.google.android.youtube -v 1540222400
 ## Goals
 
 1. [Pixel 6](//wikipedia.org/wiki/Pixel_6) (2021)
-2. [Android 11](//wikipedia.org/wiki/Android_11) (2020)
-3. [Google Play](//wikipedia.org/wiki/Google_Play) 29 (2022)
+2. [Android TV](//wikipedia.org/wiki/Android_TV)
+3. [Android 11](//wikipedia.org/wiki/Android_11) (2020)
+4. [Google Play](//wikipedia.org/wiki/Google_Play) 29 (2022)
 
 Non goals:
 

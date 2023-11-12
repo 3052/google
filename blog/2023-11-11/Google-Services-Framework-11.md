@@ -27,7 +27,7 @@ newest:
 <http://dl.google.com/android/repository/sys-img/google_apis/x86-30_r10.zip>
 
 ~~~
-emulator -avd Pixel_2_API_30 -writable-system
+emulator -avd Pixel_6_API_30 -writable-system
 adb shell avbctl disable-verification
 adb reboot
 

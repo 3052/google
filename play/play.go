@@ -10,6 +10,17 @@ import (
    "time"
 )
 
+type Device struct {
+   // developer.android.com/ndk/guides/abis
+   Platform string
+   // developer.android.com/guide/topics/manifest/supports-gl-texture-element
+   Texture []string
+   // developer.android.com/guide/topics/manifest/uses-library-element
+   Library []string
+   // developer.android.com/guide/topics/manifest/uses-feature-element
+   Feature []string
+}
+
 const (
    android_API = 30
    google_play_store = 82941300
@@ -19,7 +30,7 @@ const (
    gl_es_version = 0x30001
 )
 
-var Phone = Device{
+var Pixel_6 = Device{
    Texture: []string{
       // com.instagram.android
       "GL_OES_compressed_ETC1_RGB8_texture",
@@ -190,15 +201,4 @@ func (a Application) OBB(role uint64) string {
    b = append(b, a.ID...)
    b = append(b, ".obb"...)
    return string(b)
-}
-
-type Device struct {
-   // developer.android.com/ndk/guides/abis
-   Platform string
-   // developer.android.com/guide/topics/manifest/supports-gl-texture-element
-   Texture []string
-   // developer.android.com/guide/topics/manifest/uses-library-element
-   Library []string
-   // developer.android.com/guide/topics/manifest/uses-feature-element
-   Feature []string
 }

@@ -8,12 +8,6 @@ import (
    "net/http"
 )
 
-type Checkin struct {
-   Raw []byte
-   m protobuf.Message
-}
-
-// device is Pixel 2
 func (c *Checkin) Checkin(d Device) error {
    var m protobuf.Message
    m.Add(4, func(m *protobuf.Message) {
@@ -23,13 +17,18 @@ func (c *Checkin) Checkin(d Device) error {
    })
    m.Add_Varint(14, 3)
    m.Add(18, func(m *protobuf.Message) {
-      m.Add_Varint(1, 3)
-      m.Add_Varint(2, 2)
+      // developer.android.com/reference/android/content/res/Configuration#touchscreen
+      m.Add_Varint(1, 3) // TV different
+      // developer.android.com/reference/android/content/res/Configuration#keyboard
+      m.Add_Varint(2, 2) // TV different
       m.Add_Varint(3, 2)
-      m.Add_Varint(4, 2)
-      m.Add_Varint(5, 1)
+      // developer.android.com/reference/android/content/res/Configuration#screenLayout
+      m.Add_Varint(4, 2) // TV different
+      // developer.android.com/reference/android/content/pm/ConfigurationInfo#INPUT_FEATURE_HARD_KEYBOARD
+      m.Add_Varint(5, 1) // TV different
       m.Add_Varint(6, 1)
-      m.Add_Varint(7, 420)
+      // developer.android.com/reference/android/content/res/Configuration#densityDpi
+      m.Add_Varint(7, 420) // TV different
       m.Add_Varint(8, gl_es_version)
       for _, library := range d.Library {
          m.Add_String(9, library)
@@ -62,6 +61,11 @@ func (c *Checkin) Checkin(d Device) error {
       return err
    }
    return nil
+}
+
+type Checkin struct {
+   Raw []byte
+   m protobuf.Message
 }
 
 func (c Checkin) Device_ID() (uint64, error) {
