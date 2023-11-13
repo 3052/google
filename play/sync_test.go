@@ -16,8 +16,8 @@ func Test_Sync(t *testing.T) {
    for _, platform := range Platforms {
       var check Checkin
       fmt.Println(platform)
-      Pixel_6.Platform = platform
-      if err := check.Checkin(Pixel_6); err != nil {
+      Phone.Platform = platform
+      if err := check.Checkin(Phone); err != nil {
          t.Fatal(err)
       }
       err := os.WriteFile(home+platform+".bin", check.Raw, 0666)
@@ -28,7 +28,7 @@ func Test_Sync(t *testing.T) {
       if err := check.Unmarshal(); err != nil {
          t.Fatal(err)
       }
-      if err := check.Sync(Pixel_6); err != nil {
+      if err := check.Sync(Phone); err != nil {
          t.Fatal(err)
       }
       time.Sleep(time.Second)

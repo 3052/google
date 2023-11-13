@@ -30,7 +30,7 @@ const (
    gl_es_version = 0x30001
 )
 
-var Pixel_6 = Device{
+var Phone = Device{
    Texture: []string{
       // com.instagram.android
       "GL_OES_compressed_ETC1_RGB8_texture",

@@ -113,8 +113,8 @@ func (f flags) do_device() error {
    }
    name += "/google/play/" + f.platform + ".bin"
    var check play.Checkin
-   play.Pixel_6.Platform = f.platform
-   if err := check.Checkin(play.Pixel_6); err != nil {
+   play.Phone.Platform = f.platform
+   if err := check.Checkin(play.Phone); err != nil {
       return err
    }
    if err := os.WriteFile(name, check.Raw, 0666); err != nil {
@@ -125,7 +125,7 @@ func (f flags) do_device() error {
    if err := check.Unmarshal(); err != nil {
       return err
    }
-   return check.Sync(play.Pixel_6)
+   return check.Sync(play.Phone)
 }
 
 func (f flags) download(url, name string) error {
