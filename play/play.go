@@ -10,6 +10,15 @@ import (
    "time"
 )
 
+var Platforms = map[string]string{
+   // com.google.android.youtube
+   "0": "x86",
+   // com.miui.weather2
+   "1": "armeabi-v7a",
+   // com.kakaogames.twodin
+   "2": "arm64-v8a",
+}
+
 type Device struct {
    // developer.android.com/ndk/guides/abis
    Platform string
@@ -81,15 +90,6 @@ var Phone = Device{
       // org.videolan.vlc
       "android.hardware.screen.landscape",
    },
-}
-
-var Platforms = map[string]string{
-   // com.google.android.youtube
-   "0": "x86",
-   // com.miui.weather2
-   "1": "armeabi-v7a",
-   // com.kakaogames.twodin
-   "2": "arm64-v8a",
 }
 
 func authorization(r *http.Request, a Access_Token) {
