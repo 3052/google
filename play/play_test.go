@@ -1,6 +1,6 @@
 package play
 
-import "strconv"
+import "fmt"
 
 var apps = []app_type{
 {date:"2023-02-01",requires:24,platform:1,id:"com.miui.weather2"},
@@ -27,23 +27,19 @@ var apps = []app_type{
 {date:"2023-10-23",requires:28,platform:0,id:"com.busuu.android.enc"},
 }
 
-func (a app_type) GoString() string {
-   var b []byte
-   b = append(b, "{date:"...)
-   b = strconv.AppendQuote(b, a.date)
-   b = append(b, ",requires:"...)
-   b = strconv.AppendInt(b, a.requires, 10)
-   b = append(b, ",platform:"...)
-   b = strconv.AppendInt(b, a.platform, 10)
-   b = append(b, ",id:"...)
-   b = strconv.AppendQuote(b, a.id)
-   b = append(b, '}')
-   return string(b)
-}
-
 type app_type struct {
    date     string
-   requires int64
-   platform int64 // X-DFE-Device-ID
+   requires int
+   platform Platform
    id      string
+}
+
+func (a app_type) GoString() string {
+   var b []byte
+   b = fmt.Appendf(b, "{date:%q", a.date)
+   b = fmt.Append(b, ",requires:", a.requires)
+   b = fmt.Append(b, ",platform:", a.platform)
+   b = fmt.Appendf(b, "id:%q", a.id)
+   b = append(b, '}')
+   return string(b)
 }

@@ -9,6 +9,46 @@ import (
    option "154.pages.dev/http"
 )
 
+func (f flags) do_device() error {
+   name, err := os.UserHomeDir()
+   if err != nil {
+      return err
+   }
+   name += fmt.Sprintf("/google/play/%v.bin", f.platform)
+   var check play.Checkin
+   play.Phone.Platform = f.platform.String()
+   if err := check.Checkin(play.Phone); err != nil {
+      return err
+   }
+   if err := os.WriteFile(name, check.Raw, 0666); err != nil {
+      return err
+   }
+   fmt.Println("Sleep(9*time.Second)")
+   time.Sleep(9*time.Second)
+   if err := check.Unmarshal(); err != nil {
+      return err
+   }
+   return check.Sync(play.Phone)
+}
+
+func (f flags) download(url, name string) error {
+   res, err := http.Get(url)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   file, err := os.Create(name)
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   pro := option.Progress_Length(res.ContentLength)
+   if _, err := file.ReadFrom(pro.Reader(res)); err != nil {
+      return err
+   }
+   return nil
+}
+
 func (f flags) client(a *play.Access_Token, c *play.Checkin) error {
    home, err := os.UserHomeDir()
    if err != nil {
@@ -26,7 +66,7 @@ func (f flags) client(a *play.Access_Token, c *play.Checkin) error {
    if err := a.Refresh(token); err != nil {
       return err
    }
-   c.Raw, err = os.ReadFile(home + f.platform + ".bin")
+   c.Raw, err = os.ReadFile(fmt.Sprint(home, f.platform, ".bin"))
    if err != nil {
       return err
    }
@@ -106,42 +146,3 @@ func (f flags) do_details() (*play.Details, error) {
    return &client, nil
 }
 
-func (f flags) do_device() error {
-   name, err := os.UserHomeDir()
-   if err != nil {
-      return err
-   }
-   name += "/google/play/" + f.platform + ".bin"
-   var check play.Checkin
-   play.Phone.Platform = f.platform
-   if err := check.Checkin(play.Phone); err != nil {
-      return err
-   }
-   if err := os.WriteFile(name, check.Raw, 0666); err != nil {
-      return err
-   }
-   fmt.Println("Sleep(9*time.Second)")
-   time.Sleep(9*time.Second)
-   if err := check.Unmarshal(); err != nil {
-      return err
-   }
-   return check.Sync(play.Phone)
-}
-
-func (f flags) download(url, name string) error {
-   res, err := http.Get(url)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   file, err := os.Create(name)
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   pro := option.Progress_Length(res.ContentLength)
-   if _, err := file.ReadFrom(pro.Reader(res)); err != nil {
-      return err
-   }
-   return nil
-}

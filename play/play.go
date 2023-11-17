@@ -10,26 +10,6 @@ import (
    "time"
 )
 
-var Platforms = map[string]string{
-   // com.google.android.youtube
-   "0": "x86",
-   // com.miui.weather2
-   "1": "armeabi-v7a",
-   // com.kakaogames.twodin
-   "2": "arm64-v8a",
-}
-
-type Device struct {
-   // developer.android.com/ndk/guides/abis
-   Platform string
-   // developer.android.com/guide/topics/manifest/supports-gl-texture-element
-   Texture []string
-   // developer.android.com/guide/topics/manifest/uses-library-element
-   Library []string
-   // developer.android.com/guide/topics/manifest/uses-feature-element
-   Feature []string
-}
-
 const (
    android_API = 30
    google_play_store = 82941300
@@ -201,4 +181,39 @@ func (a Application) OBB(role uint64) string {
    b = append(b, a.ID...)
    b = append(b, ".obb"...)
    return string(b)
+}
+
+type Platform int
+
+var Platforms = map[int]string{
+   // com.google.android.youtube
+   0: "x86",
+   // com.miui.weather2
+   1: "armeabi-v7a",
+   // com.kakaogames.twodin
+   2: "arm64-v8a",
+}
+
+func (p Platform) String() string {
+   return Platforms[int(p)]
+}
+
+func (p *Platform) Set(s string) error {
+   v, err := strconv.Atoi(s)
+   if err != nil {
+      return err
+   }
+   *p = Platform(v)
+   return nil
+}
+
+type Device struct {
+   // developer.android.com/guide/topics/manifest/supports-gl-texture-element
+   Texture []string
+   // developer.android.com/guide/topics/manifest/uses-library-element
+   Library []string
+   // developer.android.com/guide/topics/manifest/uses-feature-element
+   Feature []string
+   // developer.android.com/ndk/guides/abis
+   Platform string
 }

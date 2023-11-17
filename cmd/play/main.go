@@ -13,14 +13,12 @@ type flags struct {
    app play.Application
    code string
    device bool
-   platform string
    single bool
-   trace bool
+   platform play.Platform
 }
 
 func main() {
    var f flags
-   f.platform = play.Platforms["0"]
    flag.StringVar(&f.app.ID, "a", "", "application ID")
    flag.BoolVar(&f.acquire, "acquire", false, "acquire application")
    flag.BoolVar(&f.device, "d", false, "checkin and sync device")
@@ -30,20 +28,12 @@ func main() {
       b.WriteString("accounts.google.com/embedded/setup/v2/android")
       return b.String()
    }())
-   flag.Func("p", fmt.Sprint(play.Platforms), func(s string) error {
-      f.platform = play.Platforms[s]
-      return nil
-   })
    flag.BoolVar(&f.single, "s", false, "single APK")
-   flag.BoolVar(&f.trace, "t", false, "trace")
    flag.Uint64Var(&f.app.Version, "v", 0, "version code")
+   flag.Var(&f.platform, "p", fmt.Sprint(play.Platforms))
    flag.Parse()
    http.No_Location()
-   if f.trace {
-      http.Trace()
-   } else {
-      http.Verbose()
-   }
+   http.Verbose()
    switch {
    case f.app.ID != "":
       switch {

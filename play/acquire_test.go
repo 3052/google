@@ -29,8 +29,8 @@ func Test_Acquire(t *testing.T) {
    }
    time.Sleep(time.Second)
    for _, app := range apps {
-      platform := Platforms[fmt.Sprint(app.platform)]
-      client.Checkin.Raw, err = os.ReadFile(home + platform + ".bin")
+      name := fmt.Sprint(home, app.platform, ".bin")
+      client.Checkin.Raw, err = os.ReadFile(name)
       if err != nil {
          t.Fatal(err)
       }

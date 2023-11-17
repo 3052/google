@@ -26,8 +26,8 @@ func Test_Details(t *testing.T) {
       t.Fatal(err)
    }
    for _, app := range apps {
-      platform := Platforms[fmt.Sprint(app.platform)]
-      d.Checkin.Raw, err = os.ReadFile(home + platform + ".bin")
+      name := fmt.Sprint(home, app.platform, ".bin")
+      d.Checkin.Raw, err = os.ReadFile(name)
       if err != nil {
          t.Fatal(err)
       }
