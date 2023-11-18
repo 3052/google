@@ -1,33 +1,33 @@
 # Google Play
 
 > I’m not really sure what the point of this video is, but I guess just be
-> generous. Be kind to people, because you never know how much they might need
+> generous. be kind to people, because you never know how much they might need
 > it, or how far it’ll go.
 >
 > [NakeyJakey (2018)](//youtube.com/watch?v=Cr0UYNKmrUs)
 
-Download APK from Google Play or send API requests
+download APK from Google Play or send API requests
 
-## Support
+## support
 
-BECAUSE OF REPEATED ABUSE, I NO LONGER OFFER FREE DISCUSSION OF THIS SOFTWARE. SO
-UNLESS YOU HAVE PAID UP FRONT, DONT:
+because of repeated abuse, I no longer offer free discussion of this software. so
+unless you have paid up front, do not:
 
-1. POST AN ISSUE
-2. POST A PULL REQUEST
-3. MESSAGE ME ON DISCORD
-4. EMAIL ME
+1. post an issue
+2. post a pull request
+3. message me on discord
+4. email me
 
-SOFTWARE IS NOT LICENSED FOR COMMERCIAL USE. IF YOU WISH TO PURCHASE A
-COMMERCIAL LICENSE, CONTACT ME.
+software is not licensed for commercial use. if you wish to purchase a
+commercial license, contact me.
 
 <https://paypal.com/donate?hosted_button_id=UEJBQQTU3VYDY>
 
-## Tool examples
+## tool examples
 
-[Sign in](//accounts.google.com/embedded/setup/v2/android) with your Google
-Account. Then get authorization code (`oauth_token`) cookie from
-[browser&nbsp;storage][1]. Should be valid for 10 minutes. Then exchange
+[sign in](//accounts.google.com/embedded/setup/v2/android) with your Google
+Account. then get authorization code (`oauth_token`) cookie from
+[browser&nbsp;storage][1]. should be valid for 10 minutes. then exchange
 authorization code for refresh token (`aas_et`):
 
 ~~~
@@ -36,13 +36,13 @@ play -o oauth2_4/0Adeu5B...
 
 [1]://firefox-source-docs.mozilla.org/devtools-user/storage_inspector
 
-Create a file containing `X-DFE-Device-ID` (GSF ID) for future requests:
+create a file containing `X-DFE-Device-ID` (GSF ID) for future requests:
 
 ~~~
 play -d
 ~~~
 
-Get app details:
+get app details:
 
 ~~~
 > play -a com.google.android.youtube
@@ -58,34 +58,34 @@ version: 18.38.37
 version code: 1540222400
 ~~~
 
-Acquire app. Only needs to be done once per Google account:
+acquire app. only needs to be done once per Google account:
 
 ~~~
 play -a com.google.android.youtube -acquire
 ~~~
 
-Download APK. You need to specify any valid version code. The latest code is
-provided by the previous details command. If APK is split, all pieces will be
+download APK. you need to specify any valid version code. the latest code is
+provided by the previous details command. if APK is split, all pieces will be
 downloaded:
 
 ~~~
 play -a com.google.android.youtube -v 1540222400
 ~~~
 
-## Goals
+## goals
 
 1. [Pixel 6](//wikipedia.org/wiki/Pixel_6) (2021)
-3. [Android 11](//wikipedia.org/wiki/Android_11) (2020)
-4. [Google Play](//wikipedia.org/wiki/Google_Play) 29 (2022)
+2. [Android 11](//wikipedia.org/wiki/Android_11) (2020)
+3. [Google Play](//wikipedia.org/wiki/Google_Play) 29 (2022)
 
-Non goals:
+non goals:
 
-email/password login. Up to Android 4.4 (2013), the login is protected with TLS
-fingerprinting, which is difficult but possible to bypass. Since
-Android 5 (2014), Google uses bot-guard via JavaScript to protect the login. I
-do not know how to reverse that, and I did not find any implementations online.
+email/password login. up to Android 4.4 (2013), the login is protected with TLS
+fingerprinting, which is difficult but possible to bypass. since Android 5
+(2014), Google uses bot-guard via JavaScript to protect the login. I do not
+know how to reverse that, and I did not find any implementations online.
 
-## Contact
+## contact
 
 <dl>
    <dt>
