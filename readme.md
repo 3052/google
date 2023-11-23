@@ -15,7 +15,7 @@ unless you have paid up front, do not:
 
 1. post an issue
 2. post a pull request
-3. message me on discord
+3. message me on Discord
 4. email me
 
 software is not licensed for commercial use. if you wish to purchase a
