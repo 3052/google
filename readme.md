@@ -4,7 +4,7 @@
 > generous. be kind to people, because you never know how much they might need
 > it, or how far it’ll go.
 >
-> [NakeyJakey (2018)](//youtube.com/watch?v=Cr0UYNKmrUs)
+> [NakeyJakey](//youtube.com/watch?v=Cr0UYNKmrUs) (2018)
 
 download APK from Google Play or send API requests
 
