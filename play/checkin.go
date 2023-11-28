@@ -8,6 +8,11 @@ import (
    "net/http"
 )
 
+type Checkin struct {
+   Raw []byte
+   m protobuf.Message
+}
+
 func (c *Checkin) Checkin(d Device) error {
    var m protobuf.Message
    m.Add(4, func(m *protobuf.Message) {
@@ -56,11 +61,6 @@ func (c *Checkin) Checkin(d Device) error {
       return err
    }
    return nil
-}
-
-type Checkin struct {
-   Raw []byte
-   m protobuf.Message
 }
 
 func (c Checkin) Device_ID() (uint64, error) {
