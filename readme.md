@@ -10,8 +10,8 @@ download APK from Google Play or send API requests
 
 ## support
 
-because of repeated abuse, I no longer offer free discussion of this software. so
-unless you have paid up front, do not:
+because of repeated abuse, as of november 5 2023, I no longer offer free
+discussion of this software. so unless you have paid up front, do not:
 
 1. post an issue
 2. post a pull request

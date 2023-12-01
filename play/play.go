@@ -117,6 +117,7 @@ func x_dfe_device_id(r *http.Request, c Checkin) error {
    return nil
 }
 
+// github.com/doug-leith/android-protobuf-decoding/blob/main/decoding_helpers.py
 func x_ps_rh(r *http.Request, c Checkin) error {
    id, err := c.Device_ID()
    if err != nil {
