@@ -2,12 +2,30 @@ package main
 
 import (
    "154.pages.dev/google/play"
+   "154.pages.dev/log"
    "fmt"
    "net/http"
    "os"
    "time"
-   option "154.pages.dev/http"
 )
+
+func (f flags) download(url, name string) error {
+   dst, err := os.Create(name)
+   if err != nil {
+      return err
+   }
+   defer dst.Close()
+   res, err := http.Get(url)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   src := log.New_Progress(1).Reader(res)
+   if _, err := dst.ReadFrom(src); err != nil {
+      return err
+   }
+   return nil
+}
 
 func (f flags) do_device() error {
    name, err := os.UserHomeDir()
@@ -29,24 +47,6 @@ func (f flags) do_device() error {
       return err
    }
    return check.Sync(play.Phone)
-}
-
-func (f flags) download(url, name string) error {
-   res, err := http.Get(url)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   file, err := os.Create(name)
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   pro := option.Progress_Length(res.ContentLength)
-   if _, err := file.ReadFrom(pro.Reader(res)); err != nil {
-      return err
-   }
-   return nil
 }
 
 func (f flags) client(a *play.Access_Token, c *play.Checkin) error {
@@ -104,7 +104,6 @@ func (f flags) do_delivery() error {
    if err := client.Delivery(f.single); err != nil {
       return err
    }
-   option.Location()
    for _, apk := range client.Config_APKs() {
       if url, ok := apk.URL(); ok {
          if config, ok := apk.Config(); ok {
