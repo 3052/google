@@ -1,7 +1,6 @@
 package play
 
 import (
-   "154.pages.dev/http"
    "fmt"
    "os"
    "testing"
@@ -9,7 +8,6 @@ import (
 )
 
 func Test_Acquire(t *testing.T) {
-   http.No_Location()
    home, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
