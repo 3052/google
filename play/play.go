@@ -10,14 +10,19 @@ import (
    "time"
 )
 
-const (
-   android_API = 30
-   google_play_store = 82941300
-   // developer.android.com/guide/topics/manifest/uses-feature-element#glEsVersion
-   // the device actually uses 0x30000, but some apps require a higher version,
-   // so we need to lie:
-   gl_es_version = 0x30001
-)
+// Android 11 (Level 30) is still supported:
+// source.android.com/docs/security/bulletin/2024-01-01
+// but some apps now require Android 12 (Level 31)
+// com.royalmail.app.droid
+// so lets lie for now
+const android_API = 31
+
+// developer.android.com/guide/topics/manifest/uses-feature-element#glEsVersion
+// the device actually uses 0x30000, but some apps require a higher version, so
+// we need to lie:
+const gl_es_version = 0x30001
+
+const google_play_store = 82941300
 
 var Phone = Device{
    Texture: []string{
