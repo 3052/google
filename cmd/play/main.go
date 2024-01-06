@@ -13,9 +13,9 @@ type flags struct {
    app play.Application
    code string
    device bool
-   h log.Handler
    platform play.Platform
    single bool
+   level log.Level
 }
 
 func main() {
@@ -23,7 +23,6 @@ func main() {
    flag.StringVar(&f.app.ID, "a", "", "application ID")
    flag.BoolVar(&f.acquire, "acquire", false, "acquire application")
    flag.BoolVar(&f.device, "d", false, "checkin and sync device")
-   flag.TextVar(&f.h.Level, "level", f.h.Level, "level")
    {
       var b strings.Builder
       b.WriteString("oauth_token from ")
@@ -33,9 +32,10 @@ func main() {
    flag.Var(&f.platform, "p", fmt.Sprint(play.Platforms))
    flag.BoolVar(&f.single, "s", false, "single APK")
    flag.Uint64Var(&f.app.Version, "v", 0, "version code")
+   flag.TextVar(&f.level, "level", f.level, "level")
    flag.Parse()
-   log.Set_Handler(f.h)
    log.Set_Transport(0)
+   log.Set_Logger(f.level)
    switch {
    case f.app.ID != "":
       switch {
