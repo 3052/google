@@ -18,8 +18,9 @@ import (
 const android_API = 31
 
 // developer.android.com/guide/topics/manifest/uses-feature-element#glEsVersion
-// the device actually uses 0x30000, but some apps require a higher version, so
-// we need to lie:
+// the device actually uses 0x30000, but some apps require a higher version:
+// com.axis.drawingdesk.v3
+// so lets lie for now
 const gl_es_version = 0x30001
 
 const google_play_store = 82941300
@@ -59,8 +60,6 @@ var Phone = Device{
       "android.hardware.camera",
       "android.hardware.location",
       "android.hardware.screen.portrait",
-      // com.supercell.brawlstars
-      "android.hardware.touchscreen.multitouch",
       // com.sygic.aura
       "android.hardware.location.network",
       // com.xiaomi.smarthome

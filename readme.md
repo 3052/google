@@ -21,7 +21,12 @@ discussion of this software. so unless you have paid up front, do not:
 software is not licensed for commercial use. if you wish to purchase a
 commercial license, contact me.
 
-<https://paypal.com/donate?hosted_button_id=UEJBQQTU3VYDY>
+<dl>
+   <dt>PayPal</dt>
+   <dd>https://paypal.com/donate?hosted_button_id=UEJBQQTU3VYDY</dd>
+   <dt>Ethereum</dt>
+   <dd>0xB614Ff822c8Df557dd4714f80Cd280Bc3887390F</dd>
+</dl>
 
 ## tool examples
 

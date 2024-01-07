@@ -8,7 +8,6 @@ var apps = []app_type{
 {date:"2023-04-12",requires:21,platform:0,id:"com.amctve.amcfullepisodes"},
 {date:"2023-10-26",requires:23,platform:0,id:"br.com.rodrigokolb.realdrum"},
 {date:"2023-08-04",requires:23,platform:2,id:"com.app.xt"},
-{date:"2023-10-25",requires:24,platform:1,id:"com.supercell.brawlstars"},
 {date:"2023-09-14",requires:23,platform:1,id:"com.sygic.aura"},
 {date:"2023-09-16",requires:23,platform:1,id:"com.axis.drawingdesk.v3"},
 {date:"2023-10-19",requires:21,platform:2,id:"com.kakaogames.twodin"},
