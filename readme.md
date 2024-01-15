@@ -8,26 +8,6 @@
 
 download APK from Google Play or send API requests
 
-## support
-
-because of repeated abuse, as of november 5 2023, I no longer offer free
-discussion of this software. so unless you have paid up front, do not:
-
-1. post an issue
-2. post a pull request
-3. message me on Discord
-4. email me
-
-software is not licensed for commercial use. if you wish to purchase a
-commercial license, contact me.
-
-<dl>
-   <dt>PayPal</dt>
-   <dd>https://paypal.com/donate?hosted_button_id=UEJBQQTU3VYDY</dd>
-   <dt>Ethereum</dt>
-   <dd>0xB614Ff822c8Df557dd4714f80Cd280Bc3887390F</dd>
-</dl>
-
 ## tool examples
 
 [sign in](//accounts.google.com/embedded/setup/v2/android) with your Google
@@ -90,22 +70,27 @@ fingerprinting, which is difficult but possible to bypass. since Android 5
 (2014), Google uses bot-guard via JavaScript to protect the login. I do not
 know how to reverse that, and I did not find any implementations online.
 
-## contact
+## support
+
+because of repeated abuse, as of november 5 2023, I no longer offer free
+discussion of this software. so unless you have paid up front, do not:
+
+1. post an issue
+2. post a pull request
+3. message me on Discord
+4. email me
+
+software is not licensed for commercial use. if you wish to purchase a
+commercial license, contact me.
 
 <dl>
-   <dt>
-   email
-   </dt>
-   <dd>
-   srpen6@gmail.com
-   </dd>
-   <dt>
-   Discord
-   </dt>
-   <dd>
-   srpen6
-   </dd>
-   <dd>
-   https://discord.com/invite/WWq6rFb8Rf
-   </dd>
+   <dt>email</dt>
+      <dd>srpen6@gmail.com</dd>
+   <dt>Discord</dt>
+      <dd>srpen6</dd>
+      <dd>https://discord.com/invite/WWq6rFb8Rf</dd>
+   <dt>PayPal</dt>
+      <dd>https://paypal.com/donate?hosted_button_id=UEJBQQTU3VYDY</dd>
+   <dt>Ethereum</dt>
+      <dd>0xB614Ff822c8Df557dd4714f80Cd280Bc3887390F</dd>
 </dl>
