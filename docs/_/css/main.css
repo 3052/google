@@ -33,6 +33,10 @@ nav {
   padding: 1em;
   background-color: #eee;
   border-radius: 0.5em;
+  display: flex;
+}
+nav [href="#pkg-index"] {
+  margin-left: auto;
 }
 
 /* Remove first level of nesting for a package's index section. */
