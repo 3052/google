@@ -35,7 +35,8 @@ nav {
   border-radius: 0.5em;
   display: flex;
 }
-nav [href="#pkg-index"] {
+
+nav .navbar-right {
   margin-left: auto;
 }
 

@@ -19,7 +19,7 @@ https://github.com/avih/dejsonlz4
 
 ## process memory
 
-https://godocs.io/golang.org/x/sys/windows?platform=windows/amd64#ReadProcessMemory
+https://pkg.go.dev/golang.org/x/sys/windows#ReadProcessMemory
 
 ## WebView EdgeHTML
 
