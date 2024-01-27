@@ -9,111 +9,6 @@ import (
    "net/http"
 )
 
-type Details struct {
-   Checkin Checkin
-   Token Access_Token
-   m protobuf.Message
-}
-
-func (d *Details) Details(app string, single bool) error {
-   req, err := http.NewRequest("GET", "https://android.clients.google.com", nil)
-   if err != nil {
-      return err
-   }
-   req.URL.Path = "/fdfe/details"
-   req.URL.RawQuery = "doc=" + app
-   authorization(req, d.Token)
-   user_agent(req, single)
-   if err := x_dfe_device_id(req, d.Checkin); err != nil {
-      return err
-   }
-   res, err := http.DefaultClient.Do(req)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return errors.New(res.Status)
-   }
-   d.m, err = func() (protobuf.Message, error) {
-      b, err := io.ReadAll(res.Body)
-      if err != nil {
-         return nil, err
-      }
-      return protobuf.Consume(b)
-   }()
-   if err != nil {
-      return err
-   }
-   d.m.Message(1)
-   d.m.Message(2)
-   d.m.Message(4)
-   return nil
-}
-
-// play.google.com/store/apps/details?id=com.google.android.youtube
-func (d Details) Downloads() (uint64, bool) {
-   d.m.Message(13)
-   d.m.Message(1)
-   return d.m.Varint(70)
-}
-
-func (d Details) Files() []uint64 {
-   var files []uint64
-   d.m.Message(13)
-   d.m.Message(1)
-   for _, f := range d.m {
-      if f.Number == 17 {
-         if m, ok := f.Message(); ok {
-            if file, ok := m.Varint(1); ok {
-               files = append(files, file)
-            }
-         }
-      }
-   }
-   return files
-}
-
-// play.google.com/store/apps/details?id=com.google.android.youtube
-func (d Details) Name() (string, bool) {
-   return d.m.String(5)
-}
-
-// play.google.com/store/apps/details?id=com.google.android.youtube
-func (d Details) Offered_By() (string, bool) {
-   return d.m.String(6)
-}
-
-// play.google.com/store/apps/details?id=com.google.android.youtube
-func (d Details) Price() (float64, bool) {
-   d.m.Message(8)
-   if v, ok := d.m.Varint(1); ok {
-      return float64(v) / 1_000_000, true
-   }
-   return 0, false
-}
-
-// play.google.com/store/apps/details?id=com.google.android.youtube
-func (d Details) Price_Currency() (string, bool) {
-   d.m.Message(8)
-   return d.m.String(2)
-}
-
-// play.google.com/store/apps/details?id=com.google.android.youtube
-func (d Details) Requires() (string, bool) {
-   d.m.Message(13)
-   d.m.Message(1)
-   d.m.Message(82)
-   d.m.Message(1)
-   return d.m.String(1)
-}
-
-func (d Details) Size() (uint64, bool) {
-   d.m.Message(13)
-   d.m.Message(1)
-   return d.m.Varint(9)
-}
-
 func (d Details) String() string {
    var b []byte
    b = append(b, "downloads:"...)
@@ -121,13 +16,13 @@ func (d Details) String() string {
       b = fmt.Append(b, " ", encoding.Cardinal(v))
    }
    b = append(b, "\nfiles:"...)
-   for _, file := range d.Files() {
+   d.Files(func(file uint64) {
       if file >= 1 {
          b = append(b, " OBB"...)
       } else {
          b = append(b, " APK"...)
       }
-   }
+   })
    b = append(b, "\nname:"...)
    if v, ok := d.Name(); ok {
       b = fmt.Append(b, " ", v)
@@ -185,4 +80,106 @@ func (d Details) Version_Name() (string, bool) {
    d.m.Message(13)
    d.m.Message(1)
    return d.m.String(4)
+}
+func (d Details) Files(f func(uint64)) {
+   d.m.Message(13)
+   d.m.Message(1)
+   for _, field := range d.m {
+      if field.Number == 17 {
+         if m, ok := field.Message(); ok {
+            if file, ok := m.Varint(1); ok {
+               f(file)
+            }
+         }
+      }
+   }
+}
+
+type Details struct {
+   Checkin Checkin
+   Token Access_Token
+   m protobuf.Message
+}
+
+func (d *Details) Details(app string, single bool) error {
+   req, err := http.NewRequest("GET", "https://android.clients.google.com", nil)
+   if err != nil {
+      return err
+   }
+   req.URL.Path = "/fdfe/details"
+   req.URL.RawQuery = "doc=" + app
+   authorization(req, d.Token)
+   user_agent(req, single)
+   if err := x_dfe_device_id(req, d.Checkin); err != nil {
+      return err
+   }
+   res, err := http.DefaultClient.Do(req)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return errors.New(res.Status)
+   }
+   d.m, err = func() (protobuf.Message, error) {
+      b, err := io.ReadAll(res.Body)
+      if err != nil {
+         return nil, err
+      }
+      return protobuf.Consume(b)
+   }()
+   if err != nil {
+      return err
+   }
+   d.m.Message(1)
+   d.m.Message(2)
+   d.m.Message(4)
+   return nil
+}
+
+// play.google.com/store/apps/details?id=com.google.android.youtube
+func (d Details) Downloads() (uint64, bool) {
+   d.m.Message(13)
+   d.m.Message(1)
+   return d.m.Varint(70)
+}
+
+// play.google.com/store/apps/details?id=com.google.android.youtube
+func (d Details) Name() (string, bool) {
+   return d.m.String(5)
+}
+
+// play.google.com/store/apps/details?id=com.google.android.youtube
+func (d Details) Offered_By() (string, bool) {
+   return d.m.String(6)
+}
+
+// play.google.com/store/apps/details?id=com.google.android.youtube
+func (d Details) Price() (float64, bool) {
+   d.m.Message(8)
+   if v, ok := d.m.Varint(1); ok {
+      return float64(v) / 1_000_000, true
+   }
+   return 0, false
+}
+
+// play.google.com/store/apps/details?id=com.google.android.youtube
+func (d Details) Price_Currency() (string, bool) {
+   d.m.Message(8)
+   return d.m.String(2)
+}
+
+// play.google.com/store/apps/details?id=com.google.android.youtube
+func (d Details) Requires() (string, bool) {
+   d.m.Message(13)
+   d.m.Message(1)
+   d.m.Message(82)
+   d.m.Message(1)
+   return d.m.String(1)
+}
+
+func (d Details) Size() (uint64, bool) {
+   d.m.Message(13)
+   d.m.Message(1)
+   return d.m.Varint(9)
 }
