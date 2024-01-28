@@ -9,6 +9,63 @@ import (
    "time"
 )
 
+func (f flags) do_delivery() error {
+   var client play.Delivery
+   err := f.client(&client.Token, &client.Checkin)
+   if err != nil {
+      return err
+   }
+   client.App = f.app
+   if err := client.Delivery(f.single); err != nil {
+      return err
+   }
+   client.Config_APK(func(apk play.Config_APK) bool {
+      if url, ok := apk.URL(); ok {
+         if config, ok := apk.Config(); ok {
+            if err = f.download(url, f.app.APK(config)); err != nil {
+               return true
+            }
+         }
+      }
+      return false
+   })
+   if err != nil {
+      return err
+   }
+   client.OBB_File(func(obb play.OBB_File) bool {
+      if url, ok := obb.URL(); ok {
+         if role, ok := obb.Role(); ok {
+            if err = f.download(url, f.app.OBB(role)); err != nil {
+               return true
+            }
+         }
+      }
+      return false
+   })
+   if err != nil {
+      return err
+   }
+   if url, ok := client.URL(); ok {
+      err := f.download(url, f.app.APK(""))
+      if err != nil {
+         return err
+      }
+   }
+   return nil
+}
+
+func (f flags) do_details() (*play.Details, error) {
+   var client play.Details
+   err := f.client(&client.Token, &client.Checkin)
+   if err != nil {
+      return nil, err
+   }
+   if err := client.Details(f.app.ID, f.single); err != nil {
+      return nil, err
+   }
+   return &client, nil
+}
+
 func (f flags) download(url, name string) error {
    dst, err := os.Create(name)
    if err != nil {
@@ -92,56 +149,5 @@ func (f flags) do_auth() error {
       return err
    }
    return os.WriteFile(home + "/google/play/token.txt", token.Raw, 0666)
-}
-
-func (f flags) do_delivery() error {
-   var client play.Delivery
-   err := f.client(&client.Token, &client.Checkin)
-   if err != nil {
-      return err
-   }
-   client.App = f.app
-   if err := client.Delivery(f.single); err != nil {
-      return err
-   }
-   for _, apk := range client.Config_APKs() {
-      if url, ok := apk.URL(); ok {
-         if config, ok := apk.Config(); ok {
-            err := f.download(url, f.app.APK(config))
-            if err != nil {
-               return err
-            }
-         }
-      }
-   }
-   for _, obb := range client.OBB_Files() {
-      if url, ok := obb.URL(); ok {
-         if role, ok := obb.Role(); ok {
-            err := f.download(url, f.app.OBB(role))
-            if err != nil {
-               return err
-            }
-         }
-      }
-   }
-   if url, ok := client.URL(); ok {
-      err := f.download(url, f.app.APK(""))
-      if err != nil {
-         return err
-      }
-   }
-   return nil
-}
-
-func (f flags) do_details() (*play.Details, error) {
-   var client play.Details
-   err := f.client(&client.Token, &client.Checkin)
-   if err != nil {
-      return nil, err
-   }
-   if err := client.Details(f.app.ID, f.single); err != nil {
-      return nil, err
-   }
-   return &client, nil
 }
 

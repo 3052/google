@@ -9,6 +9,30 @@ import (
    "strconv"
 )
 
+func (d Delivery) OBB_File(f func(OBB_File) bool) {
+   for _, field := range d.m {
+      if field.Number == 4 {
+         if file, ok := field.Message(); ok {
+            if f(OBB_File{file}) {
+               return
+            }
+         }
+      }
+   }
+}
+
+func (d Delivery) Config_APK(f func(Config_APK) bool) {
+   for _, field := range d.m {
+      if field.Number == 15 {
+         if config, ok := field.Message(); ok {
+            if f(Config_APK{config}) {
+               return
+            }
+         }
+      }
+   }
+}
+
 // developer.android.com/guide/app-bundle
 type Config_APK struct {
    m protobuf.Message
@@ -29,19 +53,6 @@ type Delivery struct {
    Checkin Checkin
    Token Access_Token
    m protobuf.Message
-}
-
-// developer.android.com/guide/app-bundle
-func (d Delivery) Config_APKs() []Config_APK {
-   var configs []Config_APK
-   for _, f := range d.m {
-      if f.Number == 15 {
-         if config, ok := f.Message(); ok {
-            configs = append(configs, Config_APK{config})
-         }
-      }
-   }
-   return configs
 }
 
 func (d *Delivery) Delivery(single bool) error {
@@ -91,19 +102,6 @@ func (d *Delivery) Delivery(single bool) error {
    }
    d.m.Message(2)
    return nil
-}
-
-// developer.android.com/google/play/expansion-files
-func (d Delivery) OBB_Files() []OBB_File {
-   var files []OBB_File
-   for _, f := range d.m {
-      if f.Number == 4 {
-         if file, ok := f.Message(); ok {
-            files = append(files, OBB_File{file})
-         }
-      }
-   }
-   return files
 }
 
 func (d Delivery) URL() (string, bool) {
