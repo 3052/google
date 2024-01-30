@@ -15,15 +15,15 @@ type Acquire struct {
 
 func (a Acquire) Acquire(app string) error {
    var m protobuf.Message
-   m.Add(1, func(m *protobuf.Message) {
-      m.Add(1, func(m *protobuf.Message) {
-         m.Add_String(1, app)
-         m.Add_Varint(2, 1)
-         m.Add_Varint(3, 3)
+   m.AddFunc(1, func(m *protobuf.Message) {
+      m.AddFunc(1, func(m *protobuf.Message) {
+         m.AddBytes(1, []byte(app))
+         m.AddVarint(2, 1)
+         m.AddVarint(3, 3)
       })
-      m.Add_Varint(2, 1)
+      m.AddVarint(2, 1)
    })
-   m.Add_Varint(13, 1)
+   m.AddVarint(13, 1)
    req, err := http.NewRequest(
       "POST", "https://android.clients.google.com/fdfe/acquire",
       bytes.NewReader(m.Append(nil)),
@@ -50,21 +50,19 @@ func (a Acquire) Acquire(app string) error {
    if res.StatusCode != http.StatusOK {
       return errors.New(res.Status)
    }
-   m, err = func() (protobuf.Message, error) {
-      b, err := io.ReadAll(res.Body)
-      if err != nil {
-         return nil, err
-      }
-      return protobuf.Consume(b)
-   }()
+   data, err := io.ReadAll(res.Body)
    if err != nil {
       return err
    }
-   m.Message(1)
-   m.Message(94)
-   m.Message(1)
-   m.Message(2)
-   if m.Message(147291249) {
+   m = nil
+   if err := m.Consume(data); err != nil {
+      return err
+   }
+   m, _ = m.Get(1)
+   m, _ = m.Get(94)
+   m, _ = m.Get(1)
+   m, _ = m.Get(2)
+   if m, ok := m.Get(147291249); !ok {
       return acquire_error{m}
    }
    return nil
@@ -76,16 +74,16 @@ type acquire_error struct {
 
 func (a acquire_error) Error() string {
    var b []byte
-   for _, f := range a.m {
-      if f.Number == 1 {
-         if m, ok := f.Message(); ok {
-            m.Message(10)
-            m.Message(1)
-            if c, ok := m.Bytes(1); ok {
+   for _, field := range a.m {
+      if field.Number == 1 {
+         if m, ok := field.Get(); ok {
+            m, _ = m.Get(10)
+            m, _ = m.Get(1)
+            if bytes, ok := m.GetBytes(1); ok {
                if b != nil {
                   b = append(b, '\n')
                }
-               b = append(b, c...)
+               b = append(b, bytes...)
             }
          }
       }

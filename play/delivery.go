@@ -12,7 +12,7 @@ import (
 func (d Delivery) OBB_File(f func(OBB_File) bool) {
    for _, field := range d.m {
       if field.Number == 4 {
-         if file, ok := field.Message(); ok {
+         if file, ok := field.Get(); ok {
             if f(OBB_File{file}) {
                return
             }
@@ -24,7 +24,7 @@ func (d Delivery) OBB_File(f func(OBB_File) bool) {
 func (d Delivery) Config_APK(f func(Config_APK) bool) {
    for _, field := range d.m {
       if field.Number == 15 {
-         if config, ok := field.Message(); ok {
+         if config, ok := field.Get(); ok {
             if f(Config_APK{config}) {
                return
             }
@@ -39,13 +39,13 @@ type Config_APK struct {
 }
 
 // developer.android.com/guide/app-bundle
-func (s Config_APK) Config() (string, bool) {
-   return s.m.String(1)
+func (s Config_APK) Config() ([]byte, bool) {
+   return s.m.GetBytes(1)
 }
 
 // developer.android.com/guide/app-bundle
-func (s Config_APK) URL() (string, bool) {
-   return s.m.String(5)
+func (s Config_APK) URL() ([]byte, bool) {
+   return s.m.GetBytes(5)
 }
 
 type Delivery struct {
@@ -78,19 +78,16 @@ func (d *Delivery) Delivery(single bool) error {
    if res.StatusCode != http.StatusOK {
       return errors.New(res.Status)
    }
-   d.m, err = func() (protobuf.Message, error) {
-      b, err := io.ReadAll(res.Body)
-      if err != nil {
-         return nil, err
-      }
-      return protobuf.Consume(b)
-   }()
+   data, err := io.ReadAll(res.Body)
    if err != nil {
       return err
    }
-   d.m.Message(1)
-   d.m.Message(21)
-   status_code, ok := d.m.Varint(1)
+   if err := d.m.Consume(data); err != nil {
+      return err
+   }
+   d.m, _ = d.m.Get(1)
+   d.m, _ = d.m.Get(21)
+   status_code, ok := d.m.GetVarint(1)
    if !ok {
       return errors.New("status code")
    }
@@ -100,12 +97,12 @@ func (d *Delivery) Delivery(single bool) error {
    case 5:
       return errors.New("version code")
    }
-   d.m.Message(2)
+   d.m, _ = d.m.Get(2)
    return nil
 }
 
-func (d Delivery) URL() (string, bool) {
-   return d.m.String(3)
+func (d Delivery) URL() ([]byte, bool) {
+   return d.m.GetBytes(3)
 }
 
 // developer.android.com/google/play/expansion-files
@@ -115,9 +112,12 @@ type OBB_File struct {
 
 // developer.android.com/google/play/expansion-files
 func (o OBB_File) Role() (uint64, bool) {
-   return o.m.Varint(1)
+   if v, ok := o.m.GetVarint(1); ok {
+      return uint64(v), true
+   }
+   return 0, false
 }
 
-func (o OBB_File) URL() (string, bool) {
-   return o.m.String(4)
+func (o OBB_File) URL() ([]byte, bool) {
+   return o.m.GetBytes(4)
 }

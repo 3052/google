@@ -62,33 +62,37 @@ func (d Details) String() string {
 }
 
 // play.google.com/store/apps/details?id=com.google.android.youtube
-func (d Details) Updated_On() (string, bool) {
-   d.m.Message(13)
-   d.m.Message(1)
-   return d.m.String(16)
+func (d Details) Updated_On() ([]byte, bool) {
+   d.m, _ = d.m.Get(13)
+   d.m, _ = d.m.Get(1)
+   return d.m.GetBytes(16)
 }
 
 // developer.android.com/guide/topics/manifest/manifest-element
 func (d Details) Version_Code() (uint64, bool) {
-   d.m.Message(13)
-   d.m.Message(1)
-   return d.m.Varint(3)
+   d.m, _ = d.m.Get(13)
+   d.m, _ = d.m.Get(1)
+   if v, ok := d.m.GetVarint(3); ok {
+      return uint64(v), true
+   }
+   return 0, false
 }
 
 // developer.android.com/guide/topics/manifest/manifest-element
-func (d Details) Version_Name() (string, bool) {
-   d.m.Message(13)
-   d.m.Message(1)
-   return d.m.String(4)
+func (d Details) Version_Name() ([]byte, bool) {
+   d.m, _ = d.m.Get(13)
+   d.m, _ = d.m.Get(1)
+   return d.m.GetBytes(4)
 }
+
 func (d Details) Files(f func(uint64)) {
-   d.m.Message(13)
-   d.m.Message(1)
+   d.m, _ = d.m.Get(13)
+   d.m, _ = d.m.Get(1)
    for _, field := range d.m {
       if field.Number == 17 {
-         if m, ok := field.Message(); ok {
-            if file, ok := m.Varint(1); ok {
-               f(file)
+         if m, ok := field.Get(); ok {
+            if file, ok := m.GetVarint(1); ok {
+               f(uint64(file))
             }
          }
       }
@@ -121,65 +125,63 @@ func (d *Details) Details(app string, single bool) error {
    if res.StatusCode != http.StatusOK {
       return errors.New(res.Status)
    }
-   d.m, err = func() (protobuf.Message, error) {
-      b, err := io.ReadAll(res.Body)
-      if err != nil {
-         return nil, err
-      }
-      return protobuf.Consume(b)
-   }()
+   data, err := io.ReadAll(res.Body)
    if err != nil {
       return err
    }
-   d.m.Message(1)
-   d.m.Message(2)
-   d.m.Message(4)
+   if err := d.m.Consume(data); err != nil {
+      return err
+   }
+   d.m, _ = d.m.Get(1)
+   d.m, _ = d.m.Get(2)
+   d.m, _ = d.m.Get(4)
    return nil
 }
 
 // play.google.com/store/apps/details?id=com.google.android.youtube
 func (d Details) Downloads() (uint64, bool) {
-   d.m.Message(13)
-   d.m.Message(1)
-   return d.m.Varint(70)
+   d.m, _ = d.m.Get(13)
+   d.m, _ = d.m.Get(1)
+   if v, ok := d.m.GetVarint(70); ok {
+      return uint64(v), true
+   }
+   return 0, false
 }
 
-// play.google.com/store/apps/details?id=com.google.android.youtube
-func (d Details) Name() (string, bool) {
-   return d.m.String(5)
+func (d Details) Name() ([]byte, bool) {
+   return d.m.GetBytes(5)
 }
 
-// play.google.com/store/apps/details?id=com.google.android.youtube
-func (d Details) Offered_By() (string, bool) {
-   return d.m.String(6)
+func (d Details) Offered_By() ([]byte, bool) {
+   return d.m.GetBytes(6)
 }
 
-// play.google.com/store/apps/details?id=com.google.android.youtube
 func (d Details) Price() (float64, bool) {
-   d.m.Message(8)
-   if v, ok := d.m.Varint(1); ok {
+   d.m, _ = d.m.Get(8)
+   if v, ok := d.m.GetVarint(1); ok {
       return float64(v) / 1_000_000, true
    }
    return 0, false
 }
 
-// play.google.com/store/apps/details?id=com.google.android.youtube
-func (d Details) Price_Currency() (string, bool) {
-   d.m.Message(8)
-   return d.m.String(2)
+func (d Details) Price_Currency() ([]byte, bool) {
+   d.m, _ = d.m.Get(8)
+   return d.m.GetBytes(2)
 }
 
-// play.google.com/store/apps/details?id=com.google.android.youtube
-func (d Details) Requires() (string, bool) {
-   d.m.Message(13)
-   d.m.Message(1)
-   d.m.Message(82)
-   d.m.Message(1)
-   return d.m.String(1)
+func (d Details) Requires() ([]byte, bool) {
+   d.m, _ = d.m.Get(13)
+   d.m, _ = d.m.Get(1)
+   d.m, _ = d.m.Get(82)
+   d.m, _ = d.m.Get(1)
+   return d.m.GetBytes(1)
 }
 
 func (d Details) Size() (uint64, bool) {
-   d.m.Message(13)
-   d.m.Message(1)
-   return d.m.Varint(9)
+   d.m, _ = d.m.Get(13)
+   d.m, _ = d.m.Get(1)
+   if v, ok := d.m.GetVarint(9); ok {
+      return uint64(v), true
+   }
+   return 0, false
 }

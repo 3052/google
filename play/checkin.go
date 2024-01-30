@@ -15,32 +15,32 @@ type Checkin struct {
 
 func (c *Checkin) Checkin(d Device) error {
    var m protobuf.Message
-   m.Add(4, func(m *protobuf.Message) {
-      m.Add(1, func(m *protobuf.Message) {
-         m.Add_Varint(10, android_API)
+   m.AddFunc(4, func(m *protobuf.Message) {
+      m.AddFunc(1, func(m *protobuf.Message) {
+         m.AddVarint(10, android_API)
       })
    })
-   m.Add_Varint(14, 3)
-   m.Add(18, func(m *protobuf.Message) {
-      m.Add_Varint(1, 3)
-      m.Add_Varint(2, 2)
-      m.Add_Varint(3, 2)
-      m.Add_Varint(4, 2)
-      m.Add_Varint(5, 1)
-      m.Add_Varint(6, 1)
-      m.Add_Varint(7, 420)
-      m.Add_Varint(8, gl_es_version)
+   m.AddVarint(14, 3)
+   m.AddFunc(18, func(m *protobuf.Message) {
+      m.AddVarint(1, 3)
+      m.AddVarint(2, 2)
+      m.AddVarint(3, 2)
+      m.AddVarint(4, 2)
+      m.AddVarint(5, 1)
+      m.AddVarint(6, 1)
+      m.AddVarint(7, 420)
+      m.AddVarint(8, gl_es_version)
       for _, library := range d.Library {
-         m.Add_String(9, library)
+         m.AddBytes(9, []byte(library))
       }
-      m.Add_String(11, d.Platform)
+      m.AddBytes(11, []byte(d.Platform))
       for _, texture := range d.Texture {
-         m.Add_String(15, texture)
+         m.AddBytes(15, []byte(texture))
       }
       // you cannot swap the next two lines:
       for _, feature := range d.Feature {
-         m.Add(26, func(m *protobuf.Message) {
-            m.Add_String(1, feature)
+         m.AddFunc(26, func(m *protobuf.Message) {
+            m.AddBytes(1, []byte(feature))
          })
       }
    })
@@ -63,18 +63,13 @@ func (c *Checkin) Checkin(d Device) error {
    return nil
 }
 
-func (c Checkin) Device_ID() (uint64, error) {
-   if v, ok := c.m.Fixed64(7); ok {
-      return v, nil
-   }
-   return 0, errors.New("device ID")
+func (c *Checkin) Unmarshal() error {
+   return c.m.Consume(c.Raw)
 }
 
-func (c *Checkin) Unmarshal() error {
-   var err error
-   c.m, err = protobuf.Consume(c.Raw)
-   if err != nil {
-      return err
+func (c Checkin) Device_ID() (uint64, error) {
+   if v, ok := c.m.GetFixed64(7); ok {
+      return uint64(v), nil
    }
-   return nil
+   return 0, errors.New("device ID")
 }
