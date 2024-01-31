@@ -10,6 +10,48 @@ import (
    "time"
 )
 
+// github.com/doug-leith/android-protobuf-decoding/blob/main/decoding_helpers.py
+func x_ps_rh(r *http.Request, c Checkin) error {
+   id, err := c.Device_ID()
+   if err != nil {
+      return err
+   }
+   token, err := func() ([]byte, error) {
+      var m protobuf.Message
+      m.AddFunc(3, func(m *protobuf.Message) {
+         m.AddBytes(1, strconv.AppendUint(nil, id, 10))
+         m.AddFunc(2, func(m *protobuf.Message) {
+            v := time.Now().UnixMicro()
+            m.AddBytes(1, strconv.AppendInt(nil, v, 10))
+         })
+      })
+      b, err := compress_gzip(m.Encode())
+      if err != nil {
+         return nil, err
+      }
+      return encode_base64(b)
+   }()
+   if err != nil {
+      return err
+   }
+   ps_rh, err := func() ([]byte, error) {
+      var m protobuf.Message
+      m.AddFunc(1, func(m *protobuf.Message) {
+         m.AddBytes(1, token)
+      })
+      b, err := compress_gzip(m.Encode())
+      if err != nil {
+         return nil, err
+      }
+      return encode_base64(b)
+   }()
+   if err != nil {
+      return err
+   }
+   r.Header.Set("X-PS-RH", string(ps_rh))
+   return nil
+}
+
 // Android 11 (Level 30) is still supported:
 // source.android.com/docs/security/bulletin/2024-01-01
 // but some apps now require Android 12 (Level 31):
@@ -80,19 +122,6 @@ func authorization(r *http.Request, a Access_Token) {
    r.Header.Set("Authorization", "Bearer " + a.Values.Get("Auth"))
 }
 
-func compress(m protobuf.Message) (string, error) {
-   var b bytes.Buffer
-   w := gzip.NewWriter(&b)
-   _, err := w.Write(m.Append(nil))
-   if err != nil {
-      return "", err
-   }
-   if err := w.Close(); err != nil {
-      return "", err
-   }
-   return base64.URLEncoding.EncodeToString(b.Bytes()), nil
-}
-
 func user_agent(r *http.Request, single bool) {
    var b []byte
    // `sdk` is needed for `/fdfe/delivery`
@@ -118,40 +147,6 @@ func x_dfe_device_id(r *http.Request, c Checkin) error {
       return err
    }
    r.Header.Set("X-DFE-Device-ID", strconv.FormatUint(id, 16))
-   return nil
-}
-
-// github.com/doug-leith/android-protobuf-decoding/blob/main/decoding_helpers.py
-func x_ps_rh(r *http.Request, c Checkin) error {
-   id, err := c.Device_ID()
-   if err != nil {
-      return err
-   }
-   token, err := func() (string, error) {
-      var m protobuf.Message
-      m.Add(3, func(m *protobuf.Message) {
-         m.Add_String(1, strconv.FormatUint(id, 10))
-         m.Add(2, func(m *protobuf.Message) {
-            v := time.Now().UnixMicro()
-            m.Add_String(1, strconv.FormatInt(v, 10))
-         })
-      })
-      return compress(m)
-   }()
-   if err != nil {
-      return err
-   }
-   ps_rh, err := func() (string, error) {
-      var m protobuf.Message
-      m.Add(1, func(m *protobuf.Message) {
-         m.Add_String(1, token)
-      })
-      return compress(m)
-   }()
-   if err != nil {
-      return err
-   }
-   r.Header.Set("X-PS-RH", ps_rh)
    return nil
 }
 
@@ -221,4 +216,28 @@ type Device struct {
    Feature []string
    // developer.android.com/ndk/guides/abis
    Platform string
+}
+
+func compress_gzip(p []byte) ([]byte, error) {
+   var b bytes.Buffer
+   w := gzip.NewWriter(&b)
+   if _, err := w.Write(p); err != nil {
+      return nil, err
+   }
+   if err := w.Close(); err != nil {
+      return nil, err
+   }
+   return b.Bytes(), nil
+}
+
+func encode_base64(p []byte) ([]byte, error) {
+   var b bytes.Buffer
+   w := base64.NewEncoder(base64.URLEncoding, &b)
+   if _, err := w.Write(p); err != nil {
+      return nil, err
+   }
+   if err := w.Close(); err != nil {
+      return nil, err
+   }
+   return b.Bytes(), nil
 }

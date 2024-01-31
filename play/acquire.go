@@ -26,7 +26,7 @@ func (a Acquire) Acquire(app string) error {
    m.AddVarint(13, 1)
    req, err := http.NewRequest(
       "POST", "https://android.clients.google.com/fdfe/acquire",
-      bytes.NewReader(m.Append(nil)),
+      bytes.NewReader(m.Encode()),
    )
    if err != nil {
       return err

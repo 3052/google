@@ -47,7 +47,7 @@ func (c *Checkin) Checkin(d Device) error {
    res, err := http.Post(
       "https://android.googleapis.com/checkin",
       "application/x-protobuffer",
-      bytes.NewReader(m.Append(nil)),
+      bytes.NewReader(m.Encode()),
    )
    if err != nil {
       return err

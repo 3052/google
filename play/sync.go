@@ -9,44 +9,44 @@ import (
 
 func (c Checkin) Sync(d Device) error {
    var m protobuf.Message
-   m.Add(1, func(m *protobuf.Message) {
-      m.Add(10, func(m *protobuf.Message) {
+   m.AddFunc(1, func(m *protobuf.Message) {
+      m.AddFunc(10, func(m *protobuf.Message) {
          for _, feature := range d.Feature {
-            m.Add(1, func(m *protobuf.Message) {
-               m.Add_String(1, feature)
+            m.AddFunc(1, func(m *protobuf.Message) {
+               m.AddBytes(1, []byte(feature))
             })
          }
          for _, library := range d.Library {
-            m.Add_String(2, library)
+            m.AddBytes(2, []byte(library))
          }
          for _, texture := range d.Texture {
-            m.Add_String(4, texture)
+            m.AddBytes(4, []byte(texture))
          }
       })
    })
-   m.Add(1, func(m *protobuf.Message) {
-      m.Add(15, func(m *protobuf.Message) {
-         m.Add_String(4, d.Platform)
+   m.AddFunc(1, func(m *protobuf.Message) {
+      m.AddFunc(15, func(m *protobuf.Message) {
+         m.AddBytes(4, []byte(d.Platform))
       })
    })
-   m.Add(1, func(m *protobuf.Message) {
-      m.Add(18, func(m *protobuf.Message) {
-         m.Add_String(1, "am-unknown") // X-DFE-Client-Id
+   m.AddFunc(1, func(m *protobuf.Message) {
+      m.AddFunc(18, func(m *protobuf.Message) {
+         m.AddBytes(1, []byte("am-unknown")) // X-DFE-Client-Id
       })
    })
-   m.Add(1, func(m *protobuf.Message) {
-      m.Add(19, func(m *protobuf.Message) {
-         m.Add_Varint(2, google_play_store)
+   m.AddFunc(1, func(m *protobuf.Message) {
+      m.AddFunc(19, func(m *protobuf.Message) {
+         m.AddVarint(2, google_play_store)
       })
    })
-   m.Add(1, func(m *protobuf.Message) {
-      m.Add(21, func(m *protobuf.Message) {
-         m.Add_Varint(6, gl_es_version)
+   m.AddFunc(1, func(m *protobuf.Message) {
+      m.AddFunc(21, func(m *protobuf.Message) {
+         m.AddVarint(6, gl_es_version)
       })
    })
    req, err := http.NewRequest(
       "POST", "https://android.clients.google.com/fdfe/sync",
-      bytes.NewReader(m.Append(nil)),
+      bytes.NewReader(m.Encode()),
    )
    if err != nil {
       return err
