@@ -13,7 +13,7 @@ func (d Delivery) OBB_File(f func(OBB_File) bool) {
    for _, field := range d.m {
       if field.Number == 4 {
          if file, ok := field.Get(); ok {
-            if f(OBB_File{file}) {
+            if !f(OBB_File{file}) {
                return
             }
          }
@@ -25,7 +25,7 @@ func (d Delivery) Config_APK(f func(Config_APK) bool) {
    for _, field := range d.m {
       if field.Number == 15 {
          if config, ok := field.Get(); ok {
-            if f(Config_APK{config}) {
+            if !f(Config_APK{config}) {
                return
             }
          }

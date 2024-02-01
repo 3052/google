@@ -23,11 +23,11 @@ func (f flags) do_delivery() error {
       if url, ok := apk.URL(); ok {
          if config, ok := apk.Config(); ok {
             if err = f.download(url, f.app.APK(config)); err != nil {
-               return true
+               return false
             }
          }
       }
-      return false
+      return true
    })
    if err != nil {
       return err
@@ -36,11 +36,11 @@ func (f flags) do_delivery() error {
       if url, ok := obb.URL(); ok {
          if role, ok := obb.Role(); ok {
             if err = f.download(url, f.app.OBB(role)); err != nil {
-               return true
+               return false
             }
          }
       }
-      return false
+      return true
    })
    if err != nil {
       return err
