@@ -9,6 +9,18 @@ import (
    "net/http"
 )
 
+func (d Details) Files(f func(uint64)) {
+   d.m, _ = d.m.Get(13)
+   d.m, _ = d.m.Get(1)
+   for _, field := range d.m {
+      if m, ok := field.Get(17); ok {
+         if file, ok := m.GetVarint(1); ok {
+            f(uint64(file))
+         }
+      }
+   }
+}
+
 func (d Details) String() string {
    var b []byte
    b = append(b, "downloads:"...)
@@ -61,13 +73,6 @@ func (d Details) String() string {
    return string(b)
 }
 
-// play.google.com/store/apps/details?id=com.google.android.youtube
-func (d Details) Updated_On() ([]byte, bool) {
-   d.m, _ = d.m.Get(13)
-   d.m, _ = d.m.Get(1)
-   return d.m.GetBytes(16)
-}
-
 // developer.android.com/guide/topics/manifest/manifest-element
 func (d Details) Version_Code() (uint64, bool) {
    d.m, _ = d.m.Get(13)
@@ -83,20 +88,6 @@ func (d Details) Version_Name() ([]byte, bool) {
    d.m, _ = d.m.Get(13)
    d.m, _ = d.m.Get(1)
    return d.m.GetBytes(4)
-}
-
-func (d Details) Files(f func(uint64)) {
-   d.m, _ = d.m.Get(13)
-   d.m, _ = d.m.Get(1)
-   for _, field := range d.m {
-      if field.Number == 17 {
-         if m, ok := field.Get(); ok {
-            if file, ok := m.GetVarint(1); ok {
-               f(uint64(file))
-            }
-         }
-      }
-   }
 }
 
 type Details struct {
@@ -184,4 +175,13 @@ func (d Details) Size() (uint64, bool) {
       return uint64(v), true
    }
    return 0, false
+}
+
+func (d Details) Updated_On() (string, bool) {
+   d.m, _ = d.m.Get(13)
+   d.m, _ = d.m.Get(1)
+   if v, ok := d.m.GetBytes(16); ok {
+      return string(v), true
+   }
+   return "", false
 }

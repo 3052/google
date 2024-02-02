@@ -11,16 +11,14 @@ import (
 func (a acquire_error) Error() string {
    var b []byte
    for _, field := range a.m {
-      if field.Number == 1 {
-         if m, ok := field.Get(); ok {
-            m, _ = m.Get(10)
-            m, _ = m.Get(1)
-            if bytes, ok := m.GetBytes(1); ok {
-               if b != nil {
-                  b = append(b, '\n')
-               }
-               b = append(b, bytes...)
+      if m, ok := field.Get(1); ok {
+         m, _ = m.Get(10)
+         m, _ = m.Get(1)
+         if bytes, ok := m.GetBytes(1); ok {
+            if b != nil {
+               b = append(b, '\n')
             }
+            b = append(b, bytes...)
          }
       }
    }

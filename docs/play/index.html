@@ -14,7 +14,7 @@
   <body>
     <nav>
         <a href="..">154.pages.dev/google</a>/play<span class="navbar-right">
-          v1.3.9 | <a href="..">Root</a> | <a href="#pkg-index">Index</a></span>
+          v1.4.0 | <a href="..">Root</a> | <a href="#pkg-index">Index</a></span>
       </nav>
     <main><h2 id="pkg-overview">package play</h2>
 <pre class="chroma"><span class="kn">import</span> <span class="s">&#34;154.pages.dev/google/play&#34;</span></pre>
@@ -58,9 +58,9 @@
   <li>
       <a href="#Delivery">type Delivery</a>
       <ul>
-          <li><a href="#Delivery.Config_APKs">func (d Delivery) Config_APKs() []Config_APK</a></li>
+          <li><a href="#Delivery.Config_APK">func (d Delivery) Config_APK(f func(Config_APK) bool)</a></li>
           <li><a href="#Delivery.Delivery">func (d *Delivery) Delivery(single bool) error</a></li>
-          <li><a href="#Delivery.OBB_Files">func (d Delivery) OBB_Files() []OBB_File</a></li>
+          <li><a href="#Delivery.OBB_File">func (d Delivery) OBB_File(f func(OBB_File) bool)</a></li>
           <li><a href="#Delivery.URL">func (d Delivery) URL() (string, bool)</a></li>
           </ul>
       </li>
@@ -69,17 +69,17 @@
       <ul>
           <li><a href="#Details.Details">func (d *Details) Details(app string, single bool) error</a></li>
           <li><a href="#Details.Downloads">func (d Details) Downloads() (uint64, bool)</a></li>
-          <li><a href="#Details.Files">func (d Details) Files() []uint64</a></li>
-          <li><a href="#Details.Name">func (d Details) Name() (string, bool)</a></li>
-          <li><a href="#Details.Offered_By">func (d Details) Offered_By() (string, bool)</a></li>
+          <li><a href="#Details.Files">func (d Details) Files(f func(uint64))</a></li>
+          <li><a href="#Details.Name">func (d Details) Name() ([]byte, bool)</a></li>
+          <li><a href="#Details.Offered_By">func (d Details) Offered_By() ([]byte, bool)</a></li>
           <li><a href="#Details.Price">func (d Details) Price() (float64, bool)</a></li>
-          <li><a href="#Details.Price_Currency">func (d Details) Price_Currency() (string, bool)</a></li>
-          <li><a href="#Details.Requires">func (d Details) Requires() (string, bool)</a></li>
+          <li><a href="#Details.Price_Currency">func (d Details) Price_Currency() ([]byte, bool)</a></li>
+          <li><a href="#Details.Requires">func (d Details) Requires() ([]byte, bool)</a></li>
           <li><a href="#Details.Size">func (d Details) Size() (uint64, bool)</a></li>
           <li><a href="#Details.String">func (d Details) String() string</a></li>
           <li><a href="#Details.Updated_On">func (d Details) Updated_On() (string, bool)</a></li>
           <li><a href="#Details.Version_Code">func (d Details) Version_Code() (uint64, bool)</a></li>
-          <li><a href="#Details.Version_Name">func (d Details) Version_Name() (string, bool)</a></li>
+          <li><a href="#Details.Version_Name">func (d Details) Version_Name() ([]byte, bool)</a></li>
           </ul>
       </li>
   <li>
@@ -211,23 +211,20 @@
   <p>developer.android.com/guide/app-bundle
 <h4 id="Config_APK.URL">func (Config_APK) URL</h4>
   <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <a href="#Config_APK"><span class="nx">Config_APK</span></a><span class="p">)</span> <span class="nf">URL</span><span class="p">()</span> <span class="p">(</span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
-  <p>developer.android.com/guide/app-bundle
-<h3 id="Delivery">type Delivery</h3>
+  <h3 id="Delivery">type Delivery</h3>
     <pre class="chroma"><span class="kd">type</span> <span class="nx">Delivery</span> <span class="kd">struct</span> <span class="p">{</span>
 	<span id="Delivery.App"><span class="nx">App</span></span>     <a href="#Application"><span class="nx">Application</span></a>
 	<span id="Delivery.Checkin"><span class="nx">Checkin</span></span> <a href="#Checkin"><span class="nx">Checkin</span></a>
 	<span id="Delivery.Token"><span class="nx">Token</span></span>   <a href="#Access_Token"><span class="nx">Access_Token</span></a>
 	<span class="c1">// contains filtered or unexported fields
 </span><span class="c1"></span><span class="p">}</span></pre>
-    <h4 id="Delivery.Config_APKs">func (Delivery) Config_APKs</h4>
-  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Delivery"><span class="nx">Delivery</span></a><span class="p">)</span> <span class="nf">Config_APKs</span><span class="p">()</span> <span class="p">[]</span><a href="#Config_APK"><span class="nx">Config_APK</span></a></pre>
-  <p>developer.android.com/guide/app-bundle
-<h4 id="Delivery.Delivery">func (*Delivery) Delivery</h4>
+    <h4 id="Delivery.Config_APK">func (Delivery) Config_APK</h4>
+  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Delivery"><span class="nx">Delivery</span></a><span class="p">)</span> <span class="nf">Config_APK</span><span class="p">(</span><span class="nx">f</span> <span class="kd">func</span><span class="p">(</span><a href="#Config_APK"><span class="nx">Config_APK</span></a><span class="p">)</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
+  <h4 id="Delivery.Delivery">func (*Delivery) Delivery</h4>
   <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <span class="o">*</span><a href="#Delivery"><span class="nx">Delivery</span></a><span class="p">)</span> <span class="nf">Delivery</span><span class="p">(</span><span class="nx">single</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span> <a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a></pre>
-  <h4 id="Delivery.OBB_Files">func (Delivery) OBB_Files</h4>
-  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Delivery"><span class="nx">Delivery</span></a><span class="p">)</span> <span class="nf">OBB_Files</span><span class="p">()</span> <span class="p">[]</span><a href="#OBB_File"><span class="nx">OBB_File</span></a></pre>
-  <p>developer.android.com/google/play/expansion-files
-<h4 id="Delivery.URL">func (Delivery) URL</h4>
+  <h4 id="Delivery.OBB_File">func (Delivery) OBB_File</h4>
+  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Delivery"><span class="nx">Delivery</span></a><span class="p">)</span> <span class="nf">OBB_File</span><span class="p">(</span><span class="nx">f</span> <span class="kd">func</span><span class="p">(</span><a href="#OBB_File"><span class="nx">OBB_File</span></a><span class="p">)</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
+  <h4 id="Delivery.URL">func (Delivery) URL</h4>
   <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Delivery"><span class="nx">Delivery</span></a><span class="p">)</span> <span class="nf">URL</span><span class="p">()</span> <span class="p">(</span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
   <h3 id="Details">type Details</h3>
     <pre class="chroma"><span class="kd">type</span> <span class="nx">Details</span> <span class="kd">struct</span> <span class="p">{</span>
@@ -241,34 +238,28 @@
   <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">Downloads</span><span class="p">()</span> <span class="p">(</span><a href="https://pkg.go.dev/builtin#uint64"><span class="kt">uint64</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
   <p>play.google.com/store/apps/details?id=com.google.android.youtube
 <h4 id="Details.Files">func (Details) Files</h4>
-  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">Files</span><span class="p">()</span> <span class="p">[]</span><a href="https://pkg.go.dev/builtin#uint64"><span class="kt">uint64</span></a></pre>
+  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">Files</span><span class="p">(</span><span class="nx">f</span> <span class="kd">func</span><span class="p">(</span><a href="https://pkg.go.dev/builtin#uint64"><span class="kt">uint64</span></a><span class="p">))</span></pre>
   <h4 id="Details.Name">func (Details) Name</h4>
-  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">Name</span><span class="p">()</span> <span class="p">(</span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
-  <p>play.google.com/store/apps/details?id=com.google.android.youtube
-<h4 id="Details.Offered_By">func (Details) Offered_By</h4>
-  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">Offered_By</span><span class="p">()</span> <span class="p">(</span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
-  <p>play.google.com/store/apps/details?id=com.google.android.youtube
-<h4 id="Details.Price">func (Details) Price</h4>
+  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">Name</span><span class="p">()</span> <span class="p">([]</span><a href="https://pkg.go.dev/builtin#byte"><span class="kt">byte</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
+  <h4 id="Details.Offered_By">func (Details) Offered_By</h4>
+  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">Offered_By</span><span class="p">()</span> <span class="p">([]</span><a href="https://pkg.go.dev/builtin#byte"><span class="kt">byte</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
+  <h4 id="Details.Price">func (Details) Price</h4>
   <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">Price</span><span class="p">()</span> <span class="p">(</span><a href="https://pkg.go.dev/builtin#float64"><span class="kt">float64</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
-  <p>play.google.com/store/apps/details?id=com.google.android.youtube
-<h4 id="Details.Price_Currency">func (Details) Price_Currency</h4>
-  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">Price_Currency</span><span class="p">()</span> <span class="p">(</span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
-  <p>play.google.com/store/apps/details?id=com.google.android.youtube
-<h4 id="Details.Requires">func (Details) Requires</h4>
-  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">Requires</span><span class="p">()</span> <span class="p">(</span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
-  <p>play.google.com/store/apps/details?id=com.google.android.youtube
-<h4 id="Details.Size">func (Details) Size</h4>
+  <h4 id="Details.Price_Currency">func (Details) Price_Currency</h4>
+  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">Price_Currency</span><span class="p">()</span> <span class="p">([]</span><a href="https://pkg.go.dev/builtin#byte"><span class="kt">byte</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
+  <h4 id="Details.Requires">func (Details) Requires</h4>
+  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">Requires</span><span class="p">()</span> <span class="p">([]</span><a href="https://pkg.go.dev/builtin#byte"><span class="kt">byte</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
+  <h4 id="Details.Size">func (Details) Size</h4>
   <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">Size</span><span class="p">()</span> <span class="p">(</span><a href="https://pkg.go.dev/builtin#uint64"><span class="kt">uint64</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
   <h4 id="Details.String">func (Details) String</h4>
   <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">String</span><span class="p">()</span> <a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a></pre>
   <h4 id="Details.Updated_On">func (Details) Updated_On</h4>
   <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">Updated_On</span><span class="p">()</span> <span class="p">(</span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
-  <p>play.google.com/store/apps/details?id=com.google.android.youtube
-<h4 id="Details.Version_Code">func (Details) Version_Code</h4>
+  <h4 id="Details.Version_Code">func (Details) Version_Code</h4>
   <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">Version_Code</span><span class="p">()</span> <span class="p">(</span><a href="https://pkg.go.dev/builtin#uint64"><span class="kt">uint64</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
   <p>developer.android.com/guide/topics/manifest/manifest-element
 <h4 id="Details.Version_Name">func (Details) Version_Name</h4>
-  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">Version_Name</span><span class="p">()</span> <span class="p">(</span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
+  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">Version_Name</span><span class="p">()</span> <span class="p">([]</span><a href="https://pkg.go.dev/builtin#byte"><span class="kt">byte</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
   <p>developer.android.com/guide/topics/manifest/manifest-element
 <h3 id="Device">type Device</h3>
     <pre class="chroma"><span class="kd">type</span> <span class="nx">Device</span> <span class="kd">struct</span> <span class="p">{</span>

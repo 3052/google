@@ -5,8 +5,8 @@ import (
    "bytes"
    "compress/gzip"
    "encoding/base64"
+   "fmt"
    "net/http"
-   "strconv"
    "time"
 )
 
@@ -19,10 +19,10 @@ func x_ps_rh(r *http.Request, c Checkin) error {
    token, err := func() ([]byte, error) {
       var m protobuf.Message
       m.AddFunc(3, func(m *protobuf.Message) {
-         m.AddBytes(1, strconv.AppendUint(nil, id, 10))
+         m.AddBytes(1, fmt.Append(nil, id))
          m.AddFunc(2, func(m *protobuf.Message) {
             v := time.Now().UnixMicro()
-            m.AddBytes(1, strconv.AppendInt(nil, v, 10))
+            m.AddBytes(1, fmt.Append(nil, v))
          })
       })
       b, err := compress_gzip(m.Encode())
@@ -122,65 +122,9 @@ func authorization(r *http.Request, a Access_Token) {
    r.Header.Set("Authorization", "Bearer " + a.Values.Get("Auth"))
 }
 
-func user_agent(r *http.Request, single bool) {
-   var b []byte
-   // `sdk` is needed for `/fdfe/delivery`
-   b = append(b, "Android-Finsky (sdk="...)
-   // with `/fdfe/acquire`, requests will be rejected with certain apps, if the
-   // device was created with too low a version here:
-   b = strconv.AppendInt(b, android_API, 10)
-   b = append(b, ",versionCode="...)
-   // for multiple APKs just tell the truth. for single APK we have to lie.
-   // below value is the last version that works.
-   if single {
-      b = strconv.AppendInt(b, 80919999, 10)
-   } else {
-      b = strconv.AppendInt(b, google_play_store, 10)
-   }
-   b = append(b, ')')
-   r.Header.Set("User-Agent", string(b))
-}
-
-func x_dfe_device_id(r *http.Request, c Checkin) error {
-   id, err := c.Device_ID()
-   if err != nil {
-      return err
-   }
-   r.Header.Set("X-DFE-Device-ID", strconv.FormatUint(id, 16))
-   return nil
-}
-
 type Application struct {
    ID string
    Version uint64
-}
-
-func (a Application) APK(config string) string {
-   var b []byte
-   b = append(b, a.ID...)
-   b = append(b, '-')
-   if config != "" {
-      b = append(b, config...)
-      b = append(b, '-')
-   }
-   b = strconv.AppendUint(b, a.Version, 10)
-   b = append(b, ".apk"...)
-   return string(b)
-}
-
-func (a Application) OBB(role uint64) string {
-   var b []byte
-   if role >= 1 {
-      b = append(b, "patch"...)
-   } else {
-      b = append(b, "main"...)
-   }
-   b = append(b, '.')
-   b = strconv.AppendUint(b, a.Version, 10)
-   b = append(b, '.')
-   b = append(b, a.ID...)
-   b = append(b, ".obb"...)
-   return string(b)
 }
 
 type Platform int
@@ -196,15 +140,6 @@ var Platforms = map[int]string{
 
 func (p Platform) String() string {
    return Platforms[int(p)]
-}
-
-func (p *Platform) Set(s string) error {
-   v, err := strconv.Atoi(s)
-   if err != nil {
-      return err
-   }
-   *p = Platform(v)
-   return nil
 }
 
 type Device struct {
@@ -240,4 +175,61 @@ func encode_base64(p []byte) ([]byte, error) {
       return nil, err
    }
    return b.Bytes(), nil
+}
+
+func x_dfe_device_id(r *http.Request, c Checkin) error {
+   id, err := c.Device_ID()
+   if err != nil {
+      return err
+   }
+   r.Header.Set("X-DFE-Device-ID", fmt.Sprint(id))
+   return nil
+}
+
+func (a Application) APK(config string) string {
+   var b []byte
+   b = fmt.Append(b, a.ID, "-")
+   if config != "" {
+      b = fmt.Append(b, config, "-")
+   }
+   b = fmt.Append(b, a.Version, ".apk")
+   return string(b)
+}
+
+func (a Application) OBB(role uint64) string {
+   var b []byte
+   if role >= 1 {
+      b = append(b, "patch"...)
+   } else {
+      b = append(b, "main"...)
+   }
+   b = fmt.Append(b, ".", a.Version, ".", a.ID, ".obb")
+   return string(b)
+}
+
+func (p *Platform) Set(s string) error {
+   _, err := fmt.Sscan(s, p)
+   if err != nil {
+      return err
+   }
+   return nil
+}
+
+func user_agent(r *http.Request, single bool) {
+   var b []byte
+   // `sdk` is needed for `/fdfe/delivery`
+   b = append(b, "Android-Finsky (sdk="...)
+   // with `/fdfe/acquire`, requests will be rejected with certain apps, if the
+   // device was created with too low a version here:
+   b = fmt.Append(b, android_API)
+   b = append(b, ",versionCode="...)
+   // for multiple APKs just tell the truth. for single APK we have to lie.
+   // below value is the last version that works.
+   if single {
+      b = fmt.Append(b, 80919999)
+   } else {
+      b = fmt.Append(b, google_play_store)
+   }
+   b = append(b, ')')
+   r.Header.Set("User-Agent", string(b))
 }

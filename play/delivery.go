@@ -11,11 +11,9 @@ import (
 
 func (d Delivery) OBB_File(f func(OBB_File) bool) {
    for _, field := range d.m {
-      if field.Number == 4 {
-         if file, ok := field.Get(); ok {
-            if !f(OBB_File{file}) {
-               return
-            }
+      if file, ok := field.Get(4); ok {
+         if !f(OBB_File{file}) {
+            return
          }
       }
    }
@@ -23,11 +21,9 @@ func (d Delivery) OBB_File(f func(OBB_File) bool) {
 
 func (d Delivery) Config_APK(f func(Config_APK) bool) {
    for _, field := range d.m {
-      if field.Number == 15 {
-         if config, ok := field.Get(); ok {
-            if !f(Config_APK{config}) {
-               return
-            }
+      if config, ok := field.Get(15); ok {
+         if !f(Config_APK{config}) {
+            return
          }
       }
    }
@@ -36,16 +32,6 @@ func (d Delivery) Config_APK(f func(Config_APK) bool) {
 // developer.android.com/guide/app-bundle
 type Config_APK struct {
    m protobuf.Message
-}
-
-// developer.android.com/guide/app-bundle
-func (s Config_APK) Config() ([]byte, bool) {
-   return s.m.GetBytes(1)
-}
-
-// developer.android.com/guide/app-bundle
-func (s Config_APK) URL() ([]byte, bool) {
-   return s.m.GetBytes(5)
 }
 
 type Delivery struct {
@@ -101,10 +87,6 @@ func (d *Delivery) Delivery(single bool) error {
    return nil
 }
 
-func (d Delivery) URL() ([]byte, bool) {
-   return d.m.GetBytes(3)
-}
-
 // developer.android.com/google/play/expansion-files
 type OBB_File struct {
    m protobuf.Message
@@ -118,6 +100,31 @@ func (o OBB_File) Role() (uint64, bool) {
    return 0, false
 }
 
-func (o OBB_File) URL() ([]byte, bool) {
-   return o.m.GetBytes(4)
+// developer.android.com/guide/app-bundle
+func (s Config_APK) Config() (string, bool) {
+   if v, ok := s.m.GetBytes(1); ok {
+      return string(v), true
+   }
+   return "", false
+}
+
+func (s Config_APK) URL() (string, bool) {
+   if v, ok := s.m.GetBytes(5); ok {
+      return string(v), true
+   }
+   return "", false
+}
+
+func (o OBB_File) URL() (string, bool) {
+   if v, ok := o.m.GetBytes(4); ok {
+      return string(v), true
+   }
+   return "", false
+}
+
+func (d Delivery) URL() (string, bool) {
+   if v, ok := d.m.GetBytes(3); ok {
+      return string(v), true
+   }
+   return "", false
 }
