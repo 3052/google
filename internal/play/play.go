@@ -77,8 +77,9 @@ func (f flags) download(url, name string) error {
       return err
    }
    defer res.Body.Close()
-   src := log.New_Progress(1).Reader(res)
-   if _, err := dst.ReadFrom(src); err != nil {
+   var meter log.ProgressMeter
+   meter.Set(1)
+   if _, err := dst.ReadFrom(meter.Reader(res)); err != nil {
       return err
    }
    return nil

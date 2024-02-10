@@ -15,7 +15,7 @@ type flags struct {
    device bool
    platform play.Platform
    single bool
-   level log.Level
+   v log.Level
 }
 
 func main() {
@@ -32,10 +32,10 @@ func main() {
    flag.Var(&f.platform, "p", fmt.Sprint(play.Platforms))
    flag.BoolVar(&f.single, "s", false, "single APK")
    flag.Uint64Var(&f.app.Version, "v", 0, "version code")
-   flag.TextVar(&f.level, "level", f.level, "level")
+   flag.TextVar(&f.v.Level, "level", f.v.Level, "level")
    flag.Parse()
-   log.Set_Transport(0)
-   log.Set_Logger(f.level)
+   log.Handler(f.v)
+   log.TransportInfo()
    switch {
    case f.app.ID != "":
       switch {
