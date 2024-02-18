@@ -79,7 +79,7 @@ func (a Acquire) Acquire(app string) error {
    m, _ = m.Get(94)
    m, _ = m.Get(1)
    m, _ = m.Get(2)
-   if m, ok := m.Get(147291249); !ok {
+   if m, ok := m.Get(147291249); ok {
       return acquire_error{m}
    }
    return nil

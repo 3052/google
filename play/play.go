@@ -10,6 +10,15 @@ import (
    "time"
 )
 
+func x_dfe_device_id(r *http.Request, c Checkin) error {
+   id, err := c.Device_ID()
+   if err != nil {
+      return err
+   }
+   r.Header.Set("X-DFE-Device-ID", fmt.Sprintf("%x", id))
+   return nil
+}
+
 // github.com/doug-leith/android-protobuf-decoding/blob/main/decoding_helpers.py
 func x_ps_rh(r *http.Request, c Checkin) error {
    id, err := c.Device_ID()
@@ -175,15 +184,6 @@ func encode_base64(p []byte) ([]byte, error) {
       return nil, err
    }
    return b.Bytes(), nil
-}
-
-func x_dfe_device_id(r *http.Request, c Checkin) error {
-   id, err := c.Device_ID()
-   if err != nil {
-      return err
-   }
-   r.Header.Set("X-DFE-Device-ID", fmt.Sprint(id))
-   return nil
 }
 
 func (a Application) APK(config string) string {

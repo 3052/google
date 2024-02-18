@@ -9,18 +9,6 @@ import (
    "net/http"
 )
 
-func (d Details) Files(f func(uint64)) {
-   d.m, _ = d.m.Get(13)
-   d.m, _ = d.m.Get(1)
-   for _, field := range d.m {
-      if m, ok := field.Get(17); ok {
-         if file, ok := m.GetVarint(1); ok {
-            f(uint64(file))
-         }
-      }
-   }
-}
-
 func (d Details) String() string {
    var b []byte
    b = append(b, "downloads:"...)
@@ -73,6 +61,18 @@ func (d Details) String() string {
    return string(b)
 }
 
+func (d Details) Files(f func(uint64)) {
+   d.m, _ = d.m.Get(13)
+   d.m, _ = d.m.Get(1)
+   for _, field := range d.m {
+      if m, ok := field.Get(17); ok {
+         if file, ok := m.GetVarint(1); ok {
+            f(uint64(file))
+         }
+      }
+   }
+}
+
 // developer.android.com/guide/topics/manifest/manifest-element
 func (d Details) Version_Code() (uint64, bool) {
    d.m, _ = d.m.Get(13)
@@ -81,13 +81,6 @@ func (d Details) Version_Code() (uint64, bool) {
       return uint64(v), true
    }
    return 0, false
-}
-
-// developer.android.com/guide/topics/manifest/manifest-element
-func (d Details) Version_Name() ([]byte, bool) {
-   d.m, _ = d.m.Get(13)
-   d.m, _ = d.m.Get(1)
-   return d.m.GetBytes(4)
 }
 
 type Details struct {
@@ -139,33 +132,12 @@ func (d Details) Downloads() (uint64, bool) {
    return 0, false
 }
 
-func (d Details) Name() ([]byte, bool) {
-   return d.m.GetBytes(5)
-}
-
-func (d Details) Offered_By() ([]byte, bool) {
-   return d.m.GetBytes(6)
-}
-
 func (d Details) Price() (float64, bool) {
    d.m, _ = d.m.Get(8)
    if v, ok := d.m.GetVarint(1); ok {
       return float64(v) / 1_000_000, true
    }
    return 0, false
-}
-
-func (d Details) Price_Currency() ([]byte, bool) {
-   d.m, _ = d.m.Get(8)
-   return d.m.GetBytes(2)
-}
-
-func (d Details) Requires() ([]byte, bool) {
-   d.m, _ = d.m.Get(13)
-   d.m, _ = d.m.Get(1)
-   d.m, _ = d.m.Get(82)
-   d.m, _ = d.m.Get(1)
-   return d.m.GetBytes(1)
 }
 
 func (d Details) Size() (uint64, bool) {
@@ -181,6 +153,48 @@ func (d Details) Updated_On() (string, bool) {
    d.m, _ = d.m.Get(13)
    d.m, _ = d.m.Get(1)
    if v, ok := d.m.GetBytes(16); ok {
+      return string(v), true
+   }
+   return "", false
+}
+
+func (d Details) Name() (string, bool) {
+   if v, ok := d.m.GetBytes(5); ok {
+      return string(v), true
+   }
+   return "", false
+}
+
+func (d Details) Offered_By() (string, bool) {
+   if v, ok := d.m.GetBytes(6); ok {
+      return string(v), true
+   }
+   return "", false
+}
+
+func (d Details) Price_Currency() (string, bool) {
+   d.m, _ = d.m.Get(8)
+   if v, ok := d.m.GetBytes(2); ok {
+      return string(v), true
+   }
+   return "", false
+}
+
+func (d Details) Version_Name() (string, bool) {
+   d.m, _ = d.m.Get(13)
+   d.m, _ = d.m.Get(1)
+   if v, ok := d.m.GetBytes(4); ok {
+      return string(v), true
+   }
+   return "", false
+}
+
+func (d Details) Requires() (string, bool) {
+   d.m, _ = d.m.Get(13)
+   d.m, _ = d.m.Get(1)
+   d.m, _ = d.m.Get(82)
+   d.m, _ = d.m.Get(1)
+   if v, ok := d.m.GetBytes(1); ok {
       return string(v), true
    }
    return "", false
