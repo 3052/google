@@ -70,16 +70,16 @@
           <li><a href="#Details.Details">func (d *Details) Details(app string, single bool) error</a></li>
           <li><a href="#Details.Downloads">func (d Details) Downloads() (uint64, bool)</a></li>
           <li><a href="#Details.Files">func (d Details) Files(f func(uint64))</a></li>
-          <li><a href="#Details.Name">func (d Details) Name() ([]byte, bool)</a></li>
-          <li><a href="#Details.Offered_By">func (d Details) Offered_By() ([]byte, bool)</a></li>
+          <li><a href="#Details.Name">func (d Details) Name() (string, bool)</a></li>
+          <li><a href="#Details.Offered_By">func (d Details) Offered_By() (string, bool)</a></li>
           <li><a href="#Details.Price">func (d Details) Price() (float64, bool)</a></li>
-          <li><a href="#Details.Price_Currency">func (d Details) Price_Currency() ([]byte, bool)</a></li>
-          <li><a href="#Details.Requires">func (d Details) Requires() ([]byte, bool)</a></li>
+          <li><a href="#Details.Price_Currency">func (d Details) Price_Currency() (string, bool)</a></li>
+          <li><a href="#Details.Requires">func (d Details) Requires() (string, bool)</a></li>
           <li><a href="#Details.Size">func (d Details) Size() (uint64, bool)</a></li>
           <li><a href="#Details.String">func (d Details) String() string</a></li>
           <li><a href="#Details.Updated_On">func (d Details) Updated_On() (string, bool)</a></li>
           <li><a href="#Details.Version_Code">func (d Details) Version_Code() (uint64, bool)</a></li>
-          <li><a href="#Details.Version_Name">func (d Details) Version_Name() ([]byte, bool)</a></li>
+          <li><a href="#Details.Version_Name">func (d Details) Version_Name() (string, bool)</a></li>
           </ul>
       </li>
   <li>
@@ -240,15 +240,15 @@
 <h4 id="Details.Files">func (Details) Files</h4>
   <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">Files</span><span class="p">(</span><span class="nx">f</span> <span class="kd">func</span><span class="p">(</span><a href="https://pkg.go.dev/builtin#uint64"><span class="kt">uint64</span></a><span class="p">))</span></pre>
   <h4 id="Details.Name">func (Details) Name</h4>
-  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">Name</span><span class="p">()</span> <span class="p">([]</span><a href="https://pkg.go.dev/builtin#byte"><span class="kt">byte</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
+  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">Name</span><span class="p">()</span> <span class="p">(</span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
   <h4 id="Details.Offered_By">func (Details) Offered_By</h4>
-  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">Offered_By</span><span class="p">()</span> <span class="p">([]</span><a href="https://pkg.go.dev/builtin#byte"><span class="kt">byte</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
+  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">Offered_By</span><span class="p">()</span> <span class="p">(</span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
   <h4 id="Details.Price">func (Details) Price</h4>
   <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">Price</span><span class="p">()</span> <span class="p">(</span><a href="https://pkg.go.dev/builtin#float64"><span class="kt">float64</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
   <h4 id="Details.Price_Currency">func (Details) Price_Currency</h4>
-  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">Price_Currency</span><span class="p">()</span> <span class="p">([]</span><a href="https://pkg.go.dev/builtin#byte"><span class="kt">byte</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
+  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">Price_Currency</span><span class="p">()</span> <span class="p">(</span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
   <h4 id="Details.Requires">func (Details) Requires</h4>
-  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">Requires</span><span class="p">()</span> <span class="p">([]</span><a href="https://pkg.go.dev/builtin#byte"><span class="kt">byte</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
+  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">Requires</span><span class="p">()</span> <span class="p">(</span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
   <h4 id="Details.Size">func (Details) Size</h4>
   <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">Size</span><span class="p">()</span> <span class="p">(</span><a href="https://pkg.go.dev/builtin#uint64"><span class="kt">uint64</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
   <h4 id="Details.String">func (Details) String</h4>
@@ -259,9 +259,8 @@
   <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">Version_Code</span><span class="p">()</span> <span class="p">(</span><a href="https://pkg.go.dev/builtin#uint64"><span class="kt">uint64</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
   <p>developer.android.com/guide/topics/manifest/manifest-element
 <h4 id="Details.Version_Name">func (Details) Version_Name</h4>
-  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">Version_Name</span><span class="p">()</span> <span class="p">([]</span><a href="https://pkg.go.dev/builtin#byte"><span class="kt">byte</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
-  <p>developer.android.com/guide/topics/manifest/manifest-element
-<h3 id="Device">type Device</h3>
+  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">Version_Name</span><span class="p">()</span> <span class="p">(</span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
+  <h3 id="Device">type Device</h3>
     <pre class="chroma"><span class="kd">type</span> <span class="nx">Device</span> <span class="kd">struct</span> <span class="p">{</span>
 	<span class="c1">// developer.android.com/guide/topics/manifest/supports-gl-texture-element
 </span><span class="c1"></span>	<span id="Device.Texture"><span class="nx">Texture</span></span> <span class="p">[]</span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a>
