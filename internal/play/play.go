@@ -112,7 +112,7 @@ func (f flags) client(a *play.Access_Token, c *play.Checkin) error {
    if err != nil {
       return err
    }
-   home += "/google/play/"
+   home += "/google-play/"
    var token play.Refresh_Token
    token.Raw, err = os.ReadFile(home + "token.txt")
    if err != nil {
@@ -149,6 +149,6 @@ func (f flags) do_auth() error {
    if err != nil {
       return err
    }
-   return os.WriteFile(home + "/google/play/token.txt", token.Raw, 0666)
+   return os.WriteFile(home + "/google-play/token.txt", token.Raw, 0666)
 }
 
