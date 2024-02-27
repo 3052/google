@@ -8,23 +8,6 @@ import (
    "net/http"
 )
 
-func (a acquire_error) Error() string {
-   var b []byte
-   for _, field := range a.m {
-      if m, ok := field.Get(1); ok {
-         m, _ = m.Get(10)
-         m, _ = m.Get(1)
-         if bytes, ok := m.GetBytes(1); ok {
-            if b != nil {
-               b = append(b, '\n')
-            }
-            b = append(b, bytes...)
-         }
-      }
-   }
-   return string(b)
-}
-
 type Acquire struct {
    Checkin Checkin
    Token Access_Token
@@ -87,4 +70,21 @@ func (a Acquire) Acquire(app string) error {
 
 type acquire_error struct {
    m protobuf.Message
+}
+
+func (a acquire_error) Error() string {
+   var b []byte
+   for _, field := range a.m {
+      if m, ok := field.Get(1); ok {
+         m, _ = m.Get(10)
+         m, _ = m.Get(1)
+         if bytes, ok := m.GetBytes(1); ok {
+            if b != nil {
+               b = append(b, '\n')
+            }
+            b = append(b, bytes...)
+         }
+      }
+   }
+   return string(b)
 }
