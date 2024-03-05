@@ -61,11 +61,6 @@ func x_ps_rh(r *http.Request, c Checkin) error {
    return nil
 }
 
-// Android 11 (Level 30) is still supported:
-// source.android.com/docs/security/bulletin/2024-01-01
-// but some apps now require Android 12 (Level 31):
-// com.royalmail.app.droid
-// so lets lie for now
 const android_API = 31
 
 // developer.android.com/guide/topics/manifest/uses-feature-element#glEsVersion

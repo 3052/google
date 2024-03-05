@@ -41,6 +41,48 @@ type Delivery struct {
    m protobuf.Message
 }
 
+// developer.android.com/google/play/expansion-files
+type OBB_File struct {
+   m protobuf.Message
+}
+
+// developer.android.com/google/play/expansion-files
+func (o OBB_File) Role() (uint64, bool) {
+   if v, ok := o.m.GetVarint(1); ok {
+      return uint64(v), true
+   }
+   return 0, false
+}
+
+// developer.android.com/guide/app-bundle
+func (s Config_APK) Config() (string, bool) {
+   if v, ok := s.m.GetBytes(1); ok {
+      return string(v), true
+   }
+   return "", false
+}
+
+func (s Config_APK) URL() (string, bool) {
+   if v, ok := s.m.GetBytes(5); ok {
+      return string(v), true
+   }
+   return "", false
+}
+
+func (o OBB_File) URL() (string, bool) {
+   if v, ok := o.m.GetBytes(4); ok {
+      return string(v), true
+   }
+   return "", false
+}
+
+func (d Delivery) URL() (string, bool) {
+   if v, ok := d.m.GetBytes(3); ok {
+      return string(v), true
+   }
+   return "", false
+}
+
 func (d *Delivery) Delivery(single bool) error {
    req, err := http.NewRequest("GET", "https://android.clients.google.com", nil)
    if err != nil {
@@ -85,46 +127,4 @@ func (d *Delivery) Delivery(single bool) error {
    }
    d.m, _ = d.m.Get(2)
    return nil
-}
-
-// developer.android.com/google/play/expansion-files
-type OBB_File struct {
-   m protobuf.Message
-}
-
-// developer.android.com/google/play/expansion-files
-func (o OBB_File) Role() (uint64, bool) {
-   if v, ok := o.m.GetVarint(1); ok {
-      return uint64(v), true
-   }
-   return 0, false
-}
-
-// developer.android.com/guide/app-bundle
-func (s Config_APK) Config() (string, bool) {
-   if v, ok := s.m.GetBytes(1); ok {
-      return string(v), true
-   }
-   return "", false
-}
-
-func (s Config_APK) URL() (string, bool) {
-   if v, ok := s.m.GetBytes(5); ok {
-      return string(v), true
-   }
-   return "", false
-}
-
-func (o OBB_File) URL() (string, bool) {
-   if v, ok := o.m.GetBytes(4); ok {
-      return string(v), true
-   }
-   return "", false
-}
-
-func (d Delivery) URL() (string, bool) {
-   if v, ok := d.m.GetBytes(3); ok {
-      return string(v), true
-   }
-   return "", false
 }

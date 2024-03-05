@@ -7,6 +7,16 @@ import (
    "strings"
 )
 
+func include(s string) bool {
+   switch {
+   case strings.HasPrefix(s, "android.permission."):
+      return true
+   case strings.HasPrefix(s, "com.android.permission."):
+      return true
+   }
+   return false
+}
+
 func main() {
    text, err := os.ReadFile("AndroidManifest.xml")
    if err != nil {
@@ -21,7 +31,7 @@ func main() {
       panic(err)
    }
    for _, permission := range manifest.UsesPermission {
-      if strings.HasPrefix(permission.Name, "android.permission.") {
+      if include(permission.Name) {
          fmt.Printf("<permission name=%q/>\n", permission.Name)
       }
    }

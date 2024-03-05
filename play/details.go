@@ -89,39 +89,6 @@ type Details struct {
    m protobuf.Message
 }
 
-func (d *Details) Details(app string, single bool) error {
-   req, err := http.NewRequest("GET", "https://android.clients.google.com", nil)
-   if err != nil {
-      return err
-   }
-   req.URL.Path = "/fdfe/details"
-   req.URL.RawQuery = "doc=" + app
-   authorization(req, d.Token)
-   user_agent(req, single)
-   if err := x_dfe_device_id(req, d.Checkin); err != nil {
-      return err
-   }
-   res, err := http.DefaultClient.Do(req)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return errors.New(res.Status)
-   }
-   data, err := io.ReadAll(res.Body)
-   if err != nil {
-      return err
-   }
-   if err := d.m.Consume(data); err != nil {
-      return err
-   }
-   d.m, _ = d.m.Get(1)
-   d.m, _ = d.m.Get(2)
-   d.m, _ = d.m.Get(4)
-   return nil
-}
-
 // play.google.com/store/apps/details?id=com.google.android.youtube
 func (d Details) Downloads() (uint64, bool) {
    d.m, _ = d.m.Get(13)
@@ -198,4 +165,39 @@ func (d Details) Requires() (string, bool) {
       return string(v), true
    }
    return "", false
+}
+
+///////////
+
+func (d *Details) Details(app string, single bool) error {
+   req, err := http.NewRequest("GET", "https://android.clients.google.com", nil)
+   if err != nil {
+      return err
+   }
+   req.URL.Path = "/fdfe/details"
+   req.URL.RawQuery = "doc=" + app
+   authorization(req, d.Token)
+   user_agent(req, single)
+   if err := x_dfe_device_id(req, d.Checkin); err != nil {
+      return err
+   }
+   res, err := http.DefaultClient.Do(req)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return errors.New(res.Status)
+   }
+   data, err := io.ReadAll(res.Body)
+   if err != nil {
+      return err
+   }
+   if err := d.m.Consume(data); err != nil {
+      return err
+   }
+   d.m, _ = d.m.Get(1)
+   d.m, _ = d.m.Get(2)
+   d.m, _ = d.m.Get(4)
+   return nil
 }

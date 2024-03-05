@@ -13,6 +13,17 @@ type Checkin struct {
    m protobuf.Message
 }
 
+func (c *Checkin) Unmarshal() error {
+   return c.m.Consume(c.Raw)
+}
+
+func (c Checkin) Device_ID() (uint64, error) {
+   if v, ok := c.m.GetFixed64(7); ok {
+      return uint64(v), nil
+   }
+   return 0, errors.New("device ID")
+}
+
 func (c *Checkin) Checkin(d Device) error {
    var m protobuf.Message
    m.AddFunc(4, func(m *protobuf.Message) {
@@ -61,15 +72,4 @@ func (c *Checkin) Checkin(d Device) error {
       return err
    }
    return nil
-}
-
-func (c *Checkin) Unmarshal() error {
-   return c.m.Consume(c.Raw)
-}
-
-func (c Checkin) Device_ID() (uint64, error) {
-   if v, ok := c.m.GetFixed64(7); ok {
-      return uint64(v), nil
-   }
-   return 0, errors.New("device ID")
 }

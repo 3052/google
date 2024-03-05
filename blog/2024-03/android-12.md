@@ -18,10 +18,6 @@ oldest:
 
 MAKE SURE TO USE PIXEL 6
 
----------------------------------------------------------------------------------
-
-then:
-
 ~~~
 mitmproxy -s mitmproxy.py
 emulator -avd Pixel_6_API_31 -writable-system
@@ -42,5 +38,3 @@ install system certificate
 if you omit permission file, after reboot device will just load forever
 
 https://source.android.com/docs/core/permissions/perms-allowlist
-
-pull from AndroidManifest.xml

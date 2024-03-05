@@ -82,5 +82,6 @@
       <permission name="android.permission.WRITE_EXTERNAL_STORAGE"/>
       <permission name="android.permission.WRITE_SECURE_SETTINGS"/>
       <permission name="android.permission.WRITE_SETTINGS"/>
+      <permission name="com.android.permission.USE_INSTALLER_V2"/>
    </privapp-permissions>
 </permissions>

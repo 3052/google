@@ -8,11 +8,6 @@ import (
    "net/http"
 )
 
-type Acquire struct {
-   Checkin Checkin
-   Token Access_Token
-}
-
 func (a Acquire) Acquire(app string) error {
    var m protobuf.Message
    m.AddFunc(1, func(m *protobuf.Message) {
@@ -87,4 +82,9 @@ func (a acquire_error) Error() string {
       }
    }
    return string(b)
+}
+
+type Acquire struct {
+   Checkin Checkin
+   Token Access_Token
 }
