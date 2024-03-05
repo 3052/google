@@ -8,4 +8,4 @@ require (
 	154.pages.dev/protobuf v1.1.5
 )
 
-require google.golang.org/protobuf v1.32.0 // indirect
+require google.golang.org/protobuf v1.33.0 // indirect
