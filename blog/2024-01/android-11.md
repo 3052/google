@@ -2,8 +2,6 @@
 
 API 30
 
-https://source.android.com/docs/core/permissions/perms-allowlist
-
 note if remount fails you might need to just retry it. if you omit permission
 file, after reboot device will just load forever. this seems to be the first
 version using `/fdfe/sync` only:
