@@ -167,8 +167,6 @@ func (d Details) Requires() (string, bool) {
    return "", false
 }
 
-///////////
-
 func (d *Details) Details(app string, single bool) error {
    req, err := http.NewRequest("GET", "https://android.clients.google.com", nil)
    if err != nil {

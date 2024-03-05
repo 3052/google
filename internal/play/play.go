@@ -90,7 +90,7 @@ func (f flags) do_device() error {
    if err != nil {
       return err
    }
-   name += fmt.Sprintf("/google/play/%v.bin", f.platform)
+   name += fmt.Sprintf("/google-play/%v.bin", f.platform)
    var check play.Checkin
    play.Phone.Platform = f.platform.String()
    if err := check.Checkin(play.Phone); err != nil {

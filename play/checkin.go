@@ -26,13 +26,13 @@ func (c Checkin) Device_ID() (uint64, error) {
 
 func (c *Checkin) Checkin(d Device) error {
    var m protobuf.Message
-   m.AddFunc(4, func(m *protobuf.Message) {
-      m.AddFunc(1, func(m *protobuf.Message) {
+   m.Add(4, func(m *protobuf.Message) {
+      m.Add(1, func(m *protobuf.Message) {
          m.AddVarint(10, android_API)
       })
    })
    m.AddVarint(14, 3)
-   m.AddFunc(18, func(m *protobuf.Message) {
+   m.Add(18, func(m *protobuf.Message) {
       m.AddVarint(1, 3)
       m.AddVarint(2, 2)
       m.AddVarint(3, 2)
@@ -50,7 +50,7 @@ func (c *Checkin) Checkin(d Device) error {
       }
       // you cannot swap the next two lines:
       for _, feature := range d.Feature {
-         m.AddFunc(26, func(m *protobuf.Message) {
+         m.Add(26, func(m *protobuf.Message) {
             m.AddBytes(1, []byte(feature))
          })
       }

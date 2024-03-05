@@ -27,9 +27,9 @@ func x_ps_rh(r *http.Request, c Checkin) error {
    }
    token, err := func() ([]byte, error) {
       var m protobuf.Message
-      m.AddFunc(3, func(m *protobuf.Message) {
+      m.Add(3, func(m *protobuf.Message) {
          m.AddBytes(1, fmt.Append(nil, id))
-         m.AddFunc(2, func(m *protobuf.Message) {
+         m.Add(2, func(m *protobuf.Message) {
             v := time.Now().UnixMicro()
             m.AddBytes(1, fmt.Append(nil, v))
          })
@@ -45,7 +45,7 @@ func x_ps_rh(r *http.Request, c Checkin) error {
    }
    ps_rh, err := func() ([]byte, error) {
       var m protobuf.Message
-      m.AddFunc(1, func(m *protobuf.Message) {
+      m.Add(1, func(m *protobuf.Message) {
          m.AddBytes(1, token)
       })
       b, err := compress_gzip(m.Encode())
@@ -120,10 +120,6 @@ var Phone = Device{
       // org.videolan.vlc
       "android.hardware.screen.landscape",
    },
-}
-
-func authorization(r *http.Request, a Access_Token) {
-   r.Header.Set("Authorization", "Bearer " + a.Values.Get("Auth"))
 }
 
 type Application struct {
@@ -208,6 +204,10 @@ func (p *Platform) Set(s string) error {
       return err
    }
    return nil
+}
+
+func authorization(r *http.Request, a Access_Token) {
+   r.Header.Set("Authorization", "Bearer " + a.Values.Get("Auth"))
 }
 
 func user_agent(r *http.Request, single bool) {

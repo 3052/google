@@ -10,8 +10,8 @@ import (
 
 func (a Acquire) Acquire(app string) error {
    var m protobuf.Message
-   m.AddFunc(1, func(m *protobuf.Message) {
-      m.AddFunc(1, func(m *protobuf.Message) {
+   m.Add(1, func(m *protobuf.Message) {
+      m.Add(1, func(m *protobuf.Message) {
          m.AddBytes(1, []byte(app))
          m.AddVarint(2, 1)
          m.AddVarint(3, 3)
