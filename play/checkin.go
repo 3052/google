@@ -9,22 +9,22 @@ import (
 )
 
 type Checkin struct {
-   Raw []byte
+   Data []byte
    m protobuf.Message
 }
 
 func (c *Checkin) Unmarshal() error {
-   return c.m.Consume(c.Raw)
+   return c.m.Consume(c.Data)
 }
 
 func (c Checkin) DeviceId() (uint64, error) {
    if v, ok := c.m.GetFixed64(7); ok {
       return uint64(v), nil
    }
-   return 0, errors.New("device ID")
+   return 0, errors.New("Checkin.DeviceId")
 }
 
-func (c *Checkin) Checkin(d Device) error {
+func (c *Checkin) Do(d Device) error {
    var m protobuf.Message
    m.Add(4, func(m *protobuf.Message) {
       m.Add(1, func(m *protobuf.Message) {
@@ -67,7 +67,7 @@ func (c *Checkin) Checkin(d Device) error {
    if res.StatusCode != http.StatusOK {
       return errors.New(res.Status)
    }
-   c.Raw, err = io.ReadAll(res.Body)
+   c.Data, err = io.ReadAll(res.Body)
    if err != nil {
       return err
    }

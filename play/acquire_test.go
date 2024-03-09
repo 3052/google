@@ -14,7 +14,7 @@ func TestAcquire(t *testing.T) {
    }
    home += "/google-play/"
    var token RefreshToken
-   token.Raw, err = os.ReadFile(home + "token.txt")
+   token.Data, err = os.ReadFile(home + "token.txt")
    if err != nil {
       t.Fatal(err)
    }
@@ -28,7 +28,7 @@ func TestAcquire(t *testing.T) {
    time.Sleep(time.Second)
    for _, app := range apps {
       name := fmt.Sprint(home, app.platform, ".bin")
-      client.Checkin.Raw, err = os.ReadFile(name)
+      client.Checkin.Data, err = os.ReadFile(name)
       if err != nil {
          t.Fatal(err)
       }
@@ -36,7 +36,7 @@ func TestAcquire(t *testing.T) {
          t.Fatal(err)
       }
       fmt.Println(app.id)
-      if err := client.Acquire(app.id); err != nil {
+      if err := client.Do(app.id); err != nil {
          t.Fatal(err)
       }
       time.Sleep(99 * time.Millisecond)

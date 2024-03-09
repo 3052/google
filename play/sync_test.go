@@ -17,10 +17,10 @@ func Test_Sync(t *testing.T) {
       var check Checkin
       fmt.Println(platform)
       Phone.Platform = platform
-      if err := check.Checkin(Phone); err != nil {
+      if err := check.Do(Phone); err != nil {
          t.Fatal(err)
       }
-      err := os.WriteFile(home+platform+".bin", check.Raw, 0666)
+      err := os.WriteFile(home+platform+".bin", check.Data, 0666)
       if err != nil {
          t.Fatal(err)
       }

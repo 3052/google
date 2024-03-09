@@ -13,7 +13,7 @@ func TestDelivery(t *testing.T) {
    }
    home += "/google/play/"
    var token RefreshToken
-   token.Raw, err = os.ReadFile(home + "token.txt")
+   token.Data, err = os.ReadFile(home + "token.txt")
    if err != nil {
       t.Fatal(err)
    }
@@ -24,7 +24,7 @@ func TestDelivery(t *testing.T) {
    if err := d.Token.Refresh(token); err != nil {
       t.Fatal(err)
    }
-   d.Checkin.Raw, err = os.ReadFile(home + "x86.bin")
+   d.Checkin.Data, err = os.ReadFile(home + "x86.bin")
    if err != nil {
       t.Fatal(err)
    }
@@ -32,7 +32,7 @@ func TestDelivery(t *testing.T) {
       t.Fatal(err)
    }
    d.App = Application{"com.google.android.youtube", 1524221376}
-   if err := d.Get(false); err != nil {
+   if err := d.Do(false); err != nil {
       t.Fatal(err)
    }
    fmt.Printf("%#v\n", d.m)

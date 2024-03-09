@@ -17,41 +17,13 @@ type AccessToken struct {
    Values url.Values
 }
 
-type RefreshToken struct {
-   Raw []byte
-   Values url.Values
-}
-
 func (r *RefreshToken) Unmarshal() error {
    var err error
-   r.Values, err = parse_query(string(r.Raw))
+   r.Values, err = parse_query(string(r.Data))
    if err != nil {
       return err
    }
    return nil
-}
-
-func Exchange(oauth_token string) (*RefreshToken, error) {
-   res, err := http.PostForm(
-      "https://android.googleapis.com/auth", url.Values{
-         "ACCESS_TOKEN": {"1"},
-         "Token":        {oauth_token},
-         "service":      {"ac2dm"},
-      },
-   )
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
-   var token RefreshToken
-   token.Raw, err = io.ReadAll(res.Body)
-   if err != nil {
-      return nil, err
-   }
-   return &token, nil
 }
 
 func (a *AccessToken) Refresh(r RefreshToken) error {
@@ -75,6 +47,33 @@ func (a *AccessToken) Refresh(r RefreshToken) error {
       return err
    }
    a.Values, err = parse_query(string(body))
+   if err != nil {
+      return err
+   }
+   return nil
+}
+
+type RefreshToken struct {
+   Data []byte
+   Values url.Values
+}
+
+func (r *RefreshToken) New(oauth_token string) error {
+   res, err := http.PostForm(
+      "https://android.googleapis.com/auth", url.Values{
+         "ACCESS_TOKEN": {"1"},
+         "Token":        {oauth_token},
+         "service":      {"ac2dm"},
+      },
+   )
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return errors.New(res.Status)
+   }
+   r.Data, err = io.ReadAll(res.Body)
    if err != nil {
       return err
    }

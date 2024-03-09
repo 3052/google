@@ -8,7 +8,7 @@ import (
    "net/http"
 )
 
-func (a Acquire) Acquire(app string) error {
+func (a Acquire) Do(app string) error {
    var m protobuf.Message
    m.Add(1, func(m *protobuf.Message) {
       m.Add(1, func(m *protobuf.Message) {
@@ -71,26 +71,29 @@ type acquire_error struct {
    m protobuf.Message
 }
 
-func (a acquire_error) Error() string {
-   var b []byte
-   for _, field := range a.m {
-      if v, ok := field.Get(1); ok {
-         if v, ok := v.Get(10); ok {
-            if v, ok := v.Get(1); ok {
-               if v, ok := v.GetBytes(1); ok {
-                  if b != nil {
-                     b = append(b, '\n')
-                  }
-                  b = append(b, v...)
-               }
-            }
-         }
-      }
-   }
-   return string(b)
-}
-
 type Acquire struct {
    Checkin Checkin
    Token AccessToken
+}
+
+func (a acquire_error) Error() string {
+   var b []byte
+   for {
+      i, v := a.m.Index(1)
+      if i == -1 {
+         break
+      }
+      if v, ok := v.Get(10); ok {
+         if v, ok := v.Get(1); ok {
+            if v, ok := v.GetBytes(1); ok {
+               if b != nil {
+                  b = append(b, '\n')
+               }
+               b = append(b, v...)
+            }
+         }
+      }
+      a.m = a.m[i+1:]
+   }
+   return string(b)
 }

@@ -11,7 +11,7 @@ func TestCheckin(t *testing.T) {
       fmt.Println(platform)
       var check Checkin
       Phone.Platform = platform
-      err := check.Checkin(Phone)
+      err := check.Do(Phone)
       if err != nil {
          t.Fatal(err)
       }

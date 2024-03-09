@@ -9,26 +9,6 @@ import (
    "strconv"
 )
 
-func (d Delivery) ObbFile(f func(ObbFile) bool) {
-   for _, field := range d.m {
-      if file, ok := field.Get(4); ok {
-         if !f(ObbFile{file}) {
-            return
-         }
-      }
-   }
-}
-
-func (d Delivery) ConfigApk(f func(ConfigApk) bool) {
-   for _, field := range d.m {
-      if config, ok := field.Get(15); ok {
-         if !f(ConfigApk{config}) {
-            return
-         }
-      }
-   }
-}
-
 // developer.android.com/guide/app-bundle
 type ConfigApk struct {
    m protobuf.Message
@@ -83,7 +63,7 @@ func (d Delivery) URL() (string, bool) {
    return "", false
 }
 
-func (d *Delivery) Get(single bool) error {
+func (d *Delivery) Do(single bool) error {
    req, err := http.NewRequest("GET", "https://android.clients.google.com", nil)
    if err != nil {
       return err
@@ -133,4 +113,24 @@ func (d *Delivery) Get(single bool) error {
       return errors.New("Delivery.Get[1][21]")
    }
    return errors.New("Delivery.Get[1]")
+}
+
+func (d Delivery) ObbFile(f func(ObbFile) bool) {
+   for _, field := range d.m {
+      if file, ok := field.Get(4); ok {
+         if !f(ObbFile{file}) {
+            return
+         }
+      }
+   }
+}
+
+func (d Delivery) ConfigApk(f func(ConfigApk) bool) {
+   for _, field := range d.m {
+      if config, ok := field.Get(15); ok {
+         if !f(ConfigApk{config}) {
+            return
+         }
+      }
+   }
 }
