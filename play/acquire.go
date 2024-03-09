@@ -53,12 +53,16 @@ func (a Acquire) Acquire(app string) error {
    if err := m.Consume(data); err != nil {
       return err
    }
-   m, _ = m.Get(1)
-   m, _ = m.Get(94)
-   m, _ = m.Get(1)
-   m, _ = m.Get(2)
-   if m, ok := m.Get(147291249); ok {
-      return acquire_error{m}
+   if v, ok := m.Get(1); ok {
+      if v, ok := v.Get(94); ok {
+         if v, ok := v.Get(1); ok {
+            if v, ok := v.Get(2); ok {
+               if v, ok := v.Get(147291249); ok {
+                  return acquire_error{v}
+               }
+            }
+         }
+      }
    }
    return nil
 }
