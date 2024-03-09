@@ -7,13 +7,13 @@ import (
    "time"
 )
 
-func Test_Acquire(t *testing.T) {
+func TestAcquire(t *testing.T) {
    home, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
    }
-   home += "/google/play/"
-   var token Refresh_Token
+   home += "/google-play/"
+   var token RefreshToken
    token.Raw, err = os.ReadFile(home + "token.txt")
    if err != nil {
       t.Fatal(err)

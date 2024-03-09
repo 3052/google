@@ -11,7 +11,7 @@ import (
 )
 
 func x_dfe_device_id(r *http.Request, c Checkin) error {
-   id, err := c.Device_ID()
+   id, err := c.DeviceId()
    if err != nil {
       return err
    }
@@ -21,7 +21,7 @@ func x_dfe_device_id(r *http.Request, c Checkin) error {
 
 // github.com/doug-leith/android-protobuf-decoding/blob/main/decoding_helpers.py
 func x_ps_rh(r *http.Request, c Checkin) error {
-   id, err := c.Device_ID()
+   id, err := c.DeviceId()
    if err != nil {
       return err
    }
@@ -61,7 +61,7 @@ func x_ps_rh(r *http.Request, c Checkin) error {
    return nil
 }
 
-const android_API = 31
+const android_api = 31
 
 // developer.android.com/guide/topics/manifest/uses-feature-element#glEsVersion
 // the device actually uses 0x30000, but some apps require a higher version:
@@ -206,7 +206,7 @@ func (p *Platform) Set(s string) error {
    return nil
 }
 
-func authorization(r *http.Request, a Access_Token) {
+func authorization(r *http.Request, a AccessToken) {
    r.Header.Set("Authorization", "Bearer " + a.Values.Get("Auth"))
 }
 
@@ -216,7 +216,7 @@ func user_agent(r *http.Request, single bool) {
    b = append(b, "Android-Finsky (sdk="...)
    // with `/fdfe/acquire`, requests will be rejected with certain apps, if the
    // device was created with too low a version here:
-   b = fmt.Append(b, android_API)
+   b = fmt.Append(b, android_api)
    b = append(b, ",versionCode="...)
    // for multiple APKs just tell the truth. for single APK we have to lie.
    // below value is the last version that works.

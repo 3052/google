@@ -6,7 +6,7 @@ import (
    "time"
 )
 
-func Test_Checkin(t *testing.T) {
+func TestCheckin(t *testing.T) {
    for _, platform := range Platforms {
       fmt.Println(platform)
       var check Checkin

@@ -17,7 +17,7 @@ func (c *Checkin) Unmarshal() error {
    return c.m.Consume(c.Raw)
 }
 
-func (c Checkin) Device_ID() (uint64, error) {
+func (c Checkin) DeviceId() (uint64, error) {
    if v, ok := c.m.GetFixed64(7); ok {
       return uint64(v), nil
    }
@@ -28,7 +28,7 @@ func (c *Checkin) Checkin(d Device) error {
    var m protobuf.Message
    m.Add(4, func(m *protobuf.Message) {
       m.Add(1, func(m *protobuf.Message) {
-         m.AddVarint(10, android_API)
+         m.AddVarint(10, android_api)
       })
    })
    m.AddVarint(14, 3)

@@ -74,14 +74,16 @@ type acquire_error struct {
 func (a acquire_error) Error() string {
    var b []byte
    for _, field := range a.m {
-      if m, ok := field.Get(1); ok {
-         m, _ = m.Get(10)
-         m, _ = m.Get(1)
-         if bytes, ok := m.GetBytes(1); ok {
-            if b != nil {
-               b = append(b, '\n')
+      if v, ok := field.Get(1); ok {
+         if v, ok := v.Get(10); ok {
+            if v, ok := v.Get(1); ok {
+               if v, ok := v.GetBytes(1); ok {
+                  if b != nil {
+                     b = append(b, '\n')
+                  }
+                  b = append(b, v...)
+               }
             }
-            b = append(b, bytes...)
          }
       }
    }
@@ -90,5 +92,5 @@ func (a acquire_error) Error() string {
 
 type Acquire struct {
    Checkin Checkin
-   Token Access_Token
+   Token AccessToken
 }

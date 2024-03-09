@@ -7,13 +7,13 @@ import (
    "time"
 )
 
-func Test_Details(t *testing.T) {
+func TestDetails(t *testing.T) {
    home, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
    }
-   home += "/google/play/"
-   var token Refresh_Token
+   home += "/google-play/"
+   var token RefreshToken
    token.Raw, err = os.ReadFile(home + "token.txt")
    if err != nil {
       t.Fatal(err)
@@ -43,14 +43,14 @@ func Test_Details(t *testing.T) {
       if _, ok := d.Name(); !ok {
          t.Fatal("Details.Name")
       }
-      if _, ok := d.Offered_By(); !ok {
-         t.Fatal("Details.Offered_By")
+      if _, ok := d.OfferedBy(); !ok {
+         t.Fatal("Details.OfferedBy")
       }
       if _, ok := d.Price(); !ok {
          t.Fatal("Details.Price")
       }
-      if _, ok := d.Price_Currency(); !ok {
-         t.Fatal("Details.Price_Currency")
+      if _, ok := d.PriceCurrency(); !ok {
+         t.Fatal("Details.PriceCurrency")
       }
       if _, ok := d.Requires(); !ok {
          t.Fatal("Details.Requires")
@@ -58,16 +58,16 @@ func Test_Details(t *testing.T) {
       if _, ok := d.Size(); !ok {
          t.Fatal("Details.Size")
       }
-      if _, ok := d.Version_Code(); !ok {
-         t.Fatal("Details.Version_Code")
+      if _, ok := d.VersionCode(); !ok {
+         t.Fatal("Details.VersionCode")
       }
-      if _, ok := d.Version_Name(); !ok {
-         t.Fatal("Details.Version_Name")
+      if _, ok := d.VersionName(); !ok {
+         t.Fatal("Details.VersionName")
       }
       app.date = func() string {
-         u, ok := d.Updated_On()
+         u, ok := d.UpdatedOn()
          if !ok {
-            t.Fatal("Details.Updated_On")
+            t.Fatal("Details.UpdatedOn")
          }
          p, err := time.Parse("Jan 2, 2006", u)
          if err != nil {

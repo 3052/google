@@ -9,20 +9,20 @@ import (
    "strconv"
 )
 
-func (d Delivery) OBB_File(f func(OBB_File) bool) {
+func (d Delivery) ObbFile(f func(ObbFile) bool) {
    for _, field := range d.m {
       if file, ok := field.Get(4); ok {
-         if !f(OBB_File{file}) {
+         if !f(ObbFile{file}) {
             return
          }
       }
    }
 }
 
-func (d Delivery) Config_APK(f func(Config_APK) bool) {
+func (d Delivery) ConfigApk(f func(ConfigApk) bool) {
    for _, field := range d.m {
       if config, ok := field.Get(15); ok {
-         if !f(Config_APK{config}) {
+         if !f(ConfigApk{config}) {
             return
          }
       }
@@ -30,24 +30,24 @@ func (d Delivery) Config_APK(f func(Config_APK) bool) {
 }
 
 // developer.android.com/guide/app-bundle
-type Config_APK struct {
+type ConfigApk struct {
    m protobuf.Message
 }
 
 type Delivery struct {
    App Application
    Checkin Checkin
-   Token Access_Token
+   Token AccessToken
    m protobuf.Message
 }
 
 // developer.android.com/google/play/expansion-files
-type OBB_File struct {
+type ObbFile struct {
    m protobuf.Message
 }
 
 // developer.android.com/google/play/expansion-files
-func (o OBB_File) Role() (uint64, bool) {
+func (o ObbFile) Role() (uint64, bool) {
    if v, ok := o.m.GetVarint(1); ok {
       return uint64(v), true
    }
@@ -55,21 +55,21 @@ func (o OBB_File) Role() (uint64, bool) {
 }
 
 // developer.android.com/guide/app-bundle
-func (s Config_APK) Config() (string, bool) {
-   if v, ok := s.m.GetBytes(1); ok {
+func (c ConfigApk) Config() (string, bool) {
+   if v, ok := c.m.GetBytes(1); ok {
       return string(v), true
    }
    return "", false
 }
 
-func (s Config_APK) URL() (string, bool) {
-   if v, ok := s.m.GetBytes(5); ok {
+func (c ConfigApk) URL() (string, bool) {
+   if v, ok := c.m.GetBytes(5); ok {
       return string(v), true
    }
    return "", false
 }
 
-func (o OBB_File) URL() (string, bool) {
+func (o ObbFile) URL() (string, bool) {
    if v, ok := o.m.GetBytes(4); ok {
       return string(v), true
    }
@@ -83,7 +83,7 @@ func (d Delivery) URL() (string, bool) {
    return "", false
 }
 
-func (d *Delivery) Delivery(single bool) error {
+func (d *Delivery) Get(single bool) error {
    req, err := http.NewRequest("GET", "https://android.clients.google.com", nil)
    if err != nil {
       return err
@@ -113,18 +113,24 @@ func (d *Delivery) Delivery(single bool) error {
    if err := d.m.Consume(data); err != nil {
       return err
    }
-   d.m, _ = d.m.Get(1)
-   d.m, _ = d.m.Get(21)
-   status_code, ok := d.m.GetVarint(1)
-   if !ok {
-      return errors.New("status code")
+   var ok bool
+   if d.m, ok = d.m.Get(1); ok {
+      if d.m, ok = d.m.Get(21); ok {
+         if v, ok := d.m.GetVarint(1); ok {
+            switch v {
+            case 3:
+               return errors.New("acquire")
+            case 5:
+               return errors.New("version code")
+            }
+            if d.m, ok = d.m.Get(2); ok {
+               return nil
+            }
+            return errors.New("Delivery.Get[1][21][2]")
+         }
+         return errors.New("Delivery.Get[1][21][1]")
+      }
+      return errors.New("Delivery.Get[1][21]")
    }
-   switch status_code {
-   case 3:
-      return errors.New("acquire")
-   case 5:
-      return errors.New("version code")
-   }
-   d.m, _ = d.m.Get(2)
-   return nil
+   return errors.New("Delivery.Get[1]")
 }

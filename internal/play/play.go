@@ -16,10 +16,10 @@ func (f flags) do_delivery() error {
       return err
    }
    client.App = f.app
-   if err := client.Delivery(f.single); err != nil {
+   if err := client.Get(f.single); err != nil {
       return err
    }
-   client.Config_APK(func(apk play.Config_APK) bool {
+   client.ConfigApk(func(apk play.ConfigApk) bool {
       if url, ok := apk.URL(); ok {
          if config, ok := apk.Config(); ok {
             if err = f.download(url, f.app.APK(config)); err != nil {
@@ -32,7 +32,7 @@ func (f flags) do_delivery() error {
    if err != nil {
       return err
    }
-   client.OBB_File(func(obb play.OBB_File) bool {
+   client.ObbFile(func(obb play.ObbFile) bool {
       if url, ok := obb.URL(); ok {
          if role, ok := obb.Role(); ok {
             if err = f.download(url, f.app.OBB(role)); err != nil {
@@ -107,13 +107,13 @@ func (f flags) do_device() error {
    return check.Sync(play.Phone)
 }
 
-func (f flags) client(a *play.Access_Token, c *play.Checkin) error {
+func (f flags) client(a *play.AccessToken, c *play.Checkin) error {
    home, err := os.UserHomeDir()
    if err != nil {
       return err
    }
    home += "/google-play/"
-   var token play.Refresh_Token
+   var token play.RefreshToken
    token.Raw, err = os.ReadFile(home + "token.txt")
    if err != nil {
       return err
