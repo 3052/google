@@ -8,6 +8,15 @@ import (
    "net/http"
 )
 
+func (c *Checkin) Unmarshal() error {
+   return c.m.Consume(c.Data)
+}
+
+type Checkin struct {
+   Data []byte
+   m protobuf.Message
+}
+
 func (c Checkin) DeviceId() (uint64, error) {
    if v, ok := <-c.m.GetFixed64(7); ok {
       return uint64(v), nil
@@ -63,13 +72,4 @@ func (c *Checkin) Do(d Device) error {
       return err
    }
    return nil
-}
-
-type Checkin struct {
-   Data []byte
-   m protobuf.Message
-}
-
-func (c *Checkin) Unmarshal() error {
-   return c.m.Consume(c.Data)
 }

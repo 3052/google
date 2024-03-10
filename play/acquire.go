@@ -49,7 +49,6 @@ func (a Acquire) Do(app string) error {
    if err != nil {
       return err
    }
-   m = nil
    if err := m.Consume(data); err != nil {
       return err
    }

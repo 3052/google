@@ -10,66 +10,14 @@ import (
    "time"
 )
 
-func x_dfe_device_id(r *http.Request, c Checkin) error {
-   id, err := c.DeviceId()
-   if err != nil {
-      return err
-   }
-   r.Header.Set("X-DFE-Device-ID", fmt.Sprintf("%x", id))
-   return nil
+var Platforms = map[int]string{
+   // com.google.android.youtube
+   0: "x86",
+   // com.sygic.aura
+   1: "armeabi-v7a",
+   // com.kakaogames.twodin
+   2: "arm64-v8a",
 }
-
-// github.com/doug-leith/android-protobuf-decoding/blob/main/decoding_helpers.py
-func x_ps_rh(r *http.Request, c Checkin) error {
-   id, err := c.DeviceId()
-   if err != nil {
-      return err
-   }
-   token, err := func() ([]byte, error) {
-      var m protobuf.Message
-      m.Add(3, func(m *protobuf.Message) {
-         m.AddBytes(1, fmt.Append(nil, id))
-         m.Add(2, func(m *protobuf.Message) {
-            v := time.Now().UnixMicro()
-            m.AddBytes(1, fmt.Append(nil, v))
-         })
-      })
-      b, err := compress_gzip(m.Encode())
-      if err != nil {
-         return nil, err
-      }
-      return encode_base64(b)
-   }()
-   if err != nil {
-      return err
-   }
-   ps_rh, err := func() ([]byte, error) {
-      var m protobuf.Message
-      m.Add(1, func(m *protobuf.Message) {
-         m.AddBytes(1, token)
-      })
-      b, err := compress_gzip(m.Encode())
-      if err != nil {
-         return nil, err
-      }
-      return encode_base64(b)
-   }()
-   if err != nil {
-      return err
-   }
-   r.Header.Set("X-PS-RH", string(ps_rh))
-   return nil
-}
-
-const android_api = 31
-
-// developer.android.com/guide/topics/manifest/uses-feature-element#glEsVersion
-// the device actually uses 0x30000, but some apps require a higher version:
-// com.axis.drawingdesk.v3
-// so lets lie for now
-const gl_es_version = 0x30001
-
-const google_play_store = 82941300
 
 var Phone = Device{
    Texture: []string{
@@ -117,8 +65,6 @@ var Phone = Device{
       "android.hardware.sensor.compass",
       // org.thoughtcrime.securesms
       "android.hardware.telephony",
-      // org.videolan.vlc
-      "android.hardware.screen.landscape",
    },
 }
 
@@ -128,15 +74,6 @@ type Application struct {
 }
 
 type Platform int
-
-var Platforms = map[int]string{
-   // com.google.android.youtube
-   0: "x86",
-   // com.miui.weather2
-   1: "armeabi-v7a",
-   // com.kakaogames.twodin
-   2: "arm64-v8a",
-}
 
 func (p Platform) String() string {
    return Platforms[int(p)]
@@ -228,3 +165,64 @@ func user_agent(r *http.Request, single bool) {
    b = append(b, ')')
    r.Header.Set("User-Agent", string(b))
 }
+func x_dfe_device_id(r *http.Request, c Checkin) error {
+   id, err := c.DeviceId()
+   if err != nil {
+      return err
+   }
+   r.Header.Set("X-DFE-Device-ID", fmt.Sprintf("%x", id))
+   return nil
+}
+
+// github.com/doug-leith/android-protobuf-decoding/blob/main/decoding_helpers.py
+func x_ps_rh(r *http.Request, c Checkin) error {
+   id, err := c.DeviceId()
+   if err != nil {
+      return err
+   }
+   token, err := func() ([]byte, error) {
+      var m protobuf.Message
+      m.Add(3, func(m *protobuf.Message) {
+         m.AddBytes(1, fmt.Append(nil, id))
+         m.Add(2, func(m *protobuf.Message) {
+            v := time.Now().UnixMicro()
+            m.AddBytes(1, fmt.Append(nil, v))
+         })
+      })
+      b, err := compress_gzip(m.Encode())
+      if err != nil {
+         return nil, err
+      }
+      return encode_base64(b)
+   }()
+   if err != nil {
+      return err
+   }
+   ps_rh, err := func() ([]byte, error) {
+      var m protobuf.Message
+      m.Add(1, func(m *protobuf.Message) {
+         m.AddBytes(1, token)
+      })
+      b, err := compress_gzip(m.Encode())
+      if err != nil {
+         return nil, err
+      }
+      return encode_base64(b)
+   }()
+   if err != nil {
+      return err
+   }
+   r.Header.Set("X-PS-RH", string(ps_rh))
+   return nil
+}
+
+const android_api = 31
+
+// developer.android.com/guide/topics/manifest/uses-feature-element#glEsVersion
+// the device actually uses 0x30000, but some apps require a higher version:
+// com.axis.drawingdesk.v3
+// so lets lie for now
+const gl_es_version = 0x30001
+
+const google_play_store = 82941300
+

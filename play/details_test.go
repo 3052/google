@@ -75,7 +75,7 @@ func TestDetails(t *testing.T) {
          }
          return p.Format("2006-01-02")
       }()
-      if _, ok := d.File(); !ok {
+      if _, ok := <-d.File(); !ok {
          t.Fatal("Details.File")
       }
       fmt.Printf("%#v,\n", app)

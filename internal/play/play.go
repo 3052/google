@@ -19,12 +19,7 @@ func (f flags) do_delivery() error {
    if err := client.Do(f.single); err != nil {
       return err
    }
-   apk_iterate := client.ConfigApk()
-   for {
-      apk, ok := apk_iterate()
-      if !ok {
-         break
-      }
+   for apk := range client.ConfigApk() {
       if url, ok := apk.URL(); ok {
          if config, ok := apk.Config(); ok {
             err := f.download(url, f.app.APK(config))
@@ -34,12 +29,7 @@ func (f flags) do_delivery() error {
          }
       }
    }
-   obb_iterate := client.ObbFile()
-   for {
-      obb, ok := obb_iterate()
-      if !ok {
-         break
-      }
+   for obb := range client.ObbFile() {
       if url, ok := obb.URL(); ok {
          if role, ok := obb.Role(); ok {
             err := f.download(url, f.app.OBB(role))
