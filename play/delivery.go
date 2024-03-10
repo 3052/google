@@ -9,80 +9,6 @@ import (
    "strconv"
 )
 
-func (d Delivery) ObbFile() func() (*ObbFile, bool) {
-   iterate := d.m.Iterate(4)
-   return func() (*ObbFile, bool) {
-      if v, ok := iterate(); ok {
-         return &ObbFile{v}, true
-      }
-      return nil, false
-   }
-}
-
-func (d Delivery) ConfigApk() func() (*ConfigApk, bool) {
-   iterate := d.m.Iterate(15)
-   return func() (*ConfigApk, bool) {
-      if v, ok := iterate(); ok {
-         return &ConfigApk{v}, true
-      }
-      return nil, false
-   }
-}
-
-// developer.android.com/guide/app-bundle
-type ConfigApk struct {
-   m protobuf.Message
-}
-
-type Delivery struct {
-   App Application
-   Checkin Checkin
-   Token AccessToken
-   m protobuf.Message
-}
-
-// developer.android.com/google/play/expansion-files
-type ObbFile struct {
-   m protobuf.Message
-}
-
-// developer.android.com/google/play/expansion-files
-func (o ObbFile) Role() (uint64, bool) {
-   if v, ok := o.m.GetVarint(1); ok {
-      return uint64(v), true
-   }
-   return 0, false
-}
-
-// developer.android.com/guide/app-bundle
-func (c ConfigApk) Config() (string, bool) {
-   if v, ok := c.m.GetBytes(1); ok {
-      return string(v), true
-   }
-   return "", false
-}
-
-func (c ConfigApk) URL() (string, bool) {
-   if v, ok := c.m.GetBytes(5); ok {
-      return string(v), true
-   }
-   return "", false
-}
-
-func (o ObbFile) URL() (string, bool) {
-   if v, ok := o.m.GetBytes(4); ok {
-      return string(v), true
-   }
-   return "", false
-}
-
-func (d Delivery) URL() (string, bool) {
-   if v, ok := d.m.GetBytes(3); ok {
-      return string(v), true
-   }
-   return "", false
-}
-
 func (d *Delivery) Do(single bool) error {
    req, err := http.NewRequest("GET", "https://android.clients.google.com", nil)
    if err != nil {
@@ -113,24 +39,89 @@ func (d *Delivery) Do(single bool) error {
    if err := d.m.Consume(data); err != nil {
       return err
    }
-   var ok bool
-   if d.m, ok = d.m.Get(1); ok {
-      if d.m, ok = d.m.Get(21); ok {
-         if v, ok := d.m.GetVarint(1); ok {
-            switch v {
-            case 3:
-               return errors.New("acquire")
-            case 5:
-               return errors.New("version code")
-            }
-            if d.m, ok = d.m.Get(2); ok {
-               return nil
-            }
-            return errors.New("Delivery.Get[1][21][2]")
-         }
-         return errors.New("Delivery.Get[1][21][1]")
-      }
-      return errors.New("Delivery.Get[1][21]")
+   d.m = <-d.m.Get(1)
+   d.m = <-d.m.Get(21)
+   switch <-d.m.GetVarint(1) {
+   case 3:
+      return errors.New("acquire")
+   case 5:
+      return errors.New("version code")
    }
-   return errors.New("Delivery.Get[1]")
+   d.m = <-d.m.Get(2)
+   return nil
+}
+
+func (d Delivery) ObbFile() chan ObbFile {
+   files := make(chan ObbFile)
+   go func() {
+      for file := range d.m.Get(4) {
+         files <- ObbFile{file}
+      }
+      close(files)
+   }()
+   return files
+}
+func (d Delivery) ConfigApk() chan ConfigApk {
+   apks := make(chan ConfigApk)
+   go func() {
+      for apk := range d.m.Get(15) {
+         apks <- ConfigApk{apk}
+      }
+      close(apks)
+   }()
+   return apks
+}
+
+// developer.android.com/guide/app-bundle
+type ConfigApk struct {
+   m protobuf.Message
+}
+
+type Delivery struct {
+   App Application
+   Checkin Checkin
+   Token AccessToken
+   m protobuf.Message
+}
+
+// developer.android.com/google/play/expansion-files
+type ObbFile struct {
+   m protobuf.Message
+}
+
+// developer.android.com/google/play/expansion-files
+func (o ObbFile) Role() (uint64, bool) {
+   if v, ok := <-o.m.GetVarint(1); ok {
+      return uint64(v), true
+   }
+   return 0, false
+}
+
+// developer.android.com/guide/app-bundle
+func (c ConfigApk) Config() (string, bool) {
+   if v, ok := <-c.m.GetBytes(1); ok {
+      return string(v), true
+   }
+   return "", false
+}
+
+func (c ConfigApk) URL() (string, bool) {
+   if v, ok := <-c.m.GetBytes(5); ok {
+      return string(v), true
+   }
+   return "", false
+}
+
+func (o ObbFile) URL() (string, bool) {
+   if v, ok := <-o.m.GetBytes(4); ok {
+      return string(v), true
+   }
+   return "", false
+}
+
+func (d Delivery) URL() (string, bool) {
+   if v, ok := <-d.m.GetBytes(3); ok {
+      return string(v), true
+   }
+   return "", false
 }

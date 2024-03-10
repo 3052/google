@@ -9,23 +9,6 @@ import (
    "net/http"
 )
 
-func (d Details) File() (func() (uint64, bool), bool) {
-   if v, ok := d.m.Get(13); ok {
-      if v, ok := v.Get(1); ok {
-         iterate := v.Iterate(17)
-         return func() (uint64, bool) {
-            if v, ok := iterate(); ok {
-               if v, ok := v.GetVarint(1); ok {
-                  return uint64(v), true
-               }
-            }
-            return 0, false
-         }, true
-      }
-   }
-   return nil, false
-}
-
 func (d Details) String() string {
    var b []byte
    b = append(b, "downloads:"...)
@@ -33,17 +16,11 @@ func (d Details) String() string {
       b = fmt.Append(b, " ", encoding.Cardinal(v))
    }
    b = append(b, "\nfiles:"...)
-   if iterate, ok := d.File(); ok {
-      for {
-         file, ok := iterate()
-         if !ok {
-            break
-         }
-         if file >= 1 {
-            b = append(b, " OBB"...)
-         } else {
-            b = append(b, " APK"...)
-         }
+   for file := range d.File() {
+      if file >= 1 {
+         b = append(b, " OBB"...)
+      } else {
+         b = append(b, " APK"...)
       }
    }
    b = append(b, "\nname:"...)
@@ -210,3 +187,18 @@ func (d *Details) Details(app string, single bool) error {
    d.m, _ = d.m.Get(4)
    return nil
 }
+func (d Details) File() chan uint64 {
+   vs := make(chan uint64)
+   d.m = <-d.m.Get(13)
+   d.m = <-d.m.Get(1)
+   go func() {
+      for v := range d.m.Get(17) {
+         if v, ok := <-v.GetVarint(1); ok {
+            vs <- uint64(v)
+         }
+      }
+      close(vs)
+   }()
+   return vs
+}
+
