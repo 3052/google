@@ -75,12 +75,8 @@ func TestDetails(t *testing.T) {
          }
          return p.Format("2006-01-02")
       }()
-      var ok bool
-      d.Files(func(uint64) {
-         ok = true
-      })
-      if !ok {
-         t.Fatal("Details.Files")
+      if _, ok := d.File(); !ok {
+         t.Fatal("Details.File")
       }
       fmt.Printf("%#v,\n", app)
       time.Sleep(99 * time.Millisecond)

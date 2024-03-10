@@ -53,16 +53,12 @@ func (a Acquire) Do(app string) error {
    if err := m.Consume(data); err != nil {
       return err
    }
-   if v, ok := m.Get(1); ok {
-      if v, ok := v.Get(94); ok {
-         if v, ok := v.Get(1); ok {
-            if v, ok := v.Get(2); ok {
-               if v, ok := v.Get(147291249); ok {
-                  return acquire_error{v}
-               }
-            }
-         }
-      }
+   m = <-m.Get(1)
+   m = <-m.Get(94)
+   m = <-m.Get(1)
+   m = <-m.Get(2)
+   if m, ok := <-m.Get(147291249); ok {
+      return acquire_error{m}
    }
    return nil
 }
@@ -78,22 +74,15 @@ type Acquire struct {
 
 func (a acquire_error) Error() string {
    var b []byte
-   for {
-      i, v := a.m.Index(1)
-      if i == -1 {
-         break
-      }
-      if v, ok := v.Get(10); ok {
-         if v, ok := v.Get(1); ok {
-            if v, ok := v.GetBytes(1); ok {
-               if b != nil {
-                  b = append(b, '\n')
-               }
-               b = append(b, v...)
-            }
+   for v := range a.m.Get(1) {
+      v = <-v.Get(10)
+      v = <-v.Get(1)
+      if v, ok := <-v.GetBytes(1); ok {
+         if b != nil {
+            b = append(b, '\n')
          }
+         b = append(b, v...)
       }
-      a.m = a.m[i+1:]
    }
    return string(b)
 }

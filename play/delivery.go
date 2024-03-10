@@ -9,6 +9,26 @@ import (
    "strconv"
 )
 
+func (d Delivery) ObbFile() func() (*ObbFile, bool) {
+   iterate := d.m.Iterate(4)
+   return func() (*ObbFile, bool) {
+      if v, ok := iterate(); ok {
+         return &ObbFile{v}, true
+      }
+      return nil, false
+   }
+}
+
+func (d Delivery) ConfigApk() func() (*ConfigApk, bool) {
+   iterate := d.m.Iterate(15)
+   return func() (*ConfigApk, bool) {
+      if v, ok := iterate(); ok {
+         return &ConfigApk{v}, true
+      }
+      return nil, false
+   }
+}
+
 // developer.android.com/guide/app-bundle
 type ConfigApk struct {
    m protobuf.Message
@@ -113,24 +133,4 @@ func (d *Delivery) Do(single bool) error {
       return errors.New("Delivery.Get[1][21]")
    }
    return errors.New("Delivery.Get[1]")
-}
-
-func (d Delivery) ObbFile(f func(ObbFile) bool) {
-   for _, field := range d.m {
-      if file, ok := field.Get(4); ok {
-         if !f(ObbFile{file}) {
-            return
-         }
-      }
-   }
-}
-
-func (d Delivery) ConfigApk(f func(ConfigApk) bool) {
-   for _, field := range d.m {
-      if config, ok := field.Get(15); ok {
-         if !f(ConfigApk{config}) {
-            return
-         }
-      }
-   }
 }

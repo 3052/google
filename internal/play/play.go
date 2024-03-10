@@ -19,31 +19,35 @@ func (f flags) do_delivery() error {
    if err := client.Do(f.single); err != nil {
       return err
    }
-   client.ConfigApk(func(apk play.ConfigApk) bool {
+   apk_iterate := client.ConfigApk()
+   for {
+      apk, ok := apk_iterate()
+      if !ok {
+         break
+      }
       if url, ok := apk.URL(); ok {
          if config, ok := apk.Config(); ok {
-            if err = f.download(url, f.app.APK(config)); err != nil {
-               return false
+            err := f.download(url, f.app.APK(config))
+            if err != nil {
+               return err
             }
          }
       }
-      return true
-   })
-   if err != nil {
-      return err
    }
-   client.ObbFile(func(obb play.ObbFile) bool {
+   obb_iterate := client.ObbFile()
+   for {
+      obb, ok := obb_iterate()
+      if !ok {
+         break
+      }
       if url, ok := obb.URL(); ok {
          if role, ok := obb.Role(); ok {
-            if err = f.download(url, f.app.OBB(role)); err != nil {
-               return false
+            err := f.download(url, f.app.OBB(role))
+            if err != nil {
+               return err
             }
          }
       }
-      return true
-   })
-   if err != nil {
-      return err
    }
    if url, ok := client.URL(); ok {
       err := f.download(url, f.app.APK(""))

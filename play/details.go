@@ -9,6 +9,23 @@ import (
    "net/http"
 )
 
+func (d Details) File() (func() (uint64, bool), bool) {
+   if v, ok := d.m.Get(13); ok {
+      if v, ok := v.Get(1); ok {
+         iterate := v.Iterate(17)
+         return func() (uint64, bool) {
+            if v, ok := iterate(); ok {
+               if v, ok := v.GetVarint(1); ok {
+                  return uint64(v), true
+               }
+            }
+            return 0, false
+         }, true
+      }
+   }
+   return nil, false
+}
+
 func (d Details) String() string {
    var b []byte
    b = append(b, "downloads:"...)
@@ -16,13 +33,19 @@ func (d Details) String() string {
       b = fmt.Append(b, " ", encoding.Cardinal(v))
    }
    b = append(b, "\nfiles:"...)
-   d.Files(func(file uint64) {
-      if file >= 1 {
-         b = append(b, " OBB"...)
-      } else {
-         b = append(b, " APK"...)
+   if iterate, ok := d.File(); ok {
+      for {
+         file, ok := iterate()
+         if !ok {
+            break
+         }
+         if file >= 1 {
+            b = append(b, " OBB"...)
+         } else {
+            b = append(b, " APK"...)
+         }
       }
-   })
+   }
    b = append(b, "\nname:"...)
    if v, ok := d.Name(); ok {
       b = fmt.Append(b, " ", v)
@@ -79,20 +102,6 @@ func (d Details) OfferedBy() (string, bool) {
       return string(v), true
    }
    return "", false
-}
-
-////////////////////
-
-func (d Details) Files(f func(uint64)) {
-   d.m, _ = d.m.Get(13)
-   d.m, _ = d.m.Get(1)
-   for _, field := range d.m {
-      if m, ok := field.Get(17); ok {
-         if file, ok := m.GetVarint(1); ok {
-            f(uint64(file))
-         }
-      }
-   }
 }
 
 // developer.android.com/guide/topics/manifest/manifest-element
