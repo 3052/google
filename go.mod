@@ -4,7 +4,7 @@ go 1.22.0
 
 require (
 	154.pages.dev/encoding v1.18.9
-	154.pages.dev/log v1.1.8
+	154.pages.dev/log v1.1.9
 	154.pages.dev/protobuf v1.2.0
 )
 

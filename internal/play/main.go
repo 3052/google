@@ -34,8 +34,8 @@ func main() {
    flag.Uint64Var(&f.app.Version, "v", 0, "version code")
    flag.TextVar(&f.v.Level, "level", f.v.Level, "level")
    flag.Parse()
-   log.Handler(f.v)
-   log.TransportInfo()
+   f.v.Set()
+   log.Transport{}.Set()
    switch {
    case f.app.ID != "":
       switch {
