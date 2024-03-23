@@ -9,6 +9,30 @@ import (
    "time"
 )
 
+func (f flags) client(a *play.AccessToken, c *play.Checkin) error {
+   home, err := os.UserHomeDir()
+   if err != nil {
+      return err
+   }
+   home += "/google-play/"
+   var token play.RefreshToken
+   token.Data, err = os.ReadFile(home + "token.txt")
+   if err != nil {
+      return err
+   }
+   if err := token.Unmarshal(); err != nil {
+      return err
+   }
+   if err := a.Refresh(token); err != nil {
+      return err
+   }
+   c.Data, err = os.ReadFile(fmt.Sprint(home, f.platform, ".bin"))
+   if err != nil {
+      return err
+   }
+   return c.Unmarshal()
+}
+
 func (f flags) do_delivery() error {
    var client play.Delivery
    err := f.client(&client.Token, &client.Checkin)
@@ -79,30 +103,6 @@ func (f flags) download(url, name string) error {
    return nil
 }
 
-func (f flags) client(a *play.AccessToken, c *play.Checkin) error {
-   home, err := os.UserHomeDir()
-   if err != nil {
-      return err
-   }
-   home += "/google-play/"
-   var token play.RefreshToken
-   token.Data, err = os.ReadFile(home + "token.txt")
-   if err != nil {
-      return err
-   }
-   if err := token.Unmarshal(); err != nil {
-      return err
-   }
-   if err := a.Refresh(token); err != nil {
-      return err
-   }
-   c.Data, err = os.ReadFile(fmt.Sprint(home, f.platform, ".bin"))
-   if err != nil {
-      return err
-   }
-   return c.Unmarshal()
-}
-
 func (f flags) do_acquire() error {
    var client play.Acquire
    err := f.client(&client.Token, &client.Checkin)
@@ -111,6 +111,7 @@ func (f flags) do_acquire() error {
    }
    return client.Do(f.app.ID)
 }
+
 func (f flags) do_device() error {
    name, err := os.UserHomeDir()
    if err != nil {
