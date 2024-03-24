@@ -9,7 +9,7 @@ import (
    "time"
 )
 
-func (f flags) client(a *play.AccessToken, c *play.Checkin) error {
+func (f flags) client(a *play.AccessToken, check *play.Checkin) error {
    home, err := os.UserHomeDir()
    if err != nil {
       return err
@@ -26,11 +26,11 @@ func (f flags) client(a *play.AccessToken, c *play.Checkin) error {
    if err := a.Refresh(token); err != nil {
       return err
    }
-   c.Data, err = os.ReadFile(fmt.Sprint(home, f.platform, ".bin"))
+   check.Data, err = os.ReadFile(fmt.Sprint(home, f.platform, ".bin"))
    if err != nil {
       return err
    }
-   return c.Unmarshal()
+   return check.Unmarshal()
 }
 
 func (f flags) do_delivery() error {
