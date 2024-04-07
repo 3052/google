@@ -5,6 +5,8 @@ import (
    "154.pages.dev/log"
    "flag"
    "fmt"
+   "os"
+   "path/filepath"
    "strings"
 )
 
@@ -13,13 +15,28 @@ type flags struct {
    app play.Application
    code string
    device bool
+   home string
    platform play.Platform
    single bool
    v log.Level
 }
 
+func (f *flags) New() error {
+   var err error
+   f.home, err = os.UserHomeDir()
+   if err != nil {
+      return err
+   }
+   f.home = filepath.ToSlash(f.home) + "/google-play"
+   return nil
+}
+
 func main() {
    var f flags
+   err := f.New()
+   if err != nil {
+      panic(err)
+   }
    flag.StringVar(&f.app.ID, "a", "", "application ID")
    flag.BoolVar(&f.acquire, "acquire", false, "acquire application")
    flag.BoolVar(&f.device, "d", false, "checkin and sync device")

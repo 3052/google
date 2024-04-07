@@ -10,13 +10,11 @@ import (
 )
 
 func (f flags) client(a *play.AccessToken, check *play.Checkin) error {
-   home, err := os.UserHomeDir()
-   if err != nil {
-      return err
-   }
-   home += "/google-play/"
-   var token play.RefreshToken
-   token.Data, err = os.ReadFile(home + "token.txt")
+   var (
+      token play.RefreshToken
+      err error
+   )
+   token.Data, err = os.ReadFile(f.home + "/token.txt")
    if err != nil {
       return err
    }
@@ -26,7 +24,7 @@ func (f flags) client(a *play.AccessToken, check *play.Checkin) error {
    if err := a.Refresh(token); err != nil {
       return err
    }
-   check.Data, err = os.ReadFile(fmt.Sprint(home, f.platform, ".bin"))
+   check.Data, err = os.ReadFile(fmt.Sprint(f.home, "/", f.platform, ".bin"))
    if err != nil {
       return err
    }
@@ -135,13 +133,9 @@ func (f flags) do_device() error {
 }
 
 func (f flags) do_auth() error {
-   home, err := os.UserHomeDir()
-   if err != nil {
-      return err
-   }
    var token play.RefreshToken
    if err := token.New(f.code); err != nil {
       return err
    }
-   return os.WriteFile(home + "/google-play/token.txt", token.Data, 0666)
+   return os.WriteFile(f.home + "/token.txt", token.Data, 0666)
 }

@@ -8,6 +8,30 @@ import (
    "strings"
 )
 
+func (r *RefreshToken) New(oauth_token string) error {
+   res, err := http.PostForm(
+      "https://android.googleapis.com/auth", url.Values{
+         "ACCESS_TOKEN": {"1"},
+         "Token":        {oauth_token},
+         "service":      {"ac2dm"},
+      },
+   )
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      var b strings.Builder
+      res.Write(&b)
+      return errors.New(b.String())
+   }
+   r.Data, err = io.ReadAll(res.Body)
+   if err != nil {
+      return err
+   }
+   return nil
+}
+
 func parse_query(query string) (url.Values, error) {
    query = strings.ReplaceAll(query, "\n", "&")
    return url.ParseQuery(query)
@@ -58,24 +82,3 @@ type RefreshToken struct {
    Values url.Values
 }
 
-func (r *RefreshToken) New(oauth_token string) error {
-   res, err := http.PostForm(
-      "https://android.googleapis.com/auth", url.Values{
-         "ACCESS_TOKEN": {"1"},
-         "Token":        {oauth_token},
-         "service":      {"ac2dm"},
-      },
-   )
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return errors.New(res.Status)
-   }
-   r.Data, err = io.ReadAll(res.Body)
-   if err != nil {
-      return err
-   }
-   return nil
-}

@@ -93,4 +93,6 @@ commercial license, contact me.
       <dd>https://paypal.com/donate?hosted_button_id=UEJBQQTU3VYDY</dd>
    <dt>Ethereum</dt>
       <dd>0xB614Ff822c8Df557dd4714f80Cd280Bc3887390F</dd>
+   <dt>Tether</dt>
+      <dd>0xfcF0b126A22f08881ccD7473439762A42201b77F</dd>
 </dl>
