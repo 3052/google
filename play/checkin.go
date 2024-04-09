@@ -20,7 +20,7 @@ func (c GoogleCheckin) DeviceId() (uint64, error) {
    return 0, errors.New("DeviceId")
 }
 
-func (c *GoogleCheckin) Do(d Device) error {
+func (c *GoogleCheckin) Checkin(d Device) error {
    var m protobuf.Message
    m.Add(4, func(m *protobuf.Message) {
       m.Add(1, func(m *protobuf.Message) {

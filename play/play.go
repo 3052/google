@@ -10,28 +10,8 @@ import (
    "time"
 )
 
-func (a Application) APK(config string) string {
-   var b []byte
-   b = fmt.Append(b, a.ID, "-")
-   if config != "" {
-      b = fmt.Append(b, config, "-")
-   }
-   b = fmt.Append(b, a.Version, ".apk")
-   return string(b)
-}
-
-func (a Application) OBB(role uint64) string {
-   var b []byte
-   if role >= 1 {
-      b = append(b, "patch"...)
-   } else {
-      b = append(b, "main"...)
-   }
-   b = fmt.Append(b, ".", a.Version, ".", a.ID, ".obb")
-   return string(b)
-}
-
-type Application struct {
+// play.google.com/store/apps
+type AndroidApp struct {
    ID string
    Version uint64
 }
@@ -46,13 +26,25 @@ const gl_es_version = 0x30001
 
 const google_play_store = 82941300
 
-var Platforms = map[int]string{
-   // com.google.android.youtube
-   0: "x86",
-   // com.sygic.aura
-   1: "armeabi-v7a",
-   // com.kakaogames.twodin
-   2: "arm64-v8a",
+func (a AndroidApp) APK(config string) string {
+   var b []byte
+   b = fmt.Append(b, a.ID, "-")
+   if config != "" {
+      b = fmt.Append(b, config, "-")
+   }
+   b = fmt.Append(b, a.Version, ".apk")
+   return string(b)
+}
+
+func (a AndroidApp) OBB(role uint64) string {
+   var b []byte
+   if role >= 1 {
+      b = append(b, "patch"...)
+   } else {
+      b = append(b, "main"...)
+   }
+   b = fmt.Append(b, ".", a.Version, ".", a.ID, ".obb")
+   return string(b)
 }
 
 func compress_gzip(p []byte) ([]byte, error) {
@@ -77,6 +69,38 @@ func encode_base64(p []byte) ([]byte, error) {
       return nil, err
    }
    return b.Bytes(), nil
+}
+
+func user_agent(req *http.Request, single bool) {
+   var b []byte
+   // `sdk` is needed for `/fdfe/delivery`
+   b = append(b, "Android-Finsky (sdk="...)
+   // with `/fdfe/acquire`, requests will be rejected with certain apps, if the
+   // device was created with too low a version here:
+   b = fmt.Append(b, android_api)
+   b = append(b, ",versionCode="...)
+   // for multiple APKs just tell the truth. for single APK we have to lie.
+   // below value is the last version that works.
+   if single {
+      b = fmt.Append(b, 80919999)
+   } else {
+      b = fmt.Append(b, google_play_store)
+   }
+   b = append(b, ')')
+   req.Header.Set("User-Agent", string(b))
+}
+
+func (g GoogleAuth) authorization(req *http.Request) {
+   req.Header.Set("authorization", "Bearer " + g.GetAuth())
+}
+
+func (g GoogleCheckin) x_dfe_device_id(req *http.Request) error {
+   id, err := g.DeviceId()
+   if err != nil {
+      return err
+   }
+   req.Header.Set("x-dfe-device-id", fmt.Sprintf("%x", id))
+   return nil
 }
 
 func (g GoogleCheckin) x_ps_rh(req *http.Request) error {
@@ -120,7 +144,16 @@ func (g GoogleCheckin) x_ps_rh(req *http.Request) error {
    return nil
 }
 
-//////////////////////////////////////
+////////////
+
+var Platforms = map[int]string{
+   // com.google.android.youtube
+   0: "x86",
+   // com.sygic.aura
+   1: "armeabi-v7a",
+   // com.kakaogames.twodin
+   2: "arm64-v8a",
+}
 
 var Phone = Device{
    Texture: []string{
@@ -195,37 +228,3 @@ func (p *Platform) Set(s string) error {
    }
    return nil
 }
-
-func authorization(r *http.Request, a AccessToken) {
-   r.Header.Set("Authorization", "Bearer " + a.Values.Get("Auth"))
-}
-
-func user_agent(r *http.Request, single bool) {
-   var b []byte
-   // `sdk` is needed for `/fdfe/delivery`
-   b = append(b, "Android-Finsky (sdk="...)
-   // with `/fdfe/acquire`, requests will be rejected with certain apps, if the
-   // device was created with too low a version here:
-   b = fmt.Append(b, android_api)
-   b = append(b, ",versionCode="...)
-   // for multiple APKs just tell the truth. for single APK we have to lie.
-   // below value is the last version that works.
-   if single {
-      b = fmt.Append(b, 80919999)
-   } else {
-      b = fmt.Append(b, google_play_store)
-   }
-   b = append(b, ')')
-   r.Header.Set("User-Agent", string(b))
-}
-
-func x_dfe_device_id(r *http.Request, c Checkin) error {
-   id, err := c.DeviceId()
-   if err != nil {
-      return err
-   }
-   r.Header.Set("X-DFE-Device-ID", fmt.Sprintf("%x", id))
-   return nil
-}
-
-

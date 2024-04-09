@@ -8,7 +8,52 @@ import (
    "strings"
 )
 
-func (r *RefreshToken) New(oauth_token string) error {
+func parse_query(query string) (url.Values, error) {
+   query = strings.ReplaceAll(query, "\n", "&")
+   return url.ParseQuery(query)
+}
+
+type GoogleAuth struct {
+   V url.Values
+}
+
+func (a *GoogleAuth) Auth(t GoogleToken) error {
+   res, err := http.PostForm(
+      "https://android.googleapis.com/auth", url.Values{
+         "Token":      {t.Token()},
+         "app":        {"com.android.vending"},
+         "client_sig": {"38918a453d07199354f8b19af05ec6562ced5788"},
+         "service":    {"oauth2:https://www.googleapis.com/auth/googleplay"},
+      },
+   )
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return errors.New(res.Status)
+   }
+   text, err := io.ReadAll(res.Body)
+   if err != nil {
+      return err
+   }
+   a.V, err = parse_query(string(text))
+   if err != nil {
+      return err
+   }
+   return nil
+}
+
+func (g GoogleAuth) GetAuth() string {
+   return g.V.Get("Auth")
+}
+
+type GoogleToken struct {
+   Data []byte
+   V url.Values
+}
+
+func (r *GoogleToken) Auth(oauth_token string) error {
    res, err := http.PostForm(
       "https://android.googleapis.com/auth", url.Values{
          "ACCESS_TOKEN": {"1"},
@@ -32,53 +77,15 @@ func (r *RefreshToken) New(oauth_token string) error {
    return nil
 }
 
-func parse_query(query string) (url.Values, error) {
-   query = strings.ReplaceAll(query, "\n", "&")
-   return url.ParseQuery(query)
+func (g GoogleToken) GetToken() string {
+   return g.V.Get("Token")
 }
 
-type AccessToken struct {
-   Values url.Values
-}
-
-func (r *RefreshToken) Unmarshal() error {
+func (r *GoogleToken) Parse() error {
    var err error
-   r.Values, err = parse_query(string(r.Data))
+   r.V, err = parse_query(string(r.Data))
    if err != nil {
       return err
    }
    return nil
 }
-
-func (a *AccessToken) Refresh(r RefreshToken) error {
-   res, err := http.PostForm(
-      "https://android.googleapis.com/auth", url.Values{
-         "Token":      {r.Values.Get("Token")},
-         "app":        {"com.android.vending"},
-         "client_sig": {"38918a453d07199354f8b19af05ec6562ced5788"},
-         "service":    {"oauth2:https://www.googleapis.com/auth/googleplay"},
-      },
-   )
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return errors.New(res.Status)
-   }
-   body, err := io.ReadAll(res.Body)
-   if err != nil {
-      return err
-   }
-   a.Values, err = parse_query(string(body))
-   if err != nil {
-      return err
-   }
-   return nil
-}
-
-type RefreshToken struct {
-   Data []byte
-   Values url.Values
-}
-
