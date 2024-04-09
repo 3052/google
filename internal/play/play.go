@@ -9,6 +9,18 @@ import (
    "time"
 )
 
+func (f flags) do_details() (*play.Details, error) {
+   var client play.Details
+   err := f.client(&client.Token, &client.Checkin)
+   if err != nil {
+      return nil, err
+   }
+   if err := client.Details(f.app.ID, f.single); err != nil {
+      return nil, err
+   }
+   return &client, nil
+}
+
 func (f flags) client(a *play.AccessToken, check *play.Checkin) error {
    var (
       token play.RefreshToken
@@ -68,18 +80,6 @@ func (f flags) do_delivery() error {
       }
    }
    return nil
-}
-
-func (f flags) do_details() (*play.Details, error) {
-   var client play.Details
-   err := f.client(&client.Token, &client.Checkin)
-   if err != nil {
-      return nil, err
-   }
-   if err := client.Details(f.app.ID, f.single); err != nil {
-      return nil, err
-   }
-   return &client, nil
 }
 
 func (f flags) download(url, name string) error {
