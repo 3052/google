@@ -8,6 +8,32 @@ import (
    "net/http"
 )
 
+type acquire_error struct {
+   m protobuf.Message
+}
+
+func (a acquire_error) Error() string {
+   var b []byte
+   for v := range a.m.Get(1) {
+      v = <-v.Get(10)
+      v = <-v.Get(1)
+      if v, ok := <-v.GetBytes(1); ok {
+         if b != nil {
+            b = append(b, '\n')
+         }
+         b = append(b, v...)
+      }
+   }
+   return string(b)
+}
+
+///////
+
+type Acquire struct {
+   Checkin Checkin
+   Token AccessToken
+}
+
 func (a Acquire) Do(app string) error {
    var m protobuf.Message
    m.Add(1, func(m *protobuf.Message) {
@@ -60,28 +86,4 @@ func (a Acquire) Do(app string) error {
       return acquire_error{m}
    }
    return nil
-}
-
-type acquire_error struct {
-   m protobuf.Message
-}
-
-type Acquire struct {
-   Checkin Checkin
-   Token AccessToken
-}
-
-func (a acquire_error) Error() string {
-   var b []byte
-   for v := range a.m.Get(1) {
-      v = <-v.Get(10)
-      v = <-v.Get(1)
-      if v, ok := <-v.GetBytes(1); ok {
-         if b != nil {
-            b = append(b, '\n')
-         }
-         b = append(b, v...)
-      }
-   }
-   return string(b)
 }
