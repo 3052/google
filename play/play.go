@@ -10,6 +10,42 @@ import (
    "time"
 )
 
+func (a Application) APK(config string) string {
+   var b []byte
+   b = fmt.Append(b, a.ID, "-")
+   if config != "" {
+      b = fmt.Append(b, config, "-")
+   }
+   b = fmt.Append(b, a.Version, ".apk")
+   return string(b)
+}
+
+func (a Application) OBB(role uint64) string {
+   var b []byte
+   if role >= 1 {
+      b = append(b, "patch"...)
+   } else {
+      b = append(b, "main"...)
+   }
+   b = fmt.Append(b, ".", a.Version, ".", a.ID, ".obb")
+   return string(b)
+}
+
+type Application struct {
+   ID string
+   Version uint64
+}
+
+const android_api = 31
+
+// developer.android.com/guide/topics/manifest/uses-feature-element#glEsVersion
+// the device actually uses 0x30000, but some apps require a higher version:
+// com.axis.drawingdesk.v3
+// so lets lie for now
+const gl_es_version = 0x30001
+
+const google_play_store = 82941300
+
 var Platforms = map[int]string{
    // com.google.android.youtube
    0: "x86",
@@ -18,6 +54,73 @@ var Platforms = map[int]string{
    // com.kakaogames.twodin
    2: "arm64-v8a",
 }
+
+func compress_gzip(p []byte) ([]byte, error) {
+   var b bytes.Buffer
+   w := gzip.NewWriter(&b)
+   if _, err := w.Write(p); err != nil {
+      return nil, err
+   }
+   if err := w.Close(); err != nil {
+      return nil, err
+   }
+   return b.Bytes(), nil
+}
+
+func encode_base64(p []byte) ([]byte, error) {
+   var b bytes.Buffer
+   w := base64.NewEncoder(base64.URLEncoding, &b)
+   if _, err := w.Write(p); err != nil {
+      return nil, err
+   }
+   if err := w.Close(); err != nil {
+      return nil, err
+   }
+   return b.Bytes(), nil
+}
+
+func (g GoogleCheckin) x_ps_rh(req *http.Request) error {
+   id, err := g.DeviceId()
+   if err != nil {
+      return err
+   }
+   token, err := func() ([]byte, error) {
+      var m protobuf.Message
+      m.Add(3, func(m *protobuf.Message) {
+         m.AddBytes(1, fmt.Append(nil, id))
+         m.Add(2, func(m *protobuf.Message) {
+            v := time.Now().UnixMicro()
+            m.AddBytes(1, fmt.Append(nil, v))
+         })
+      })
+      b, err := compress_gzip(m.Encode())
+      if err != nil {
+         return nil, err
+      }
+      return encode_base64(b)
+   }()
+   if err != nil {
+      return err
+   }
+   ps_rh, err := func() ([]byte, error) {
+      var m protobuf.Message
+      m.Add(1, func(m *protobuf.Message) {
+         m.AddBytes(1, token)
+      })
+      b, err := compress_gzip(m.Encode())
+      if err != nil {
+         return nil, err
+      }
+      return encode_base64(b)
+   }()
+   if err != nil {
+      return err
+   }
+   req.Header.Set("x-ps-rh", string(ps_rh))
+   return nil
+}
+
+//////////////////////////////////////
 
 var Phone = Device{
    Texture: []string{
@@ -68,11 +171,6 @@ var Phone = Device{
    },
 }
 
-type Application struct {
-   ID string
-   Version uint64
-}
-
 type Platform int
 
 func (p Platform) String() string {
@@ -88,51 +186,6 @@ type Device struct {
    Feature []string
    // developer.android.com/ndk/guides/abis
    Platform string
-}
-
-func compress_gzip(p []byte) ([]byte, error) {
-   var b bytes.Buffer
-   w := gzip.NewWriter(&b)
-   if _, err := w.Write(p); err != nil {
-      return nil, err
-   }
-   if err := w.Close(); err != nil {
-      return nil, err
-   }
-   return b.Bytes(), nil
-}
-
-func encode_base64(p []byte) ([]byte, error) {
-   var b bytes.Buffer
-   w := base64.NewEncoder(base64.URLEncoding, &b)
-   if _, err := w.Write(p); err != nil {
-      return nil, err
-   }
-   if err := w.Close(); err != nil {
-      return nil, err
-   }
-   return b.Bytes(), nil
-}
-
-func (a Application) APK(config string) string {
-   var b []byte
-   b = fmt.Append(b, a.ID, "-")
-   if config != "" {
-      b = fmt.Append(b, config, "-")
-   }
-   b = fmt.Append(b, a.Version, ".apk")
-   return string(b)
-}
-
-func (a Application) OBB(role uint64) string {
-   var b []byte
-   if role >= 1 {
-      b = append(b, "patch"...)
-   } else {
-      b = append(b, "main"...)
-   }
-   b = fmt.Append(b, ".", a.Version, ".", a.ID, ".obb")
-   return string(b)
 }
 
 func (p *Platform) Set(s string) error {
@@ -165,6 +218,7 @@ func user_agent(r *http.Request, single bool) {
    b = append(b, ')')
    r.Header.Set("User-Agent", string(b))
 }
+
 func x_dfe_device_id(r *http.Request, c Checkin) error {
    id, err := c.DeviceId()
    if err != nil {
@@ -174,55 +228,4 @@ func x_dfe_device_id(r *http.Request, c Checkin) error {
    return nil
 }
 
-// github.com/doug-leith/android-protobuf-decoding/blob/main/decoding_helpers.py
-func x_ps_rh(r *http.Request, c Checkin) error {
-   id, err := c.DeviceId()
-   if err != nil {
-      return err
-   }
-   token, err := func() ([]byte, error) {
-      var m protobuf.Message
-      m.Add(3, func(m *protobuf.Message) {
-         m.AddBytes(1, fmt.Append(nil, id))
-         m.Add(2, func(m *protobuf.Message) {
-            v := time.Now().UnixMicro()
-            m.AddBytes(1, fmt.Append(nil, v))
-         })
-      })
-      b, err := compress_gzip(m.Encode())
-      if err != nil {
-         return nil, err
-      }
-      return encode_base64(b)
-   }()
-   if err != nil {
-      return err
-   }
-   ps_rh, err := func() ([]byte, error) {
-      var m protobuf.Message
-      m.Add(1, func(m *protobuf.Message) {
-         m.AddBytes(1, token)
-      })
-      b, err := compress_gzip(m.Encode())
-      if err != nil {
-         return nil, err
-      }
-      return encode_base64(b)
-   }()
-   if err != nil {
-      return err
-   }
-   r.Header.Set("X-PS-RH", string(ps_rh))
-   return nil
-}
-
-const android_api = 31
-
-// developer.android.com/guide/topics/manifest/uses-feature-element#glEsVersion
-// the device actually uses 0x30000, but some apps require a higher version:
-// com.axis.drawingdesk.v3
-// so lets lie for now
-const gl_es_version = 0x30001
-
-const google_play_store = 82941300
 

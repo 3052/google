@@ -27,8 +27,6 @@ func (a acquire_error) Error() string {
    return string(b)
 }
 
-///////
-
 type Acquire struct {
    Checkin Checkin
    Token AccessToken
