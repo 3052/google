@@ -8,6 +8,15 @@ import (
    "net/http"
 )
 
+func (g *GoogleCheckin) Unmarshal() error {
+   return g.m.Consume(g.Data)
+}
+
+type GoogleCheckin struct {
+   Data []byte
+   m protobuf.Message
+}
+
 func (g *GoogleCheckin) Checkin(a AndroidDevice) error {
    var m protobuf.Message
    m.Add(4, func(m *protobuf.Message) {
@@ -56,11 +65,6 @@ func (g *GoogleCheckin) Checkin(a AndroidDevice) error {
       return err
    }
    return nil
-}
-
-type GoogleCheckin struct {
-   Data []byte
-   m protobuf.Message
 }
 
 func (g GoogleCheckin) DeviceId() (uint64, error) {

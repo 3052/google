@@ -7,11 +7,11 @@ import (
 )
 
 func TestCheckin(t *testing.T) {
-   for _, platform := range Platforms {
+   for _, platform := range BinaryInterfaces {
       fmt.Println(platform)
-      var check Checkin
-      Phone.Platform = platform
-      err := check.Do(Phone)
+      Phone.ABI = platform
+      var checkin GoogleCheckin
+      err := checkin.Checkin(Phone)
       if err != nil {
          t.Fatal(err)
       }

@@ -8,7 +8,7 @@ import (
    "strings"
 )
 
-func (g *GoogleToken) Parse() error {
+func (g *GoogleToken) Unmarshal() error {
    var err error
    g.v, err = parse_query(string(g.Data))
    if err != nil {

@@ -9,21 +9,33 @@ import (
    "time"
 )
 
+func (f flags) do_auth() error {
+   var token play.GoogleToken
+   if err := token.Auth(f.code); err != nil {
+      return err
+   }
+   return os.WriteFile(f.home + "/token.txt", token.Data, 0666)
+}
+
 func (f flags) do_details() (*play.Details, error) {
-   var client play.Details
-   err := f.client(&client.Token, &client.Checkin)
+   var (
+      auth play.GoogleAuth
+      checkin play.GoogleCheckin
+   )
+   err := f.client(&auth, &checkin)
    if err != nil {
       return nil, err
    }
-   if err := client.Details(f.app.ID, f.single); err != nil {
+   var detail play.Details
+   if err := detail.Details(auth, checkin, f.app.ID, f.single); err != nil {
       return nil, err
    }
-   return &client, nil
+   return &detail, nil
 }
 
-func (f flags) client(a *play.AccessToken, check *play.Checkin) error {
+func (f flags) client(auth *play.GoogleAuth, checkin *play.GoogleCheckin) error {
    var (
-      token play.RefreshToken
+      token play.GoogleToken
       err error
    )
    token.Data, err = os.ReadFile(f.home + "/token.txt")
@@ -33,29 +45,31 @@ func (f flags) client(a *play.AccessToken, check *play.Checkin) error {
    if err := token.Unmarshal(); err != nil {
       return err
    }
-   if err := a.Refresh(token); err != nil {
+   if err := auth.Auth(token); err != nil {
       return err
    }
-   check.Data, err = os.ReadFile(fmt.Sprint(f.home, "/", f.platform, ".bin"))
+   checkin.Data, err = os.ReadFile(fmt.Sprint(f.home, "/", f.platform, ".bin"))
    if err != nil {
       return err
    }
-   return check.Unmarshal()
+   return checkin.Unmarshal()
 }
-
 func (f flags) do_delivery() error {
-   var client play.Delivery
-   err := f.client(&client.Token, &client.Checkin)
+   var (
+      auth play.GoogleAuth
+      checkin play.GoogleCheckin
+   )
+   err := f.client(&auth, &checkin)
    if err != nil {
       return err
    }
-   client.App = f.app
-   if err := client.Do(f.single); err != nil {
+   var deliver play.Delivery
+   if err := deliver.Delivery(auth, checkin, f.app, f.single); err != nil {
       return err
    }
-   for apk := range client.ConfigApk() {
+   for apk := range deliver.Configuration() {
       if url, ok := apk.URL(); ok {
-         if config, ok := apk.Config(); ok {
+         if config, ok := apk.Configuration(); ok {
             err := f.download(url, f.app.APK(config))
             if err != nil {
                return err
@@ -63,7 +77,7 @@ func (f flags) do_delivery() error {
          }
       }
    }
-   for obb := range client.ObbFile() {
+   for obb := range deliver.Expansion() {
       if url, ok := obb.URL(); ok {
          if role, ok := obb.Role(); ok {
             err := f.download(url, f.app.OBB(role))
@@ -73,7 +87,7 @@ func (f flags) do_delivery() error {
          }
       }
    }
-   if url, ok := client.URL(); ok {
+   if url, ok := deliver.URL(); ok {
       err := f.download(url, f.app.APK(""))
       if err != nil {
          return err
@@ -100,42 +114,31 @@ func (f flags) download(url, name string) error {
    }
    return nil
 }
-
 func (f flags) do_acquire() error {
-   var client play.Acquire
-   err := f.client(&client.Token, &client.Checkin)
+   var (
+      auth play.GoogleAuth
+      checkin play.GoogleCheckin
+   )
+   err := f.client(&auth, &checkin)
    if err != nil {
       return err
    }
-   return client.Do(f.app.ID)
+   return auth.Acquire(checkin, f.app.ID)
 }
-
 func (f flags) do_device() error {
-   name, err := os.UserHomeDir()
-   if err != nil {
+   f.home += fmt.Sprintf("/google-play/%v.bin", f.platform)
+   play.Phone.ABI = f.platform.String()
+   var checkin play.GoogleCheckin
+   if err := checkin.Checkin(play.Phone); err != nil {
       return err
    }
-   name += fmt.Sprintf("/google-play/%v.bin", f.platform)
-   var check play.Checkin
-   play.Phone.Platform = f.platform.String()
-   if err := check.Do(play.Phone); err != nil {
-      return err
-   }
-   if err := os.WriteFile(name, check.Data, 0666); err != nil {
+   if err := os.WriteFile(f.home, checkin.Data, 0666); err != nil {
       return err
    }
    fmt.Println("Sleep(9*time.Second)")
    time.Sleep(9*time.Second)
-   if err := check.Unmarshal(); err != nil {
+   if err := checkin.Unmarshal(); err != nil {
       return err
    }
-   return check.Sync(play.Phone)
-}
-
-func (f flags) do_auth() error {
-   var token play.RefreshToken
-   if err := token.New(f.code); err != nil {
-      return err
-   }
-   return os.WriteFile(f.home + "/token.txt", token.Data, 0666)
+   return checkin.Sync(play.Phone)
 }

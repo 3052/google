@@ -11,22 +11,22 @@ func (g GoogleCheckin) Sync(a AndroidDevice) error {
    var m protobuf.Message
    m.Add(1, func(m *protobuf.Message) {
       m.Add(10, func(m *protobuf.Message) {
-         for _, feature := range d.Feature {
+         for _, feature := range a.Feature {
             m.Add(1, func(m *protobuf.Message) {
                m.AddBytes(1, []byte(feature))
             })
          }
-         for _, library := range d.Library {
+         for _, library := range a.Library {
             m.AddBytes(2, []byte(library))
          }
-         for _, texture := range d.Texture {
+         for _, texture := range a.Texture {
             m.AddBytes(4, []byte(texture))
          }
       })
    })
    m.Add(1, func(m *protobuf.Message) {
       m.Add(15, func(m *protobuf.Message) {
-         m.AddBytes(4, []byte(d.Platform))
+         m.AddBytes(4, []byte(a.ABI))
       })
    })
    m.Add(1, func(m *protobuf.Message) {
@@ -51,7 +51,7 @@ func (g GoogleCheckin) Sync(a AndroidDevice) error {
    if err != nil {
       return err
    }
-   if err := x_dfe_device_id(req, c); err != nil {
+   if err := g.x_dfe_device_id(req); err != nil {
       return err
    }
    res, err := http.DefaultClient.Do(req)

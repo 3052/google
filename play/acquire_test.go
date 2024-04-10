@@ -12,31 +12,32 @@ func TestAcquire(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   home += "/google-play/"
-   var token RefreshToken
-   token.Data, err = os.ReadFile(home + "token.txt")
+   home += "/google-play"
+   var token GoogleToken
+   token.Data, err = os.ReadFile(home + "/token.txt")
    if err != nil {
       t.Fatal(err)
    }
    if err := token.Unmarshal(); err != nil {
       t.Fatal(err)
    }
-   var client Acquire
-   if err := client.Token.Refresh(token); err != nil {
+   var auth GoogleAuth
+   if err := auth.Auth(token); err != nil {
       t.Fatal(err)
    }
    time.Sleep(time.Second)
    for _, app := range apps {
-      name := fmt.Sprint(home, app.platform, ".bin")
-      client.Checkin.Data, err = os.ReadFile(name)
+      name := fmt.Sprint(home, "/", app.platform, ".bin")
+      var checkin GoogleCheckin
+      checkin.Data, err = os.ReadFile(name)
       if err != nil {
          t.Fatal(err)
       }
-      if err := client.Checkin.Unmarshal(); err != nil {
+      if err := checkin.Unmarshal(); err != nil {
          t.Fatal(err)
       }
       fmt.Println(app.id)
-      if err := client.Do(app.id); err != nil {
+      if err := auth.Acquire(checkin, app.id); err != nil {
          t.Fatal(err)
       }
       time.Sleep(99 * time.Millisecond)
