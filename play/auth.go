@@ -89,4 +89,3 @@ func (g *GoogleToken) Auth(oauth_token string) error {
 func (g GoogleToken) GetToken() string {
    return g.v.Get("Token")
 }
-
