@@ -9,62 +9,6 @@ import (
    "net/http"
 )
 
-func (d Details) String() string {
-   var b []byte
-   b = append(b, "downloads ="...)
-   if v, ok := d.Downloads(); ok {
-      b = fmt.Append(b, " ", encoding.Cardinal(v))
-   }
-   b = append(b, "\nfiles ="...)
-   for file := range d.File() {
-      if file >= 1 {
-         b = append(b, " OBB"...)
-      } else {
-         b = append(b, " APK"...)
-      }
-   }
-   b = append(b, "\nname ="...)
-   if v, ok := d.Name(); ok {
-      b = fmt.Append(b, " ", v)
-   }
-   b = append(b, "\noffered by ="...)
-   if v, ok := d.OfferedBy(); ok {
-      b = fmt.Append(b, " ", v)
-   }
-   b = append(b, "\nprice ="...)
-   if v, ok := d.Price(); ok {
-      b = fmt.Append(b, " ", v)
-   }
-   if v, ok := d.PriceCurrency(); ok {
-      b = fmt.Append(b, " ", v)
-   }
-   b = append(b, "\nrequires ="...)
-   if v, ok := d.Requires(); ok {
-      b = fmt.Append(b, " ", v)
-   }
-   b = append(b, "\nsize ="...)
-   if v, ok := d.Size(); ok {
-      b = fmt.Appendf(b, " %v (%v)", encoding.Size(v), v)
-   }
-   b = append(b, "\nupdated on ="...)
-   if v, ok := d.UpdatedOn(); ok {
-      b = fmt.Append(b, " ", v)
-   }
-   b = append(b, "\nversion code ="...)
-   if v, ok := d.VersionCode(); ok {
-      b = fmt.Append(b, " ", v)
-   }
-   b = append(b, "\nversion name ="...)
-   if v, ok := d.VersionName(); ok {
-      b = fmt.Append(b, " ", v)
-   }
-   return string(b)
-}
-
-type Details struct {
-   m protobuf.Message
-}
-
 // developer.android.com/build/configure-apk-splits
 // play.google.com/store/apps/details?id=com.google.android.youtube
 func (d *Details) Details(
@@ -75,10 +19,10 @@ func (d *Details) Details(
       return err
    }
    req.URL.Path = "/fdfe/details"
-   req.URL.RawQuery = "doc=" + app
-   authorization(req, d.Token)
+   req.URL.RawQuery = "doc=" + id
+   auth.authorization(req)
    user_agent(req, single)
-   if err := x_dfe_device_id(req, d.Checkin); err != nil {
+   if err := checkin.x_dfe_device_id(req); err != nil {
       return err
    }
    res, err := http.DefaultClient.Do(req)
@@ -213,3 +157,59 @@ func (d Details) Files() chan uint64 {
    }()
    return vs
 }
+func (d Details) String() string {
+   var b []byte
+   b = append(b, "downloads ="...)
+   if v, ok := d.Downloads(); ok {
+      b = fmt.Append(b, " ", encoding.Cardinal(v))
+   }
+   b = append(b, "\nfiles ="...)
+   for file := range d.Files() {
+      if file >= 1 {
+         b = append(b, " OBB"...)
+      } else {
+         b = append(b, " APK"...)
+      }
+   }
+   b = append(b, "\nname ="...)
+   if v, ok := d.Name(); ok {
+      b = fmt.Append(b, " ", v)
+   }
+   b = append(b, "\noffered by ="...)
+   if v, ok := d.OfferedBy(); ok {
+      b = fmt.Append(b, " ", v)
+   }
+   b = append(b, "\nprice ="...)
+   if v, ok := d.Price(); ok {
+      b = fmt.Append(b, " ", v)
+   }
+   if v, ok := d.PriceCurrency(); ok {
+      b = fmt.Append(b, " ", v)
+   }
+   b = append(b, "\nrequires ="...)
+   if v, ok := d.Requires(); ok {
+      b = fmt.Append(b, " ", v)
+   }
+   b = append(b, "\nsize ="...)
+   if v, ok := d.Size(); ok {
+      b = fmt.Appendf(b, " %v (%v)", encoding.Size(v), v)
+   }
+   b = append(b, "\nupdated on ="...)
+   if v, ok := d.UpdatedOn(); ok {
+      b = fmt.Append(b, " ", v)
+   }
+   b = append(b, "\nversion code ="...)
+   if v, ok := d.VersionCode(); ok {
+      b = fmt.Append(b, " ", v)
+   }
+   b = append(b, "\nversion name ="...)
+   if v, ok := d.Version(); ok {
+      b = fmt.Append(b, " ", v)
+   }
+   return string(b)
+}
+
+type Details struct {
+   m protobuf.Message
+}
+

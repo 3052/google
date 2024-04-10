@@ -8,18 +8,6 @@ import (
    "net/http"
 )
 
-type GoogleCheckin struct {
-   Data []byte
-   m protobuf.Message
-}
-
-func (g GoogleCheckin) DeviceId() (uint64, error) {
-   if v, ok := <-c.m.GetFixed64(7); ok {
-      return uint64(v), nil
-   }
-   return 0, errors.New("DeviceId")
-}
-
 func (g *GoogleCheckin) Checkin(a AndroidDevice) error {
    var m protobuf.Message
    m.Add(4, func(m *protobuf.Message) {
@@ -37,15 +25,15 @@ func (g *GoogleCheckin) Checkin(a AndroidDevice) error {
       m.AddVarint(6, 1)
       m.AddVarint(7, 420)
       m.AddVarint(8, gl_es_version)
-      for _, library := range d.Library {
+      for _, library := range a.Library {
          m.AddBytes(9, []byte(library))
       }
-      m.AddBytes(11, []byte(d.Platform))
-      for _, texture := range d.Texture {
+      m.AddBytes(11, []byte(a.ABI))
+      for _, texture := range a.Texture {
          m.AddBytes(15, []byte(texture))
       }
       // you cannot swap the next two lines:
-      for _, feature := range d.Feature {
+      for _, feature := range a.Feature {
          m.Add(26, func(m *protobuf.Message) {
             m.AddBytes(1, []byte(feature))
          })
@@ -63,9 +51,21 @@ func (g *GoogleCheckin) Checkin(a AndroidDevice) error {
    if res.StatusCode != http.StatusOK {
       return errors.New(res.Status)
    }
-   c.Data, err = io.ReadAll(res.Body)
+   g.Data, err = io.ReadAll(res.Body)
    if err != nil {
       return err
    }
    return nil
+}
+
+type GoogleCheckin struct {
+   Data []byte
+   m protobuf.Message
+}
+
+func (g GoogleCheckin) DeviceId() (uint64, error) {
+   if v, ok := <-g.m.GetFixed64(7); ok {
+      return uint64(v), nil
+   }
+   return 0, errors.New("DeviceId")
 }

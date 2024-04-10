@@ -9,10 +9,6 @@ import (
    "strconv"
 )
 
-type Delivery struct {
-   m protobuf.Message
-}
-
 func (d *Delivery) Delivery(
    auth GoogleAuth, checkin GoogleCheckin, app AndroidApp, single bool,
 ) error {
@@ -22,12 +18,12 @@ func (d *Delivery) Delivery(
    }
    req.URL.Path = "/fdfe/delivery"
    req.URL.RawQuery = url.Values{
-      "doc": {d.App.ID},
-      "vc":  {strconv.FormatUint(d.App.Version, 10)},
+      "doc": {app.ID},
+      "vc":  {strconv.FormatUint(app.Version, 10)},
    }.Encode()
-   authorization(req, d.Token)
+   auth.authorization(req)
    user_agent(req, single)
-   if err := x_dfe_device_id(req, d.Checkin); err != nil {
+   if err := checkin.x_dfe_device_id(req); err != nil {
       return err
    }
    res, err := http.DefaultClient.Do(req)
@@ -127,3 +123,7 @@ func (d Delivery) URL() (string, bool) {
    }
    return "", false
 }
+type Delivery struct {
+   m protobuf.Message
+}
+

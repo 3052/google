@@ -9,7 +9,7 @@ import (
 )
 
 // play.google.com/store/apps/details?id=com.google.android.youtube
-func (g GoogleAuth) Acquire(g GoogleCheckin, id string) error {
+func (g GoogleAuth) Acquire(checkin GoogleCheckin, id string) error {
    var m protobuf.Message
    m.Add(1, func(m *protobuf.Message) {
       m.Add(1, func(m *protobuf.Message) {
@@ -27,15 +27,15 @@ func (g GoogleAuth) Acquire(g GoogleCheckin, id string) error {
    if err != nil {
       return err
    }
-   a.authorization(req)
-   if err := g.x_dfe_device_id(req); err != nil {
+   g.authorization(req)
+   if err := checkin.x_dfe_device_id(req); err != nil {
       return err
    }
    // with a new device, this needs to be included in the first request to
    // /fdfe/acquire, or you get:
    // Please open my apps to establish a connection with the server.
    // on following requests you can omit it
-   if err := g.x_ps_rh(req); err != nil {
+   if err := checkin.x_ps_rh(req); err != nil {
       return err
    }
    res, err := http.DefaultClient.Do(req)
