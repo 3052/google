@@ -10,11 +10,11 @@ import (
 
 type GoogleCheckin struct {
    Data []byte
-   V protobuf.Message
+   m protobuf.Message
 }
 
 func (g GoogleCheckin) DeviceId() (uint64, error) {
-   if v, ok := <-c.V.GetFixed64(7); ok {
+   if v, ok := <-c.m.GetFixed64(7); ok {
       return uint64(v), nil
    }
    return 0, errors.New("DeviceId")

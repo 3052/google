@@ -57,8 +57,7 @@ func (d *Delivery) Delivery(
    return nil
 }
 
-////////////
-
+// developer.android.com/google/play/expansion-files
 func (d Delivery) Expansion() chan Expansion {
    files := make(chan Expansion)
    go func() {

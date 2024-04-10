@@ -9,12 +9,6 @@ import (
    "net/http"
 )
 
-type Details struct {
-   Checkin Checkin
-   Token AccessToken
-   m protobuf.Message
-}
-
 func (d Details) String() string {
    var b []byte
    b = append(b, "downloads ="...)
@@ -67,16 +61,15 @@ func (d Details) String() string {
    return string(b)
 }
 
-func (d Details) Size() (uint64, bool) {
-   d.m = <-d.m.Get(13)
-   d.m = <-d.m.Get(1)
-   if v, ok := <-d.m.GetVarint(9); ok {
-      return uint64(v), true
-   }
-   return 0, false
+type Details struct {
+   m protobuf.Message
 }
 
-func (d *Details) Details(app string, single bool) error {
+// developer.android.com/build/configure-apk-splits
+// play.google.com/store/apps/details?id=com.google.android.youtube
+func (d *Details) Details(
+   auth GoogleAuth, checkin GoogleCheckin, id string, single bool,
+) error {
    req, err := http.NewRequest("GET", "https://android.clients.google.com", nil)
    if err != nil {
       return err
@@ -109,35 +102,6 @@ func (d *Details) Details(app string, single bool) error {
    return nil
 }
 
-func (d Details) File() chan uint64 {
-   vs := make(chan uint64)
-   d.m = <-d.m.Get(13)
-   d.m = <-d.m.Get(1)
-   go func() {
-      for v := range d.m.Get(17) {
-         if v, ok := <-v.GetVarint(1); ok {
-            vs <- uint64(v)
-         }
-      }
-      close(vs)
-   }()
-   return vs
-}
-
-func (d Details) Name() (string, bool) {
-   if v, ok := <-d.m.GetBytes(5); ok {
-      return string(v), true
-   }
-   return "", false
-}
-
-func (d Details) OfferedBy() (string, bool) {
-   if v, ok := <-d.m.GetBytes(6); ok {
-      return string(v), true
-   }
-   return "", false
-}
-
 // developer.android.com/guide/topics/manifest/manifest-element
 func (d Details) VersionCode() (uint64, bool) {
    d.m = <-d.m.Get(13)
@@ -158,14 +122,7 @@ func (d Details) Downloads() (uint64, bool) {
    return 0, false
 }
 
-func (d Details) Price() (float64, bool) {
-   d.m = <-d.m.Get(8)
-   if v, ok := <-d.m.GetVarint(1); ok {
-      return float64(v) / 1_000_000, true
-   }
-   return 0, false
-}
-
+// play.google.com/store/apps/details?id=com.google.android.youtube
 func (d Details) UpdatedOn() (string, bool) {
    d.m = <-d.m.Get(13)
    d.m = <-d.m.Get(1)
@@ -175,15 +132,8 @@ func (d Details) UpdatedOn() (string, bool) {
    return "", false
 }
 
-func (d Details) PriceCurrency() (string, bool) {
-   d.m = <-d.m.Get(8)
-   if v, ok := <-d.m.GetBytes(2); ok {
-      return string(v), true
-   }
-   return "", false
-}
-
-func (d Details) VersionName() (string, bool) {
+// play.google.com/store/apps/details?id=com.google.android.apps.youtube.unplugged
+func (d Details) Version() (string, bool) {
    d.m = <-d.m.Get(13)
    d.m = <-d.m.Get(1)
    if v, ok := <-d.m.GetBytes(4); ok {
@@ -192,6 +142,7 @@ func (d Details) VersionName() (string, bool) {
    return "", false
 }
 
+// play.google.com/store/apps/details?id=com.google.android.apps.youtube.unplugged
 func (d Details) Requires() (string, bool) {
    d.m = <-d.m.Get(13)
    d.m = <-d.m.Get(1)
@@ -203,3 +154,62 @@ func (d Details) Requires() (string, bool) {
    return "", false
 }
 
+// play.google.com/store/apps/details?id=com.google.android.apps.youtube.unplugged
+func (d Details) OfferedBy() (string, bool) {
+   if v, ok := <-d.m.GetBytes(6); ok {
+      return string(v), true
+   }
+   return "", false
+}
+
+// developer.android.com/reference/app-actions/built-in-intents/shopping/create-offer
+func (d Details) Price() (float64, bool) {
+   d.m = <-d.m.Get(8)
+   if v, ok := <-d.m.GetVarint(1); ok {
+      return float64(v) / 1_000_000, true
+   }
+   return 0, false
+}
+
+// developer.android.com/reference/app-actions/built-in-intents/shopping/create-offer
+func (d Details) PriceCurrency() (string, bool) {
+   d.m = <-d.m.Get(8)
+   if v, ok := <-d.m.GetBytes(2); ok {
+      return string(v), true
+   }
+   return "", false
+}
+
+// developer.android.com/reference/app-actions/built-in-intents/shopping/create-offer
+func (d Details) Name() (string, bool) {
+   if v, ok := <-d.m.GetBytes(5); ok {
+      return string(v), true
+   }
+   return "", false
+}
+
+// developer.android.com/guide/app-bundle
+func (d Details) Size() (uint64, bool) {
+   d.m = <-d.m.Get(13)
+   d.m = <-d.m.Get(1)
+   if v, ok := <-d.m.GetVarint(9); ok {
+      return uint64(v), true
+   }
+   return 0, false
+}
+
+// developer.android.com/guide/app-bundle
+func (d Details) Files() chan uint64 {
+   vs := make(chan uint64)
+   d.m = <-d.m.Get(13)
+   d.m = <-d.m.Get(1)
+   go func() {
+      for v := range d.m.Get(17) {
+         if v, ok := <-v.GetVarint(1); ok {
+            vs <- uint64(v)
+         }
+      }
+      close(vs)
+   }()
+   return vs
+}
