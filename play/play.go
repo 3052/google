@@ -26,25 +26,24 @@ const gl_es_version = 0x30001
 
 const google_play_store = 82941300
 
-func (a AndroidApp) APK(config string) string {
+// developer.android.com/build/configure-apk-splits
+func user_agent(req *http.Request, single bool) {
    var b []byte
-   b = fmt.Append(b, a.ID, "-")
-   if config != "" {
-      b = fmt.Append(b, config, "-")
-   }
-   b = fmt.Append(b, a.Version, ".apk")
-   return string(b)
-}
-
-func (a AndroidApp) OBB(role uint64) string {
-   var b []byte
-   if role >= 1 {
-      b = append(b, "patch"...)
+   // `sdk` is needed for `/fdfe/delivery`
+   b = append(b, "Android-Finsky (sdk="...)
+   // with `/fdfe/acquire`, requests will be rejected with certain apps, if the
+   // device was created with too low a version here:
+   b = fmt.Append(b, android_api)
+   b = append(b, ",versionCode="...)
+   // for multiple APKs just tell the truth. for single APK we have to lie.
+   // below value is the last version that works.
+   if single {
+      b = fmt.Append(b, 80919999)
    } else {
-      b = append(b, "main"...)
+      b = fmt.Append(b, google_play_store)
    }
-   b = fmt.Append(b, ".", a.Version, ".", a.ID, ".obb")
-   return string(b)
+   b = append(b, ')')
+   req.Header.Set("User-Agent", string(b))
 }
 
 func compress_gzip(p []byte) ([]byte, error) {
@@ -71,29 +70,6 @@ func encode_base64(p []byte) ([]byte, error) {
    return b.Bytes(), nil
 }
 
-func user_agent(req *http.Request, single bool) {
-   var b []byte
-   // `sdk` is needed for `/fdfe/delivery`
-   b = append(b, "Android-Finsky (sdk="...)
-   // with `/fdfe/acquire`, requests will be rejected with certain apps, if the
-   // device was created with too low a version here:
-   b = fmt.Append(b, android_api)
-   b = append(b, ",versionCode="...)
-   // for multiple APKs just tell the truth. for single APK we have to lie.
-   // below value is the last version that works.
-   if single {
-      b = fmt.Append(b, 80919999)
-   } else {
-      b = fmt.Append(b, google_play_store)
-   }
-   b = append(b, ')')
-   req.Header.Set("User-Agent", string(b))
-}
-
-func (g GoogleAuth) authorization(req *http.Request) {
-   req.Header.Set("authorization", "Bearer " + g.GetAuth())
-}
-
 func (g GoogleCheckin) x_dfe_device_id(req *http.Request) error {
    id, err := g.DeviceId()
    if err != nil {
@@ -101,6 +77,10 @@ func (g GoogleCheckin) x_dfe_device_id(req *http.Request) error {
    }
    req.Header.Set("x-dfe-device-id", fmt.Sprintf("%x", id))
    return nil
+}
+
+func (g GoogleAuth) authorization(req *http.Request) {
+   req.Header.Set("authorization", "Bearer " + g.GetAuth())
 }
 
 func (g GoogleCheckin) x_ps_rh(req *http.Request) error {
@@ -144,9 +124,22 @@ func (g GoogleCheckin) x_ps_rh(req *http.Request) error {
    return nil
 }
 
-////////////
+// developer.android.com/ndk/guides/abis
+type BinaryInterface int
 
-var Platforms = map[int]string{
+func (b *BinaryInterface) Set(s string) error {
+   _, err := fmt.Sscan(s, b)
+   if err != nil {
+      return err
+   }
+   return nil
+}
+
+func (b BinaryInterface) String() string {
+   return BinaryInterfaces[int(b)]
+}
+
+var BinaryInterfaces = map[int]string{
    // com.google.android.youtube
    0: "x86",
    // com.sygic.aura
@@ -155,19 +148,42 @@ var Platforms = map[int]string{
    2: "arm64-v8a",
 }
 
-var Phone = Device{
-   Texture: []string{
-      // com.instagram.android
-      "GL_OES_compressed_ETC1_RGB8_texture",
-      // com.kakaogames.twodin
-      "GL_KHR_texture_compression_astc_ldr",
-   },
-   Library: []string{
-      // com.amctve.amcfullepisodes
-      "org.apache.http.legacy",
-      // com.binance.dev
-      "android.test.runner",
-   },
+// developer.android.com/google/play/expansion-files
+func (a AndroidApp) OBB(role uint64) string {
+   var b []byte
+   if role >= 1 {
+      b = append(b, "patch"...)
+   } else {
+      b = append(b, "main"...)
+   }
+   b = fmt.Append(b, ".", a.Version, ".", a.ID, ".obb")
+   return string(b)
+}
+
+// developer.android.com/guide/app-bundle/app-bundle-format
+func (a AndroidApp) APK(configuration string) string {
+   var b []byte
+   b = fmt.Append(b, a.ID, "-")
+   if configuration != "" {
+      b = fmt.Append(b, configuration, "-")
+   }
+   b = fmt.Append(b, a.Version, ".apk")
+   return string(b)
+}
+
+// developer.android.com/ndk/guides/abis
+type AndroidDevice struct {
+   // developer.android.com/ndk/guides/abis
+   ABI string
+   // developer.android.com/guide/topics/manifest/uses-feature-element
+   Feature []string
+   // developer.android.com/guide/topics/manifest/uses-library-element
+   Library []string
+   // developer.android.com/guide/topics/manifest/supports-gl-texture-element
+   Texture []string
+}
+
+var Phone = AndroidDevice{
    Feature: []string{
       // app.source.getcontact
       "android.hardware.location.gps",
@@ -202,29 +218,16 @@ var Phone = Device{
       // org.thoughtcrime.securesms
       "android.hardware.telephony",
    },
-}
-
-type Platform int
-
-func (p Platform) String() string {
-   return Platforms[int(p)]
-}
-
-type Device struct {
-   // developer.android.com/guide/topics/manifest/supports-gl-texture-element
-   Texture []string
-   // developer.android.com/guide/topics/manifest/uses-library-element
-   Library []string
-   // developer.android.com/guide/topics/manifest/uses-feature-element
-   Feature []string
-   // developer.android.com/ndk/guides/abis
-   Platform string
-}
-
-func (p *Platform) Set(s string) error {
-   _, err := fmt.Sscan(s, p)
-   if err != nil {
-      return err
-   }
-   return nil
+   Library: []string{
+      // com.amctve.amcfullepisodes
+      "org.apache.http.legacy",
+      // com.binance.dev
+      "android.test.runner",
+   },
+   Texture: []string{
+      // com.instagram.android
+      "GL_OES_compressed_ETC1_RGB8_texture",
+      // com.kakaogames.twodin
+      "GL_KHR_texture_compression_astc_ldr",
+   },
 }

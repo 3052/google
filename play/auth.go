@@ -53,7 +53,7 @@ type GoogleToken struct {
    V url.Values
 }
 
-func (r *GoogleToken) Auth(oauth_token string) error {
+func (g *GoogleToken) Auth(oauth_token string) error {
    res, err := http.PostForm(
       "https://android.googleapis.com/auth", url.Values{
          "ACCESS_TOKEN": {"1"},
@@ -81,7 +81,7 @@ func (g GoogleToken) GetToken() string {
    return g.V.Get("Token")
 }
 
-func (r *GoogleToken) Parse() error {
+func (g *GoogleToken) Parse() error {
    var err error
    r.V, err = parse_query(string(r.Data))
    if err != nil {

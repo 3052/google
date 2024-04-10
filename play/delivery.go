@@ -9,7 +9,13 @@ import (
    "strconv"
 )
 
-func (d *Delivery) Do(single bool) error {
+type Delivery struct {
+   m protobuf.Message
+}
+
+func (d *Delivery) Delivery(
+   auth GoogleAuth, checkin GoogleCheckin, app AndroidApp, single bool,
+) error {
    req, err := http.NewRequest("GET", "https://android.clients.google.com", nil)
    if err != nil {
       return err
@@ -51,21 +57,25 @@ func (d *Delivery) Do(single bool) error {
    return nil
 }
 
-func (d Delivery) ObbFile() chan ObbFile {
-   files := make(chan ObbFile)
+////////////
+
+func (d Delivery) Expansion() chan Expansion {
+   files := make(chan Expansion)
    go func() {
       for file := range d.m.Get(4) {
-         files <- ObbFile{file}
+         files <- Expansion{file}
       }
       close(files)
    }()
    return files
 }
-func (d Delivery) ConfigApk() chan ConfigApk {
-   apks := make(chan ConfigApk)
+
+// developer.android.com/guide/app-bundle/app-bundle-format
+func (d Delivery) Configuration() chan Configuration {
+   apks := make(chan Configuration)
    go func() {
       for apk := range d.m.Get(15) {
-         apks <- ConfigApk{apk}
+         apks <- Configuration{apk}
       }
       close(apks)
    }()
@@ -73,47 +83,40 @@ func (d Delivery) ConfigApk() chan ConfigApk {
 }
 
 // developer.android.com/guide/app-bundle
-type ConfigApk struct {
-   m protobuf.Message
-}
-
-type Delivery struct {
-   App Application
-   Checkin Checkin
-   Token AccessToken
+type Configuration struct {
    m protobuf.Message
 }
 
 // developer.android.com/google/play/expansion-files
-type ObbFile struct {
+type Expansion struct {
    m protobuf.Message
 }
 
 // developer.android.com/google/play/expansion-files
-func (o ObbFile) Role() (uint64, bool) {
-   if v, ok := <-o.m.GetVarint(1); ok {
+func (e Expansion) Role() (uint64, bool) {
+   if v, ok := <-e.m.GetVarint(1); ok {
       return uint64(v), true
    }
    return 0, false
 }
 
 // developer.android.com/guide/app-bundle
-func (c ConfigApk) Config() (string, bool) {
+func (c Configuration) Configuration() (string, bool) {
    if v, ok := <-c.m.GetBytes(1); ok {
       return string(v), true
    }
    return "", false
 }
 
-func (c ConfigApk) URL() (string, bool) {
+func (c Configuration) URL() (string, bool) {
    if v, ok := <-c.m.GetBytes(5); ok {
       return string(v), true
    }
    return "", false
 }
 
-func (o ObbFile) URL() (string, bool) {
-   if v, ok := <-o.m.GetBytes(4); ok {
+func (e Expansion) URL() (string, bool) {
+   if v, ok := <-e.m.GetBytes(4); ok {
       return string(v), true
    }
    return "", false

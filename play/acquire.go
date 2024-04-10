@@ -28,7 +28,7 @@ func (a acquire_error) Error() string {
 }
 
 // play.google.com/store/apps/details?id=com.google.android.youtube
-func (a AccessToken) Acquire(g GoogleCheckin, id string) error {
+func (g GoogleAuth) Acquire(g GoogleCheckin, id string) error {
    var m protobuf.Message
    m.Add(1, func(m *protobuf.Message) {
       m.Add(1, func(m *protobuf.Message) {
