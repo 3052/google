@@ -10,51 +10,8 @@ import (
    "time"
 )
 
-func user_agent(req *http.Request, single bool) {
-   var b []byte
-   // `sdk` is needed for `/fdfe/delivery`
-   b = append(b, "Android-Finsky (sdk="...)
-   // with `/fdfe/acquire`, requests will be rejected with certain apps, if the
-   // device was created with too low a version here:
-   b = fmt.Append(b, android_api)
-   b = append(b, ",versionCode="...)
-   // for multiple APKs just tell the truth. for single APK we have to lie.
-   // below value is the last version that works.
-   if single {
-      b = fmt.Append(b, 80919999)
-   } else {
-      b = fmt.Append(b, google_play_store)
-   }
-   b = append(b, ')')
-   req.Header.Set("User-Agent", string(b))
-}
-
-func compress_gzip(p []byte) ([]byte, error) {
-   var b bytes.Buffer
-   w := gzip.NewWriter(&b)
-   if _, err := w.Write(p); err != nil {
-      return nil, err
-   }
-   if err := w.Close(); err != nil {
-      return nil, err
-   }
-   return b.Bytes(), nil
-}
-
-func encode_base64(p []byte) ([]byte, error) {
-   var b bytes.Buffer
-   w := base64.NewEncoder(base64.URLEncoding, &b)
-   if _, err := w.Write(p); err != nil {
-      return nil, err
-   }
-   if err := w.Close(); err != nil {
-      return nil, err
-   }
-   return b.Bytes(), nil
-}
-
 func (g GoogleAuth) authorization(req *http.Request) {
-   req.Header.Set("authorization", "Bearer " + g.GetAuth())
+   req.Header.Set("authorization", "Bearer " + g.get_auth())
 }
 
 const google_play_store = 82941300
@@ -221,4 +178,47 @@ var Phone = GoogleDevice{
       // org.thoughtcrime.securesms
       "android.hardware.telephony",
    },
+}
+
+func user_agent(req *http.Request, single bool) {
+   var b []byte
+   // `sdk` is needed for `/fdfe/delivery`
+   b = append(b, "Android-Finsky (sdk="...)
+   // with `/fdfe/acquire`, requests will be rejected with certain apps, if the
+   // device was created with too low a version here:
+   b = fmt.Append(b, android_api)
+   b = append(b, ",versionCode="...)
+   // for multiple APKs just tell the truth. for single APK we have to lie.
+   // below value is the last version that works.
+   if single {
+      b = fmt.Append(b, 80919999)
+   } else {
+      b = fmt.Append(b, google_play_store)
+   }
+   b = append(b, ')')
+   req.Header.Set("User-Agent", string(b))
+}
+
+func compress_gzip(p []byte) ([]byte, error) {
+   var b bytes.Buffer
+   w := gzip.NewWriter(&b)
+   if _, err := w.Write(p); err != nil {
+      return nil, err
+   }
+   if err := w.Close(); err != nil {
+      return nil, err
+   }
+   return b.Bytes(), nil
+}
+
+func encode_base64(p []byte) ([]byte, error) {
+   var b bytes.Buffer
+   w := base64.NewEncoder(base64.URLEncoding, &b)
+   if _, err := w.Write(p); err != nil {
+      return nil, err
+   }
+   if err := w.Close(); err != nil {
+      return nil, err
+   }
+   return b.Bytes(), nil
 }

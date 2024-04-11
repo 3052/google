@@ -11,22 +11,22 @@ func (g GoogleCheckin) Sync(device GoogleDevice) error {
    var m protobuf.Message
    m.Add(1, func(m *protobuf.Message) {
       m.Add(10, func(m *protobuf.Message) {
-         for _, v := range a.Feature {
+         for _, v := range device.Feature {
             m.Add(1, func(m *protobuf.Message) {
                m.AddBytes(1, []byte(v))
             })
          }
-         for _, v := range a.Library {
+         for _, v := range device.Library {
             m.AddBytes(2, []byte(v))
          }
-         for _, v := range a.Texture {
+         for _, v := range device.Texture {
             m.AddBytes(4, []byte(v))
          }
       })
    })
    m.Add(1, func(m *protobuf.Message) {
       m.Add(15, func(m *protobuf.Message) {
-         m.AddBytes(4, []byte(a.ABI))
+         m.AddBytes(4, []byte(device.ABI))
       })
    })
    m.Add(1, func(m *protobuf.Message) {

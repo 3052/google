@@ -8,11 +8,11 @@ import (
    "net/http"
 )
 
-func (g GoogleAuth) Acquire(checkin GoogleCheckin, s1_1_1 string) error {
+func (g GoogleAuth) Acquire(checkin GoogleCheckin, s string) error {
    var m protobuf.Message
    m.Add(1, func(m *protobuf.Message) {
       m.Add(1, func(m *protobuf.Message) {
-         m.AddBytes(1, []byte(s1_1_1))
+         m.AddBytes(1, []byte(s))
          m.AddVarint(2, 1)
          m.AddVarint(3, 3)
       })

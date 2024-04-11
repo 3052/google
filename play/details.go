@@ -8,7 +8,7 @@ import (
    "net/http"
 )
 
-func (d Details) Field13_1_3() (uint64, bool) {
+func (d Details) field_13_1_3() (uint64, bool) {
    d.m = <-d.m.Get(13)
    d.m = <-d.m.Get(1)
    if v, ok := <-d.m.GetVarint(3); ok {
@@ -17,7 +17,7 @@ func (d Details) Field13_1_3() (uint64, bool) {
    return 0, false
 }
 
-func (d Details) Field13_1_70() (uint64, bool) {
+func (d Details) field_13_1_70() (uint64, bool) {
    d.m = <-d.m.Get(13)
    d.m = <-d.m.Get(1)
    if v, ok := <-d.m.GetVarint(70); ok {
@@ -26,7 +26,7 @@ func (d Details) Field13_1_70() (uint64, bool) {
    return 0, false
 }
 
-func (d Details) Field13_1_16() (string, bool) {
+func (d Details) field_13_1_16() (string, bool) {
    d.m = <-d.m.Get(13)
    d.m = <-d.m.Get(1)
    if v, ok := <-d.m.GetBytes(16); ok {
@@ -35,7 +35,7 @@ func (d Details) Field13_1_16() (string, bool) {
    return "", false
 }
 
-func (d Details) Field13_1_4() (string, bool) {
+func (d Details) field_13_1_4() (string, bool) {
    d.m = <-d.m.Get(13)
    d.m = <-d.m.Get(1)
    if v, ok := <-d.m.GetBytes(4); ok {
@@ -44,7 +44,7 @@ func (d Details) Field13_1_4() (string, bool) {
    return "", false
 }
 
-func (d Details) Field13_1_82_1_1() (string, bool) {
+func (d Details) field_13_1_82_1_1() (string, bool) {
    d.m = <-d.m.Get(13)
    d.m = <-d.m.Get(1)
    d.m = <-d.m.Get(82)
@@ -55,14 +55,14 @@ func (d Details) Field13_1_82_1_1() (string, bool) {
    return "", false
 }
 
-func (d Details) Field6() (string, bool) {
+func (d Details) field_6() (string, bool) {
    if v, ok := <-d.m.GetBytes(6); ok {
       return string(v), true
    }
    return "", false
 }
 
-func (d Details) Field8_1() (float64, bool) {
+func (d Details) field_8_1() (float64, bool) {
    d.m = <-d.m.Get(8)
    if v, ok := <-d.m.GetVarint(1); ok {
       return float64(v) / 1_000_000, true
@@ -70,7 +70,7 @@ func (d Details) Field8_1() (float64, bool) {
    return 0, false
 }
 
-func (d Details) Field8_2() (string, bool) {
+func (d Details) field_8_2() (string, bool) {
    d.m = <-d.m.Get(8)
    if v, ok := <-d.m.GetBytes(2); ok {
       return string(v), true
@@ -78,14 +78,14 @@ func (d Details) Field8_2() (string, bool) {
    return "", false
 }
 
-func (d Details) Field5() (string, bool) {
+func (d Details) field_5() (string, bool) {
    if v, ok := <-d.m.GetBytes(5); ok {
       return string(v), true
    }
    return "", false
 }
 
-func (d Details) Field13_1_9() (uint64, bool) {
+func (d Details) field_13_1_9() (uint64, bool) {
    d.m = <-d.m.Get(13)
    d.m = <-d.m.Get(1)
    if v, ok := <-d.m.GetVarint(9); ok {
@@ -94,7 +94,7 @@ func (d Details) Field13_1_9() (uint64, bool) {
    return 0, false
 }
 
-func (d Details) Field13_1_17() chan uint64 {
+func (d Details) field_13_1_17() chan uint64 {
    vs := make(chan uint64)
    d.m = <-d.m.Get(13)
    d.m = <-d.m.Get(1)
@@ -112,11 +112,11 @@ func (d Details) Field13_1_17() chan uint64 {
 func (d Details) String() string {
    var b []byte
    b = append(b, "downloads ="...)
-   if v, ok := d.Field13_1_70(); ok {
+   if v, ok := d.field_13_1_70(); ok {
       b = fmt.Append(b, " ", encoding.Cardinal(v))
    }
    b = append(b, "\nfiles ="...)
-   for file := range d.Field13_1_17() {
+   for file := range d.field_13_1_17() {
       if file >= 1 {
          b = append(b, " OBB"...)
       } else {
@@ -124,38 +124,38 @@ func (d Details) String() string {
       }
    }
    b = append(b, "\nname ="...)
-   if v, ok := d.Field5(); ok {
+   if v, ok := d.field_5(); ok {
       b = fmt.Append(b, " ", v)
    }
    b = append(b, "\noffered by ="...)
-   if v, ok := d.Field6(); ok {
+   if v, ok := d.field_6(); ok {
       b = fmt.Append(b, " ", v)
    }
    b = append(b, "\nprice ="...)
-   if v, ok := d.Field8_1(); ok {
+   if v, ok := d.field_8_1(); ok {
       b = fmt.Append(b, " ", v)
    }
-   if v, ok := d.Field8_2(); ok {
+   if v, ok := d.field_8_2(); ok {
       b = fmt.Append(b, " ", v)
    }
    b = append(b, "\nrequires ="...)
-   if v, ok := d.Field13_1_82_1_1(); ok {
+   if v, ok := d.field_13_1_82_1_1(); ok {
       b = fmt.Append(b, " ", v)
    }
    b = append(b, "\nsize ="...)
-   if v, ok := d.Field13_1_9(); ok {
+   if v, ok := d.field_13_1_9(); ok {
       b = fmt.Appendf(b, " %v (%v)", encoding.Size(v), v)
    }
    b = append(b, "\nupdated on ="...)
-   if v, ok := d.Field13_1_16(); ok {
+   if v, ok := d.field_13_1_16(); ok {
       b = fmt.Append(b, " ", v)
    }
    b = append(b, "\nversion code ="...)
-   if v, ok := d.Field13_1_3(); ok {
+   if v, ok := d.field_13_1_3(); ok {
       b = fmt.Append(b, " ", v)
    }
    b = append(b, "\nversion name ="...)
-   if v, ok := d.Field13_1_4(); ok {
+   if v, ok := d.field_13_1_4(); ok {
       b = fmt.Append(b, " ", v)
    }
    return string(b)

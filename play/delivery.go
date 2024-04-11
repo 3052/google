@@ -81,13 +81,6 @@ func (d Delivery) Field15() chan DeliveryField15 {
    return vs
 }
 
-func (d DeliveryField4) Field1() (uint64, bool) {
-   if v, ok := <-d.m.GetVarint(1); ok {
-      return uint64(v), true
-   }
-   return 0, false
-}
-
 func (d DeliveryField15) Field1() (string, bool) {
    if v, ok := <-d.m.GetBytes(1); ok {
       return string(v), true
@@ -102,19 +95,26 @@ func (d DeliveryField15) Field5() (string, bool) {
    return "", false
 }
 
-func (d DeliveryField4) Field4() (string, bool) {
-   if v, ok := <-d.m.GetBytes(4); ok {
-      return string(v), true
-   }
-   return "", false
-}
-
 type Delivery struct {
    m protobuf.Message
 }
 
 func (d Delivery) Field3() (string, bool) {
    if v, ok := <-d.m.GetBytes(3); ok {
+      return string(v), true
+   }
+   return "", false
+}
+
+func (d DeliveryField4) Field1() (uint64, bool) {
+   if v, ok := <-d.m.GetVarint(1); ok {
+      return uint64(v), true
+   }
+   return 0, false
+}
+
+func (d DeliveryField4) Field4() (string, bool) {
+   if v, ok := <-d.m.GetBytes(4); ok {
       return string(v), true
    }
    return "", false

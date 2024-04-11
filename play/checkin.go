@@ -8,21 +8,9 @@ import (
    "net/http"
 )
 
-func (g *GoogleCheckin) Unmarshal() error {
-   return g.m.Consume(g.Data)
-}
-
 type GoogleCheckin struct {
    Data []byte
    m protobuf.Message
-}
-
-// x-dfe-device-id
-func (g GoogleCheckin) device_id() (uint64, error) {
-   if v, ok := <-g.m.GetFixed64(7); ok {
-      return uint64(v), nil
-   }
-   return 0, errors.New("x-dfe-device-id")
 }
 
 func (g *GoogleCheckin) Checkin(c GoogleDevice) error {
@@ -73,4 +61,16 @@ func (g *GoogleCheckin) Checkin(c GoogleDevice) error {
       return err
    }
    return nil
+}
+
+func (g *GoogleCheckin) Unmarshal() error {
+   return g.m.Consume(g.Data)
+}
+
+// x-dfe-device-id
+func (g GoogleCheckin) device_id() (uint64, error) {
+   if v, ok := <-g.m.GetFixed64(7); ok {
+      return uint64(v), nil
+   }
+   return 0, errors.New("x-dfe-device-id")
 }
