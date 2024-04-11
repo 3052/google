@@ -7,7 +7,7 @@ import (
 )
 
 func TestCheckin(t *testing.T) {
-   for _, platform := range BinaryInterfaces {
+   for _, platform := range ABIs {
       fmt.Println(platform)
       Phone.ABI = platform
       var checkin GoogleCheckin

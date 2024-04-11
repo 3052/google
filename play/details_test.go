@@ -12,9 +12,9 @@ func TestDetails(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   home += "/google-play/"
+   home += "/google-play"
    var token RefreshToken
-   token.Data, err = os.ReadFile(home + "token.txt")
+   token.Data, err = os.ReadFile(home + "/token.txt")
    if err != nil {
       t.Fatal(err)
    }
@@ -26,7 +26,7 @@ func TestDetails(t *testing.T) {
       t.Fatal(err)
    }
    for _, app := range apps {
-      name := fmt.Sprint(home, app.platform, ".bin")
+      name := fmt.Sprint(home, "/", app.platform, ".bin")
       d.Checkin.Data, err = os.ReadFile(name)
       if err != nil {
          t.Fatal(err)

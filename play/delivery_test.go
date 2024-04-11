@@ -32,10 +32,10 @@ func TestDelivery(t *testing.T) {
    if err := checkin.Unmarshal(); err != nil {
       t.Fatal(err)
    }
-   app := AndroidApp{"com.google.android.youtube", 1524221376}
-   var deliver Delivery
-   if err := deliver.Delivery(auth, checkin, app, false); err != nil {
+   app := StoreApp{"com.google.android.youtube", 1524221376}
+   deliver, err := auth.Delivery(checkin, app, false)
+   if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%#v\n", d.m)
+   fmt.Printf("%#v\n", deliver.m)
 }

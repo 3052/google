@@ -5,7 +5,7 @@ import "fmt"
 type app_type struct {
    date     string
    requires int
-   platform BinaryInterface
+   platform ABI
    id      string
 }
 
