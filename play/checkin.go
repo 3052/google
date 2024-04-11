@@ -25,7 +25,7 @@ func (g GoogleCheckin) device_id() (uint64, error) {
    return 0, errors.New("x-dfe-device-id")
 }
 
-func (g *GoogleCheckin) Checkin(c Checkin18) error {
+func (g *GoogleCheckin) Checkin(c GoogleDevice) error {
    var m protobuf.Message
    m.Add(4, func(m *protobuf.Message) {
       m.Add(1, func(m *protobuf.Message) {
@@ -42,15 +42,15 @@ func (g *GoogleCheckin) Checkin(c Checkin18) error {
       m.AddVarint(6, 1)
       m.AddVarint(7, 420)
       m.AddVarint(8, gl_es_version)
-      for _, v := range c.Field9 {
+      for _, v := range c.Library {
          m.AddBytes(9, []byte(v))
       }
-      m.AddBytes(11, []byte(c.Field11))
-      for _, v := range c.Field15 {
+      m.AddBytes(11, []byte(c.ABI))
+      for _, v := range c.Texture {
          m.AddBytes(15, []byte(v))
       }
       // you cannot swap the next two lines:
-      for _, v := range c.Field26 {
+      for _, v := range c.Feature {
          m.Add(26, func(m *protobuf.Message) {
             m.AddBytes(1, []byte(v))
          })

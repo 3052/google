@@ -14,7 +14,7 @@ func (g GoogleAuth) Delivery(
 ) (*Delivery, error) {
    req, err := http.NewRequest("GET", "https://android.clients.google.com", nil)
    if err != nil {
-      return err
+      return nil, err
    }
    req.URL.Path = "/fdfe/delivery"
    req.URL.RawQuery = url.Values{
@@ -24,33 +24,31 @@ func (g GoogleAuth) Delivery(
    g.authorization(req)
    user_agent(req, single)
    if err := checkin.x_dfe_device_id(req); err != nil {
-      return err
+      return nil, err
    }
    res, err := http.DefaultClient.Do(req)
    if err != nil {
-      return err
+      return nil, err
    }
    defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return errors.New(res.Status)
-   }
    data, err := io.ReadAll(res.Body)
    if err != nil {
-      return err
+      return nil, err
    }
+   var d Delivery
    if err := d.m.Consume(data); err != nil {
-      return err
+      return nil, err
    }
    d.m = <-d.m.Get(1)
    d.m = <-d.m.Get(21)
    switch <-d.m.GetVarint(1) {
    case 3:
-      return errors.New("acquire")
+      return nil, errors.New("acquire")
    case 5:
-      return errors.New("version code")
+      return nil, errors.New("version code")
    }
    d.m = <-d.m.Get(2)
-   return nil
+   return &d, nil
 }
 
 func (d Delivery) Field4() chan DeliveryField4 {

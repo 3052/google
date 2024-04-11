@@ -3,46 +3,10 @@ package play
 import (
    "154.pages.dev/encoding"
    "154.pages.dev/protobuf"
-   "errors"
    "fmt"
    "io"
    "net/http"
 )
-
-func (g GoogleAuth) Details(
-   checkin GoogleCheckin, doc string, single bool,
-) (*Details, error) {
-   req, err := http.NewRequest("GET", "https://android.clients.google.com", nil)
-   if err != nil {
-      return err
-   }
-   req.URL.Path = "/fdfe/details"
-   req.URL.RawQuery = "doc=" + doc
-   g.authorization(req)
-   user_agent(req, single)
-   if err := checkin.x_dfe_device_id(req); err != nil {
-      return err
-   }
-   res, err := http.DefaultClient.Do(req)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return errors.New(res.Status)
-   }
-   data, err := io.ReadAll(res.Body)
-   if err != nil {
-      return err
-   }
-   if err := d.m.Consume(data); err != nil {
-      return err
-   }
-   d.m = <-d.m.Get(1)
-   d.m = <-d.m.Get(2)
-   d.m = <-d.m.Get(4)
-   return nil
-}
 
 func (d Details) Field13_1_3() (uint64, bool) {
    d.m = <-d.m.Get(13)
@@ -80,7 +44,7 @@ func (d Details) Field13_1_4() (string, bool) {
    return "", false
 }
 
-func (d Details) Field_13_1_82_1_1() (string, bool) {
+func (d Details) Field13_1_82_1_1() (string, bool) {
    d.m = <-d.m.Get(13)
    d.m = <-d.m.Get(1)
    d.m = <-d.m.Get(82)
@@ -199,4 +163,37 @@ func (d Details) String() string {
 
 type Details struct {
    m protobuf.Message
+}
+
+func (g GoogleAuth) Details(
+   checkin GoogleCheckin, doc string, single bool,
+) (*Details, error) {
+   req, err := http.NewRequest("GET", "https://android.clients.google.com", nil)
+   if err != nil {
+      return nil, err
+   }
+   req.URL.Path = "/fdfe/details"
+   req.URL.RawQuery = "doc=" + doc
+   g.authorization(req)
+   user_agent(req, single)
+   if err := checkin.x_dfe_device_id(req); err != nil {
+      return nil, err
+   }
+   res, err := http.DefaultClient.Do(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   data, err := io.ReadAll(res.Body)
+   if err != nil {
+      return nil, err
+   }
+   var d Details
+   if err := d.m.Consume(data); err != nil {
+      return nil, err
+   }
+   d.m = <-d.m.Get(1)
+   d.m = <-d.m.Get(2)
+   d.m = <-d.m.Get(4)
+   return &d, nil
 }

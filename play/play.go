@@ -57,62 +57,6 @@ func (g GoogleAuth) authorization(req *http.Request) {
    req.Header.Set("authorization", "Bearer " + g.GetAuth())
 }
 
-type Checkin18 struct {
-   Field9 []string
-   Field11 string
-   Field15 []string
-   Field26 []string
-}
-
-var Phone = Checkin18{
-   Field9: []string{
-      // com.amctve.amcfullepisodes
-      "org.apache.http.legacy",
-      // com.binance.dev
-      "android.test.runner",
-   },
-   Field15: []string{
-      // com.instagram.android
-      "GL_OES_compressed_ETC1_RGB8_texture",
-      // com.kakaogames.twodin
-      "GL_KHR_texture_compression_astc_ldr",
-   },
-   Field26: []string{
-      // app.source.getcontact
-      "android.hardware.location.gps",
-      // br.com.rodrigokolb.realdrum
-      "android.software.midi",
-      // com.app.xt
-      "android.hardware.camera.front",
-      // com.cabify.rider
-      "android.hardware.camera.flash",
-      // com.clearchannel.iheartradio.controller
-      "android.hardware.microphone",
-      // com.google.android.apps.walletnfcrel
-      "android.software.device_admin",
-      // com.google.android.youtube
-      "android.hardware.touchscreen",
-      "android.hardware.wifi",
-      // com.madhead.tos.zh
-      "android.hardware.sensor.accelerometer",
-      // com.pinterest
-      "android.hardware.camera",
-      "android.hardware.location",
-      "android.hardware.screen.portrait",
-      // com.sygic.aura
-      "android.hardware.location.network",
-      // com.xiaomi.smarthome
-      "android.hardware.bluetooth",
-      "android.hardware.bluetooth_le",
-      "android.hardware.camera.autofocus",
-      "android.hardware.usb.host",
-      // kr.sira.metal
-      "android.hardware.sensor.compass",
-      // org.thoughtcrime.securesms
-      "android.hardware.telephony",
-   },
-}
-
 const google_play_store = 82941300
 
 // the device actually uses 0x30000, but some apps require a higher version:
@@ -221,4 +165,60 @@ func (s StoreApp) APK(v string) string {
    }
    b = fmt.Append(b, s.Version, ".apk")
    return string(b)
+}
+
+type GoogleDevice struct {
+   ABI string
+   Feature []string
+   Library []string
+   Texture []string
+}
+
+var Phone = GoogleDevice{
+   Library: []string{
+      // com.amctve.amcfullepisodes
+      "org.apache.http.legacy",
+      // com.binance.dev
+      "android.test.runner",
+   },
+   Texture: []string{
+      // com.instagram.android
+      "GL_OES_compressed_ETC1_RGB8_texture",
+      // com.kakaogames.twodin
+      "GL_KHR_texture_compression_astc_ldr",
+   },
+   Feature: []string{
+      // app.source.getcontact
+      "android.hardware.location.gps",
+      // br.com.rodrigokolb.realdrum
+      "android.software.midi",
+      // com.app.xt
+      "android.hardware.camera.front",
+      // com.cabify.rider
+      "android.hardware.camera.flash",
+      // com.clearchannel.iheartradio.controller
+      "android.hardware.microphone",
+      // com.google.android.apps.walletnfcrel
+      "android.software.device_admin",
+      // com.google.android.youtube
+      "android.hardware.touchscreen",
+      "android.hardware.wifi",
+      // com.madhead.tos.zh
+      "android.hardware.sensor.accelerometer",
+      // com.pinterest
+      "android.hardware.camera",
+      "android.hardware.location",
+      "android.hardware.screen.portrait",
+      // com.sygic.aura
+      "android.hardware.location.network",
+      // com.xiaomi.smarthome
+      "android.hardware.bluetooth",
+      "android.hardware.bluetooth_le",
+      "android.hardware.camera.autofocus",
+      "android.hardware.usb.host",
+      // kr.sira.metal
+      "android.hardware.sensor.compass",
+      // org.thoughtcrime.securesms
+      "android.hardware.telephony",
+   },
 }

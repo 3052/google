@@ -26,10 +26,10 @@ type GoogleAuth struct {
    v url.Values
 }
 
-func (a *GoogleAuth) Auth(t GoogleToken) error {
+func (a *GoogleAuth) Auth(token GoogleToken) error {
    res, err := http.PostForm(
       "https://android.googleapis.com/auth", url.Values{
-         "Token":      {t.GetToken()},
+         "Token":      {token.get_token()},
          "app":        {"com.android.vending"},
          "client_sig": {"38918a453d07199354f8b19af05ec6562ced5788"},
          "service":    {"oauth2:https://www.googleapis.com/auth/googleplay"},
@@ -53,7 +53,7 @@ func (a *GoogleAuth) Auth(t GoogleToken) error {
    return nil
 }
 
-func (g GoogleAuth) GetAuth() string {
+func (g GoogleAuth) get_auth() string {
    return g.v.Get("Auth")
 }
 
@@ -86,6 +86,6 @@ func (g *GoogleToken) Auth(oauth_token string) error {
    return nil
 }
 
-func (g GoogleToken) GetToken() string {
+func (g GoogleToken) get_token() string {
    return g.v.Get("Token")
 }
