@@ -51,6 +51,17 @@ func (g GoogleAuth) Delivery(
    return &d, nil
 }
 
+type Delivery struct {
+   m protobuf.Message
+}
+
+func (d Delivery) Field3() (string, bool) {
+   if v, ok := <-d.m.GetBytes(3); ok {
+      return string(v), true
+   }
+   return "", false
+}
+
 func (d Delivery) Field4() chan DeliveryField4 {
    vs := make(chan DeliveryField4)
    go func() {
@@ -60,14 +71,6 @@ func (d Delivery) Field4() chan DeliveryField4 {
       close(vs)
    }()
    return vs
-}
-
-type DeliveryField4 struct {
-   m protobuf.Message
-}
-
-type DeliveryField15 struct {
-   m protobuf.Message
 }
 
 func (d Delivery) Field15() chan DeliveryField15 {
@@ -81,29 +84,8 @@ func (d Delivery) Field15() chan DeliveryField15 {
    return vs
 }
 
-func (d DeliveryField15) Field1() (string, bool) {
-   if v, ok := <-d.m.GetBytes(1); ok {
-      return string(v), true
-   }
-   return "", false
-}
-
-func (d DeliveryField15) Field5() (string, bool) {
-   if v, ok := <-d.m.GetBytes(5); ok {
-      return string(v), true
-   }
-   return "", false
-}
-
-type Delivery struct {
+type DeliveryField4 struct {
    m protobuf.Message
-}
-
-func (d Delivery) Field3() (string, bool) {
-   if v, ok := <-d.m.GetBytes(3); ok {
-      return string(v), true
-   }
-   return "", false
 }
 
 func (d DeliveryField4) Field1() (uint64, bool) {
@@ -115,6 +97,24 @@ func (d DeliveryField4) Field1() (uint64, bool) {
 
 func (d DeliveryField4) Field4() (string, bool) {
    if v, ok := <-d.m.GetBytes(4); ok {
+      return string(v), true
+   }
+   return "", false
+}
+
+type DeliveryField15 struct {
+   m protobuf.Message
+}
+
+func (d DeliveryField15) Field1() (string, bool) {
+   if v, ok := <-d.m.GetBytes(1); ok {
+      return string(v), true
+   }
+   return "", false
+}
+
+func (d DeliveryField15) Field5() (string, bool) {
+   if v, ok := <-d.m.GetBytes(5); ok {
       return string(v), true
    }
    return "", false
