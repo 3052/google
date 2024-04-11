@@ -39,37 +39,28 @@ func TestDetails(t *testing.T) {
       if err != nil {
          t.Fatal(err)
       }
-      if _, ok := detail.field_13_1_70(); !ok {
-         t.Fatal(err)
+      if _, ok := detail.downloads(); !ok {
+         t.Fatal("downloads")
       }
       if _, ok := detail.field_5(); !ok {
-         t.Fatal("Details.Name")
+         t.Fatal("field 5")
       }
       if _, ok := detail.field_6(); !ok {
-         t.Fatal("Details.OfferedBy")
+         t.Fatal("field 6")
       }
       if _, ok := detail.field_8_1(); !ok {
-         t.Fatal("Details.Price")
+         t.Fatal("field 8 1")
       }
       if _, ok := detail.field_8_2(); !ok {
-         t.Fatal("Details.PriceCurrency")
-      }
-      if _, ok := detail.field_13_1_82_1_1(); !ok {
-         t.Fatal("Details.Requires")
-      }
-      if _, ok := detail.field_13_1_9(); !ok {
-         t.Fatal("Details.Size")
-      }
-      if _, ok := detail.field_13_1_3(); !ok {
-         t.Fatal("Details.VersionCode")
+         t.Fatal("field 8 2")
       }
       if _, ok := detail.field_13_1_4(); !ok {
-         t.Fatal("Details.VersionName")
+         t.Fatal("field 13 1 4")
       }
       app.date = func() string {
          u, ok := detail.field_13_1_16()
          if !ok {
-            t.Fatal("Details.UpdatedOn")
+            t.Fatal("field 13 1 16")
          }
          p, err := time.Parse("Jan 2, 2006", u)
          if err != nil {
@@ -78,7 +69,16 @@ func TestDetails(t *testing.T) {
          return p.Format("2006-01-02")
       }()
       if _, ok := <-detail.field_13_1_17(); !ok {
-         t.Fatal("Details.File")
+         t.Fatal("field 13 1 17")
+      }
+      if _, ok := detail.field_13_1_82_1_1(); !ok {
+         t.Fatal("field 13 1 82 1 1")
+      }
+      if _, ok := detail.size(); !ok {
+         t.Fatal("size")
+      }
+      if _, ok := detail.version_code(); !ok {
+         t.Fatal("version code")
       }
       fmt.Printf("%#v,\n", app)
       time.Sleep(99 * time.Millisecond)

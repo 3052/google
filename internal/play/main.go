@@ -37,19 +37,19 @@ func main() {
    if err != nil {
       panic(err)
    }
-   flag.StringVar(&f.app.ID, "a", "", "application ID")
-   flag.BoolVar(&f.acquire, "acquire", false, "acquire application")
+   flag.BoolVar(&f.acquire, "a", false, "acquire")
+   flag.Var(&f.platform, "b", fmt.Sprint(play.ABIs))
    flag.BoolVar(&f.device, "d", false, "checkin and sync device")
+   flag.StringVar(&f.app.ID, "i", "", "ID")
+   flag.TextVar(&f.v.Level, "level", f.v.Level, "level")
    {
       var b strings.Builder
       b.WriteString("oauth_token from ")
       b.WriteString("accounts.google.com/embedded/setup/v2/android")
       flag.StringVar(&f.code, "o", "", b.String())
    }
-   flag.Var(&f.platform, "p", fmt.Sprint(play.ABIs))
    flag.BoolVar(&f.single, "s", false, "single APK")
    flag.Uint64Var(&f.app.Version, "v", 0, "version code")
-   flag.TextVar(&f.v.Level, "level", f.v.Level, "level")
    flag.Parse()
    f.v.Set()
    log.Transport{}.Set()

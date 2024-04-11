@@ -30,23 +30,23 @@ play -d
 get app details:
 
 ~~~
-> play -a com.google.android.youtube
-creator: Google LLC
-file: APK APK APK APK
-installation size: 89.03 megabyte
-downloads: 14.81 billion
-offer: 0 USD
-requires: Android 8.0 and up
-title: YouTube
-upload date: Sep 22, 2023
-version: 18.38.37
-version code: 1540222400
+> play -i com.google.android.youtube
+details[5] = YouTube
+details[6] = Google LLC
+details[8] = 0 USD
+details[13][1][4] = 19.13.36
+details[13][1][16] = Apr 3, 2024
+details[13][1][17] = APK APK APK APK
+details[13][1][82][1][1] = 8.0 and up
+downloads = 16.09 billion
+size = 112.04 megabyte
+version code = 1545332160
 ~~~
 
 acquire app. only needs to be done once per Google account:
 
 ~~~
-play -a com.google.android.youtube -acquire
+play -i com.google.android.youtube -a
 ~~~
 
 download APK. you need to specify any valid version code. the latest code is
@@ -54,7 +54,7 @@ provided by the previous details command. if APK is split, all pieces will be
 downloaded:
 
 ~~~
-play -a com.google.android.youtube -v 1540222400
+play -i com.google.android.youtube -v 1540222400
 ~~~
 
 ## goals
