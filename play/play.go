@@ -148,18 +148,6 @@ type GoogleDevice struct {
 }
 
 var Phone = GoogleDevice{
-   Library: []string{
-      // com.amctve.amcfullepisodes
-      "org.apache.http.legacy",
-      // com.binance.dev
-      "android.test.runner",
-   },
-   Texture: []string{
-      // com.instagram.android
-      "GL_OES_compressed_ETC1_RGB8_texture",
-      // com.kakaogames.twodin
-      "GL_KHR_texture_compression_astc_ldr",
-   },
    Feature: []string{
       // app.source.getcontact
       "android.hardware.location.gps",
@@ -193,6 +181,18 @@ var Phone = GoogleDevice{
       "android.hardware.sensor.compass",
       // org.thoughtcrime.securesms
       "android.hardware.telephony",
+   },
+   Library: []string{
+      // com.amctve.amcfullepisodes
+      "org.apache.http.legacy",
+      // com.binance.dev
+      "android.test.runner",
+   },
+   Texture: []string{
+      // com.instagram.android
+      "GL_OES_compressed_ETC1_RGB8_texture",
+      // com.kakaogames.twodin
+      "GL_KHR_texture_compression_astc_ldr",
    },
 }
 

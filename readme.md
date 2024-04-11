@@ -31,7 +31,6 @@ get app details:
 
 ~~~
 > play -i com.google.android.youtube
-details[5] = YouTube
 details[6] = Google LLC
 details[8] = 0 USD
 details[13][1][4] = 19.13.36
@@ -39,6 +38,7 @@ details[13][1][16] = Apr 3, 2024
 details[13][1][17] = APK APK APK APK
 details[13][1][82][1][1] = 8.0 and up
 downloads = 16.09 billion
+name = YouTube
 size = 112.04 megabyte
 version code = 1545332160
 ~~~

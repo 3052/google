@@ -39,11 +39,11 @@ func TestDetails(t *testing.T) {
       if err != nil {
          t.Fatal(err)
       }
-      if _, ok := detail.downloads(); !ok {
+      if _, ok := detail.Downloads(); !ok {
          t.Fatal("downloads")
       }
-      if _, ok := detail.field_5(); !ok {
-         t.Fatal("field 5")
+      if _, ok := detail.Name(); !ok {
+         t.Fatal("name")
       }
       if _, ok := detail.field_6(); !ok {
          t.Fatal("field 6")

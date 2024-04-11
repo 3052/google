@@ -12,74 +12,6 @@ type Details struct {
    m protobuf.Message
 }
 
-func (d Details) String() string {
-   var b []byte
-   b = append(b, "details[5] ="...)
-   if v, ok := d.field_5(); ok {
-      b = fmt.Append(b, " ", v)
-   }
-   b = append(b, "\ndetails[6] ="...)
-   if v, ok := d.field_6(); ok {
-      b = fmt.Append(b, " ", v)
-   }
-   b = append(b, "\ndetails[8] ="...)
-   if v, ok := d.field_8_1(); ok {
-      b = fmt.Append(b, " ", v)
-   }
-   if v, ok := d.field_8_2(); ok {
-      b = fmt.Append(b, " ", v)
-   }
-   b = append(b, "\ndetails[13][1][4] ="...)
-   if v, ok := d.field_13_1_4(); ok {
-      b = fmt.Append(b, " ", v)
-   }
-   b = append(b, "\ndetails[13][1][16] ="...)
-   if v, ok := d.field_13_1_16(); ok {
-      b = fmt.Append(b, " ", v)
-   }
-   b = append(b, "\ndetails[13][1][17] ="...)
-   for file := range d.field_13_1_17() {
-      if file >= 1 {
-         b = append(b, " OBB"...)
-      } else {
-         b = append(b, " APK"...)
-      }
-   }
-   b = append(b, "\ndetails[13][1][82][1][1] ="...)
-   if v, ok := d.field_13_1_82_1_1(); ok {
-      b = fmt.Append(b, " ", v)
-   }
-   b = append(b, "\ndownloads ="...)
-   if v, ok := d.downloads(); ok {
-      b = fmt.Append(b, " ", encoding.Cardinal(v))
-   }
-   b = append(b, "\nsize ="...)
-   if v, ok := d.size(); ok {
-      b = fmt.Append(b, " ", encoding.Size(v))
-   }
-   b = append(b, "\nversion code ="...)
-   if v, ok := d.version_code(); ok {
-      b = fmt.Append(b, " ", v)
-   }
-   return string(b)
-}
-
-func (d Details) downloads() (uint64, bool) {
-   d.m = <-d.m.Get(13)
-   d.m = <-d.m.Get(1)
-   if v, ok := <-d.m.GetVarint(70); ok {
-      return uint64(v), true
-   }
-   return 0, false
-}
-
-func (d Details) field_5() (string, bool) {
-   if v, ok := <-d.m.GetBytes(5); ok {
-      return string(v), true
-   }
-   return "", false
-}
-
 func (d Details) field_6() (string, bool) {
    if v, ok := <-d.m.GetBytes(6); ok {
       return string(v), true
@@ -196,4 +128,72 @@ func (g GoogleCheckin) Details(
    d.m = <-d.m.Get(2)
    d.m = <-d.m.Get(4)
    return &d, nil
+}
+
+func (d Details) Name() (string, bool) {
+   if v, ok := <-d.m.GetBytes(5); ok {
+      return string(v), true
+   }
+   return "", false
+}
+
+func (d Details) Downloads() (uint64, bool) {
+   d.m = <-d.m.Get(13)
+   d.m = <-d.m.Get(1)
+   if v, ok := <-d.m.GetVarint(70); ok {
+      return uint64(v), true
+   }
+   return 0, false
+}
+
+func (d Details) String() string {
+   var b []byte
+   b = append(b, "details[6] ="...)
+   if v, ok := d.field_6(); ok {
+      b = fmt.Append(b, " ", v)
+   }
+   b = append(b, "\ndetails[8] ="...)
+   if v, ok := d.field_8_1(); ok {
+      b = fmt.Append(b, " ", v)
+   }
+   if v, ok := d.field_8_2(); ok {
+      b = fmt.Append(b, " ", v)
+   }
+   b = append(b, "\ndetails[13][1][4] ="...)
+   if v, ok := d.field_13_1_4(); ok {
+      b = fmt.Append(b, " ", v)
+   }
+   b = append(b, "\ndetails[13][1][16] ="...)
+   if v, ok := d.field_13_1_16(); ok {
+      b = fmt.Append(b, " ", v)
+   }
+   b = append(b, "\ndetails[13][1][17] ="...)
+   for file := range d.field_13_1_17() {
+      if file >= 1 {
+         b = append(b, " OBB"...)
+      } else {
+         b = append(b, " APK"...)
+      }
+   }
+   b = append(b, "\ndetails[13][1][82][1][1] ="...)
+   if v, ok := d.field_13_1_82_1_1(); ok {
+      b = fmt.Append(b, " ", v)
+   }
+   b = append(b, "\ndownloads ="...)
+   if v, ok := d.Downloads(); ok {
+      b = fmt.Append(b, " ", encoding.Cardinal(v))
+   }
+   b = append(b, "\nname ="...)
+   if v, ok := d.Name(); ok {
+      b = fmt.Append(b, " ", v)
+   }
+   b = append(b, "\nsize ="...)
+   if v, ok := d.size(); ok {
+      b = fmt.Append(b, " ", encoding.Size(v))
+   }
+   b = append(b, "\nversion code ="...)
+   if v, ok := d.version_code(); ok {
+      b = fmt.Append(b, " ", v)
+   }
+   return string(b)
 }

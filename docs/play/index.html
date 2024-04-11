@@ -14,7 +14,7 @@
   <body>
     <nav>
         <a href="..">154.pages.dev/google</a>/play<span class="navbar-right">
-          v1.4.3 | <a href="..">Root</a> | <a href="#pkg-index">Index</a></span>
+          v1.4.4 | <a href="..">Root</a> | <a href="#pkg-index">Index</a></span>
       </nav>
     <main><h2 id="pkg-overview">package play</h2>
 <pre class="chroma"><span class="kn">import</span> <span class="s">&#34;154.pages.dev/google/play&#34;</span></pre>
@@ -45,6 +45,8 @@
   <li>
       <a href="#Details">type Details</a>
       <ul>
+          <li><a href="#Details.Downloads">func (d Details) Downloads() (uint64, bool)</a></li>
+          <li><a href="#Details.Name">func (d Details) Name() (string, bool)</a></li>
           <li><a href="#Details.String">func (d Details) String() string</a></li>
           </ul>
       </li>
@@ -99,18 +101,6 @@
 	<span class="mi">2</span><span class="p">:</span> <span class="s">&#34;arm64-v8a&#34;</span><span class="p">,</span>
 <span class="p">}</span></pre>
   <pre class="chroma"><span class="kd">var</span> <span id="Phone"><span class="nx">Phone</span></span> <span class="p">=</span> <a href="#GoogleDevice"><span class="nx">GoogleDevice</span></a><span class="p">{</span>
-	<span class="nx">Library</span><span class="p">:</span> <span class="p">[]</span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">{</span>
-
-		<span class="s">&#34;org.apache.http.legacy&#34;</span><span class="p">,</span>
-
-		<span class="s">&#34;android.test.runner&#34;</span><span class="p">,</span>
-	<span class="p">},</span>
-	<span class="nx">Texture</span><span class="p">:</span> <span class="p">[]</span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">{</span>
-
-		<span class="s">&#34;GL_OES_compressed_ETC1_RGB8_texture&#34;</span><span class="p">,</span>
-
-		<span class="s">&#34;GL_KHR_texture_compression_astc_ldr&#34;</span><span class="p">,</span>
-	<span class="p">},</span>
 	<span class="nx">Feature</span><span class="p">:</span> <span class="p">[]</span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">{</span>
 
 		<span class="s">&#34;android.hardware.location.gps&#34;</span><span class="p">,</span>
@@ -145,6 +135,18 @@
 
 		<span class="s">&#34;android.hardware.telephony&#34;</span><span class="p">,</span>
 	<span class="p">},</span>
+	<span class="nx">Library</span><span class="p">:</span> <span class="p">[]</span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">{</span>
+
+		<span class="s">&#34;org.apache.http.legacy&#34;</span><span class="p">,</span>
+
+		<span class="s">&#34;android.test.runner&#34;</span><span class="p">,</span>
+	<span class="p">},</span>
+	<span class="nx">Texture</span><span class="p">:</span> <span class="p">[]</span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">{</span>
+
+		<span class="s">&#34;GL_OES_compressed_ETC1_RGB8_texture&#34;</span><span class="p">,</span>
+
+		<span class="s">&#34;GL_KHR_texture_compression_astc_ldr&#34;</span><span class="p">,</span>
+	<span class="p">},</span>
 <span class="p">}</span></pre>
   <h3 id="pkg-types">Types</h3>
   <h3 id="ABI">type ABI</h3>
@@ -176,7 +178,11 @@
     <pre class="chroma"><span class="kd">type</span> <span class="nx">Details</span> <span class="kd">struct</span> <span class="p">{</span>
 	<span class="c1">// contains filtered or unexported fields
 </span><span class="c1"></span><span class="p">}</span></pre>
-    <h4 id="Details.String">func (Details) String</h4>
+    <h4 id="Details.Downloads">func (Details) Downloads</h4>
+  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">Downloads</span><span class="p">()</span> <span class="p">(</span><a href="https://pkg.go.dev/builtin#uint64"><span class="kt">uint64</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
+  <h4 id="Details.Name">func (Details) Name</h4>
+  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">Name</span><span class="p">()</span> <span class="p">(</span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
+  <h4 id="Details.String">func (Details) String</h4>
   <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">String</span><span class="p">()</span> <a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a></pre>
   <h3 id="GoogleAuth">type GoogleAuth</h3>
     <pre class="chroma"><span class="kd">type</span> <span class="nx">GoogleAuth</span> <span class="kd">struct</span> <span class="p">{</span>
