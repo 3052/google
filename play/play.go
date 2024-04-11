@@ -196,32 +196,29 @@ var ABIs = map[int]string{
    2: "arm64-v8a",
 }
 
-///////////////////////////////
-
-type AndroidApp struct {
+// play.google.com/store/apps/details?id=com.google.android.apps.youtube.unplugged
+type StoreApp struct {
    ID string
    Version uint64
 }
 
-// developer.android.com/google/play/expansion-files
-func (a AndroidApp) OBB(role uint64) string {
+func (s StoreApp) OBB(v uint64) string {
    var b []byte
-   if role >= 1 {
+   if v >= 1 {
       b = append(b, "patch"...)
    } else {
       b = append(b, "main"...)
    }
-   b = fmt.Append(b, ".", a.Version, ".", a.ID, ".obb")
+   b = fmt.Append(b, ".", s.Version, ".", s.ID, ".obb")
    return string(b)
 }
 
-// developer.android.com/guide/app-bundle/app-bundle-format
-func (a AndroidApp) APK(configuration string) string {
+func (s StoreApp) APK(v string) string {
    var b []byte
-   b = fmt.Append(b, a.ID, "-")
-   if configuration != "" {
-      b = fmt.Append(b, configuration, "-")
+   b = fmt.Append(b, s.ID, "-")
+   if v != "" {
+      b = fmt.Append(b, v, "-")
    }
-   b = fmt.Append(b, a.Version, ".apk")
+   b = fmt.Append(b, s.Version, ".apk")
    return string(b)
 }

@@ -9,9 +9,9 @@ import (
    "strconv"
 )
 
-func (d *Delivery) Delivery(
-   auth GoogleAuth, checkin GoogleCheckin, app AndroidApp, single bool,
-) error {
+func (g GoogleAuth) Delivery(
+   checkin GoogleCheckin, app StoreApp, single bool,
+) (*Delivery, error) {
    req, err := http.NewRequest("GET", "https://android.clients.google.com", nil)
    if err != nil {
       return err
@@ -21,7 +21,7 @@ func (d *Delivery) Delivery(
       "doc": {app.ID},
       "vc":  {strconv.FormatUint(app.Version, 10)},
    }.Encode()
-   auth.authorization(req)
+   g.authorization(req)
    user_agent(req, single)
    if err := checkin.x_dfe_device_id(req); err != nil {
       return err
@@ -53,77 +53,71 @@ func (d *Delivery) Delivery(
    return nil
 }
 
-// developer.android.com/google/play/expansion-files
-func (d Delivery) Expansion() chan Expansion {
-   files := make(chan Expansion)
+func (d Delivery) Field4() chan DeliveryField4 {
+   vs := make(chan DeliveryField4)
    go func() {
-      for file := range d.m.Get(4) {
-         files <- Expansion{file}
+      for v := range d.m.Get(4) {
+         vs <- DeliveryField4{v}
       }
-      close(files)
+      close(vs)
    }()
-   return files
+   return vs
 }
 
-// developer.android.com/guide/app-bundle/app-bundle-format
-func (d Delivery) Configuration() chan Configuration {
-   apks := make(chan Configuration)
-   go func() {
-      for apk := range d.m.Get(15) {
-         apks <- Configuration{apk}
-      }
-      close(apks)
-   }()
-   return apks
-}
-
-// developer.android.com/guide/app-bundle
-type Configuration struct {
+type DeliveryField4 struct {
    m protobuf.Message
 }
 
-// developer.android.com/google/play/expansion-files
-type Expansion struct {
+type DeliveryField15 struct {
    m protobuf.Message
 }
 
-// developer.android.com/google/play/expansion-files
-func (e Expansion) Role() (uint64, bool) {
-   if v, ok := <-e.m.GetVarint(1); ok {
+func (d Delivery) Field15() chan DeliveryField15 {
+   vs := make(chan DeliveryField15)
+   go func() {
+      for v := range d.m.Get(15) {
+         vs <- DeliveryField15{v}
+      }
+      close(vs)
+   }()
+   return vs
+}
+
+func (d DeliveryField4) Field1() (uint64, bool) {
+   if v, ok := <-d.m.GetVarint(1); ok {
       return uint64(v), true
    }
    return 0, false
 }
 
-// developer.android.com/guide/app-bundle
-func (c Configuration) Configuration() (string, bool) {
-   if v, ok := <-c.m.GetBytes(1); ok {
+func (d DeliveryField15) Field1() (string, bool) {
+   if v, ok := <-d.m.GetBytes(1); ok {
       return string(v), true
    }
    return "", false
 }
 
-func (c Configuration) URL() (string, bool) {
-   if v, ok := <-c.m.GetBytes(5); ok {
+func (d DeliveryField15) Field5() (string, bool) {
+   if v, ok := <-d.m.GetBytes(5); ok {
       return string(v), true
    }
    return "", false
 }
 
-func (e Expansion) URL() (string, bool) {
-   if v, ok := <-e.m.GetBytes(4); ok {
+func (d DeliveryField4) Field4() (string, bool) {
+   if v, ok := <-d.m.GetBytes(4); ok {
       return string(v), true
    }
    return "", false
 }
 
-func (d Delivery) URL() (string, bool) {
+type Delivery struct {
+   m protobuf.Message
+}
+
+func (d Delivery) Field3() (string, bool) {
    if v, ok := <-d.m.GetBytes(3); ok {
       return string(v), true
    }
    return "", false
 }
-type Delivery struct {
-   m protobuf.Message
-}
-
