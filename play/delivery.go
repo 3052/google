@@ -96,7 +96,7 @@ func (g GoogleCheckin) Delivery(
    case 3:
       return nil, errors.New("acquire")
    case 5:
-      return nil, errors.New("version code")
+      return nil, errors.New("version")
    }
    d.m = <-d.m.Get(2)
    return &d, nil

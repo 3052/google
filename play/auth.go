@@ -8,15 +8,6 @@ import (
    "strings"
 )
 
-func parse_query(query string) (url.Values, error) {
-   query = strings.ReplaceAll(query, "\n", "&")
-   return url.ParseQuery(query)
-}
-
-type GoogleAuth struct {
-   v url.Values
-}
-
 func (g *GoogleAuth) Auth(token GoogleToken) error {
    res, err := http.PostForm(
       "https://android.googleapis.com/auth", url.Values{
@@ -31,7 +22,9 @@ func (g *GoogleAuth) Auth(token GoogleToken) error {
    }
    defer res.Body.Close()
    if res.StatusCode != http.StatusOK {
-      return errors.New(res.Status)
+      var b strings.Builder
+      res.Write(&b)
+      return errors.New(b.String())
    }
    text, err := io.ReadAll(res.Body)
    if err != nil {
@@ -42,6 +35,15 @@ func (g *GoogleAuth) Auth(token GoogleToken) error {
       return err
    }
    return nil
+}
+
+func parse_query(query string) (url.Values, error) {
+   query = strings.ReplaceAll(query, "\n", "&")
+   return url.ParseQuery(query)
+}
+
+type GoogleAuth struct {
+   v url.Values
 }
 
 func (g GoogleAuth) get_auth() string {
