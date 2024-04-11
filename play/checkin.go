@@ -17,6 +17,14 @@ type GoogleCheckin struct {
    m protobuf.Message
 }
 
+// x-dfe-device-id
+func (g GoogleCheckin) device_id() (uint64, error) {
+   if v, ok := <-g.m.GetFixed64(7); ok {
+      return uint64(v), nil
+   }
+   return 0, errors.New("x-dfe-device-id")
+}
+
 func (g *GoogleCheckin) Checkin(a AndroidDevice) error {
    var m protobuf.Message
    m.Add(4, func(m *protobuf.Message) {
@@ -65,11 +73,4 @@ func (g *GoogleCheckin) Checkin(a AndroidDevice) error {
       return err
    }
    return nil
-}
-
-func (g GoogleCheckin) DeviceId() (uint64, error) {
-   if v, ok := <-g.m.GetFixed64(7); ok {
-      return uint64(v), nil
-   }
-   return 0, errors.New("DeviceId")
 }

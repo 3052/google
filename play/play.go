@@ -10,23 +10,6 @@ import (
    "time"
 )
 
-// play.google.com/store/apps
-type AndroidApp struct {
-   ID string
-   Version uint64
-}
-
-const android_api = 31
-
-// developer.android.com/guide/topics/manifest/uses-feature-element#glEsVersion
-// the device actually uses 0x30000, but some apps require a higher version:
-// com.axis.drawingdesk.v3
-// so lets lie for now
-const gl_es_version = 0x30001
-
-const google_play_store = 82941300
-
-// developer.android.com/build/configure-apk-splits
 func user_agent(req *http.Request, single bool) {
    var b []byte
    // `sdk` is needed for `/fdfe/delivery`
@@ -70,121 +53,31 @@ func encode_base64(p []byte) ([]byte, error) {
    return b.Bytes(), nil
 }
 
-func (g GoogleCheckin) x_dfe_device_id(req *http.Request) error {
-   id, err := g.DeviceId()
-   if err != nil {
-      return err
-   }
-   req.Header.Set("x-dfe-device-id", fmt.Sprintf("%x", id))
-   return nil
-}
-
 func (g GoogleAuth) authorization(req *http.Request) {
    req.Header.Set("authorization", "Bearer " + g.GetAuth())
 }
 
-func (g GoogleCheckin) x_ps_rh(req *http.Request) error {
-   id, err := g.DeviceId()
-   if err != nil {
-      return err
-   }
-   token, err := func() ([]byte, error) {
-      var m protobuf.Message
-      m.Add(3, func(m *protobuf.Message) {
-         m.AddBytes(1, fmt.Append(nil, id))
-         m.Add(2, func(m *protobuf.Message) {
-            v := time.Now().UnixMicro()
-            m.AddBytes(1, fmt.Append(nil, v))
-         })
-      })
-      b, err := compress_gzip(m.Encode())
-      if err != nil {
-         return nil, err
-      }
-      return encode_base64(b)
-   }()
-   if err != nil {
-      return err
-   }
-   ps_rh, err := func() ([]byte, error) {
-      var m protobuf.Message
-      m.Add(1, func(m *protobuf.Message) {
-         m.AddBytes(1, token)
-      })
-      b, err := compress_gzip(m.Encode())
-      if err != nil {
-         return nil, err
-      }
-      return encode_base64(b)
-   }()
-   if err != nil {
-      return err
-   }
-   req.Header.Set("x-ps-rh", string(ps_rh))
-   return nil
+type Checkin18 struct {
+   Field9 []string
+   Field11 string
+   Field15 []string
+   Field26 []string
 }
 
-// developer.android.com/ndk/guides/abis
-type BinaryInterface int
-
-func (b *BinaryInterface) Set(s string) error {
-   _, err := fmt.Sscan(s, b)
-   if err != nil {
-      return err
-   }
-   return nil
-}
-
-func (b BinaryInterface) String() string {
-   return BinaryInterfaces[int(b)]
-}
-
-var BinaryInterfaces = map[int]string{
-   // com.google.android.youtube
-   0: "x86",
-   // com.sygic.aura
-   1: "armeabi-v7a",
-   // com.kakaogames.twodin
-   2: "arm64-v8a",
-}
-
-// developer.android.com/google/play/expansion-files
-func (a AndroidApp) OBB(role uint64) string {
-   var b []byte
-   if role >= 1 {
-      b = append(b, "patch"...)
-   } else {
-      b = append(b, "main"...)
-   }
-   b = fmt.Append(b, ".", a.Version, ".", a.ID, ".obb")
-   return string(b)
-}
-
-// developer.android.com/guide/app-bundle/app-bundle-format
-func (a AndroidApp) APK(configuration string) string {
-   var b []byte
-   b = fmt.Append(b, a.ID, "-")
-   if configuration != "" {
-      b = fmt.Append(b, configuration, "-")
-   }
-   b = fmt.Append(b, a.Version, ".apk")
-   return string(b)
-}
-
-// developer.android.com/ndk/guides/abis
-type AndroidDevice struct {
-   // developer.android.com/ndk/guides/abis
-   ABI string
-   // developer.android.com/guide/topics/manifest/uses-feature-element
-   Feature []string
-   // developer.android.com/guide/topics/manifest/uses-library-element
-   Library []string
-   // developer.android.com/guide/topics/manifest/supports-gl-texture-element
-   Texture []string
-}
-
-var Phone = AndroidDevice{
-   Feature: []string{
+var Phone = Checkin18{
+   Field9: []string{
+      // com.amctve.amcfullepisodes
+      "org.apache.http.legacy",
+      // com.binance.dev
+      "android.test.runner",
+   },
+   Field15: []string{
+      // com.instagram.android
+      "GL_OES_compressed_ETC1_RGB8_texture",
+      // com.kakaogames.twodin
+      "GL_KHR_texture_compression_astc_ldr",
+   },
+   Field26: []string{
       // app.source.getcontact
       "android.hardware.location.gps",
       // br.com.rodrigokolb.realdrum
@@ -218,16 +111,117 @@ var Phone = AndroidDevice{
       // org.thoughtcrime.securesms
       "android.hardware.telephony",
    },
-   Library: []string{
-      // com.amctve.amcfullepisodes
-      "org.apache.http.legacy",
-      // com.binance.dev
-      "android.test.runner",
-   },
-   Texture: []string{
-      // com.instagram.android
-      "GL_OES_compressed_ETC1_RGB8_texture",
-      // com.kakaogames.twodin
-      "GL_KHR_texture_compression_astc_ldr",
-   },
+}
+
+const google_play_store = 82941300
+
+// the device actually uses 0x30000, but some apps require a higher version:
+// com.axis.drawingdesk.v3
+// so lets lie for now
+const gl_es_version = 0x30001
+
+const android_api = 31
+
+func (g GoogleCheckin) x_dfe_device_id(req *http.Request) error {
+   id, err := g.device_id()
+   if err != nil {
+      return err
+   }
+   req.Header.Set("x-dfe-device-id", fmt.Sprintf("%x", id))
+   return nil
+}
+
+func (g GoogleCheckin) x_ps_rh(req *http.Request) error {
+   id, err := g.device_id()
+   if err != nil {
+      return err
+   }
+   field1, err := func() ([]byte, error) {
+      var m protobuf.Message
+      m.Add(3, func(m *protobuf.Message) {
+         m.AddBytes(1, fmt.Append(nil, id))
+         m.Add(2, func(m *protobuf.Message) {
+            v := time.Now().UnixMicro()
+            m.AddBytes(1, fmt.Append(nil, v))
+         })
+      })
+      b, err := compress_gzip(m.Encode())
+      if err != nil {
+         return nil, err
+      }
+      return encode_base64(b)
+   }()
+   if err != nil {
+      return err
+   }
+   ps_rh, err := func() ([]byte, error) {
+      var m protobuf.Message
+      m.Add(1, func(m *protobuf.Message) {
+         m.AddBytes(1, field1)
+      })
+      b, err := compress_gzip(m.Encode())
+      if err != nil {
+         return nil, err
+      }
+      return encode_base64(b)
+   }()
+   if err != nil {
+      return err
+   }
+   req.Header.Set("x-ps-rh", string(ps_rh))
+   return nil
+}
+
+// developer.android.com/ndk/guides/abis
+type ABI int
+
+func (a *ABI) Set(s string) error {
+   _, err := fmt.Sscan(s, a)
+   if err != nil {
+      return err
+   }
+   return nil
+}
+
+func (a ABI) String() string {
+   return ABIs[int(a)]
+}
+
+var ABIs = map[int]string{
+   // com.google.android.youtube
+   0: "x86",
+   // com.sygic.aura
+   1: "armeabi-v7a",
+   // com.kakaogames.twodin
+   2: "arm64-v8a",
+}
+
+///////////////////////////////
+
+type AndroidApp struct {
+   ID string
+   Version uint64
+}
+
+// developer.android.com/google/play/expansion-files
+func (a AndroidApp) OBB(role uint64) string {
+   var b []byte
+   if role >= 1 {
+      b = append(b, "patch"...)
+   } else {
+      b = append(b, "main"...)
+   }
+   b = fmt.Append(b, ".", a.Version, ".", a.ID, ".obb")
+   return string(b)
+}
+
+// developer.android.com/guide/app-bundle/app-bundle-format
+func (a AndroidApp) APK(configuration string) string {
+   var b []byte
+   b = fmt.Append(b, a.ID, "-")
+   if configuration != "" {
+      b = fmt.Append(b, configuration, "-")
+   }
+   b = fmt.Append(b, a.Version, ".apk")
+   return string(b)
 }
