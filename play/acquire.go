@@ -8,7 +8,6 @@ import (
    "net/http"
 )
 
-// play.google.com/store/apps/details?id=com.google.android.youtube
 func (g GoogleAuth) Acquire(checkin GoogleCheckin, id string) error {
    var m protobuf.Message
    m.Add(1, func(m *protobuf.Message) {
