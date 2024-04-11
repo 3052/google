@@ -13,7 +13,7 @@ func TestDetails(t *testing.T) {
       t.Fatal(err)
    }
    home += "/google-play"
-   var token RefreshToken
+   var token GoogleToken
    token.Data, err = os.ReadFile(home + "/token.txt")
    if err != nil {
       t.Fatal(err)
@@ -21,51 +21,53 @@ func TestDetails(t *testing.T) {
    if err := token.Unmarshal(); err != nil {
       t.Fatal(err)
    }
-   var d Details
-   if err := d.Token.Refresh(token); err != nil {
+   var auth GoogleAuth
+   if err := auth.Auth(token); err != nil {
       t.Fatal(err)
    }
    for _, app := range apps {
       name := fmt.Sprint(home, "/", app.platform, ".bin")
-      d.Checkin.Data, err = os.ReadFile(name)
+      var checkin GoogleCheckin
+      checkin.Data, err = os.ReadFile(name)
       if err != nil {
          t.Fatal(err)
       }
-      if err := d.Checkin.Unmarshal(); err != nil {
+      if err := checkin.Unmarshal(); err != nil {
          t.Fatal(err)
       }
-      if err := d.Details(app.id, false); err != nil {
+      detail, err := checkin.Details(auth, app.id, false)
+      if err != nil {
          t.Fatal(err)
       }
-      if _, ok := d.Downloads(); !ok {
+      if _, ok := detail.field_13_1_70(); !ok {
          t.Fatal(err)
       }
-      if _, ok := d.Name(); !ok {
+      if _, ok := detail.field_5(); !ok {
          t.Fatal("Details.Name")
       }
-      if _, ok := d.OfferedBy(); !ok {
+      if _, ok := detail.field_6(); !ok {
          t.Fatal("Details.OfferedBy")
       }
-      if _, ok := d.Price(); !ok {
+      if _, ok := detail.field_8_1(); !ok {
          t.Fatal("Details.Price")
       }
-      if _, ok := d.PriceCurrency(); !ok {
+      if _, ok := detail.field_8_2(); !ok {
          t.Fatal("Details.PriceCurrency")
       }
-      if _, ok := d.Requires(); !ok {
+      if _, ok := detail.field_13_1_82_1_1(); !ok {
          t.Fatal("Details.Requires")
       }
-      if _, ok := d.Size(); !ok {
+      if _, ok := detail.field_13_1_9(); !ok {
          t.Fatal("Details.Size")
       }
-      if _, ok := d.VersionCode(); !ok {
+      if _, ok := detail.field_13_1_3(); !ok {
          t.Fatal("Details.VersionCode")
       }
-      if _, ok := d.VersionName(); !ok {
+      if _, ok := detail.field_13_1_4(); !ok {
          t.Fatal("Details.VersionName")
       }
       app.date = func() string {
-         u, ok := d.UpdatedOn()
+         u, ok := detail.field_13_1_16()
          if !ok {
             t.Fatal("Details.UpdatedOn")
          }
@@ -75,7 +77,7 @@ func TestDetails(t *testing.T) {
          }
          return p.Format("2006-01-02")
       }()
-      if _, ok := <-d.File(); !ok {
+      if _, ok := <-detail.field_13_1_17(); !ok {
          t.Fatal("Details.File")
       }
       fmt.Printf("%#v,\n", app)

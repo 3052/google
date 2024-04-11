@@ -8,8 +8,8 @@ import (
    "net/http"
 )
 
-func (g GoogleAuth) Details(
-   checkin GoogleCheckin, doc string, single bool,
+func (g GoogleCheckin) Details(
+   auth GoogleAuth, doc string, single bool,
 ) (*Details, error) {
    req, err := http.NewRequest("GET", "https://android.clients.google.com", nil)
    if err != nil {
@@ -17,9 +17,9 @@ func (g GoogleAuth) Details(
    }
    req.URL.Path = "/fdfe/details"
    req.URL.RawQuery = "doc=" + doc
-   g.authorization(req)
+   auth.authorization(req)
    user_agent(req, single)
-   if err := checkin.x_dfe_device_id(req); err != nil {
+   if err := g.x_dfe_device_id(req); err != nil {
       return nil, err
    }
    res, err := http.DefaultClient.Do(req)

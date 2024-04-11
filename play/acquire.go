@@ -8,11 +8,11 @@ import (
    "net/http"
 )
 
-func (g GoogleAuth) Acquire(checkin GoogleCheckin, s string) error {
+func (g GoogleCheckin) Acquire(auth GoogleAuth, doc string) error {
    var m protobuf.Message
    m.Add(1, func(m *protobuf.Message) {
       m.Add(1, func(m *protobuf.Message) {
-         m.AddBytes(1, []byte(s))
+         m.AddBytes(1, []byte(doc))
          m.AddVarint(2, 1)
          m.AddVarint(3, 3)
       })
@@ -26,15 +26,15 @@ func (g GoogleAuth) Acquire(checkin GoogleCheckin, s string) error {
    if err != nil {
       return err
    }
-   g.authorization(req)
-   if err := checkin.x_dfe_device_id(req); err != nil {
+   auth.authorization(req)
+   if err := g.x_dfe_device_id(req); err != nil {
       return err
    }
    // with a new device, this needs to be included in the first request to
    // /fdfe/acquire, or you get:
    // Please open my apps to establish a connection with the server.
    // on following requests you can omit it
-   if err := checkin.x_ps_rh(req); err != nil {
+   if err := g.x_ps_rh(req); err != nil {
       return err
    }
    res, err := http.DefaultClient.Do(req)

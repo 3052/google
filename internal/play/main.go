@@ -12,11 +12,11 @@ import (
 
 type flags struct {
    acquire bool
-   app play.AndroidApp
+   app play.StoreApp
    code string
    device bool
    home string
-   platform play.BinaryInterface
+   platform play.ABI
    single bool
    v log.Level
 }
@@ -46,7 +46,7 @@ func main() {
       b.WriteString("accounts.google.com/embedded/setup/v2/android")
       flag.StringVar(&f.code, "o", "", b.String())
    }
-   flag.Var(&f.platform, "p", fmt.Sprint(play.BinaryInterfaces))
+   flag.Var(&f.platform, "p", fmt.Sprint(play.ABIs))
    flag.BoolVar(&f.single, "s", false, "single APK")
    flag.Uint64Var(&f.app.Version, "v", 0, "version code")
    flag.TextVar(&f.v.Level, "level", f.v.Level, "level")

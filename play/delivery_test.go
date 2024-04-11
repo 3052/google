@@ -33,7 +33,7 @@ func TestDelivery(t *testing.T) {
       t.Fatal(err)
    }
    app := StoreApp{"com.google.android.youtube", 1524221376}
-   deliver, err := auth.Delivery(checkin, app, false)
+   deliver, err := checkin.Delivery(auth, app, false)
    if err != nil {
       t.Fatal(err)
    }

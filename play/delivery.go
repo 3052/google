@@ -9,8 +9,8 @@ import (
    "strconv"
 )
 
-func (g GoogleAuth) Delivery(
-   checkin GoogleCheckin, app StoreApp, single bool,
+func (g GoogleCheckin) Delivery(
+   auth GoogleAuth, app StoreApp, single bool,
 ) (*Delivery, error) {
    req, err := http.NewRequest("GET", "https://android.clients.google.com", nil)
    if err != nil {
@@ -21,9 +21,9 @@ func (g GoogleAuth) Delivery(
       "doc": {app.ID},
       "vc":  {strconv.FormatUint(app.Version, 10)},
    }.Encode()
-   g.authorization(req)
+   auth.authorization(req)
    user_agent(req, single)
-   if err := checkin.x_dfe_device_id(req); err != nil {
+   if err := g.x_dfe_device_id(req); err != nil {
       return nil, err
    }
    res, err := http.DefaultClient.Do(req)
@@ -62,60 +62,60 @@ func (d Delivery) Field3() (string, bool) {
    return "", false
 }
 
-func (d Delivery) Field4() chan DeliveryField4 {
-   vs := make(chan DeliveryField4)
-   go func() {
-      for v := range d.m.Get(4) {
-         vs <- DeliveryField4{v}
-      }
-      close(vs)
-   }()
-   return vs
-}
-
-func (d Delivery) Field15() chan DeliveryField15 {
-   vs := make(chan DeliveryField15)
-   go func() {
-      for v := range d.m.Get(15) {
-         vs <- DeliveryField15{v}
-      }
-      close(vs)
-   }()
-   return vs
-}
-
-type DeliveryField4 struct {
+type OBB struct {
    m protobuf.Message
 }
 
-func (d DeliveryField4) Field1() (uint64, bool) {
-   if v, ok := <-d.m.GetVarint(1); ok {
+type APK struct {
+   m protobuf.Message
+}
+
+func (o OBB) Field1() (uint64, bool) {
+   if v, ok := <-o.m.GetVarint(1); ok {
       return uint64(v), true
    }
    return 0, false
 }
 
-func (d DeliveryField4) Field4() (string, bool) {
-   if v, ok := <-d.m.GetBytes(4); ok {
+func (o OBB) Field4() (string, bool) {
+   if v, ok := <-o.m.GetBytes(4); ok {
       return string(v), true
    }
    return "", false
 }
 
-type DeliveryField15 struct {
-   m protobuf.Message
+func (d Delivery) OBB() chan OBB {
+   vs := make(chan OBB)
+   go func() {
+      for v := range d.m.Get(4) {
+         vs <- OBB{v}
+      }
+      close(vs)
+   }()
+   return vs
 }
 
-func (d DeliveryField15) Field1() (string, bool) {
-   if v, ok := <-d.m.GetBytes(1); ok {
+func (a APK) Field1() (string, bool) {
+   if v, ok := <-a.m.GetBytes(1); ok {
       return string(v), true
    }
    return "", false
 }
 
-func (d DeliveryField15) Field5() (string, bool) {
-   if v, ok := <-d.m.GetBytes(5); ok {
+func (a APK) Field5() (string, bool) {
+   if v, ok := <-a.m.GetBytes(5); ok {
       return string(v), true
    }
    return "", false
+}
+
+func (d Delivery) APK() chan APK {
+   vs := make(chan APK)
+   go func() {
+      for v := range d.m.Get(15) {
+         vs <- APK{v}
+      }
+      close(vs)
+   }()
+   return vs
 }

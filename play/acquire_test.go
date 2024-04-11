@@ -37,7 +37,7 @@ func TestAcquire(t *testing.T) {
          t.Fatal(err)
       }
       fmt.Println(app.id)
-      if err := auth.Acquire(checkin, app.id); err != nil {
+      if err := checkin.Acquire(auth, app.id); err != nil {
          t.Fatal(err)
       }
       time.Sleep(99 * time.Millisecond)
