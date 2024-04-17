@@ -43,7 +43,9 @@ func (g GoogleCheckin) Acquire(auth GoogleAuth, doc string) error {
    }
    defer res.Body.Close()
    if res.StatusCode != http.StatusOK {
-      return errors.New(res.Status)
+      var b bytes.Buffer
+      res.Write(&b)
+      return errors.New(b.String())
    }
    data, err := io.ReadAll(res.Body)
    if err != nil {

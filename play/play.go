@@ -10,6 +10,59 @@ import (
    "time"
 )
 
+func (g GoogleCheckin) x_ps_rh(req *http.Request) error {
+   id, err := g.device_id()
+   if err != nil {
+      return err
+   }
+   var m protobuf.Message
+   m.Add(1, func(m *protobuf.Message) {
+      m.Add(1, func(m *protobuf.Message) {
+         m.Add(3, func(m *protobuf.Message) {
+            m.AddBytes(1, fmt.Append(nil, id))
+            m.Add(2, func(m *protobuf.Message) {
+               now := time.Now().UnixMicro()
+               m.AddBytes(1, fmt.Append(nil, now))
+            })
+         })
+      })
+   })
+   data, err := compress_gzip(m.Encode())
+   if err != nil {
+      return err
+   }
+   data, err = encode_base64(data)
+   if err != nil {
+      return err
+   }
+   req.Header.Set("x-ps-rh", string(data))
+   return nil
+}
+
+func encode_base64(p []byte) ([]byte, error) {
+   var b bytes.Buffer
+   w := base64.NewEncoder(base64.URLEncoding, &b)
+   if _, err := w.Write(p); err != nil {
+      return nil, err
+   }
+   if err := w.Close(); err != nil {
+      return nil, err
+   }
+   return b.Bytes(), nil
+}
+
+func compress_gzip(p []byte) ([]byte, error) {
+   var b bytes.Buffer
+   w := gzip.NewWriter(&b)
+   if _, err := w.Write(p); err != nil {
+      return nil, err
+   }
+   if err := w.Close(); err != nil {
+      return nil, err
+   }
+   return b.Bytes(), nil
+}
+
 const android_api = 31
 
 // the device actually uses 0x30000, but some apps require a higher version:
@@ -26,30 +79,6 @@ var ABIs = map[int]string{
    1: "armeabi-v7a",
    // com.kakaogames.twodin
    2: "arm64-v8a",
-}
-
-func compress_gzip(p []byte) ([]byte, error) {
-   var b bytes.Buffer
-   w := gzip.NewWriter(&b)
-   if _, err := w.Write(p); err != nil {
-      return nil, err
-   }
-   if err := w.Close(); err != nil {
-      return nil, err
-   }
-   return b.Bytes(), nil
-}
-
-func encode_base64(p []byte) ([]byte, error) {
-   var b bytes.Buffer
-   w := base64.NewEncoder(base64.URLEncoding, &b)
-   if _, err := w.Write(p); err != nil {
-      return nil, err
-   }
-   if err := w.Close(); err != nil {
-      return nil, err
-   }
-   return b.Bytes(), nil
 }
 
 func user_agent(req *http.Request, single bool) {
@@ -96,47 +125,6 @@ func (g GoogleCheckin) x_dfe_device_id(req *http.Request) error {
       return err
    }
    req.Header.Set("x-dfe-device-id", fmt.Sprintf("%x", id))
-   return nil
-}
-
-func (g GoogleCheckin) x_ps_rh(req *http.Request) error {
-   id, err := g.device_id()
-   if err != nil {
-      return err
-   }
-   field1, err := func() ([]byte, error) {
-      var m protobuf.Message
-      m.Add(3, func(m *protobuf.Message) {
-         m.AddBytes(1, fmt.Append(nil, id))
-         m.Add(2, func(m *protobuf.Message) {
-            v := time.Now().UnixMicro()
-            m.AddBytes(1, fmt.Append(nil, v))
-         })
-      })
-      b, err := compress_gzip(m.Encode())
-      if err != nil {
-         return nil, err
-      }
-      return encode_base64(b)
-   }()
-   if err != nil {
-      return err
-   }
-   ps_rh, err := func() ([]byte, error) {
-      var m protobuf.Message
-      m.Add(1, func(m *protobuf.Message) {
-         m.AddBytes(1, field1)
-      })
-      b, err := compress_gzip(m.Encode())
-      if err != nil {
-         return nil, err
-      }
-      return encode_base64(b)
-   }()
-   if err != nil {
-      return err
-   }
-   req.Header.Set("x-ps-rh", string(ps_rh))
    return nil
 }
 
