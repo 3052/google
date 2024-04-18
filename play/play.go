@@ -31,24 +31,8 @@ func (g GoogleCheckin) x_ps_rh(req *http.Request) error {
    if err != nil {
       return err
    }
-   data, err = encode_base64(data)
-   if err != nil {
-      return err
-   }
-   req.Header.Set("x-ps-rh", string(data))
+   req.Header.Set("x-ps-rh", base64.URLEncoding.EncodeToString(data))
    return nil
-}
-
-func encode_base64(p []byte) ([]byte, error) {
-   var b bytes.Buffer
-   w := base64.NewEncoder(base64.URLEncoding, &b)
-   if _, err := w.Write(p); err != nil {
-      return nil, err
-   }
-   if err := w.Close(); err != nil {
-      return nil, err
-   }
-   return b.Bytes(), nil
 }
 
 func compress_gzip(p []byte) ([]byte, error) {
