@@ -10,34 +10,6 @@ import (
    "time"
 )
 
-const android_api = 31
-
-// play.google.com/store/apps/details?id=com.google.android.apps.youtube.unplugged
-type StoreApp struct {
-   ID string
-   Version uint64
-}
-
-func (s StoreApp) APK(v string) string {
-   var b []byte
-   b = fmt.Append(b, s.ID, "-")
-   if v != "" {
-      b = fmt.Append(b, v, "-")
-   }
-   b = fmt.Append(b, s.Version, ".apk")
-   return string(b)
-}
-
-func (s StoreApp) OBB(v uint64) string {
-   var b []byte
-   if v >= 1 {
-      b = append(b, "patch"...)
-   } else {
-      b = append(b, "main"...)
-   }
-   b = fmt.Append(b, ".", s.Version, ".", s.ID, ".obb")
-   return string(b)
-}
 func (g GoogleCheckin) x_ps_rh(req *http.Request) error {
    id, err := g.device_id()
    if err != nil {
@@ -192,4 +164,33 @@ var Phone = GoogleDevice{
       // com.kakaogames.twodin
       "GL_KHR_texture_compression_astc_ldr",
    },
+}
+
+const android_api = 31
+
+// play.google.com/store/apps/details?id=com.google.android.apps.youtube.unplugged
+type StoreApp struct {
+   ID string
+   Version uint64
+}
+
+func (s StoreApp) APK(v string) string {
+   var b []byte
+   b = fmt.Append(b, s.ID, "-")
+   if v != "" {
+      b = fmt.Append(b, v, "-")
+   }
+   b = fmt.Append(b, s.Version, ".apk")
+   return string(b)
+}
+
+func (s StoreApp) OBB(v uint64) string {
+   var b []byte
+   if v >= 1 {
+      b = append(b, "patch"...)
+   } else {
+      b = append(b, "main"...)
+   }
+   b = fmt.Append(b, ".", s.Version, ".", s.ID, ".obb")
+   return string(b)
 }
