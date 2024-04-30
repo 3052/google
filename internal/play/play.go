@@ -38,6 +38,7 @@ func (f flags) do_device() error {
    }
    return checkin.Sync(play.Phone)
 }
+
 func (f flags) do_auth() error {
    var token play.GoogleToken
    if err := token.Auth(f.code); err != nil {
