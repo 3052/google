@@ -10,6 +10,83 @@ import (
    "time"
 )
 
+var Phone = GoogleDevice{
+   Feature: []string{
+      // app.source.getcontact
+      "android.hardware.location.gps",
+      // br.com.rodrigokolb.realdrum
+      "android.software.midi",
+      // com.app.xt
+      "android.hardware.camera.front",
+      // com.cabify.rider
+      "android.hardware.camera.flash",
+      // com.clearchannel.iheartradio.controller
+      "android.hardware.microphone",
+      // com.google.android.apps.walletnfcrel
+      "android.software.device_admin",
+      // com.google.android.youtube
+      "android.hardware.touchscreen",
+      "android.hardware.wifi",
+      // com.madhead.tos.zh
+      "android.hardware.sensor.accelerometer",
+      // com.pinterest
+      "android.hardware.camera",
+      "android.hardware.location",
+      "android.hardware.screen.portrait",
+      // com.sygic.aura
+      "android.hardware.location.network",
+      // com.xiaomi.smarthome
+      "android.hardware.bluetooth",
+      "android.hardware.bluetooth_le",
+      "android.hardware.camera.autofocus",
+      "android.hardware.usb.host",
+      // kr.sira.metal
+      "android.hardware.sensor.compass",
+      // org.thoughtcrime.securesms
+      "android.hardware.telephony",
+   },
+   Library: []string{
+      // com.amctve.amcfullepisodes
+      "org.apache.http.legacy",
+      // com.binance.dev
+      "android.test.runner",
+   },
+   Texture: []string{
+      // com.instagram.android
+      "GL_OES_compressed_ETC1_RGB8_texture",
+      // com.kakaogames.twodin
+      "GL_KHR_texture_compression_astc_ldr",
+   },
+}
+
+const android_api = 31
+
+// play.google.com/store/apps/details?id=com.google.android.apps.youtube.unplugged
+type StoreApp struct {
+   ID string
+   Version uint64
+}
+
+func (s StoreApp) APK(v string) string {
+   var b []byte
+   b = fmt.Append(b, s.ID, "-")
+   if v != "" {
+      b = fmt.Append(b, v, "-")
+   }
+   b = fmt.Append(b, s.Version, ".apk")
+   return string(b)
+}
+
+func (s StoreApp) OBB(v uint64) string {
+   var b []byte
+   if v >= 1 {
+      b = append(b, "patch"...)
+   } else {
+      b = append(b, "main"...)
+   }
+   b = fmt.Append(b, ".", s.Version, ".", s.ID, ".obb")
+   return string(b)
+}
 func (g GoogleCheckin) x_ps_rh(req *http.Request) error {
    id, err := g.device_id()
    if err != nil {
@@ -115,82 +192,4 @@ type GoogleDevice struct {
    Feature []string
    Library []string
    Texture []string
-}
-
-var Phone = GoogleDevice{
-   Feature: []string{
-      // app.source.getcontact
-      "android.hardware.location.gps",
-      // br.com.rodrigokolb.realdrum
-      "android.software.midi",
-      // com.app.xt
-      "android.hardware.camera.front",
-      // com.cabify.rider
-      "android.hardware.camera.flash",
-      // com.clearchannel.iheartradio.controller
-      "android.hardware.microphone",
-      // com.google.android.apps.walletnfcrel
-      "android.software.device_admin",
-      // com.google.android.youtube
-      "android.hardware.touchscreen",
-      "android.hardware.wifi",
-      // com.madhead.tos.zh
-      "android.hardware.sensor.accelerometer",
-      // com.pinterest
-      "android.hardware.camera",
-      "android.hardware.location",
-      "android.hardware.screen.portrait",
-      // com.sygic.aura
-      "android.hardware.location.network",
-      // com.xiaomi.smarthome
-      "android.hardware.bluetooth",
-      "android.hardware.bluetooth_le",
-      "android.hardware.camera.autofocus",
-      "android.hardware.usb.host",
-      // kr.sira.metal
-      "android.hardware.sensor.compass",
-      // org.thoughtcrime.securesms
-      "android.hardware.telephony",
-   },
-   Library: []string{
-      // com.amctve.amcfullepisodes
-      "org.apache.http.legacy",
-      // com.binance.dev
-      "android.test.runner",
-   },
-   Texture: []string{
-      // com.instagram.android
-      "GL_OES_compressed_ETC1_RGB8_texture",
-      // com.kakaogames.twodin
-      "GL_KHR_texture_compression_astc_ldr",
-   },
-}
-
-const android_api = 31
-
-// play.google.com/store/apps/details?id=com.google.android.apps.youtube.unplugged
-type StoreApp struct {
-   ID string
-   Version uint64
-}
-
-func (s StoreApp) APK(v string) string {
-   var b []byte
-   b = fmt.Append(b, s.ID, "-")
-   if v != "" {
-      b = fmt.Append(b, v, "-")
-   }
-   b = fmt.Append(b, s.Version, ".apk")
-   return string(b)
-}
-
-func (s StoreApp) OBB(v uint64) string {
-   var b []byte
-   if v >= 1 {
-      b = append(b, "patch"...)
-   } else {
-      b = append(b, "main"...)
-   }
-   b = fmt.Append(b, ".", s.Version, ".", s.ID, ".obb")
-   return string(b)
 }
