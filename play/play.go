@@ -5,9 +5,9 @@ import (
    "bytes"
    "compress/gzip"
    "encoding/base64"
-   "errors"
    "fmt"
    "net/http"
+   "strings"
    "time"
 )
 
@@ -116,8 +116,15 @@ func (g GoogleCheckin) x_dfe_device_id(req *http.Request) error {
    return nil
 }
 
+type GoogleDevice struct {
+   ABI string
+   Feature Feature
+   Library []string
+   Texture []string
+}
+
 // developer.android.com/ndk/guides/abis
-var ABI = []string{
+var ABIs = []string{
    // com.google.android.youtube
    "x86",
    // com.sygic.aura
@@ -126,84 +133,70 @@ var ABI = []string{
    "arm64-v8a",
 }
 
-type GoogleDevice struct {
-   Category string
-   ABI string
-   Feature []string
-   Library []string
-   Texture []string
+var Device = GoogleDevice{
+   Library: []string{
+      // com.amctve.amcfullepisodes
+      "org.apache.http.legacy",
+      // com.binance.dev
+      "android.test.runner",
+   },
+   Texture: []string{
+      // com.instagram.android
+      "GL_OES_compressed_ETC1_RGB8_texture",
+      // com.kakaogames.twodin
+      "GL_KHR_texture_compression_astc_ldr",
+   },
 }
 
-func (g GoogleDevice) MarshalText() ([]byte, error) {
-   return []byte(g.Category), nil
+type Feature []string
+
+func (f Feature) MarshalText() ([]byte, error) {
+   return []byte(strings.Join(f, ",")), nil
 }
 
-func (g *GoogleDevice) UnmarshalText(text []byte) error {
-   for _, device := range Devices {
-      if device.Category == string(text) {
-         *g = device
-         return nil
-      }
-   }
-   return errors.New("GoogleDevice.UnmarshalText")
+func (f *Feature) UnmarshalText(text []byte) error {
+   *f = strings.Split(string(text), ",")
+   return nil
 }
 
-var Devices = []GoogleDevice{
+var Features = []Feature{
    {
-      Category: "Phone",
-      Feature: []string{
-         // app.source.getcontact
-         "android.hardware.location.gps",
-         // br.com.rodrigokolb.realdrum
-         "android.software.midi",
-         // com.app.xt
-         "android.hardware.camera.front",
-         // com.cabify.rider
-         "android.hardware.camera.flash",
-         // com.clearchannel.iheartradio.controller
-         "android.hardware.microphone",
-         // com.google.android.apps.walletnfcrel
-         "android.software.device_admin",
-         // com.google.android.youtube
-         "android.hardware.touchscreen",
-         "android.hardware.wifi",
-         // com.madhead.tos.zh
-         "android.hardware.sensor.accelerometer",
-         // com.pinterest
-         "android.hardware.camera",
-         "android.hardware.location",
-         "android.hardware.screen.portrait",
-         // com.sygic.aura
-         "android.hardware.location.network",
-         // com.xiaomi.smarthome
-         "android.hardware.bluetooth",
-         "android.hardware.bluetooth_le",
-         "android.hardware.camera.autofocus",
-         "android.hardware.usb.host",
-         // kr.sira.metal
-         "android.hardware.sensor.compass",
-         // org.thoughtcrime.securesms
-         "android.hardware.telephony",
-      },
-      Library: []string{
-         // com.amctve.amcfullepisodes
-         "org.apache.http.legacy",
-         // com.binance.dev
-         "android.test.runner",
-      },
-      Texture: []string{
-         // com.instagram.android
-         "GL_OES_compressed_ETC1_RGB8_texture",
-         // com.kakaogames.twodin
-         "GL_KHR_texture_compression_astc_ldr",
-      },
+      // app.source.getcontact
+      "android.hardware.location.gps",
+      // br.com.rodrigokolb.realdrum
+      "android.software.midi",
+      // com.app.xt
+      "android.hardware.camera.front",
+      // com.cabify.rider
+      "android.hardware.camera.flash",
+      // com.clearchannel.iheartradio.controller
+      "android.hardware.microphone",
+      // com.google.android.apps.walletnfcrel
+      "android.software.device_admin",
+      // com.google.android.youtube
+      "android.hardware.touchscreen",
+      "android.hardware.wifi",
+      // com.madhead.tos.zh
+      "android.hardware.sensor.accelerometer",
+      // com.pinterest
+      "android.hardware.camera",
+      "android.hardware.location",
+      "android.hardware.screen.portrait",
+      // com.sygic.aura
+      "android.hardware.location.network",
+      // com.xiaomi.smarthome
+      "android.hardware.bluetooth",
+      "android.hardware.bluetooth_le",
+      "android.hardware.camera.autofocus",
+      "android.hardware.usb.host",
+      // kr.sira.metal
+      "android.hardware.sensor.compass",
+      // org.thoughtcrime.securesms
+      "android.hardware.telephony",
    },
    {
-      Category: "TV",
-      Feature: []string{
-         // com.roku.web.trc
-         "android.software.leanback",
-         "android.hardware.screen.landscape",
-      },
+      // com.roku.web.trc
+      "android.software.leanback",
+      "android.hardware.screen.landscape",
    },
 }

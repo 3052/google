@@ -10,17 +10,6 @@ import (
    "strings"
 )
 
-type flags struct {
-   acquire bool
-   app play.StoreApp
-   code string
-   checkin bool
-   home string
-   single bool
-   v log.Level
-   device play.GoogleDevice
-}
-
 func (f *flags) New() error {
    var err error
    f.home, err = os.UserHomeDir()
@@ -31,6 +20,18 @@ func (f *flags) New() error {
    return nil
 }
 
+type flags struct {
+   acquire bool
+   app play.StoreApp
+   code string
+   checkin bool
+   home string
+   single bool
+   v log.Level
+   abi string
+   feature play.Feature
+}
+
 func main() {
    var f flags
    err := f.New()
@@ -39,19 +40,23 @@ func main() {
    }
    flag.BoolVar(&f.acquire, "a", false, "acquire")
    flag.StringVar(
-      &f.device.ABI, "b", play.ABI[0], strings.Join(play.ABI[1:], " "),
+      &f.abi, "b", play.ABIs[0], strings.Join(play.ABIs[1:], " "),
    )
    flag.BoolVar(&f.checkin, "c", false, "checkin and sync device")
-   flag.TextVar(&f.device, "d", play.Devices[0], func() string {
+   {
       var b strings.Builder
-      for i, device := range play.Devices {
+      for i, feature := range Features[1:] {
          if i >= 1 {
-            b.WriteByte(' ')
+            b.WriteByte('\n')
          }
-         b.WriteString(device.Category)
+         text, err := feature.MarshalText()
+         if err != nil {
+            panic(err)
+         }
+         b.Write(text)
       }
-      return b.String()
-   }())
+      flag.TextVar(&f.feature, "d", play.Features[0], b.String())
+   }
    flag.StringVar(&f.app.ID, "i", "", "app ID")
    flag.TextVar(&f.v.Level, "level", f.v.Level, "level")
    {

@@ -24,7 +24,7 @@ play -o oauth2_4/0Adeu5B...
 create a file containing `X-DFE-Device-ID` (GSF ID) for future requests:
 
 ~~~
-play -d
+play -c
 ~~~
 
 get app details:

@@ -6,6 +6,7 @@ import (
    "fmt"
    "net/http"
    "os"
+   "strings"
    "time"
 )
 
@@ -121,20 +122,7 @@ func (f flags) client(auth *play.GoogleAuth, checkin *play.GoogleCheckin) error 
    if err != nil {
       return err
    }
-   device, err := f.device.MarshalText()
-   if err != nil {
-      return err
-   }
-   f.home += func() string {
-      var b strings.Builder
-      b.WriteByte('/')
-      b.Write(device)
-      b.WriteByte('-')
-      b.WriteString(f.device.ABI)
-      b.WriteString(".bin")
-      return b.String()
-   }()
-   checkin.Data, err = os.ReadFile(f.home)
+   checkin.Data, err = os.ReadFile(f.device_path())
    if err != nil {
       return err
    }
@@ -143,12 +131,11 @@ func (f flags) client(auth *play.GoogleAuth, checkin *play.GoogleCheckin) error 
 
 func (f flags) do_device() error {
    var checkin play.GoogleCheckin
-   err := checkin.Checkin(f.device)
+   err := checkin.Checkin(play.Device)
    if err != nil {
       return err
    }
-   f.home += fmt.Sprintf("/%v.bin", f.device.ABI)
-   err = os.WriteFile(f.home, checkin.Data, 0666)
+   err = os.WriteFile(f.device_path(), checkin.Data, 0666)
    if err != nil {
       return err
    }
@@ -158,5 +145,18 @@ func (f flags) do_device() error {
    if err != nil {
       return err
    }
-   return checkin.Sync(f.device)
+   return checkin.Sync(play.Device)
+}
+
+func (f flags) device_path() string {
+   var h maphash.Hash
+   var b strings.Builder
+   b.WriteString(f.home)
+   b.WriteByte('/')
+   b.WriteString(f.abi)
+   b.WriteByte('-')
+   b.Write()
+   b.WriteString(f.device.Category)
+   b.WriteString(".bin")
+   return b.String()
 }
