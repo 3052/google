@@ -28,8 +28,7 @@ type flags struct {
    home string
    single bool
    v log.Level
-   abi string
-   feature play.Feature
+   leanback bool
 }
 
 func main() {
@@ -40,23 +39,9 @@ func main() {
    }
    flag.BoolVar(&f.acquire, "a", false, "acquire")
    flag.StringVar(
-      &f.abi, "b", play.ABIs[0], strings.Join(play.ABIs[1:], " "),
+      &play.Device.ABI, "b", play.ABI[0], strings.Join(play.ABI[1:], " "),
    )
    flag.BoolVar(&f.checkin, "c", false, "checkin and sync device")
-   {
-      var b strings.Builder
-      for i, feature := range Features[1:] {
-         if i >= 1 {
-            b.WriteByte('\n')
-         }
-         text, err := feature.MarshalText()
-         if err != nil {
-            panic(err)
-         }
-         b.Write(text)
-      }
-      flag.TextVar(&f.feature, "d", play.Features[0], b.String())
-   }
    flag.StringVar(&f.app.ID, "i", "", "app ID")
    flag.TextVar(&f.v.Level, "level", f.v.Level, "level")
    {
@@ -66,6 +51,7 @@ func main() {
       flag.StringVar(&f.code, "o", "", b.String())
    }
    flag.BoolVar(&f.single, "s", false, "single APK")
+   flag.BoolVar(&f.leanback, "t", false, play.Leanback)
    flag.Uint64Var(&f.app.Version, "v", 0, "version code")
    flag.Parse()
    f.v.Set()

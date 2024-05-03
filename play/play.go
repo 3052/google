@@ -7,7 +7,6 @@ import (
    "encoding/base64"
    "fmt"
    "net/http"
-   "strings"
    "time"
 )
 
@@ -118,13 +117,13 @@ func (g GoogleCheckin) x_dfe_device_id(req *http.Request) error {
 
 type GoogleDevice struct {
    ABI string
-   Feature Feature
+   Feature []string
    Library []string
    Texture []string
 }
 
 // developer.android.com/ndk/guides/abis
-var ABIs = []string{
+var ABI = []string{
    // com.google.android.youtube
    "x86",
    // com.sygic.aura
@@ -134,33 +133,7 @@ var ABIs = []string{
 }
 
 var Device = GoogleDevice{
-   Library: []string{
-      // com.amctve.amcfullepisodes
-      "org.apache.http.legacy",
-      // com.binance.dev
-      "android.test.runner",
-   },
-   Texture: []string{
-      // com.instagram.android
-      "GL_OES_compressed_ETC1_RGB8_texture",
-      // com.kakaogames.twodin
-      "GL_KHR_texture_compression_astc_ldr",
-   },
-}
-
-type Feature []string
-
-func (f Feature) MarshalText() ([]byte, error) {
-   return []byte(strings.Join(f, ",")), nil
-}
-
-func (f *Feature) UnmarshalText(text []byte) error {
-   *f = strings.Split(string(text), ",")
-   return nil
-}
-
-var Features = []Feature{
-   {
+   Feature: []string{
       // app.source.getcontact
       "android.hardware.location.gps",
       // br.com.rodrigokolb.realdrum
@@ -182,6 +155,8 @@ var Features = []Feature{
       "android.hardware.camera",
       "android.hardware.location",
       "android.hardware.screen.portrait",
+      // com.roku.web.trc
+      "android.hardware.screen.landscape",
       // com.sygic.aura
       "android.hardware.location.network",
       // com.xiaomi.smarthome
@@ -194,9 +169,19 @@ var Features = []Feature{
       // org.thoughtcrime.securesms
       "android.hardware.telephony",
    },
-   {
-      // com.roku.web.trc
-      "android.software.leanback",
-      "android.hardware.screen.landscape",
+   Library: []string{
+      // com.amctve.amcfullepisodes
+      "org.apache.http.legacy",
+      // com.binance.dev
+      "android.test.runner",
+   },
+   Texture: []string{
+      // com.instagram.android
+      "GL_OES_compressed_ETC1_RGB8_texture",
+      // com.kakaogames.twodin
+      "GL_KHR_texture_compression_astc_ldr",
    },
 }
+
+// com.roku.web.trc
+const Leanback = "android.software.leanback"

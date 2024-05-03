@@ -10,6 +10,40 @@ import (
    "time"
 )
 
+func (f flags) device_path() string {
+   var b strings.Builder
+   b.WriteString(f.home)
+   b.WriteByte('/')
+   b.WriteString(play.Device.ABI)
+   if f.leanback {
+      b.WriteString("-leanback")
+   }
+   b.WriteString(".bin")
+   return b.String()
+}
+
+func (f flags) do_device() error {
+   var checkin play.GoogleCheckin
+   if f.leanback {
+      play.Device.Feature = append(play.Device.Feature, play.Leanback)
+   }
+   err := checkin.Checkin(play.Device)
+   if err != nil {
+      return err
+   }
+   err = os.WriteFile(f.device_path(), checkin.Data, 0666)
+   if err != nil {
+      return err
+   }
+   fmt.Println("Sleep(9*time.Second)")
+   time.Sleep(9*time.Second)
+   err = checkin.Unmarshal()
+   if err != nil {
+      return err
+   }
+   return checkin.Sync(play.Device)
+}
+
 func (f flags) do_delivery() error {
    var (
       auth play.GoogleAuth
@@ -127,36 +161,4 @@ func (f flags) client(auth *play.GoogleAuth, checkin *play.GoogleCheckin) error 
       return err
    }
    return checkin.Unmarshal()
-}
-
-func (f flags) do_device() error {
-   var checkin play.GoogleCheckin
-   err := checkin.Checkin(play.Device)
-   if err != nil {
-      return err
-   }
-   err = os.WriteFile(f.device_path(), checkin.Data, 0666)
-   if err != nil {
-      return err
-   }
-   fmt.Println("Sleep(9*time.Second)")
-   time.Sleep(9*time.Second)
-   err = checkin.Unmarshal()
-   if err != nil {
-      return err
-   }
-   return checkin.Sync(play.Device)
-}
-
-func (f flags) device_path() string {
-   var h maphash.Hash
-   var b strings.Builder
-   b.WriteString(f.home)
-   b.WriteByte('/')
-   b.WriteString(f.abi)
-   b.WriteByte('-')
-   b.Write()
-   b.WriteString(f.device.Category)
-   b.WriteString(".bin")
-   return b.String()
 }

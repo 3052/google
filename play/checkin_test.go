@@ -2,19 +2,26 @@ package play
 
 import (
    "fmt"
+   "os"
    "testing"
    "time"
 )
 
 func TestCheckin(t *testing.T) {
-   for _, platform := range ABIs {
-      fmt.Println(platform)
-      Phone.ABI = platform
+   home, err := os.UserHomeDir()
+   if err != nil {
+      t.Fatal(err)
+   }
+   home += "/google-play"
+   for _, each := range ABI {
+      fmt.Println(each)
+      Device.ABI = each
       var checkin GoogleCheckin
-      err := checkin.Checkin(Phone)
+      err := checkin.Checkin(Device)
       if err != nil {
          t.Fatal(err)
       }
+      os.WriteFile(home + "/" + each + ".bin", checkin.Data, 0666)
       time.Sleep(time.Second)
    }
 }
