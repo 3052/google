@@ -10,49 +10,8 @@ import (
    "strings"
 )
 
-func (g GoogleCheckin) Details(
-   auth GoogleAuth, doc string, single bool,
-) (*Details, error) {
-   req, err := http.NewRequest("GET", "https://android.clients.google.com", nil)
-   if err != nil {
-      return nil, err
-   }
-   req.URL.Path = "/fdfe/details"
-   req.URL.RawQuery = "doc=" + doc
-   auth.authorization(req)
-   user_agent(req, single)
-   if err := g.x_dfe_device_id(req); err != nil {
-      return nil, err
-   }
-   res, err := http.DefaultClient.Do(req)
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      var b strings.Builder
-      res.Write(&b)
-      return nil, errors.New(b.String())
-   }
-   data, err := io.ReadAll(res.Body)
-   if err != nil {
-      return nil, err
-   }
-   var d Details
-   if err := d.m.Consume(data); err != nil {
-      return nil, err
-   }
-   d.m = <-d.m.Get(1)
-   d.m = <-d.m.Get(2)
-   d.m = <-d.m.Get(4)
-   return &d, nil
-}
-
-func (d Details) Name() (string, bool) {
-   if v, ok := <-d.m.GetBytes(5); ok {
-      return string(v), true
-   }
-   return "", false
+type Details struct {
+   m protobuf.Message
 }
 
 func (d Details) Downloads() (uint64, bool) {
@@ -62,6 +21,13 @@ func (d Details) Downloads() (uint64, bool) {
       return uint64(v), true
    }
    return 0, false
+}
+
+func (d Details) Name() (string, bool) {
+   if v, ok := <-d.m.GetBytes(5); ok {
+      return string(v), true
+   }
+   return "", false
 }
 
 func (d Details) String() string {
@@ -114,10 +80,6 @@ func (d Details) String() string {
       b = fmt.Append(b, " ", v)
    }
    return string(b)
-}
-
-type Details struct {
-   m protobuf.Message
 }
 
 func (d Details) field_6() (string, bool) {
@@ -203,4 +165,42 @@ func (d Details) version_code() (uint64, bool) {
       return uint64(v), true
    }
    return 0, false
+}
+
+func (g GoogleCheckin) Details(
+   auth GoogleAuth, doc string, single bool,
+) (*Details, error) {
+   req, err := http.NewRequest("GET", "https://android.clients.google.com", nil)
+   if err != nil {
+      return nil, err
+   }
+   req.URL.Path = "/fdfe/details"
+   req.URL.RawQuery = "doc=" + doc
+   auth.authorization(req)
+   user_agent(req, single)
+   if err := g.x_dfe_device_id(req); err != nil {
+      return nil, err
+   }
+   res, err := http.DefaultClient.Do(req)
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      var b strings.Builder
+      res.Write(&b)
+      return nil, errors.New(b.String())
+   }
+   data, err := io.ReadAll(res.Body)
+   if err != nil {
+      return nil, err
+   }
+   var d Details
+   if err := d.m.Consume(data); err != nil {
+      return nil, err
+   }
+   d.m = <-d.m.Get(1)
+   d.m = <-d.m.Get(2)
+   d.m = <-d.m.Get(4)
+   return &d, nil
 }

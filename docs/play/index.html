@@ -14,20 +14,13 @@
   <body>
     <nav>
         <a href="..">154.pages.dev/google</a>/play<span class="navbar-right">
-          v1.4.5 | <a href="..">Root</a> | <a href="#pkg-index">Index</a></span>
+          v1.4.6 | <a href="..">Root</a> | <a href="#pkg-index">Index</a></span>
       </nav>
     <main><h2 id="pkg-overview">package play</h2>
 <pre class="chroma"><span class="kn">import</span> <span class="s">&#34;154.pages.dev/google/play&#34;</span></pre>
 <h3 id="pkg-index">Index</h3>
 <ul>
-  <li><a href="#pkg-variables">Variables</a></li><li>
-      <a href="#ABI">type ABI</a>
-      <ul>
-          <li><a href="#ABI.Set">func (a *ABI) Set(s string) error</a></li>
-          <li><a href="#ABI.String">func (a ABI) String() string</a></li>
-          </ul>
-      </li>
-  <li>
+  <li><a href="#pkg-constants">Constants</a></li><li><a href="#pkg-variables">Variables</a></li><li>
       <a href="#APK">type APK</a>
       <ul>
           <li><a href="#APK.Field1">func (a APK) Field1() (string, bool)</a></li>
@@ -91,16 +84,20 @@
           <li><a href="#StoreApp.OBB">func (s StoreApp) OBB(v uint64) string</a></li>
           </ul>
       </li>
-  </ul><h3 id="pkg-variables">Variables</h3>
-  <pre class="chroma"><span class="kd">var</span> <span id="ABIs"><span class="nx">ABIs</span></span> <span class="p">=</span> <span class="kd">map</span><span class="p">[</span><a href="https://pkg.go.dev/builtin#int"><span class="kt">int</span></a><span class="p">]</span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">{</span>
+  </ul><h3 id="pkg-constants">Constants</h3>
+  <pre class="chroma"><span class="kd">const</span> <span id="Leanback"><span class="nx">Leanback</span></span> <span class="p">=</span> <span class="s">&#34;android.software.leanback&#34;</span></pre>
+  <p>com.roku.web.trc
+<h3 id="pkg-variables">Variables</h3>
+  <pre class="chroma"><span class="kd">var</span> <span id="ABI"><span class="nx">ABI</span></span> <span class="p">=</span> <span class="p">[]</span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">{</span>
 
-	<span class="mi">0</span><span class="p">:</span> <span class="s">&#34;x86&#34;</span><span class="p">,</span>
+	<span class="s">&#34;x86&#34;</span><span class="p">,</span>
 
-	<span class="mi">1</span><span class="p">:</span> <span class="s">&#34;armeabi-v7a&#34;</span><span class="p">,</span>
+	<span class="s">&#34;armeabi-v7a&#34;</span><span class="p">,</span>
 
-	<span class="mi">2</span><span class="p">:</span> <span class="s">&#34;arm64-v8a&#34;</span><span class="p">,</span>
+	<span class="s">&#34;arm64-v8a&#34;</span><span class="p">,</span>
 <span class="p">}</span></pre>
-  <pre class="chroma"><span class="kd">var</span> <span id="Phone"><span class="nx">Phone</span></span> <span class="p">=</span> <a href="#GoogleDevice"><span class="nx">GoogleDevice</span></a><span class="p">{</span>
+  <p>developer.android.com/ndk/guides/abis
+<pre class="chroma"><span class="kd">var</span> <span id="Device"><span class="nx">Device</span></span> <span class="p">=</span> <a href="#GoogleDevice"><span class="nx">GoogleDevice</span></a><span class="p">{</span>
 	<span class="nx">Feature</span><span class="p">:</span> <span class="p">[]</span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">{</span>
 
 		<span class="s">&#34;android.hardware.location.gps&#34;</span><span class="p">,</span>
@@ -123,6 +120,8 @@
 		<span class="s">&#34;android.hardware.camera&#34;</span><span class="p">,</span>
 		<span class="s">&#34;android.hardware.location&#34;</span><span class="p">,</span>
 		<span class="s">&#34;android.hardware.screen.portrait&#34;</span><span class="p">,</span>
+
+		<span class="s">&#34;android.hardware.screen.landscape&#34;</span><span class="p">,</span>
 
 		<span class="s">&#34;android.hardware.location.network&#34;</span><span class="p">,</span>
 
@@ -149,13 +148,6 @@
 	<span class="p">},</span>
 <span class="p">}</span></pre>
   <h3 id="pkg-types">Types</h3>
-  <h3 id="ABI">type ABI</h3>
-    <pre class="chroma"><span class="kd">type</span> <span class="nx">ABI</span> <a href="https://pkg.go.dev/builtin#int"><span class="kt">int</span></a></pre>
-    <p>developer.android.com/ndk/guides/abis
-<h4 id="ABI.Set">func (*ABI) Set</h4>
-  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">a</span> <span class="o">*</span><a href="#ABI"><span class="nx">ABI</span></a><span class="p">)</span> <span class="nf">Set</span><span class="p">(</span><span class="nx">s</span> <a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">)</span> <a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a></pre>
-  <h4 id="ABI.String">func (ABI) String</h4>
-  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">a</span> <a href="#ABI"><span class="nx">ABI</span></a><span class="p">)</span> <span class="nf">String</span><span class="p">()</span> <a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a></pre>
   <h3 id="APK">type APK</h3>
     <pre class="chroma"><span class="kd">type</span> <span class="nx">APK</span> <span class="kd">struct</span> <span class="p">{</span>
 	<span class="c1">// contains filtered or unexported fields
