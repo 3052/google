@@ -14,11 +14,11 @@ type flags struct {
    acquire bool
    app play.StoreApp
    code string
-   device bool
+   checkin bool
    home string
-   platform play.ABI
    single bool
    v log.Level
+   device play.GoogleDevice
 }
 
 func (f *flags) New() error {
@@ -38,9 +38,21 @@ func main() {
       panic(err)
    }
    flag.BoolVar(&f.acquire, "a", false, "acquire")
-   flag.Var(&f.platform, "b", fmt.Sprint(play.ABIs))
-   flag.BoolVar(&f.device, "d", false, "checkin and sync device")
-   flag.StringVar(&f.app.ID, "i", "", "ID")
+   flag.StringVar(
+      &f.device.ABI, "b", play.ABI[0], strings.Join(play.ABI[1:], " "),
+   )
+   flag.BoolVar(&f.checkin, "c", false, "checkin and sync device")
+   flag.Var(&f.device, "d", func() string {
+      var b strings.Builder
+      for i, device := range play.Devices {
+         if i >= 1 {
+            b.WriteByte(' ')
+         }
+         b.WriteString(device.Category)
+      }
+      return b.String()
+   }())
+   flag.StringVar(&f.app.ID, "i", "", "app ID")
    flag.TextVar(&f.v.Level, "level", f.v.Level, "level")
    {
       var b strings.Builder
@@ -78,7 +90,7 @@ func main() {
       if err != nil {
          panic(err)
       }
-   case f.device:
+   case f.checkin:
       err := f.do_device()
       if err != nil {
          panic(err)

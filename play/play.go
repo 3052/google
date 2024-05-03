@@ -115,15 +115,8 @@ func (g GoogleCheckin) x_dfe_device_id(req *http.Request) error {
    return nil
 }
 
-type GoogleDevice struct {
-   ABI string
-   Feature []string
-   Library []string
-   Texture []string
-}
-
 // developer.android.com/ndk/guides/abis
-var ABIs = []string{
+var ABI = []string{
    // com.google.android.youtube
    "x86",
    // com.sygic.aura
@@ -132,9 +125,32 @@ var ABIs = []string{
    "arm64-v8a",
 }
 
-var devices = map[string]GoogleDevice{
-   "TV": {},
-   "Phone": {
+type GoogleDevice struct {
+   Category string
+   ABI string
+   Feature []string
+   Library []string
+   Texture []string
+}
+
+func (g GoogleDevice) String() string {
+   return g.Category
+}
+
+func (g *GoogleDevice) Set(s string) error {
+   for _, device := range Devices {
+      if device.Category == s {
+         *g = device
+         return nil
+      }
+   }
+   *g = Devices[0]
+   return nil
+}
+
+var Devices = []GoogleDevice{
+   {
+      Category: "Phone",
       Feature: []string{
          // app.source.getcontact
          "android.hardware.location.gps",
@@ -180,6 +196,14 @@ var devices = map[string]GoogleDevice{
          "GL_OES_compressed_ETC1_RGB8_texture",
          // com.kakaogames.twodin
          "GL_KHR_texture_compression_astc_ldr",
+      },
+   },
+   {
+      Category: "TV",
+      Feature: []string{
+         // com.roku.web.trc
+         "android.software.leanback",
+         "android.hardware.screen.landscape",
       },
    },
 }

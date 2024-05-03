@@ -9,56 +9,6 @@ import (
    "time"
 )
 
-func (f flags) do_acquire() error {
-   var (
-      auth play.GoogleAuth
-      checkin play.GoogleCheckin
-   )
-   err := f.client(&auth, &checkin)
-   if err != nil {
-      return err
-   }
-   return checkin.Acquire(auth, f.app.ID)
-}
-
-func (f flags) do_device() error {
-   play.Phone.ABI = f.platform.String()
-   var checkin play.GoogleCheckin
-   if err := checkin.Checkin(play.Phone); err != nil {
-      return err
-   }
-   f.home += fmt.Sprintf("/%v.bin", f.platform)
-   if err := os.WriteFile(f.home, checkin.Data, 0666); err != nil {
-      return err
-   }
-   fmt.Println("Sleep(9*time.Second)")
-   time.Sleep(9*time.Second)
-   if err := checkin.Unmarshal(); err != nil {
-      return err
-   }
-   return checkin.Sync(play.Phone)
-}
-
-func (f flags) do_auth() error {
-   var token play.GoogleToken
-   if err := token.Auth(f.code); err != nil {
-      return err
-   }
-   return os.WriteFile(f.home + "/token.txt", token.Data, 0666)
-}
-
-func (f flags) do_details() (*play.Details, error) {
-   var (
-      auth play.GoogleAuth
-      checkin play.GoogleCheckin
-   )
-   err := f.client(&auth, &checkin)
-   if err != nil {
-      return nil, err
-   }
-   return checkin.Details(auth, f.app.ID, f.single)
-}
-
 func (f flags) client(auth *play.GoogleAuth, checkin *play.GoogleCheckin) error {
    var (
       token play.GoogleToken
@@ -68,10 +18,12 @@ func (f flags) client(auth *play.GoogleAuth, checkin *play.GoogleCheckin) error 
    if err != nil {
       return err
    }
-   if err := token.Unmarshal(); err != nil {
+   err = token.Unmarshal()
+   if err != nil {
       return err
    }
-   if err := auth.Auth(token); err != nil {
+   err = auth.Auth(token)
+   if err != nil {
       return err
    }
    checkin.Data, err = os.ReadFile(fmt.Sprint(f.home, "/", f.platform, ".bin"))
@@ -136,8 +88,62 @@ func (f flags) download(url, name string) error {
    defer res.Body.Close()
    var meter log.ProgressMeter
    meter.Set(1)
-   if _, err := dst.ReadFrom(meter.Reader(res)); err != nil {
+   _, err = dst.ReadFrom(meter.Reader(res))
+   if err != nil {
       return err
    }
    return nil
 }
+
+func (f flags) do_acquire() error {
+   var (
+      auth play.GoogleAuth
+      checkin play.GoogleCheckin
+   )
+   err := f.client(&auth, &checkin)
+   if err != nil {
+      return err
+   }
+   return checkin.Acquire(auth, f.app.ID)
+}
+func (f flags) do_device() error {
+   var checkin play.GoogleCheckin
+   err := checkin.Checkin(f.device)
+   if err != nil {
+      return err
+   }
+   f.home += fmt.Sprintf("/%v.bin", f.device.ABI)
+   err = os.WriteFile(f.home, checkin.Data, 0666)
+   if err != nil {
+      return err
+   }
+   fmt.Println("Sleep(9*time.Second)")
+   time.Sleep(9*time.Second)
+   err = checkin.Unmarshal()
+   if err != nil {
+      return err
+   }
+   return checkin.Sync(f.device)
+}
+
+func (f flags) do_auth() error {
+   var token play.GoogleToken
+   err := token.Auth(f.code)
+   if err != nil {
+      return err
+   }
+   return os.WriteFile(f.home + "/token.txt", token.Data, 0666)
+}
+
+func (f flags) do_details() (*play.Details, error) {
+   var (
+      auth play.GoogleAuth
+      checkin play.GoogleCheckin
+   )
+   err := f.client(&auth, &checkin)
+   if err != nil {
+      return nil, err
+   }
+   return checkin.Details(auth, f.app.ID, f.single)
+}
+
