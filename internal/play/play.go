@@ -9,30 +9,6 @@ import (
    "time"
 )
 
-func (f flags) client(auth *play.GoogleAuth, checkin *play.GoogleCheckin) error {
-   var (
-      token play.GoogleToken
-      err error
-   )
-   token.Data, err = os.ReadFile(f.home + "/token.txt")
-   if err != nil {
-      return err
-   }
-   err = token.Unmarshal()
-   if err != nil {
-      return err
-   }
-   err = auth.Auth(token)
-   if err != nil {
-      return err
-   }
-   checkin.Data, err = os.ReadFile(fmt.Sprint(f.home, "/", f.platform, ".bin"))
-   if err != nil {
-      return err
-   }
-   return checkin.Unmarshal()
-}
-
 func (f flags) do_delivery() error {
    var (
       auth play.GoogleAuth
@@ -106,25 +82,6 @@ func (f flags) do_acquire() error {
    }
    return checkin.Acquire(auth, f.app.ID)
 }
-func (f flags) do_device() error {
-   var checkin play.GoogleCheckin
-   err := checkin.Checkin(f.device)
-   if err != nil {
-      return err
-   }
-   f.home += fmt.Sprintf("/%v.bin", f.device.ABI)
-   err = os.WriteFile(f.home, checkin.Data, 0666)
-   if err != nil {
-      return err
-   }
-   fmt.Println("Sleep(9*time.Second)")
-   time.Sleep(9*time.Second)
-   err = checkin.Unmarshal()
-   if err != nil {
-      return err
-   }
-   return checkin.Sync(f.device)
-}
 
 func (f flags) do_auth() error {
    var token play.GoogleToken
@@ -147,3 +104,59 @@ func (f flags) do_details() (*play.Details, error) {
    return checkin.Details(auth, f.app.ID, f.single)
 }
 
+func (f flags) client(auth *play.GoogleAuth, checkin *play.GoogleCheckin) error {
+   var (
+      token play.GoogleToken
+      err error
+   )
+   token.Data, err = os.ReadFile(f.home + "/token.txt")
+   if err != nil {
+      return err
+   }
+   err = token.Unmarshal()
+   if err != nil {
+      return err
+   }
+   err = auth.Auth(token)
+   if err != nil {
+      return err
+   }
+   device, err := f.device.MarshalText()
+   if err != nil {
+      return err
+   }
+   f.home += func() string {
+      var b strings.Builder
+      b.WriteByte('/')
+      b.Write(device)
+      b.WriteByte('-')
+      b.WriteString(f.device.ABI)
+      b.WriteString(".bin")
+      return b.String()
+   }()
+   checkin.Data, err = os.ReadFile(f.home)
+   if err != nil {
+      return err
+   }
+   return checkin.Unmarshal()
+}
+
+func (f flags) do_device() error {
+   var checkin play.GoogleCheckin
+   err := checkin.Checkin(f.device)
+   if err != nil {
+      return err
+   }
+   f.home += fmt.Sprintf("/%v.bin", f.device.ABI)
+   err = os.WriteFile(f.home, checkin.Data, 0666)
+   if err != nil {
+      return err
+   }
+   fmt.Println("Sleep(9*time.Second)")
+   time.Sleep(9*time.Second)
+   err = checkin.Unmarshal()
+   if err != nil {
+      return err
+   }
+   return checkin.Sync(f.device)
+}

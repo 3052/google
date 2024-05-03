@@ -42,7 +42,7 @@ func main() {
       &f.device.ABI, "b", play.ABI[0], strings.Join(play.ABI[1:], " "),
    )
    flag.BoolVar(&f.checkin, "c", false, "checkin and sync device")
-   flag.Var(&f.device, "d", func() string {
+   flag.TextVar(&f.device, "d", play.Devices[0], func() string {
       var b strings.Builder
       for i, device := range play.Devices {
          if i >= 1 {

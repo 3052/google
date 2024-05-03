@@ -5,6 +5,7 @@ import (
    "bytes"
    "compress/gzip"
    "encoding/base64"
+   "errors"
    "fmt"
    "net/http"
    "time"
@@ -133,19 +134,18 @@ type GoogleDevice struct {
    Texture []string
 }
 
-func (g GoogleDevice) String() string {
-   return g.Category
+func (g GoogleDevice) MarshalText() ([]byte, error) {
+   return []byte(g.Category), nil
 }
 
-func (g *GoogleDevice) Set(s string) error {
+func (g *GoogleDevice) UnmarshalText(text []byte) error {
    for _, device := range Devices {
-      if device.Category == s {
+      if device.Category == string(text) {
          *g = device
          return nil
       }
    }
-   *g = Devices[0]
-   return nil
+   return errors.New("GoogleDevice.UnmarshalText")
 }
 
 var Devices = []GoogleDevice{
