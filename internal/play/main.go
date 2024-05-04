@@ -41,9 +41,9 @@ func main() {
    flag.StringVar(
       &play.Device.ABI, "b", play.ABI[0], strings.Join(play.ABI[1:], " "),
    )
-   flag.BoolVar(&f.checkin, "c", false, "checkin and sync device")
+   flag.Uint64Var(&f.app.Version, "c", 0, "version code")
+   flag.BoolVar(&f.checkin, "d", false, "checkin and sync device")
    flag.StringVar(&f.app.ID, "i", "", "app ID")
-   flag.TextVar(&f.v.Level, "level", f.v.Level, "level")
    {
       var b strings.Builder
       b.WriteString("oauth_token from ")
@@ -52,7 +52,7 @@ func main() {
    }
    flag.BoolVar(&f.single, "s", false, "single APK")
    flag.BoolVar(&f.leanback, "t", false, play.Leanback)
-   flag.Uint64Var(&f.app.Version, "v", 0, "version code")
+   flag.TextVar(&f.v.Level, "v", f.v.Level, "level")
    flag.Parse()
    f.v.Set()
    log.Transport{}.Set()

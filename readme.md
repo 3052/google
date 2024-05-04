@@ -24,7 +24,7 @@ play -o oauth2_4/0Adeu5B...
 create a file containing `X-DFE-Device-ID` (GSF ID) for future requests:
 
 ~~~
-play -c
+play -d
 ~~~
 
 get app details:
@@ -33,14 +33,14 @@ get app details:
 > play -i com.google.android.youtube
 details[6] = Google LLC
 details[8] = 0 USD
-details[13][1][4] = 19.13.36
-details[13][1][16] = Apr 3, 2024
+details[13][1][4] = 19.17.34
+details[13][1][16] = Apr 26, 2024
 details[13][1][17] = APK APK APK APK
 details[13][1][82][1][1] = 8.0 and up
-downloads = 16.09 billion
+downloads = 16.25 billion
 name = YouTube
-size = 112.04 megabyte
-version code = 1545332160
+size = 114.63 megabyte
+version code = 1545852352
 ~~~
 
 acquire app. only needs to be done once per Google account:
@@ -54,7 +54,7 @@ provided by the previous details command. if APK is split, all pieces will be
 downloaded:
 
 ~~~
-play -i com.google.android.youtube -v 1540222400
+play -i com.google.android.youtube -c 1545852352
 ~~~
 
 ## goals
