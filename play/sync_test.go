@@ -7,7 +7,7 @@ import (
    "time"
 )
 
-func Test_Sync(t *testing.T) {
+func TestSync(t *testing.T) {
    home, err := os.UserHomeDir()
    if err != nil {
       t.Fatal(err)
