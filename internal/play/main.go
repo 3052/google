@@ -2,7 +2,7 @@ package main
 
 import (
    "154.pages.dev/google/play"
-   "154.pages.dev/log"
+   "154.pages.dev/text"
    "flag"
    "fmt"
    "os"
@@ -27,7 +27,7 @@ type flags struct {
    checkin bool
    home string
    single bool
-   v log.Level
+   v text.Level
    leanback bool
 }
 
@@ -55,7 +55,7 @@ func main() {
    flag.TextVar(&f.v.Level, "v", f.v.Level, "level")
    flag.Parse()
    f.v.Set()
-   log.Transport{}.Set()
+   text.Transport{}.Set()
    switch {
    case f.app.ID != "":
       switch {

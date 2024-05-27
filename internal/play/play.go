@@ -2,7 +2,7 @@ package main
 
 import (
    "154.pages.dev/google/play"
-   "154.pages.dev/log"
+   "154.pages.dev/text"
    "fmt"
    "net/http"
    "os"
@@ -97,7 +97,7 @@ func (f flags) download(url, name string) error {
       return err
    }
    defer res.Body.Close()
-   var meter log.ProgressMeter
+   var meter text.ProgressMeter
    meter.Set(1)
    _, err = dst.ReadFrom(meter.Reader(res))
    if err != nil {

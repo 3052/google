@@ -1,8 +1,8 @@
 package play
 
 import (
-   "154.pages.dev/encoding"
    "154.pages.dev/protobuf"
+   "154.pages.dev/text"
    "errors"
    "fmt"
    "io"
@@ -65,7 +65,7 @@ func (d Details) String() string {
    }
    b = append(b, "\ndownloads ="...)
    if v, ok := d.Downloads(); ok {
-      b = fmt.Append(b, " ", encoding.Cardinal(v))
+      b = fmt.Append(b, " ", text.Cardinal(v))
    }
    b = append(b, "\nname ="...)
    if v, ok := d.Name(); ok {
@@ -73,7 +73,7 @@ func (d Details) String() string {
    }
    b = append(b, "\nsize ="...)
    if v, ok := d.size(); ok {
-      b = fmt.Append(b, " ", encoding.Size(v))
+      b = fmt.Append(b, " ", text.Size(v))
    }
    b = append(b, "\nversion code ="...)
    if v, ok := d.version_code(); ok {
