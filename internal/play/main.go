@@ -27,7 +27,7 @@ type flags struct {
    checkin bool
    home string
    single bool
-   level text.LogLevel
+   log text.LogLevel
    leanback bool
 }
 
@@ -52,10 +52,10 @@ func main() {
    }
    flag.BoolVar(&f.single, "s", false, "single APK")
    flag.BoolVar(&f.leanback, "t", false, play.Leanback)
-   flag.TextVar(&f.level.Level, "v", f.level.Level, "level")
+   flag.TextVar(&f.log.Level, "v", f.log.Level, "level")
    flag.Parse()
-   f.level.Set()
-   f.level.SetTransport(true)
+   f.log.Set()
+   f.log.SetTransport(true)
    switch {
    case f.app.ID != "":
       switch {
