@@ -7,4 +7,4 @@ require (
 	154.pages.dev/text v1.2.2
 )
 
-require google.golang.org/protobuf v1.34.1 // indirect
+require google.golang.org/protobuf v1.34.2 // indirect
