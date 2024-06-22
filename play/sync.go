@@ -54,13 +54,13 @@ func (g GoogleCheckin) Sync(device GoogleDevice) error {
    if err := g.x_dfe_device_id(req); err != nil {
       return err
    }
-   res, err := http.DefaultClient.Do(req)
+   resp, err := http.DefaultClient.Do(req)
    if err != nil {
       return err
    }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return errors.New(res.Status)
+   defer resp.Body.Close()
+   if resp.StatusCode != http.StatusOK {
+      return errors.New(resp.Status)
    }
    return nil
 }
