@@ -1,6 +1,6 @@
 154.pages.dev/protobuf v1.2.0 h1:mA9M6BQ3kRQwy5hXq6vtKcvZWcvtBjGVLc7EIGvBkVc=
 154.pages.dev/protobuf v1.2.0/go.mod h1:kFM1NMn73gQZwDNqF24zulewOIORP/4Etn1L6qlTc3U=
-154.pages.dev/text v1.2.2 h1:vfpyStBBllcdJossyTZXRIDowPEIBPkGM6aIwrtONSM=
-154.pages.dev/text v1.2.2/go.mod h1:UvyUI44OzPxT7aBKgFMCqA8simgm/OMEvNSn+UxbW8o=
+154.pages.dev/text v1.2.3 h1:Ch64xR0DumNFU14V+SiQ6l5iTZewNQS9A4FF0thApPU=
+154.pages.dev/text v1.2.3/go.mod h1:UvyUI44OzPxT7aBKgFMCqA8simgm/OMEvNSn+UxbW8o=
 google.golang.org/protobuf v1.34.2 h1:6xV6lTsCfpGD21XK49h7MhtcApnLqkfYgPcdHftf6hg=
 google.golang.org/protobuf v1.34.2/go.mod h1:qYOHts0dSfpeUzUFpOMr/WGzszTmLH+DiWniOlNbLDw=
