@@ -10,26 +10,6 @@ import (
    "strings"
 )
 
-func (f *flags) New() error {
-   var err error
-   f.home, err = os.UserHomeDir()
-   if err != nil {
-      return err
-   }
-   f.home = filepath.ToSlash(f.home) + "/google-play"
-   return nil
-}
-
-type flags struct {
-   acquire bool
-   app play.StoreApp
-   code string
-   checkin bool
-   home string
-   single bool
-   leanback bool
-}
-
 func main() {
    var f flags
    err := f.New()
@@ -38,7 +18,7 @@ func main() {
    }
    flag.BoolVar(&f.acquire, "a", false, "acquire")
    flag.StringVar(
-      &play.Device.ABI, "b", play.ABI[0], strings.Join(play.ABI[1:], " "),
+      &play.Device.ABI, "b", play.Abi[0], strings.Join(play.Abi[1:], " "),
    )
    flag.Uint64Var(&f.app.Version, "c", 0, "version code")
    flag.BoolVar(&f.checkin, "d", false, "checkin and sync device")
@@ -86,4 +66,24 @@ func main() {
    default:
       flag.Usage()
    }
+}
+
+func (f *flags) New() error {
+   var err error
+   f.home, err = os.UserHomeDir()
+   if err != nil {
+      return err
+   }
+   f.home = filepath.ToSlash(f.home) + "/google-play"
+   return nil
+}
+
+type flags struct {
+   acquire bool
+   app play.StoreApp
+   code string
+   checkin bool
+   home string
+   single bool
+   leanback bool
 }
