@@ -18,7 +18,7 @@ type GoogleAuth struct {
 }
 
 func (g *GoogleAuth) Auth(token GoogleToken) error {
-   res, err := http.PostForm(
+   resp, err := http.PostForm(
       "https://android.googleapis.com/auth", url.Values{
          "Token":      {token.get_token()},
          "app":        {"com.android.vending"},
@@ -29,13 +29,13 @@ func (g *GoogleAuth) Auth(token GoogleToken) error {
    if err != nil {
       return err
    }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
+   defer resp.Body.Close()
+   if resp.StatusCode != http.StatusOK {
       var b strings.Builder
-      res.Write(&b)
+      resp.Write(&b)
       return errors.New(b.String())
    }
-   text, err := io.ReadAll(res.Body)
+   text, err := io.ReadAll(resp.Body)
    if err != nil {
       return err
    }
@@ -56,7 +56,7 @@ type GoogleToken struct {
 }
 
 func (g *GoogleToken) Auth(oauth_token string) error {
-   res, err := http.PostForm(
+   resp, err := http.PostForm(
       "https://android.googleapis.com/auth", url.Values{
          "ACCESS_TOKEN": {"1"},
          "Token":        {oauth_token},
@@ -66,13 +66,13 @@ func (g *GoogleToken) Auth(oauth_token string) error {
    if err != nil {
       return err
    }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
+   defer resp.Body.Close()
+   if resp.StatusCode != http.StatusOK {
       var b strings.Builder
-      res.Write(&b)
+      resp.Write(&b)
       return errors.New(b.String())
    }
-   g.Data, err = io.ReadAll(res.Body)
+   g.Data, err = io.ReadAll(resp.Body)
    if err != nil {
       return err
    }
