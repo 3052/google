@@ -181,17 +181,17 @@ func (g GoogleCheckin) Details(
    if err := g.x_dfe_device_id(req); err != nil {
       return nil, err
    }
-   res, err := http.DefaultClient.Do(req)
+   resp, err := http.DefaultClient.Do(req)
    if err != nil {
       return nil, err
    }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
+   defer resp.Body.Close()
+   if resp.StatusCode != http.StatusOK {
       var b strings.Builder
-      res.Write(&b)
+      resp.Write(&b)
       return nil, errors.New(b.String())
    }
-   data, err := io.ReadAll(res.Body)
+   data, err := io.ReadAll(resp.Body)
    if err != nil {
       return nil, err
    }

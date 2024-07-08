@@ -77,12 +77,12 @@ func (g GoogleCheckin) Delivery(
    if err := g.x_dfe_device_id(req); err != nil {
       return nil, err
    }
-   res, err := http.DefaultClient.Do(req)
+   resp, err := http.DefaultClient.Do(req)
    if err != nil {
       return nil, err
    }
-   defer res.Body.Close()
-   data, err := io.ReadAll(res.Body)
+   defer resp.Body.Close()
+   data, err := io.ReadAll(resp.Body)
    if err != nil {
       return nil, err
    }

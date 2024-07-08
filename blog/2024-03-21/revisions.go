@@ -22,12 +22,12 @@ func main() {
       req.URL.Path = "/android/repository/sys-img/"
       req.URL.Path += fmt.Sprintf("%v/%v-%v", target, abi, api_level)
       req.URL.Path += fmt.Sprintf("_r%02v.zip", r)
-      res, err := http.DefaultClient.Do(req)
+      resp, err := http.DefaultClient.Do(req)
       if err != nil {
          panic(err)
       }
-      fmt.Println(res.Status, req.URL)
-      if res.StatusCode == http.StatusOK {
+      fmt.Println(resp.Status, req.URL)
+      if resp.StatusCode == http.StatusOK {
          break
       }
       time.Sleep(time.Second)

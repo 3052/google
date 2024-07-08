@@ -92,14 +92,14 @@ func (f flags) download(url, name string) error {
       return err
    }
    defer dst.Close()
-   res, err := http.Get(url)
+   resp, err := http.Get(url)
    if err != nil {
       return err
    }
-   defer res.Body.Close()
+   defer resp.Body.Close()
    var meter text.ProgressMeter
    meter.Set(1)
-   _, err = dst.ReadFrom(meter.Reader(res))
+   _, err = dst.ReadFrom(meter.Reader(resp))
    if err != nil {
       return err
    }

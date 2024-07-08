@@ -44,7 +44,7 @@ func (g *GoogleCheckin) Checkin(c GoogleDevice) error {
          })
       }
    })
-   res, err := http.Post(
+   resp, err := http.Post(
       "https://android.googleapis.com/checkin",
       "application/x-protobuffer",
       bytes.NewReader(m.Encode()),
@@ -52,11 +52,11 @@ func (g *GoogleCheckin) Checkin(c GoogleDevice) error {
    if err != nil {
       return err
    }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return errors.New(res.Status)
+   defer resp.Body.Close()
+   if resp.StatusCode != http.StatusOK {
+      return errors.New(resp.Status)
    }
-   g.Data, err = io.ReadAll(res.Body)
+   g.Data, err = io.ReadAll(resp.Body)
    if err != nil {
       return err
    }

@@ -37,17 +37,17 @@ func (g GoogleCheckin) Acquire(auth GoogleAuth, doc string) error {
    if err := g.x_ps_rh(req); err != nil {
       return err
    }
-   res, err := http.DefaultClient.Do(req)
+   resp, err := http.DefaultClient.Do(req)
    if err != nil {
       return err
    }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
+   defer resp.Body.Close()
+   if resp.StatusCode != http.StatusOK {
       var b bytes.Buffer
-      res.Write(&b)
+      resp.Write(&b)
       return errors.New(b.String())
    }
-   data, err := io.ReadAll(res.Body)
+   data, err := io.ReadAll(resp.Body)
    if err != nil {
       return err
    }
