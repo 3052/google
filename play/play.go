@@ -153,7 +153,7 @@ func (g GoogleCheckin) x_ps_rh(req *http.Request) error {
 }
 
 type GoogleDevice struct {
-   ABI     string
+   Abi     string
    Feature []string
    Library []string
    Texture []string
@@ -161,13 +161,13 @@ type GoogleDevice struct {
 
 // play.google.com/store/apps/details?id=com.google.android.apps.youtube.unplugged
 type StoreApp struct {
-   ID      string
+   Id      string
    Version uint64
 }
 
-func (s StoreApp) APK(v string) string {
+func (s StoreApp) Apk(v string) string {
    var b []byte
-   b = fmt.Append(b, s.ID, "-")
+   b = fmt.Append(b, s.Id, "-")
    if v != "" {
       b = fmt.Append(b, v, "-")
    }
@@ -175,13 +175,13 @@ func (s StoreApp) APK(v string) string {
    return string(b)
 }
 
-func (s StoreApp) OBB(v uint64) string {
+func (s StoreApp) Obb(v uint64) string {
    var b []byte
    if v >= 1 {
       b = append(b, "patch"...)
    } else {
       b = append(b, "main"...)
    }
-   b = fmt.Append(b, ".", s.Version, ".", s.ID, ".obb")
+   b = fmt.Append(b, ".", s.Version, ".", s.Id, ".obb")
    return string(b)
 }

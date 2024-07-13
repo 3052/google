@@ -33,7 +33,7 @@ func (g *GoogleCheckin) Checkin(c GoogleDevice) error {
       for _, v := range c.Library {
          m.AddBytes(9, []byte(v))
       }
-      m.AddBytes(11, []byte(c.ABI))
+      m.AddBytes(11, []byte(c.Abi))
       for _, v := range c.Texture {
          m.AddBytes(15, []byte(v))
       }

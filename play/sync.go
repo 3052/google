@@ -26,7 +26,7 @@ func (g GoogleCheckin) Sync(device GoogleDevice) error {
    })
    m.Add(1, func(m *protobuf.Message) {
       m.Add(15, func(m *protobuf.Message) {
-         m.AddBytes(4, []byte(device.ABI))
+         m.AddBytes(4, []byte(device.Abi))
       })
    })
    m.Add(1, func(m *protobuf.Message) {

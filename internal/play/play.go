@@ -14,7 +14,7 @@ func (f flags) device_path() string {
    var b strings.Builder
    b.WriteString(f.home)
    b.WriteByte('/')
-   b.WriteString(play.Device.ABI)
+   b.WriteString(play.Device.Abi)
    if f.leanback {
       b.WriteString("-leanback")
    }
@@ -57,20 +57,20 @@ func (f flags) do_delivery() error {
    if err != nil {
       return err
    }
-   for apk := range deliver.APK() {
+   for apk := range deliver.Apk() {
       if url, ok := apk.URL(); ok {
          if v, ok := apk.Field1(); ok {
-            err := f.download(url, f.app.APK(v))
+            err := f.download(url, f.app.Apk(v))
             if err != nil {
                return err
             }
          }
       }
    }
-   for obb := range deliver.OBB() {
+   for obb := range deliver.Obb() {
       if url, ok := obb.URL(); ok {
          if v, ok := obb.Field1(); ok {
-            err := f.download(url, f.app.OBB(v))
+            err := f.download(url, f.app.Obb(v))
             if err != nil {
                return err
             }
@@ -78,7 +78,7 @@ func (f flags) do_delivery() error {
       }
    }
    if v, ok := deliver.URL(); ok {
-      err := f.download(v, f.app.APK(""))
+      err := f.download(v, f.app.Apk(""))
       if err != nil {
          return err
       }
@@ -115,7 +115,7 @@ func (f flags) do_acquire() error {
    if err != nil {
       return err
    }
-   return checkin.Acquire(auth, f.app.ID)
+   return checkin.Acquire(auth, f.app.Id)
 }
 
 func (f flags) do_auth() error {
@@ -136,7 +136,7 @@ func (f flags) do_details() (*play.Details, error) {
    if err != nil {
       return nil, err
    }
-   return checkin.Details(auth, f.app.ID, f.single)
+   return checkin.Details(auth, f.app.Id, f.single)
 }
 
 func (f flags) client(auth *play.GoogleAuth, checkin *play.GoogleCheckin) error {

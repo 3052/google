@@ -15,7 +15,7 @@ func TestCheckin(t *testing.T) {
    home += "/google-play"
    for _, each := range Abi {
       fmt.Println(each)
-      Device.ABI = each
+      Device.Abi = each
       var checkin GoogleCheckin
       err := checkin.Checkin(Device)
       if err != nil {

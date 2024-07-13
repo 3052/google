@@ -9,18 +9,18 @@ import (
    "strconv"
 )
 
-type APK struct {
+type Apk struct {
    m protobuf.Message
 }
 
-func (a APK) Field1() (string, bool) {
+func (a Apk) Field1() (string, bool) {
    if v, ok := <-a.m.GetBytes(1); ok {
       return string(v), true
    }
    return "", false
 }
 
-func (a APK) URL() (string, bool) {
+func (a Apk) URL() (string, bool) {
    if v, ok := <-a.m.GetBytes(5); ok {
       return string(v), true
    }
@@ -31,22 +31,22 @@ type Delivery struct {
    m protobuf.Message
 }
 
-func (d Delivery) APK() chan APK {
-   vs := make(chan APK)
+func (d Delivery) Apk() chan Apk {
+   vs := make(chan Apk)
    go func() {
       for v := range d.m.Get(15) {
-         vs <- APK{v}
+         vs <- Apk{v}
       }
       close(vs)
    }()
    return vs
 }
 
-func (d Delivery) OBB() chan OBB {
-   vs := make(chan OBB)
+func (d Delivery) Obb() chan Obb {
+   vs := make(chan Obb)
    go func() {
       for v := range d.m.Get(4) {
-         vs <- OBB{v}
+         vs <- Obb{v}
       }
       close(vs)
    }()
@@ -69,7 +69,7 @@ func (g GoogleCheckin) Delivery(
    }
    req.URL.Path = "/fdfe/delivery"
    req.URL.RawQuery = url.Values{
-      "doc": {app.ID},
+      "doc": {app.Id},
       "vc":  {strconv.FormatUint(app.Version, 10)},
    }.Encode()
    auth.authorization(req)
@@ -102,18 +102,18 @@ func (g GoogleCheckin) Delivery(
    return &d, nil
 }
 
-type OBB struct {
+type Obb struct {
    m protobuf.Message
 }
 
-func (o OBB) Field1() (uint64, bool) {
+func (o Obb) Field1() (uint64, bool) {
    if v, ok := <-o.m.GetVarint(1); ok {
       return uint64(v), true
    }
    return 0, false
 }
 
-func (o OBB) URL() (string, bool) {
+func (o Obb) URL() (string, bool) {
    if v, ok := <-o.m.GetBytes(4); ok {
       return string(v), true
    }

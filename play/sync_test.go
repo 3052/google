@@ -16,7 +16,7 @@ func TestSync(t *testing.T) {
    for _, each := range Abi {
       var checkin GoogleCheckin
       fmt.Println(each)
-      Device.ABI = each
+      Device.Abi = each
       if err := checkin.Checkin(Device); err != nil {
          t.Fatal(err)
       }

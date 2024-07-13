@@ -18,11 +18,11 @@ func main() {
    }
    flag.BoolVar(&f.acquire, "a", false, "acquire")
    flag.StringVar(
-      &play.Device.ABI, "b", play.Abi[0], strings.Join(play.Abi[1:], " "),
+      &play.Device.Abi, "b", play.Abi[0], strings.Join(play.Abi[1:], " "),
    )
    flag.Uint64Var(&f.app.Version, "c", 0, "version code")
    flag.BoolVar(&f.checkin, "d", false, "checkin and sync device")
-   flag.StringVar(&f.app.ID, "i", "", "app ID")
+   flag.StringVar(&f.app.Id, "i", "", "app ID")
    {
       var b strings.Builder
       b.WriteString("oauth_token from ")
@@ -34,7 +34,7 @@ func main() {
    flag.Parse()
    text.Transport{}.Set(true)
    switch {
-   case f.app.ID != "":
+   case f.app.Id != "":
       switch {
       case f.acquire:
          err := f.do_acquire()
