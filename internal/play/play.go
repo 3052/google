@@ -58,9 +58,9 @@ func (f flags) do_delivery() error {
       return err
    }
    for apk := range deliver.Apk() {
-      if url, ok := apk.URL(); ok {
+      if address, ok := apk.Url(); ok {
          if v, ok := apk.Field1(); ok {
-            err := f.download(url, f.app.Apk(v))
+            err := f.download(address, f.app.Apk(v))
             if err != nil {
                return err
             }
@@ -68,16 +68,16 @@ func (f flags) do_delivery() error {
       }
    }
    for obb := range deliver.Obb() {
-      if url, ok := obb.URL(); ok {
+      if address, ok := obb.Url(); ok {
          if v, ok := obb.Field1(); ok {
-            err := f.download(url, f.app.Obb(v))
+            err := f.download(address, f.app.Obb(v))
             if err != nil {
                return err
             }
          }
       }
    }
-   if v, ok := deliver.URL(); ok {
+   if v, ok := deliver.Url(); ok {
       err := f.download(v, f.app.Apk(""))
       if err != nil {
          return err
@@ -86,13 +86,13 @@ func (f flags) do_delivery() error {
    return nil
 }
 
-func (f flags) download(url, name string) error {
+func (f flags) download(address, name string) error {
    dst, err := os.Create(name)
    if err != nil {
       return err
    }
    defer dst.Close()
-   resp, err := http.Get(url)
+   resp, err := http.Get(address)
    if err != nil {
       return err
    }

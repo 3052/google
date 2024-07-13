@@ -10,31 +10,31 @@ import (
 )
 
 type Apk struct {
-   m protobuf.Message
+   Message protobuf.Message
 }
 
 func (a Apk) Field1() (string, bool) {
-   if v, ok := <-a.m.GetBytes(1); ok {
+   if v, ok := <-a.Message.GetBytes(1); ok {
       return string(v), true
    }
    return "", false
 }
 
-func (a Apk) URL() (string, bool) {
-   if v, ok := <-a.m.GetBytes(5); ok {
+func (a Apk) Url() (string, bool) {
+   if v, ok := <-a.Message.GetBytes(5); ok {
       return string(v), true
    }
    return "", false
 }
 
 type Delivery struct {
-   m protobuf.Message
+   Message protobuf.Message
 }
 
 func (d Delivery) Apk() chan Apk {
    vs := make(chan Apk)
    go func() {
-      for v := range d.m.Get(15) {
+      for v := range d.Message.Get(15) {
          vs <- Apk{v}
       }
       close(vs)
@@ -45,7 +45,7 @@ func (d Delivery) Apk() chan Apk {
 func (d Delivery) Obb() chan Obb {
    vs := make(chan Obb)
    go func() {
-      for v := range d.m.Get(4) {
+      for v := range d.Message.Get(4) {
          vs <- Obb{v}
       }
       close(vs)
@@ -53,8 +53,26 @@ func (d Delivery) Obb() chan Obb {
    return vs
 }
 
-func (d Delivery) URL() (string, bool) {
-   if v, ok := <-d.m.GetBytes(3); ok {
+func (d Delivery) Url() (string, bool) {
+   if v, ok := <-d.Message.GetBytes(3); ok {
+      return string(v), true
+   }
+   return "", false
+}
+
+type Obb struct {
+   Message protobuf.Message
+}
+
+func (o Obb) Field1() (uint64, bool) {
+   if v, ok := <-o.Message.GetVarint(1); ok {
+      return uint64(v), true
+   }
+   return 0, false
+}
+
+func (o Obb) Url() (string, bool) {
+   if v, ok := <-o.Message.GetBytes(4); ok {
       return string(v), true
    }
    return "", false
@@ -63,7 +81,7 @@ func (d Delivery) URL() (string, bool) {
 func (g GoogleCheckin) Delivery(
    auth GoogleAuth, app StoreApp, single bool,
 ) (*Delivery, error) {
-   req, err := http.NewRequest("GET", "https://android.clients.google.com", nil)
+   req, err := http.NewRequest("", "https://android.clients.google.com", nil)
    if err != nil {
       return nil, err
    }
@@ -86,36 +104,19 @@ func (g GoogleCheckin) Delivery(
    if err != nil {
       return nil, err
    }
-   var d Delivery
-   if err := d.m.Consume(data); err != nil {
+   var m protobuf.Message
+   err = m.Consume(data)
+   if err != nil {
       return nil, err
    }
-   d.m = <-d.m.Get(1)
-   d.m = <-d.m.Get(21)
-   switch <-d.m.GetVarint(1) {
+   m = <-m.Get(1)
+   m = <-m.Get(21)
+   switch <-m.GetVarint(1) {
    case 3:
       return nil, errors.New("acquire")
    case 5:
       return nil, errors.New("version")
    }
-   d.m = <-d.m.Get(2)
-   return &d, nil
-}
-
-type Obb struct {
-   m protobuf.Message
-}
-
-func (o Obb) Field1() (uint64, bool) {
-   if v, ok := <-o.m.GetVarint(1); ok {
-      return uint64(v), true
-   }
-   return 0, false
-}
-
-func (o Obb) URL() (string, bool) {
-   if v, ok := <-o.m.GetBytes(4); ok {
-      return string(v), true
-   }
-   return "", false
+   m = <-m.Get(2)
+   return &Delivery{m}, nil
 }
