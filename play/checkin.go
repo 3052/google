@@ -10,10 +10,10 @@ import (
 
 type GoogleCheckin struct {
    Data []byte
-   m protobuf.Message
+   Message protobuf.Message
 }
 
-func (g *GoogleCheckin) Checkin(c GoogleDevice) error {
+func (g *GoogleCheckin) Checkin(device GoogleDevice) error {
    var m protobuf.Message
    m.Add(4, func(m *protobuf.Message) {
       m.Add(1, func(m *protobuf.Message) {
@@ -30,15 +30,15 @@ func (g *GoogleCheckin) Checkin(c GoogleDevice) error {
       m.AddVarint(6, 1)
       m.AddVarint(7, 420)
       m.AddVarint(8, gl_es_version)
-      for _, v := range c.Library {
+      for _, v := range device.Library {
          m.AddBytes(9, []byte(v))
       }
-      m.AddBytes(11, []byte(c.Abi))
-      for _, v := range c.Texture {
+      m.AddBytes(11, []byte(device.Abi))
+      for _, v := range device.Texture {
          m.AddBytes(15, []byte(v))
       }
       // you cannot swap the next two lines:
-      for _, v := range c.Feature {
+      for _, v := range device.Feature {
          m.Add(26, func(m *protobuf.Message) {
             m.AddBytes(1, []byte(v))
          })
@@ -64,12 +64,12 @@ func (g *GoogleCheckin) Checkin(c GoogleDevice) error {
 }
 
 func (g *GoogleCheckin) Unmarshal() error {
-   return g.m.Consume(g.Data)
+   return g.Message.Consume(g.Data)
 }
 
 // x-dfe-device-id
 func (g GoogleCheckin) device_id() (uint64, error) {
-   if v, ok := <-g.m.GetFixed64(7); ok {
+   if v, ok := <-g.Message.GetFixed64(7); ok {
       return uint64(v), nil
    }
    return 0, errors.New("x-dfe-device-id")

@@ -11,20 +11,11 @@ import (
 )
 
 type Details struct {
-   m protobuf.Message
-}
-
-func (d Details) Downloads() (uint64, bool) {
-   d.m = <-d.m.Get(13)
-   d.m = <-d.m.Get(1)
-   if v, ok := <-d.m.GetVarint(70); ok {
-      return uint64(v), true
-   }
-   return 0, false
+   Message protobuf.Message
 }
 
 func (d Details) Name() (string, bool) {
-   if v, ok := <-d.m.GetBytes(5); ok {
+   if v, ok := <-d.Message.GetBytes(5); ok {
       return string(v), true
    }
    return "", false
@@ -83,41 +74,55 @@ func (d Details) String() string {
 }
 
 func (d Details) field_6() (string, bool) {
-   if v, ok := <-d.m.GetBytes(6); ok {
+   if v, ok := <-d.Message.GetBytes(6); ok {
       return string(v), true
    }
    return "", false
 }
 
-func (d Details) field_8_1() (float64, bool) {
-   d.m = <-d.m.Get(8)
-   if v, ok := <-d.m.GetVarint(1); ok {
-      return float64(v) / 1_000_000, true
+func (d Details) Downloads() (uint64, bool) {
+   if v, ok := <-d.Message.Get(13); ok {
+      if v, ok := <-v.Get(1); ok {
+         if v, ok := <-v.GetVarint(70); ok {
+            return uint64(v), true
+         }
+      }
    }
    return 0, false
 }
 
+func (d Details) field_8_1() (float64, bool) {
+   if v, ok := <-d.Message.Get(8); ok {
+      if v, ok := <-v.GetVarint(1); ok {
+         return float64(v) / 1_000_000, true
+      }
+   }
+   return 0, false
+}
+
+/////////
+
 func (d Details) field_8_2() (string, bool) {
-   d.m = <-d.m.Get(8)
-   if v, ok := <-d.m.GetBytes(2); ok {
+   d.Message = <-d.Message.Get(8)
+   if v, ok := <-d.Message.GetBytes(2); ok {
       return string(v), true
    }
    return "", false
 }
 
 func (d Details) field_13_1_4() (string, bool) {
-   d.m = <-d.m.Get(13)
-   d.m = <-d.m.Get(1)
-   if v, ok := <-d.m.GetBytes(4); ok {
+   d.Message = <-d.Message.Get(13)
+   d.Message = <-d.Message.Get(1)
+   if v, ok := <-d.Message.GetBytes(4); ok {
       return string(v), true
    }
    return "", false
 }
 
 func (d Details) field_13_1_16() (string, bool) {
-   d.m = <-d.m.Get(13)
-   d.m = <-d.m.Get(1)
-   if v, ok := <-d.m.GetBytes(16); ok {
+   d.Message = <-d.Message.Get(13)
+   d.Message = <-d.Message.Get(1)
+   if v, ok := <-d.Message.GetBytes(16); ok {
       return string(v), true
    }
    return "", false
@@ -125,10 +130,10 @@ func (d Details) field_13_1_16() (string, bool) {
 
 func (d Details) field_13_1_17() chan uint64 {
    vs := make(chan uint64)
-   d.m = <-d.m.Get(13)
-   d.m = <-d.m.Get(1)
+   d.Message = <-d.Message.Get(13)
+   d.Message = <-d.Message.Get(1)
    go func() {
-      for v := range d.m.Get(17) {
+      for v := range d.Message.Get(17) {
          if v, ok := <-v.GetVarint(1); ok {
             vs <- uint64(v)
          }
@@ -139,29 +144,29 @@ func (d Details) field_13_1_17() chan uint64 {
 }
 
 func (d Details) field_13_1_82_1_1() (string, bool) {
-   d.m = <-d.m.Get(13)
-   d.m = <-d.m.Get(1)
-   d.m = <-d.m.Get(82)
-   d.m = <-d.m.Get(1)
-   if v, ok := <-d.m.GetBytes(1); ok {
+   d.Message = <-d.Message.Get(13)
+   d.Message = <-d.Message.Get(1)
+   d.Message = <-d.Message.Get(82)
+   d.Message = <-d.Message.Get(1)
+   if v, ok := <-d.Message.GetBytes(1); ok {
       return string(v), true
    }
    return "", false
 }
 
 func (d Details) size() (uint64, bool) {
-   d.m = <-d.m.Get(13)
-   d.m = <-d.m.Get(1)
-   if v, ok := <-d.m.GetVarint(9); ok {
+   d.Message = <-d.Message.Get(13)
+   d.Message = <-d.Message.Get(1)
+   if v, ok := <-d.Message.GetVarint(9); ok {
       return uint64(v), true
    }
    return 0, false
 }
 
 func (d Details) version_code() (uint64, bool) {
-   d.m = <-d.m.Get(13)
-   d.m = <-d.m.Get(1)
-   if v, ok := <-d.m.GetVarint(3); ok {
+   d.Message = <-d.Message.Get(13)
+   d.Message = <-d.Message.Get(1)
+   if v, ok := <-d.Message.GetVarint(3); ok {
       return uint64(v), true
    }
    return 0, false
@@ -170,7 +175,7 @@ func (d Details) version_code() (uint64, bool) {
 func (g GoogleCheckin) Details(
    auth GoogleAuth, doc string, single bool,
 ) (*Details, error) {
-   req, err := http.NewRequest("GET", "https://android.clients.google.com", nil)
+   req, err := http.NewRequest("", "https://android.clients.google.com", nil)
    if err != nil {
       return nil, err
    }
@@ -196,11 +201,11 @@ func (g GoogleCheckin) Details(
       return nil, err
    }
    var d Details
-   if err := d.m.Consume(data); err != nil {
+   if err := d.Message.Consume(data); err != nil {
       return nil, err
    }
-   d.m = <-d.m.Get(1)
-   d.m = <-d.m.Get(2)
-   d.m = <-d.m.Get(4)
+   d.Message = <-d.Message.Get(1)
+   d.Message = <-d.Message.Get(2)
+   d.Message = <-d.Message.Get(4)
    return &d, nil
 }
