@@ -60,24 +60,6 @@ func (d Delivery) Url() (string, bool) {
    return "", false
 }
 
-type Obb struct {
-   Message protobuf.Message
-}
-
-func (o Obb) Field1() (uint64, bool) {
-   if v, ok := <-o.Message.GetVarint(1); ok {
-      return uint64(v), true
-   }
-   return 0, false
-}
-
-func (o Obb) Url() (string, bool) {
-   if v, ok := <-o.Message.GetBytes(4); ok {
-      return string(v), true
-   }
-   return "", false
-}
-
 func (g GoogleCheckin) Delivery(
    auth GoogleAuth, app StoreApp, single bool,
 ) (*Delivery, error) {
@@ -119,4 +101,22 @@ func (g GoogleCheckin) Delivery(
    }
    m = <-m.Get(2)
    return &Delivery{m}, nil
+}
+
+type Obb struct {
+   Message protobuf.Message
+}
+
+func (o Obb) Field1() (uint64, bool) {
+   if v, ok := <-o.Message.GetVarint(1); ok {
+      return uint64(v), true
+   }
+   return 0, false
+}
+
+func (o Obb) Url() (string, bool) {
+   if v, ok := <-o.Message.GetBytes(4); ok {
+      return string(v), true
+   }
+   return "", false
 }
