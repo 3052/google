@@ -12,28 +12,30 @@ func TestDelivery(t *testing.T) {
       t.Fatal(err)
    }
    home += "/google/play"
-   var token GoogleToken
-   token.Data, err = os.ReadFile(home + "/token.txt")
+   data, err := os.ReadFile(home + "/token.txt")
    if err != nil {
       t.Fatal(err)
    }
-   if err := token.Unmarshal(); err != nil {
+   var token GoogleToken
+   err = token.Unmarshal(data)
+   if err != nil {
       t.Fatal(err)
    }
-   var auth GoogleAuth
-   if err := auth.Auth(token); err != nil {
+   auth, err := token.Auth()
+   if err != nil {
+      t.Fatal(err)
+   }
+   data, err = os.ReadFile(home + "/x86.bin")
+   if err != nil {
       t.Fatal(err)
    }
    var checkin GoogleCheckin
-   checkin.Data, err = os.ReadFile(home + "/x86.bin")
+   err = checkin.Unmarshal(data)
    if err != nil {
       t.Fatal(err)
    }
-   if err := checkin.Unmarshal(); err != nil {
-      t.Fatal(err)
-   }
    app := StoreApp{"com.google.android.youtube", 1524221376}
-   deliver, err := checkin.Delivery(auth, app, false)
+   deliver, err := auth.Delivery(checkin, app, false)
    if err != nil {
       t.Fatal(err)
    }

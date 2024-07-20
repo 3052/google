@@ -10,8 +10,8 @@ import (
    "strings"
 )
 
-func (g GoogleCheckin) Details(
-   auth *GoogleAuth, doc string, single bool,
+func (a GoogleAuth) Details(
+   checkin GoogleCheckin, doc string, single bool,
 ) (*Details, error) {
    req, err := http.NewRequest("", "https://android.clients.google.com", nil)
    if err != nil {
@@ -19,9 +19,10 @@ func (g GoogleCheckin) Details(
    }
    req.URL.Path = "/fdfe/details"
    req.URL.RawQuery = "doc=" + doc
-   auth.authorization(req)
+   a.authorization(req)
    user_agent(req, single)
-   if err := g.x_dfe_device_id(req); err != nil {
+   err = checkin.x_dfe_device_id(req)
+   if err != nil {
       return nil, err
    }
    resp, err := http.DefaultClient.Do(req)
@@ -39,7 +40,8 @@ func (g GoogleCheckin) Details(
       return nil, err
    }
    var d Details
-   if err := d.Message.Consume(data); err != nil {
+   err = d.Message.Consume(data)
+   if err != nil {
       return nil, err
    }
    d.Message = <-d.Message.Get(1)

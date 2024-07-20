@@ -9,8 +9,8 @@ import (
    "strconv"
 )
 
-func (g GoogleCheckin) Delivery(
-   auth *GoogleAuth, app StoreApp, single bool,
+func (a GoogleAuth) Delivery(
+   checkin GoogleCheckin, app StoreApp, single bool,
 ) (*Delivery, error) {
    req, err := http.NewRequest("", "https://android.clients.google.com", nil)
    if err != nil {
@@ -21,9 +21,10 @@ func (g GoogleCheckin) Delivery(
       "doc": {app.Id},
       "vc":  {strconv.FormatUint(app.Version, 10)},
    }.Encode()
-   auth.authorization(req)
+   a.authorization(req)
    user_agent(req, single)
-   if err := g.x_dfe_device_id(req); err != nil {
+   err = checkin.x_dfe_device_id(req)
+   if err != nil {
       return nil, err
    }
    resp, err := http.DefaultClient.Do(req)
@@ -69,6 +70,7 @@ func (o Obb) Url() (string, bool) {
    }
    return "", false
 }
+
 type Apk struct {
    Message protobuf.Message
 }

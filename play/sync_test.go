@@ -14,21 +14,24 @@ func TestSync(t *testing.T) {
    }
    home += "/google-play"
    for _, each := range Abi {
-      var checkin GoogleCheckin
       fmt.Println(each)
       Device.Abi = each
-      if err := checkin.Checkin(Device); err != nil {
+      data, err := Device.GoogleCheckin()
+      if err != nil {
          t.Fatal(err)
       }
-      err := os.WriteFile(home+"/"+each+".bin", checkin.Data, 0666)
+      err = os.WriteFile(home+"/"+each+".bin", data, 0666)
       if err != nil {
          t.Fatal(err)
       }
       time.Sleep(time.Second)
-      if err := checkin.Unmarshal(); err != nil {
+      var checkin GoogleCheckin
+      err = checkin.Unmarshal(data)
+      if err != nil {
          t.Fatal(err)
       }
-      if err := checkin.Sync(Device); err != nil {
+      err = Device.Sync(checkin)
+      if err != nil {
          t.Fatal(err)
       }
       time.Sleep(time.Second)

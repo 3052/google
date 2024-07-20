@@ -13,29 +13,30 @@ func TestDetails(t *testing.T) {
       t.Fatal(err)
    }
    home += "/google-play"
-   var token GoogleToken
-   token.Data, err = os.ReadFile(home + "/token.txt")
+   text, err := os.ReadFile(home + "/token.txt")
    if err != nil {
       t.Fatal(err)
    }
-   if err := token.Unmarshal(); err != nil {
+   var token GoogleToken
+   err = token.Unmarshal(text)
+   if err != nil {
       t.Fatal(err)
    }
-   var auth GoogleAuth
-   if err := auth.Auth(token); err != nil {
+   auth, err := token.Auth()
+   if err != nil {
       t.Fatal(err)
    }
    for _, app := range apps {
-      name := fmt.Sprint(home, "/", Abi[app.abi], ".bin")
-      var checkin GoogleCheckin
-      checkin.Data, err = os.ReadFile(name)
+      data, err := os.ReadFile(fmt.Sprint(home, "/", Abi[app.abi], ".bin"))
       if err != nil {
          t.Fatal(err)
       }
-      if err := checkin.Unmarshal(); err != nil {
+      var checkin GoogleCheckin
+      err = checkin.Unmarshal(data)
+      if err != nil {
          t.Fatal(err)
       }
-      detail, err := checkin.Details(auth, app.id, false)
+      detail, err := auth.Details(checkin, app.id, false)
       if err != nil {
          t.Fatal(err)
       }
