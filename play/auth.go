@@ -50,11 +50,6 @@ func (g GoogleAuth) get_auth() string {
    return g.Values.Get("Auth")
 }
 
-type GoogleToken struct {
-   Data []byte
-   Values url.Values
-}
-
 func (g *GoogleToken) Auth(oauth_token string) error {
    resp, err := http.PostForm(
       "https://android.googleapis.com/auth", url.Values{
@@ -90,4 +85,9 @@ func (g *GoogleToken) Unmarshal() error {
 
 func (g GoogleToken) get_token() string {
    return g.Values.Get("Token")
+}
+
+type GoogleToken struct {
+   Data []byte
+   Values url.Values
 }
