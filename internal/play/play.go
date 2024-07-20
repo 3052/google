@@ -10,71 +10,9 @@ import (
    "time"
 )
 
-func (f flags) do_delivery() error {
+func (f flags) do_acquire() error {
    var checkin play.GoogleCheckin
    auth, err := f.client(&checkin)
-   if err != nil {
-      return err
-   }
-   deliver, err := checkin.Delivery(auth, f.app, f.single)
-   if err != nil {
-      return err
-   }
-   for apk := range deliver.Apk() {
-      if address, ok := apk.Url(); ok {
-         if v, ok := apk.Field1(); ok {
-            err := f.download(address, f.app.Apk(v))
-            if err != nil {
-               return err
-            }
-         }
-      }
-   }
-   for obb := range deliver.Obb() {
-      if address, ok := obb.Url(); ok {
-         if v, ok := obb.Field1(); ok {
-            err := f.download(address, f.app.Obb(v))
-            if err != nil {
-               return err
-            }
-         }
-      }
-   }
-   if v, ok := deliver.Url(); ok {
-      err := f.download(v, f.app.Apk(""))
-      if err != nil {
-         return err
-      }
-   }
-   return nil
-}
-
-func (f flags) download(address, name string) error {
-   dst, err := os.Create(name)
-   if err != nil {
-      return err
-   }
-   defer dst.Close()
-   resp, err := http.Get(address)
-   if err != nil {
-      return err
-   }
-   defer resp.Body.Close()
-   var meter text.ProgressMeter
-   meter.Set(1)
-   _, err = dst.ReadFrom(meter.Reader(resp))
-   if err != nil {
-      return err
-   }
-   return nil
-}
-
-func (f flags) do_acquire() error {
-   var (
-      auth play.GoogleAuth
-      checkin play.GoogleCheckin
-   )
-   err := f.client(&auth, &checkin)
    if err != nil {
       return err
    }
@@ -90,11 +28,8 @@ func (f flags) do_auth() error {
 }
 
 func (f flags) do_details() (*play.Details, error) {
-   var (
-      auth play.GoogleAuth
-      checkin play.GoogleCheckin
-   )
-   err := f.client(&auth, &checkin)
+   var checkin play.GoogleCheckin
+   auth, err := f.client(&checkin)
    if err != nil {
       return nil, err
    }
@@ -157,4 +92,62 @@ func (f flags) do_device() error {
    fmt.Println("Sleep(9*time.Second)")
    time.Sleep(9*time.Second)
    return checkin.Sync(play.Device)
+}
+func (f flags) do_delivery() error {
+   var checkin play.GoogleCheckin
+   auth, err := f.client(&checkin)
+   if err != nil {
+      return err
+   }
+   deliver, err := checkin.Delivery(auth, f.app, f.single)
+   if err != nil {
+      return err
+   }
+   for apk := range deliver.Apk() {
+      if address, ok := apk.Url(); ok {
+         if v, ok := apk.Field1(); ok {
+            err := f.download(address, f.app.Apk(v))
+            if err != nil {
+               return err
+            }
+         }
+      }
+   }
+   for obb := range deliver.Obb() {
+      if address, ok := obb.Url(); ok {
+         if v, ok := obb.Field1(); ok {
+            err := f.download(address, f.app.Obb(v))
+            if err != nil {
+               return err
+            }
+         }
+      }
+   }
+   if v, ok := deliver.Url(); ok {
+      err := f.download(v, f.app.Apk(""))
+      if err != nil {
+         return err
+      }
+   }
+   return nil
+}
+
+func (f flags) download(address, name string) error {
+   dst, err := os.Create(name)
+   if err != nil {
+      return err
+   }
+   defer dst.Close()
+   resp, err := http.Get(address)
+   if err != nil {
+      return err
+   }
+   defer resp.Body.Close()
+   var meter text.ProgressMeter
+   meter.Set(1)
+   _, err = dst.ReadFrom(meter.Reader(resp))
+   if err != nil {
+      return err
+   }
+   return nil
 }

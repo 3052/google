@@ -10,6 +10,43 @@ import (
    "strings"
 )
 
+func (g GoogleCheckin) Details(
+   auth *GoogleAuth, doc string, single bool,
+) (*Details, error) {
+   req, err := http.NewRequest("", "https://android.clients.google.com", nil)
+   if err != nil {
+      return nil, err
+   }
+   req.URL.Path = "/fdfe/details"
+   req.URL.RawQuery = "doc=" + doc
+   auth.authorization(req)
+   user_agent(req, single)
+   if err := g.x_dfe_device_id(req); err != nil {
+      return nil, err
+   }
+   resp, err := http.DefaultClient.Do(req)
+   if err != nil {
+      return nil, err
+   }
+   defer resp.Body.Close()
+   if resp.StatusCode != http.StatusOK {
+      var b strings.Builder
+      resp.Write(&b)
+      return nil, errors.New(b.String())
+   }
+   data, err := io.ReadAll(resp.Body)
+   if err != nil {
+      return nil, err
+   }
+   var d Details
+   if err := d.Message.Consume(data); err != nil {
+      return nil, err
+   }
+   d.Message = <-d.Message.Get(1)
+   d.Message = <-d.Message.Get(2)
+   d.Message = <-d.Message.Get(4)
+   return &d, nil
+}
 type Details struct {
    Message protobuf.Message
 }
@@ -100,8 +137,6 @@ func (d Details) field_8_1() (float64, bool) {
    return 0, false
 }
 
-/////////
-
 func (d Details) field_8_2() (string, bool) {
    d.Message = <-d.Message.Get(8)
    if v, ok := <-d.Message.GetBytes(2); ok {
@@ -170,42 +205,4 @@ func (d Details) version_code() (uint64, bool) {
       return uint64(v), true
    }
    return 0, false
-}
-
-func (g GoogleCheckin) Details(
-   auth GoogleAuth, doc string, single bool,
-) (*Details, error) {
-   req, err := http.NewRequest("", "https://android.clients.google.com", nil)
-   if err != nil {
-      return nil, err
-   }
-   req.URL.Path = "/fdfe/details"
-   req.URL.RawQuery = "doc=" + doc
-   auth.authorization(req)
-   user_agent(req, single)
-   if err := g.x_dfe_device_id(req); err != nil {
-      return nil, err
-   }
-   resp, err := http.DefaultClient.Do(req)
-   if err != nil {
-      return nil, err
-   }
-   defer resp.Body.Close()
-   if resp.StatusCode != http.StatusOK {
-      var b strings.Builder
-      resp.Write(&b)
-      return nil, errors.New(b.String())
-   }
-   data, err := io.ReadAll(resp.Body)
-   if err != nil {
-      return nil, err
-   }
-   var d Details
-   if err := d.Message.Consume(data); err != nil {
-      return nil, err
-   }
-   d.Message = <-d.Message.Get(1)
-   d.Message = <-d.Message.Get(2)
-   d.Message = <-d.Message.Get(4)
-   return &d, nil
 }
