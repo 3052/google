@@ -8,12 +8,14 @@ import (
    "net/http"
 )
 
-type GoogleCheckin struct {
-   Data []byte
-   Message protobuf.Message
+func (g GoogleCheckin) device_id() (uint64, error) {
+   if v, ok := <-g.Message.GetFixed64(7); ok {
+      return uint64(v), nil
+   }
+   return 0, errors.New("x-dfe-device-id")
 }
 
-func (g *GoogleCheckin) Checkin(device GoogleDevice) error {
+func (g GoogleDevice) GoogleCheckin() ([]byte, error) {
    var m protobuf.Message
    m.Add(4, func(m *protobuf.Message) {
       m.Add(1, func(m *protobuf.Message) {
@@ -30,15 +32,15 @@ func (g *GoogleCheckin) Checkin(device GoogleDevice) error {
       m.AddVarint(6, 1)
       m.AddVarint(7, 420)
       m.AddVarint(8, gl_es_version)
-      for _, v := range device.Library {
+      for _, v := range g.Library {
          m.AddBytes(9, []byte(v))
       }
-      m.AddBytes(11, []byte(device.Abi))
-      for _, v := range device.Texture {
+      m.AddBytes(11, []byte(g.Abi))
+      for _, v := range g.Texture {
          m.AddBytes(15, []byte(v))
       }
       // you cannot swap the next two lines:
-      for _, v := range device.Feature {
+      for _, v := range g.Feature {
          m.Add(26, func(m *protobuf.Message) {
             m.AddBytes(1, []byte(v))
          })
@@ -50,27 +52,19 @@ func (g *GoogleCheckin) Checkin(device GoogleDevice) error {
       bytes.NewReader(m.Encode()),
    )
    if err != nil {
-      return err
+      return nil, err
    }
    defer resp.Body.Close()
    if resp.StatusCode != http.StatusOK {
-      return errors.New(resp.Status)
+      return nil, errors.New(resp.Status)
    }
-   g.Data, err = io.ReadAll(resp.Body)
-   if err != nil {
-      return err
-   }
-   return nil
+   return io.ReadAll(resp.Body)
 }
 
-func (g *GoogleCheckin) Unmarshal() error {
-   return g.Message.Consume(g.Data)
+type GoogleCheckin struct {
+   Message protobuf.Message
 }
 
-// x-dfe-device-id
-func (g GoogleCheckin) device_id() (uint64, error) {
-   if v, ok := <-g.Message.GetFixed64(7); ok {
-      return uint64(v), nil
-   }
-   return 0, errors.New("x-dfe-device-id")
+func (g *GoogleCheckin) Unmarshal(data []byte) error {
+   return g.Message.Consume(data)
 }
