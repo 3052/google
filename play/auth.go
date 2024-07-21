@@ -22,7 +22,7 @@ func parse_query(query string) (url.Values, error) {
 }
 
 func (g GoogleToken) get_token() string {
-   return g.v.Get("Token")
+   return g.values.Get("Token")
 }
 
 func (g *GoogleToken) New(oauth_token string) error {
@@ -51,7 +51,7 @@ func (g *GoogleToken) New(oauth_token string) error {
 
 func (g *GoogleToken) Unmarshal() error {
    var err error
-   g.v, err = parse_query(string(g.Data))
+   g.values, err = parse_query(string(g.Data))
    if err != nil {
       return err
    }
@@ -60,7 +60,7 @@ func (g *GoogleToken) Unmarshal() error {
 
 type GoogleToken struct {
    Data []byte
-   v url.Values
+   values url.Values
 }
 
 func (g GoogleToken) Auth() (*GoogleAuth, error) {

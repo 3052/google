@@ -68,12 +68,12 @@ func (a GoogleAuth) Acquire(checkin GoogleCheckin, doc string) error {
 }
 
 type acquire_error struct {
-   m protobuf.Message
+   message protobuf.Message
 }
 
 func (a acquire_error) Error() string {
    var b []byte
-   for v := range a.m.Get(1) {
+   for v := range a.message.Get(1) {
       v = <-v.Get(10)
       v = <-v.Get(1)
       if v, ok := <-v.GetBytes(1); ok {

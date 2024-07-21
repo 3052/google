@@ -48,9 +48,6 @@ func TestDetails(t *testing.T) {
       if _, ok := detail.Name(); !ok {
          t.Fatal("name")
       }
-      if _, ok := detail.field_6(); !ok {
-         t.Fatal("field 6")
-      }
       if _, ok := detail.field_8_1(); !ok {
          t.Fatal("field 8 1")
       }
@@ -59,6 +56,9 @@ func TestDetails(t *testing.T) {
       }
       if _, ok := detail.field_13_1_4(); !ok {
          t.Fatal("field 13 1 4")
+      }
+      if _, ok := detail.field_13_1_12(); !ok {
+         t.Fatal("field 13 1 12")
       }
       app.date = func() string {
          u, ok := detail.field_13_1_16()
