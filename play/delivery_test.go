@@ -12,12 +12,12 @@ func TestDelivery(t *testing.T) {
       t.Fatal(err)
    }
    home += "/google/play"
-   data, err := os.ReadFile(home + "/token.txt")
+   var token GoogleToken
+   token.Data, err = os.ReadFile(home + "/token.txt")
    if err != nil {
       t.Fatal(err)
    }
-   var token GoogleToken
-   err = token.Unmarshal(data)
+   err = token.Unmarshal()
    if err != nil {
       t.Fatal(err)
    }
@@ -25,12 +25,12 @@ func TestDelivery(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   data, err = os.ReadFile(home + "/x86.bin")
+   var checkin GoogleCheckin
+   checkin.Data, err = os.ReadFile(home + "/x86.bin")
    if err != nil {
       t.Fatal(err)
    }
-   var checkin GoogleCheckin
-   err = checkin.Unmarshal(data)
+   err = checkin.Unmarshal()
    if err != nil {
       t.Fatal(err)
    }

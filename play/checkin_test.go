@@ -16,11 +16,11 @@ func TestCheckin(t *testing.T) {
    for _, each := range Abi {
       fmt.Println(each)
       Device.Abi = each
-      data, err := Device.GoogleCheckin()
+      checkin, err := Device.Checkin()
       if err != nil {
          t.Fatal(err)
       }
-      os.WriteFile(home+"/"+each+".bin", data, 0666)
+      os.WriteFile(home+"/"+each+".bin", checkin.Data, 0666)
       time.Sleep(time.Second)
    }
 }

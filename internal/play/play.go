@@ -10,20 +10,58 @@ import (
    "time"
 )
 
+func (f flags) client(checkin *play.GoogleCheckin) (*play.GoogleAuth, error) {
+   var (
+      token play.GoogleToken
+      err error
+   )
+   token.Data, err = os.ReadFile(f.home + "/token.txt")
+   if err != nil {
+      return nil, err
+   }
+   err = token.Unmarshal()
+   if err != nil {
+      return nil, err
+   }
+   auth, err := token.Auth()
+   if err != nil {
+      return nil, err
+   }
+   checkin.Data, err = os.ReadFile(f.device_path())
+   if err != nil {
+      return nil, err
+   }
+   err = checkin.Unmarshal()
+   if err != nil {
+      return nil, err
+   }
+   return auth, nil
+}
+
+func (f flags) device_path() string {
+   var b strings.Builder
+   b.WriteString(f.home)
+   b.WriteByte('/')
+   b.WriteString(play.Device.Abi)
+   if f.leanback {
+      b.WriteString("-leanback")
+   }
+   b.WriteString(".bin")
+   return b.String()
+}
 func (f flags) do_device() error {
    if f.leanback {
       play.Device.Feature = append(play.Device.Feature, play.Leanback)
    }
-   data, err := play.Device.GoogleCheckin()
+   checkin, err := play.Device.Checkin()
    if err != nil {
       return err
    }
-   err = os.WriteFile(f.device_path(), data, 0666)
+   err = os.WriteFile(f.device_path(), checkin.Data, 0666)
    if err != nil {
       return err
    }
-   var checkin play.GoogleCheckin
-   err = checkin.Unmarshal(data)
+   err = checkin.Unmarshal()
    if err != nil {
       return err
    }
@@ -90,6 +128,7 @@ func (f flags) download(address, name string) error {
    }
    return nil
 }
+
 func (f flags) do_acquire() error {
    var checkin play.GoogleCheckin
    auth, err := f.client(&checkin)
@@ -98,14 +137,15 @@ func (f flags) do_acquire() error {
    }
    return auth.Acquire(checkin, f.app.Id)
 }
-
 func (f flags) do_auth() error {
-   text, err := play.NewGoogleToken(f.code)
+   var token play.GoogleToken
+   err := token.New(f.code)
    if err != nil {
       return err
    }
-   return os.WriteFile(f.home + "/token.txt", text, 0666)
+   return os.WriteFile(f.home + "/token.txt", token.Data, 0666)
 }
+
 func (f flags) do_details() (*play.Details, error) {
    var checkin play.GoogleCheckin
    auth, err := f.client(&checkin)
@@ -113,41 +153,4 @@ func (f flags) do_details() (*play.Details, error) {
       return nil, err
    }
    return auth.Details(checkin, f.app.Id, f.single)
-}
-
-func (f flags) client(checkin *play.GoogleCheckin) (*play.GoogleAuth, error) {
-   data, err := os.ReadFile(f.home + "/token.txt")
-   if err != nil {
-      return nil, err
-   }
-   var token play.GoogleToken
-   err = token.Unmarshal(data)
-   if err != nil {
-      return nil, err
-   }
-   auth, err := token.Auth()
-   if err != nil {
-      return nil, err
-   }
-   data, err = os.ReadFile(f.device_path())
-   if err != nil {
-      return nil, err
-   }
-   err = checkin.Unmarshal(data)
-   if err != nil {
-      return nil, err
-   }
-   return auth, nil
-}
-
-func (f flags) device_path() string {
-   var b strings.Builder
-   b.WriteString(f.home)
-   b.WriteByte('/')
-   b.WriteString(play.Device.Abi)
-   if f.leanback {
-      b.WriteString("-leanback")
-   }
-   b.WriteString(".bin")
-   return b.String()
 }

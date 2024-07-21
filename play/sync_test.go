@@ -16,17 +16,16 @@ func TestSync(t *testing.T) {
    for _, each := range Abi {
       fmt.Println(each)
       Device.Abi = each
-      data, err := Device.GoogleCheckin()
+      checkin, err := Device.Checkin()
       if err != nil {
          t.Fatal(err)
       }
-      err = os.WriteFile(home+"/"+each+".bin", data, 0666)
+      err = os.WriteFile(home+"/"+each+".bin", checkin.Data, 0666)
       if err != nil {
          t.Fatal(err)
       }
       time.Sleep(time.Second)
-      var checkin GoogleCheckin
-      err = checkin.Unmarshal(data)
+      err = checkin.Unmarshal()
       if err != nil {
          t.Fatal(err)
       }
