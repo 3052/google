@@ -111,7 +111,7 @@ func user_agent(req *http.Request, single bool) {
       b = fmt.Append(b, google_play_store)
    }
    b = append(b, ')')
-   req.Header.Set("User-Agent", string(b))
+   req.Header.Set("user-agent", string(b))
 }
 
 func (g GoogleAuth) authorization(req *http.Request) {
