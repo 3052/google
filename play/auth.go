@@ -8,21 +8,25 @@ import (
    "strings"
 )
 
-type GoogleAuth struct {
-   Values url.Values
+type Values map[string]string
+
+// pkg.go.dev/net/url#ParseQuery
+func (v Values) Set(query string) error {
+   for query != "" {
+      var key string
+      key, query, _ = strings.Cut(query, "\n")
+      key, value, _ := strings.Cut(key, "=")
+      v[key] = value
+   }
+   return nil
 }
 
-func (g GoogleAuth) get_auth() string {
-   return g.Values.Get("Auth")
+func (g GoogleAuth) auth() string {
+   return g.Values["Auth"]
 }
 
-func parse_query(query string) (url.Values, error) {
-   query = strings.ReplaceAll(query, "\n", "&")
-   return url.ParseQuery(query)
-}
-
-func (g GoogleToken) get_token() string {
-   return g.values.Get("Token")
+func (g GoogleToken) token() string {
+   return g.Values["Token"]
 }
 
 func (g *GoogleToken) New(oauth_token string) error {
@@ -49,24 +53,19 @@ func (g *GoogleToken) New(oauth_token string) error {
    return nil
 }
 
-func (g *GoogleToken) Unmarshal() error {
-   var err error
-   g.values, err = parse_query(string(g.Data))
-   if err != nil {
-      return err
-   }
-   return nil
-}
-
 type GoogleToken struct {
    Data []byte
-   values url.Values
+   Values Values
+}
+
+type GoogleAuth struct {
+   Values Values
 }
 
 func (g GoogleToken) Auth() (*GoogleAuth, error) {
    resp, err := http.PostForm(
       "https://android.googleapis.com/auth", url.Values{
-         "Token":      {g.get_token()},
+         "Token":      {g.token()},
          "app":        {"com.android.vending"},
          "client_sig": {"38918a453d07199354f8b19af05ec6562ced5788"},
          "service":    {"oauth2:https://www.googleapis.com/auth/googleplay"},
@@ -85,9 +84,13 @@ func (g GoogleToken) Auth() (*GoogleAuth, error) {
    if err != nil {
       return nil, err
    }
-   query, err := parse_query(string(text))
-   if err != nil {
-      return nil, err
-   }
-   return &GoogleAuth{query}, nil
+   var auth GoogleAuth
+   auth.Values = make(Values)
+   auth.Values.Set(string(text))
+   return &auth, nil
+}
+
+func (g *GoogleToken) Unmarshal() error {
+   g.Values = make(Values)
+   return g.Values.Set(string(g.Data))
 }

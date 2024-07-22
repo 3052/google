@@ -115,7 +115,7 @@ func user_agent(req *http.Request, single bool) {
 }
 
 func (g GoogleAuth) authorization(req *http.Request) {
-   req.Header.Set("authorization", "Bearer "+g.get_auth())
+   req.Header.Set("authorization", "Bearer " + g.auth())
 }
 
 func (g GoogleCheckin) x_dfe_device_id(req *http.Request) error {
