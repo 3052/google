@@ -10,28 +10,6 @@ import (
    "time"
 )
 
-// com.roku.web.trc
-const Leanback = "android.software.leanback"
-
-const android_api = 31
-
-// the device actually uses 0x30000, but some apps require a higher version:
-// com.axis.drawingdesk.v3
-// so lets lie for now
-const gl_es_version = 0x30001
-
-const google_play_store = 82941300
-
-// developer.android.com/ndk/guides/abis
-var Abi = []string{
-   // com.google.android.youtube
-   "x86",
-   // com.sygic.aura
-   "armeabi-v7a",
-   // com.kakaogames.twodin
-   "arm64-v8a",
-}
-
 var Device = GoogleDevice{
    Feature: []string{
       // app.source.getcontact
@@ -184,4 +162,25 @@ func (s StoreApp) Obb(v uint64) string {
    }
    b = fmt.Append(b, ".", s.Version, ".", s.Id, ".obb")
    return string(b)
+}
+// com.roku.web.trc
+const Leanback = "android.software.leanback"
+
+const android_api = 31
+
+// the device actually uses 0x30000, but some apps require a higher version:
+// com.axis.drawingdesk.v3
+// so lets lie for now
+const gl_es_version = 0x30001
+
+const google_play_store = 82941300
+
+// developer.android.com/ndk/guides/abis
+var Abi = []string{
+   // com.google.android.youtube
+   "x86",
+   // com.sygic.aura
+   "armeabi-v7a",
+   // com.kakaogames.twodin
+   "arm64-v8a",
 }
