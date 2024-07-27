@@ -5,7 +5,7 @@ API 31
 this seems to be the first version using `/fdfe/sync` only:
 
 ~~~
-play -i com.android.vending -v 82941300
+play -i com.android.vending -c 82941300
 ~~~
 
 newest:
