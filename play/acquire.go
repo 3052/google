@@ -8,7 +8,7 @@ import (
    "net/http"
 )
 
-func (g GoogleAuth) Acquire(checkin GoogleCheckin, doc string) error {
+func (g *GoogleAuth) Acquire(checkin GoogleCheckin, doc string) error {
    var m protobuf.Message
    m.Add(1, func(m *protobuf.Message) {
       m.Add(1, func(m *protobuf.Message) {
