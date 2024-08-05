@@ -29,7 +29,7 @@ func TestDetails(t *testing.T) {
    for _, app := range apps {
       var checkin GoogleCheckin
       checkin.Data, err = os.ReadFile(
-         fmt.Sprint(home, "/", Abi[app.abi], ".bin"),
+         fmt.Sprint(home, "/", Abi[app.abi], ".txt"),
       )
       if err != nil {
          t.Fatal(err)

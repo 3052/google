@@ -26,7 +26,7 @@ func TestDelivery(t *testing.T) {
       t.Fatal(err)
    }
    var checkin GoogleCheckin
-   checkin.Data, err = os.ReadFile(home + "/x86.bin")
+   checkin.Data, err = os.ReadFile(home + "/x86.txt")
    if err != nil {
       t.Fatal(err)
    }

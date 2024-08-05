@@ -85,12 +85,12 @@ func (g GoogleToken) Auth() (*GoogleAuth, error) {
       return nil, err
    }
    var auth GoogleAuth
-   auth.Values = make(Values)
+   auth.Values = Values{}
    auth.Values.Set(string(text))
    return &auth, nil
 }
 
 func (g *GoogleToken) Unmarshal() error {
-   g.Values = make(Values)
+   g.Values = Values{}
    return g.Values.Set(string(g.Data))
 }

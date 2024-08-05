@@ -20,7 +20,7 @@ func TestCheckin(t *testing.T) {
       if err != nil {
          t.Fatal(err)
       }
-      os.WriteFile(home+"/"+each+".bin", checkin.Data, 0666)
+      os.WriteFile(home+"/"+each+".txt", checkin.Data, 0666)
       time.Sleep(time.Second)
    }
 }

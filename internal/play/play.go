@@ -46,9 +46,10 @@ func (f flags) device_path() string {
    if f.leanback {
       b.WriteString("-leanback")
    }
-   b.WriteString(".bin")
+   b.WriteString(".txt")
    return b.String()
 }
+
 func (f flags) do_device() error {
    if f.leanback {
       play.Device.Feature = append(play.Device.Feature, play.Leanback)
