@@ -71,7 +71,7 @@ type acquire_error struct {
    message protobuf.Message
 }
 
-func (a acquire_error) Error() string {
+func (a *acquire_error) Error() string {
    var b []byte
    for v := range a.message.Get(1) {
       v = <-v.Get(10)
