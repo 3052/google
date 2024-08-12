@@ -70,15 +70,7 @@ fingerprinting, which is difficult but possible to bypass. since Android 5
 (2014), Google uses bot-guard via JavaScript to protect the login. I do not
 know how to reverse that, and I did not find any implementations online.
 
-## support
-
-because of repeated abuse, as of november 5 2023, I no longer offer free
-discussion of this software. so unless you have paid up front, do not:
-
-1. post an issue
-2. post a pull request
-3. message me on Discord
-4. email me
+## license
 
 software is not licensed for commercial use. if you wish to purchase a
 commercial license, contact me.
