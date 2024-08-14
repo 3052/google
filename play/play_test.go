@@ -2,23 +2,6 @@ package play
 
 import "fmt"
 
-type app_type struct {
-   date     string
-   requires int
-   abi int
-   id      string
-}
-
-func (a app_type) GoString() string {
-   var b []byte
-   b = fmt.Appendf(b, "{date:%q", a.date)
-   b = fmt.Append(b, ",requires:", a.requires)
-   b = fmt.Appendf(b, ",abi:%d", a.abi)
-   b = fmt.Appendf(b, ",id:%q", a.id)
-   b = append(b, '}')
-   return string(b)
-}
-
 var apps = []app_type{
 {date:"2023-10-31",requires:21,abi:0,id:"com.roku.web.trc"},
 {date:"2024-01-08",requires:21,abi:0,id:"kr.sira.metal"},
@@ -40,4 +23,21 @@ var apps = []app_type{
 {date:"2024-04-29",requires:24,abi:0,id:"com.pinterest"},
 {date:"2024-05-01",requires:23,abi:0,id:"br.com.rodrigokolb.realdrum"},
 {date:"2024-05-03",requires:23,abi:1,id:"com.axis.drawingdesk.v3"},
+}
+
+type app_type struct {
+   date     string
+   requires int
+   abi int
+   id      string
+}
+
+func (a app_type) GoString() string {
+   var b []byte
+   b = fmt.Appendf(b, "{date:%q", a.date)
+   b = fmt.Append(b, ",requires:", a.requires)
+   b = fmt.Appendf(b, ",abi:%d", a.abi)
+   b = fmt.Appendf(b, ",id:%q", a.id)
+   b = append(b, '}')
+   return string(b)
 }
