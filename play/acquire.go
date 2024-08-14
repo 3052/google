@@ -49,11 +49,11 @@ func (g *GoogleAuth) Acquire(checkin *GoogleCheckin, doc string) error {
       resp.Write(&b)
       return errors.New(b.String())
    }
-   data, err := io.ReadAll(resp.Body)
+   body, err := io.ReadAll(resp.Body)
    if err != nil {
       return err
    }
-   err = message.Consume(data)
+   err = message.Consume(body)
    if err != nil {
       return err
    }
@@ -73,10 +73,10 @@ type acquire_error struct {
 
 func (a *acquire_error) Error() string {
    var b []byte
-   for message := range a.message.Get(1) {
-      message = <-message.Get(10)
-      message = <-message.Get(1)
-      if v, ok := <-message.GetBytes(1); ok {
+   for v := range a.message.Get(1) {
+      v = <-v.Get(10)
+      v = <-v.Get(1)
+      if v, ok := <-v.GetBytes(1); ok {
          if b != nil {
             b = append(b, '\n')
          }

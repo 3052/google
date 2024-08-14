@@ -10,7 +10,7 @@ import (
    "strings"
 )
 
-func (a *GoogleAuth) Details(
+func (g *GoogleAuth) Details(
    checkin *GoogleCheckin, doc string, single bool,
 ) (*Details, error) {
    req, err := http.NewRequest("", "https://android.clients.google.com", nil)
@@ -19,7 +19,7 @@ func (a *GoogleAuth) Details(
    }
    req.URL.Path = "/fdfe/details"
    req.URL.RawQuery = "doc=" + doc
-   authorization(req, a)
+   authorization(req, g)
    user_agent(req, single)
    err = x_dfe_device_id(req, checkin)
    if err != nil {
@@ -35,12 +35,12 @@ func (a *GoogleAuth) Details(
       resp.Write(&b)
       return nil, errors.New(b.String())
    }
-   data, err := io.ReadAll(resp.Body)
+   body, err := io.ReadAll(resp.Body)
    if err != nil {
       return nil, err
    }
    var message protobuf.Message
-   err = message.Consume(data)
+   err = message.Consume(body)
    if err != nil {
       return nil, err
    }
@@ -50,16 +50,16 @@ func (a *GoogleAuth) Details(
    return &Details{message}, nil
 }
 
-func (d Details) field_13_1_12() (string, bool) {
-   message := <-d.Message.Get(13)
-   message = <-message.Get(1)
-   if v, ok := <-message.GetBytes(12); ok {
+func (d *Details) field_13_1_12() (string, bool) {
+   v := <-d.Message.Get(13)
+   v = <-v.Get(1)
+   if v, ok := <-v.GetBytes(12); ok {
       return string(v), true
    }
    return "", false
 }
 
-func (d Details) String() string {
+func (d *Details) String() string {
    var b []byte
    b = append(b, "details[8] ="...)
    if v, ok := d.field_8_1(); ok {
@@ -111,60 +111,44 @@ func (d Details) String() string {
    return string(b)
 }
 
-func (d Details) field_13_1_16() (string, bool) {
-   message := <-d.Message.Get(13)
-   message = <-message.Get(1)
-   if v, ok := <-message.GetBytes(16); ok {
+func (d *Details) field_13_1_16() (string, bool) {
+   v := <-d.Message.Get(13)
+   v = <-v.Get(1)
+   if v, ok := <-v.GetBytes(16); ok {
       return string(v), true
    }
    return "", false
-}
-
-func (d Details) field_13_1_17() chan uint64 {
-   message := <-d.Message.Get(13)
-   message = <-message.Get(1)
-   vs := make(chan uint64)
-   go func() {
-      for message := range message.Get(17) {
-         if v, ok := <-message.GetVarint(1); ok {
-            vs <- uint64(v)
-         }
-      }
-      close(vs)
-   }()
-   return vs
 }
 
 type Details struct {
    Message protobuf.Message
 }
 
-func (d Details) Name() (string, bool) {
+func (d *Details) Name() (string, bool) {
    if v, ok := <-d.Message.GetBytes(5); ok {
       return string(v), true
    }
    return "", false
 }
 
-func (d Details) Downloads() (uint64, bool) {
-   message := <-d.Message.Get(13)
-   message = <-message.Get(1)
-   if v, ok := <-message.GetVarint(70); ok {
+func (d *Details) Downloads() (uint64, bool) {
+   v := <-d.Message.Get(13)
+   v = <-v.Get(1)
+   if v, ok := <-v.GetVarint(70); ok {
       return uint64(v), true
    }
    return 0, false
 }
 
-func (d Details) field_8_1() (float64, bool) {
-   if v, ok := <-d.Message.Get(8); ok {
-      if v, ok := <-v.GetVarint(1); ok {
-         return float64(v) / 1_000_000, true
-      }
+func (d *Details) field_8_1() (float64, bool) {
+   v := <-d.Message.Get(8)
+   if v, ok := <-v.GetVarint(1); ok {
+      return float64(v) / 1_000_000, true
    }
    return 0, false
 }
 
-func (d Details) field_13_1_4() (string, bool) {
+func (d *Details) field_13_1_4() (string, bool) {
    v := <-d.Message.Get(13)
    v = <-v.Get(1)
    if v, ok := <-v.GetBytes(4); ok {
@@ -173,7 +157,7 @@ func (d Details) field_13_1_4() (string, bool) {
    return "", false
 }
 
-func (d Details) field_8_2() (string, bool) {
+func (d *Details) field_8_2() (string, bool) {
    v := <-d.Message.Get(8)
    if v, ok := <-v.GetBytes(2); ok {
       return string(v), true
@@ -181,7 +165,7 @@ func (d Details) field_8_2() (string, bool) {
    return "", false
 }
 
-func (d Details) size() (uint64, bool) {
+func (d *Details) size() (uint64, bool) {
    v := <-d.Message.Get(13)
    v = <-v.Get(1)
    if v, ok := <-v.GetVarint(9); ok {
@@ -190,7 +174,7 @@ func (d Details) size() (uint64, bool) {
    return 0, false
 }
 
-func (d Details) version_code() (uint64, bool) {
+func (d *Details) version_code() (uint64, bool) {
    v := <-d.Message.Get(13)
    v = <-v.Get(1)
    if v, ok := <-v.GetVarint(3); ok {
@@ -199,7 +183,7 @@ func (d Details) version_code() (uint64, bool) {
    return 0, false
 }
 
-func (d Details) field_13_1_82_1_1() (string, bool) {
+func (d *Details) field_13_1_82_1_1() (string, bool) {
    v := <-d.Message.Get(13)
    v = <-v.Get(1)
    v = <-v.Get(82)
@@ -208,4 +192,19 @@ func (d Details) field_13_1_82_1_1() (string, bool) {
       return string(v), true
    }
    return "", false
+}
+
+func (d *Details) field_13_1_17() chan uint64 {
+   v := <-d.Message.Get(13)
+   v = <-v.Get(1)
+   vs := make(chan uint64)
+   go func() {
+      for v := range v.Get(17) {
+         if v, ok := <-v.GetVarint(1); ok {
+            vs <- uint64(v)
+         }
+      }
+      close(vs)
+   }()
+   return vs
 }

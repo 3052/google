@@ -34,15 +34,15 @@ func (a *Apk) Field1() (string, bool) {
    return "", false
 }
 
+type Apk struct {
+   Message protobuf.Message
+}
+
 func (a *Apk) Url() (string, bool) {
    if v, ok := <-a.Message.GetBytes(5); ok {
       return string(v), true
    }
    return "", false
-}
-
-type Apk struct {
-   Message protobuf.Message
 }
 
 func (d *Delivery) Url() (string, bool) {
@@ -55,8 +55,8 @@ func (d *Delivery) Url() (string, bool) {
 func (d *Delivery) Apk() chan Apk {
    vs := make(chan Apk)
    go func() {
-      for message := range d.Message.Get(15) {
-         vs <- Apk{message}
+      for v := range d.Message.Get(15) {
+         vs <- Apk{v}
       }
       close(vs)
    }()
@@ -66,8 +66,8 @@ func (d *Delivery) Apk() chan Apk {
 func (d *Delivery) Obb() chan Obb {
    vs := make(chan Obb)
    go func() {
-      for message := range d.Message.Get(4) {
-         vs <- Obb{message}
+      for v := range d.Message.Get(4) {
+         vs <- Obb{v}
       }
       close(vs)
    }()
@@ -78,9 +78,7 @@ type Delivery struct {
    Message protobuf.Message
 }
 
-///
-
-func (a *GoogleAuth) Delivery(
+func (g *GoogleAuth) Delivery(
    checkin *GoogleCheckin, app *StoreApp, single bool,
 ) (*Delivery, error) {
    req, err := http.NewRequest("", "https://android.clients.google.com", nil)
@@ -92,7 +90,7 @@ func (a *GoogleAuth) Delivery(
       "doc": {app.Id},
       "vc":  {strconv.FormatUint(app.Version, 10)},
    }.Encode()
-   authorization(req, a)
+   authorization(req, g)
    user_agent(req, single)
    err = x_dfe_device_id(req, checkin)
    if err != nil {
@@ -103,12 +101,12 @@ func (a *GoogleAuth) Delivery(
       return nil, err
    }
    defer resp.Body.Close()
-   data, err := io.ReadAll(resp.Body)
+   body, err := io.ReadAll(resp.Body)
    if err != nil {
       return nil, err
    }
    var message protobuf.Message
-   err = message.Consume(data)
+   err = message.Consume(body)
    if err != nil {
       return nil, err
    }

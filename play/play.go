@@ -61,16 +61,18 @@ var Device = GoogleDevice{
    },
 }
 
-func compress_gzip(p []byte) ([]byte, error) {
-   var b bytes.Buffer
-   w := gzip.NewWriter(&b)
-   if _, err := w.Write(p); err != nil {
+func compress_gzip(data []byte) ([]byte, error) {
+   var buf bytes.Buffer
+   w := gzip.NewWriter(&buf)
+   _, err := w.Write(data)
+   if err != nil {
       return nil, err
    }
-   if err := w.Close(); err != nil {
+   err = w.Close()
+   if err != nil {
       return nil, err
    }
-   return b.Bytes(), nil
+   return buf.Bytes(), nil
 }
 
 type GoogleDevice struct {
@@ -80,36 +82,26 @@ type GoogleDevice struct {
    Texture []string
 }
 
-// play.google.com/store/apps/details?id=com.google.android.apps.youtube.unplugged
-type StoreApp struct {
-   Id      string
-   Version uint64
-}
-
-func (s StoreApp) Apk(v string) string {
+func (s *StoreApp) Apk(value string) string {
    var b []byte
    b = fmt.Append(b, s.Id, "-")
-   if v != "" {
-      b = fmt.Append(b, v, "-")
+   if value != "" {
+      b = fmt.Append(b, value, "-")
    }
    b = fmt.Append(b, s.Version, ".apk")
    return string(b)
 }
 
-func (s StoreApp) Obb(v uint64) string {
-   var b []byte
-   if v >= 1 {
-      b = append(b, "patch"...)
-   } else {
-      b = append(b, "main"...)
-   }
-   b = fmt.Append(b, ".", s.Version, ".", s.Id, ".obb")
-   return string(b)
-}
 // com.roku.web.trc
 const Leanback = "android.software.leanback"
 
 const android_api = 31
+
+// play.google.com/store/apps/details?id=com.google.android.apps.youtube.unplugged
+type StoreApp struct {
+   Id      string
+   Version uint64
+}
 
 // the device actually uses 0x30000, but some apps require a higher version:
 // com.axis.drawingdesk.v3
@@ -126,6 +118,17 @@ var Abi = []string{
    "armeabi-v7a",
    // com.kakaogames.twodin
    "arm64-v8a",
+}
+
+func (s *StoreApp) Obb(value uint64) string {
+   var b []byte
+   if value >= 1 {
+      b = append(b, "patch"...)
+   } else {
+      b = append(b, "main"...)
+   }
+   b = fmt.Append(b, ".", s.Version, ".", s.Id, ".obb")
+   return string(b)
 }
 
 func user_agent(req *http.Request, single bool) {

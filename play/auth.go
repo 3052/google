@@ -8,16 +8,8 @@ import (
    "strings"
 )
 
-type Values map[string]string
-
-func (v Values) Set(query string) error {
-   for query != "" {
-      var key string
-      key, query, _ = strings.Cut(query, "\n")
-      key, value, _ := strings.Cut(key, "=")
-      v[key] = value
-   }
-   return nil
+type GoogleAuth struct {
+   Values Values
 }
 
 func (g *GoogleAuth) auth() string {
@@ -52,6 +44,16 @@ func (g *GoogleToken) New(oauth_token string) error {
    return nil
 }
 
+type GoogleToken struct {
+   Values Values
+   Raw []byte
+}
+
+func (g *GoogleToken) Unmarshal() error {
+   g.Values = Values{}
+   return g.Values.Set(string(g.Raw))
+}
+
 func (g *GoogleToken) Auth() (*GoogleAuth, error) {
    resp, err := http.PostForm(
       "https://android.googleapis.com/auth", url.Values{
@@ -70,25 +72,23 @@ func (g *GoogleToken) Auth() (*GoogleAuth, error) {
       resp.Write(&b)
       return nil, errors.New(b.String())
    }
-   text, err := io.ReadAll(resp.Body)
+   body, err := io.ReadAll(resp.Body)
    if err != nil {
       return nil, err
    }
    query := Values{}
-   query.Set(string(text))
+   query.Set(string(body))
    return &GoogleAuth{query}, nil
 }
 
-type GoogleAuth struct {
-   Values Values
-}
+type Values map[string]string
 
-type GoogleToken struct {
-   Values Values
-   Raw []byte
-}
-
-func (g *GoogleToken) Unmarshal() error {
-   g.Values = Values{}
-   return g.Values.Set(string(g.Raw))
+func (v Values) Set(query string) error {
+   for query != "" {
+      var key string
+      key, query, _ = strings.Cut(query, "\n")
+      key, value, _ := strings.Cut(key, "=")
+      v[key] = value
+   }
+   return nil
 }
