@@ -165,8 +165,8 @@ func x_ps_rh(req *http.Request, checkin *GoogleCheckin) error {
    if err != nil {
       return err
    }
-   var m protobuf.Message
-   m.Add(1, func(m *protobuf.Message) {
+   var message protobuf.Message
+   message.Add(1, func(m *protobuf.Message) {
       m.Add(1, func(m *protobuf.Message) {
          m.Add(3, func(m *protobuf.Message) {
             m.AddBytes(1, fmt.Append(nil, id))
@@ -177,7 +177,7 @@ func x_ps_rh(req *http.Request, checkin *GoogleCheckin) error {
          })
       })
    })
-   data, err := compress_gzip(m.Encode())
+   data, err := compress_gzip(message.Encode())
    if err != nil {
       return err
    }

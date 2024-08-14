@@ -55,8 +55,8 @@ func (d *Delivery) Url() (string, bool) {
 func (d *Delivery) Apk() chan Apk {
    vs := make(chan Apk)
    go func() {
-      for v := range d.Message.Get(15) {
-         vs <- Apk{v}
+      for message := range d.Message.Get(15) {
+         vs <- Apk{message}
       }
       close(vs)
    }()
@@ -66,8 +66,8 @@ func (d *Delivery) Apk() chan Apk {
 func (d *Delivery) Obb() chan Obb {
    vs := make(chan Obb)
    go func() {
-      for v := range d.Message.Get(4) {
-         vs <- Obb{v}
+      for message := range d.Message.Get(4) {
+         vs <- Obb{message}
       }
       close(vs)
    }()
@@ -92,9 +92,9 @@ func (a *GoogleAuth) Delivery(
       "doc": {app.Id},
       "vc":  {strconv.FormatUint(app.Version, 10)},
    }.Encode()
-   a.authorization(req)
+   authorization(req, a)
    user_agent(req, single)
-   err = checkin.x_dfe_device_id(req)
+   err = x_dfe_device_id(req, checkin)
    if err != nil {
       return nil, err
    }
@@ -107,19 +107,19 @@ func (a *GoogleAuth) Delivery(
    if err != nil {
       return nil, err
    }
-   var m protobuf.Message
-   err = m.Consume(data)
+   var message protobuf.Message
+   err = message.Consume(data)
    if err != nil {
       return nil, err
    }
-   m = <-m.Get(1)
-   m = <-m.Get(21)
-   switch <-m.GetVarint(1) {
+   message = <-message.Get(1)
+   message = <-message.Get(21)
+   switch <-message.GetVarint(1) {
    case 3:
       return nil, errors.New("acquire")
    case 5:
       return nil, errors.New("version")
    }
-   m = <-m.Get(2)
-   return &Delivery{m}, nil
+   message = <-message.Get(2)
+   return &Delivery{message}, nil
 }

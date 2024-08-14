@@ -9,14 +9,14 @@ import (
 )
 
 func (g *GoogleDevice) Checkin() (*GoogleCheckin, error) {
-   var m protobuf.Message
-   m.Add(4, func(m *protobuf.Message) {
+   var message protobuf.Message
+   message.Add(4, func(m *protobuf.Message) {
       m.Add(1, func(m *protobuf.Message) {
          m.AddVarint(10, android_api)
       })
    })
-   m.AddVarint(14, 3)
-   m.Add(18, func(m *protobuf.Message) {
+   message.AddVarint(14, 3)
+   message.Add(18, func(m *protobuf.Message) {
       m.AddVarint(1, 3)
       m.AddVarint(2, 2)
       m.AddVarint(3, 2)
@@ -42,7 +42,7 @@ func (g *GoogleDevice) Checkin() (*GoogleCheckin, error) {
    resp, err := http.Post(
       "https://android.googleapis.com/checkin",
       "application/x-protobuffer",
-      bytes.NewReader(m.Encode()),
+      bytes.NewReader(message.Encode()),
    )
    if err != nil {
       return nil, err

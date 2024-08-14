@@ -9,8 +9,8 @@ import (
 )
 
 func (g *GoogleAuth) Acquire(checkin *GoogleCheckin, doc string) error {
-   var m protobuf.Message
-   m.Add(1, func(m *protobuf.Message) {
+   var message protobuf.Message
+   message.Add(1, func(m *protobuf.Message) {
       m.Add(1, func(m *protobuf.Message) {
          m.AddBytes(1, []byte(doc))
          m.AddVarint(2, 1)
@@ -18,16 +18,16 @@ func (g *GoogleAuth) Acquire(checkin *GoogleCheckin, doc string) error {
       })
       m.AddVarint(2, 1)
    })
-   m.AddVarint(13, 1)
+   message.AddVarint(13, 1)
    req, err := http.NewRequest(
       "POST", "https://android.clients.google.com/fdfe/acquire",
-      bytes.NewReader(m.Encode()),
+      bytes.NewReader(message.Encode()),
    )
    if err != nil {
       return err
    }
-   g.authorization(req)
-   err = checkin.x_dfe_device_id(req)
+   authorization(req, g)
+   err = x_dfe_device_id(req, checkin)
    if err != nil {
       return err
    }
@@ -35,7 +35,7 @@ func (g *GoogleAuth) Acquire(checkin *GoogleCheckin, doc string) error {
    // /fdfe/acquire, or you get:
    // Please open my apps to establish a connection with the server.
    // on following requests you can omit it
-   err = checkin.x_ps_rh(req)
+   err = x_ps_rh(req, checkin)
    if err != nil {
       return err
    }
@@ -53,16 +53,16 @@ func (g *GoogleAuth) Acquire(checkin *GoogleCheckin, doc string) error {
    if err != nil {
       return err
    }
-   err = m.Consume(data)
+   err = message.Consume(data)
    if err != nil {
       return err
    }
-   m = <-m.Get(1)
-   m = <-m.Get(94)
-   m = <-m.Get(1)
-   m = <-m.Get(2)
-   if m, ok := <-m.Get(147291249); ok {
-      return &acquire_error{m}
+   message = <-message.Get(1)
+   message = <-message.Get(94)
+   message = <-message.Get(1)
+   message = <-message.Get(2)
+   if message, ok := <-message.Get(147291249); ok {
+      return &acquire_error{message}
    }
    return nil
 }
@@ -73,10 +73,10 @@ type acquire_error struct {
 
 func (a *acquire_error) Error() string {
    var b []byte
-   for v := range a.message.Get(1) {
-      v = <-v.Get(10)
-      v = <-v.Get(1)
-      if v, ok := <-v.GetBytes(1); ok {
+   for message := range a.message.Get(1) {
+      message = <-message.Get(10)
+      message = <-message.Get(1)
+      if v, ok := <-message.GetBytes(1); ok {
          if b != nil {
             b = append(b, '\n')
          }
