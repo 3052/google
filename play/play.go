@@ -10,25 +10,6 @@ import (
    "time"
 )
 
-func user_agent(req *http.Request, single bool) {
-   var b []byte
-   // `sdk` is needed for `/fdfe/delivery`
-   b = append(b, "Android-Finsky (sdk="...)
-   // with `/fdfe/acquire`, requests will be rejected with certain apps, if the
-   // device was created with too low a version here:
-   b = fmt.Append(b, android_api)
-   b = append(b, ",versionCode="...)
-   // for multiple APKs just tell the truth. for single APK we have to lie.
-   // below value is the last version that works.
-   if single {
-      b = fmt.Append(b, 80919999)
-   } else {
-      b = fmt.Append(b, google_play_store)
-   }
-   b = append(b, ')')
-   req.Header.Set("user-agent", string(b))
-}
-
 var Device = GoogleDevice{
    Feature: []string{
       // app.source.getcontact
@@ -92,44 +73,6 @@ func compress_gzip(p []byte) ([]byte, error) {
    return b.Bytes(), nil
 }
 
-func (g GoogleAuth) authorization(req *http.Request) {
-   req.Header.Set("authorization", "Bearer " + g.auth())
-}
-
-func (g GoogleCheckin) x_dfe_device_id(req *http.Request) error {
-   id, err := g.device_id()
-   if err != nil {
-      return err
-   }
-   req.Header.Set("x-dfe-device-id", fmt.Sprintf("%x", id))
-   return nil
-}
-
-func (g GoogleCheckin) x_ps_rh(req *http.Request) error {
-   id, err := g.device_id()
-   if err != nil {
-      return err
-   }
-   var m protobuf.Message
-   m.Add(1, func(m *protobuf.Message) {
-      m.Add(1, func(m *protobuf.Message) {
-         m.Add(3, func(m *protobuf.Message) {
-            m.AddBytes(1, fmt.Append(nil, id))
-            m.Add(2, func(m *protobuf.Message) {
-               now := time.Now().UnixMicro()
-               m.AddBytes(1, fmt.Append(nil, now))
-            })
-         })
-      })
-   })
-   data, err := compress_gzip(m.Encode())
-   if err != nil {
-      return err
-   }
-   req.Header.Set("x-ps-rh", base64.URLEncoding.EncodeToString(data))
-   return nil
-}
-
 type GoogleDevice struct {
    Abi     string
    Feature []string
@@ -183,4 +126,61 @@ var Abi = []string{
    "armeabi-v7a",
    // com.kakaogames.twodin
    "arm64-v8a",
+}
+
+func user_agent(req *http.Request, single bool) {
+   var b []byte
+   // `sdk` is needed for `/fdfe/delivery`
+   b = append(b, "Android-Finsky (sdk="...)
+   // with `/fdfe/acquire`, requests will be rejected with certain apps, if the
+   // device was created with too low a version here:
+   b = fmt.Append(b, android_api)
+   b = append(b, ",versionCode="...)
+   // for multiple APKs just tell the truth. for single APK we have to lie.
+   // below value is the last version that works.
+   if single {
+      b = fmt.Append(b, 80919999)
+   } else {
+      b = fmt.Append(b, google_play_store)
+   }
+   b = append(b, ')')
+   req.Header.Set("user-agent", string(b))
+}
+
+func authorization(req *http.Request, auth *GoogleAuth) {
+   req.Header.Set("authorization", "Bearer " + auth.auth())
+}
+
+func x_dfe_device_id(req *http.Request, checkin *GoogleCheckin) error {
+   id, err := checkin.device_id()
+   if err != nil {
+      return err
+   }
+   req.Header.Set("x-dfe-device-id", fmt.Sprintf("%x", id))
+   return nil
+}
+
+func x_ps_rh(req *http.Request, checkin *GoogleCheckin) error {
+   id, err := checkin.device_id()
+   if err != nil {
+      return err
+   }
+   var m protobuf.Message
+   m.Add(1, func(m *protobuf.Message) {
+      m.Add(1, func(m *protobuf.Message) {
+         m.Add(3, func(m *protobuf.Message) {
+            m.AddBytes(1, fmt.Append(nil, id))
+            m.Add(2, func(m *protobuf.Message) {
+               now := time.Now().UnixMicro()
+               m.AddBytes(1, fmt.Append(nil, now))
+            })
+         })
+      })
+   })
+   data, err := compress_gzip(m.Encode())
+   if err != nil {
+      return err
+   }
+   req.Header.Set("x-ps-rh", base64.URLEncoding.EncodeToString(data))
+   return nil
 }

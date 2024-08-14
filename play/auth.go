@@ -10,7 +10,6 @@ import (
 
 type Values map[string]string
 
-// pkg.go.dev/net/url#ParseQuery
 func (v Values) Set(query string) error {
    for query != "" {
       var key string
@@ -21,11 +20,11 @@ func (v Values) Set(query string) error {
    return nil
 }
 
-func (g GoogleAuth) auth() string {
+func (g *GoogleAuth) auth() string {
    return g.Values["Auth"]
 }
 
-func (g GoogleToken) token() string {
+func (g *GoogleToken) token() string {
    return g.Values["Token"]
 }
 
@@ -46,23 +45,14 @@ func (g *GoogleToken) New(oauth_token string) error {
       resp.Write(&b)
       return errors.New(b.String())
    }
-   g.Data, err = io.ReadAll(resp.Body)
+   g.Raw, err = io.ReadAll(resp.Body)
    if err != nil {
       return err
    }
    return nil
 }
 
-type GoogleToken struct {
-   Data []byte
-   Values Values
-}
-
-type GoogleAuth struct {
-   Values Values
-}
-
-func (g GoogleToken) Auth() (*GoogleAuth, error) {
+func (g *GoogleToken) Auth() (*GoogleAuth, error) {
    resp, err := http.PostForm(
       "https://android.googleapis.com/auth", url.Values{
          "Token":      {g.token()},
@@ -84,13 +74,21 @@ func (g GoogleToken) Auth() (*GoogleAuth, error) {
    if err != nil {
       return nil, err
    }
-   var auth GoogleAuth
-   auth.Values = Values{}
-   auth.Values.Set(string(text))
-   return &auth, nil
+   query := Values{}
+   query.Set(string(text))
+   return &GoogleAuth{query}, nil
+}
+
+type GoogleAuth struct {
+   Values Values
+}
+
+type GoogleToken struct {
+   Values Values
+   Raw []byte
 }
 
 func (g *GoogleToken) Unmarshal() error {
    g.Values = Values{}
-   return g.Values.Set(string(g.Data))
+   return g.Values.Set(string(g.Raw))
 }

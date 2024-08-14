@@ -9,8 +9,79 @@ import (
    "strconv"
 )
 
-func (a GoogleAuth) Delivery(
-   checkin GoogleCheckin, app StoreApp, single bool,
+func (o *Obb) Field1() (uint64, bool) {
+   if v, ok := <-o.Message.GetVarint(1); ok {
+      return uint64(v), true
+   }
+   return 0, false
+}
+
+func (o *Obb) Url() (string, bool) {
+   if v, ok := <-o.Message.GetBytes(4); ok {
+      return string(v), true
+   }
+   return "", false
+}
+
+type Obb struct {
+   Message protobuf.Message
+}
+
+func (a *Apk) Field1() (string, bool) {
+   if v, ok := <-a.Message.GetBytes(1); ok {
+      return string(v), true
+   }
+   return "", false
+}
+
+func (a *Apk) Url() (string, bool) {
+   if v, ok := <-a.Message.GetBytes(5); ok {
+      return string(v), true
+   }
+   return "", false
+}
+
+type Apk struct {
+   Message protobuf.Message
+}
+
+func (d *Delivery) Url() (string, bool) {
+   if v, ok := <-d.Message.GetBytes(3); ok {
+      return string(v), true
+   }
+   return "", false
+}
+
+func (d *Delivery) Apk() chan Apk {
+   vs := make(chan Apk)
+   go func() {
+      for v := range d.Message.Get(15) {
+         vs <- Apk{v}
+      }
+      close(vs)
+   }()
+   return vs
+}
+
+func (d *Delivery) Obb() chan Obb {
+   vs := make(chan Obb)
+   go func() {
+      for v := range d.Message.Get(4) {
+         vs <- Obb{v}
+      }
+      close(vs)
+   }()
+   return vs
+}
+
+type Delivery struct {
+   Message protobuf.Message
+}
+
+///
+
+func (a *GoogleAuth) Delivery(
+   checkin *GoogleCheckin, app *StoreApp, single bool,
 ) (*Delivery, error) {
    req, err := http.NewRequest("", "https://android.clients.google.com", nil)
    if err != nil {
@@ -51,73 +122,4 @@ func (a GoogleAuth) Delivery(
    }
    m = <-m.Get(2)
    return &Delivery{m}, nil
-}
-
-type Obb struct {
-   Message protobuf.Message
-}
-
-func (o Obb) Field1() (uint64, bool) {
-   if v, ok := <-o.Message.GetVarint(1); ok {
-      return uint64(v), true
-   }
-   return 0, false
-}
-
-func (o Obb) Url() (string, bool) {
-   if v, ok := <-o.Message.GetBytes(4); ok {
-      return string(v), true
-   }
-   return "", false
-}
-
-type Apk struct {
-   Message protobuf.Message
-}
-
-func (a Apk) Field1() (string, bool) {
-   if v, ok := <-a.Message.GetBytes(1); ok {
-      return string(v), true
-   }
-   return "", false
-}
-
-func (a Apk) Url() (string, bool) {
-   if v, ok := <-a.Message.GetBytes(5); ok {
-      return string(v), true
-   }
-   return "", false
-}
-
-type Delivery struct {
-   Message protobuf.Message
-}
-
-func (d Delivery) Apk() chan Apk {
-   vs := make(chan Apk)
-   go func() {
-      for v := range d.Message.Get(15) {
-         vs <- Apk{v}
-      }
-      close(vs)
-   }()
-   return vs
-}
-
-func (d Delivery) Obb() chan Obb {
-   vs := make(chan Obb)
-   go func() {
-      for v := range d.Message.Get(4) {
-         vs <- Obb{v}
-      }
-      close(vs)
-   }()
-   return vs
-}
-
-func (d Delivery) Url() (string, bool) {
-   if v, ok := <-d.Message.GetBytes(3); ok {
-      return string(v), true
-   }
-   return "", false
 }
