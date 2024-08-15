@@ -15,7 +15,7 @@ func (f flags) client(checkin *play.GoogleCheckin) (*play.GoogleAuth, error) {
       token play.GoogleToken
       err error
    )
-   token.Data, err = os.ReadFile(f.home + "/token.txt")
+   token.Raw, err = os.ReadFile(f.home + "/token.txt")
    if err != nil {
       return nil, err
    }
@@ -27,7 +27,7 @@ func (f flags) client(checkin *play.GoogleCheckin) (*play.GoogleAuth, error) {
    if err != nil {
       return nil, err
    }
-   checkin.Data, err = os.ReadFile(f.device_path())
+   checkin.Raw, err = os.ReadFile(f.device_path())
    if err != nil {
       return nil, err
    }
@@ -58,7 +58,7 @@ func (f flags) do_device() error {
    if err != nil {
       return err
    }
-   err = os.WriteFile(f.device_path(), checkin.Data, 0666)
+   err = os.WriteFile(f.device_path(), checkin.Raw, 0666)
    if err != nil {
       return err
    }
@@ -138,13 +138,14 @@ func (f flags) do_acquire() error {
    }
    return auth.Acquire(checkin, f.app.Id)
 }
+
 func (f flags) do_auth() error {
    var token play.GoogleToken
    err := token.New(f.code)
    if err != nil {
       return err
    }
-   return os.WriteFile(f.home + "/token.txt", token.Data, 0666)
+   return os.WriteFile(f.home + "/token.txt", token.Raw, 0666)
 }
 
 func (f flags) do_details() (*play.Details, error) {
