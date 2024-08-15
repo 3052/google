@@ -14,7 +14,7 @@ func TestAcquire(t *testing.T) {
    }
    home += "/google-play"
    var token GoogleToken
-   token.Data, err = os.ReadFile(home + "/token.txt")
+   token.Raw, err = os.ReadFile(home + "/token.txt")
    if err != nil {
       t.Fatal(err)
    }
@@ -29,7 +29,7 @@ func TestAcquire(t *testing.T) {
    time.Sleep(time.Second)
    for _, app := range apps {
       var checkin GoogleCheckin
-      checkin.Data, err = os.ReadFile(
+      checkin.Raw, err = os.ReadFile(
          fmt.Sprint(home, "/", Abi[app.abi], ".txt"),
       )
       if err != nil {
@@ -40,7 +40,7 @@ func TestAcquire(t *testing.T) {
          t.Fatal(err)
       }
       fmt.Println(app.id)
-      err = auth.Acquire(checkin, app.id)
+      err = auth.Acquire(&checkin, app.id)
       if err != nil {
          t.Fatal(err)
       }

@@ -10,7 +10,88 @@ import (
    "time"
 )
 
-func (f flags) client(checkin *play.GoogleCheckin) (*play.GoogleAuth, error) {
+func (f *flags) do_delivery() error {
+   checkin := &play.GoogleCheckin{}
+   auth, err := f.client(checkin)
+   if err != nil {
+      return err
+   }
+   deliver, err := auth.Delivery(checkin, &f.app, f.single)
+   if err != nil {
+      return err
+   }
+   for apk := range deliver.Apk() {
+      if address, ok := apk.Url(); ok {
+         if v, ok := apk.Field1(); ok {
+            err := download(address, f.app.Apk(v))
+            if err != nil {
+               return err
+            }
+         }
+      }
+   }
+   for obb := range deliver.Obb() {
+      if address, ok := obb.Url(); ok {
+         if v, ok := obb.Field1(); ok {
+            err := download(address, f.app.Obb(v))
+            if err != nil {
+               return err
+            }
+         }
+      }
+   }
+   if v, ok := deliver.Url(); ok {
+      err := download(v, f.app.Apk(""))
+      if err != nil {
+         return err
+      }
+   }
+   return nil
+}
+
+func (f *flags) do_acquire() error {
+   checkin := &play.GoogleCheckin{}
+   auth, err := f.client(checkin)
+   if err != nil {
+      return err
+   }
+   return auth.Acquire(checkin, f.app.Id)
+}
+
+func (f *flags) do_device() error {
+   if f.leanback {
+      play.Device.Feature = append(play.Device.Feature, play.Leanback)
+   }
+   checkin, err := play.Device.Checkin()
+   if err != nil {
+      return err
+   }
+   err = os.WriteFile(f.device_path(), checkin.Raw, 0666)
+   if err != nil {
+      return err
+   }
+   err = checkin.Unmarshal()
+   if err != nil {
+      return err
+   }
+   fmt.Println("Sleep(9*time.Second)")
+   time.Sleep(9*time.Second)
+   return play.Device.Sync(checkin)
+}
+
+func (f *flags) device_path() string {
+   var b strings.Builder
+   b.WriteString(f.home)
+   b.WriteByte('/')
+   b.WriteString(play.Device.Abi)
+   if f.leanback {
+      b.WriteString("-leanback")
+   }
+   b.WriteString(".txt")
+   return b.String()
+}
+
+func (f *flags) client(checkin *play.GoogleCheckin) (*play.GoogleAuth, error) {
    var (
       token play.GoogleToken
       err error
@@ -38,79 +119,7 @@ func (f flags) client(checkin *play.GoogleCheckin) (*play.GoogleAuth, error) {
    return auth, nil
 }
 
-func (f flags) device_path() string {
-   var b strings.Builder
-   b.WriteString(f.home)
-   b.WriteByte('/')
-   b.WriteString(play.Device.Abi)
-   if f.leanback {
-      b.WriteString("-leanback")
-   }
-   b.WriteString(".txt")
-   return b.String()
-}
-
-func (f flags) do_device() error {
-   if f.leanback {
-      play.Device.Feature = append(play.Device.Feature, play.Leanback)
-   }
-   checkin, err := play.Device.Checkin()
-   if err != nil {
-      return err
-   }
-   err = os.WriteFile(f.device_path(), checkin.Raw, 0666)
-   if err != nil {
-      return err
-   }
-   err = checkin.Unmarshal()
-   if err != nil {
-      return err
-   }
-   fmt.Println("Sleep(9*time.Second)")
-   time.Sleep(9*time.Second)
-   return play.Device.Sync(checkin)
-}
-
-func (f flags) do_delivery() error {
-   var checkin play.GoogleCheckin
-   auth, err := f.client(&checkin)
-   if err != nil {
-      return err
-   }
-   deliver, err := auth.Delivery(checkin, f.app, f.single)
-   if err != nil {
-      return err
-   }
-   for apk := range deliver.Apk() {
-      if address, ok := apk.Url(); ok {
-         if v, ok := apk.Field1(); ok {
-            err := f.download(address, f.app.Apk(v))
-            if err != nil {
-               return err
-            }
-         }
-      }
-   }
-   for obb := range deliver.Obb() {
-      if address, ok := obb.Url(); ok {
-         if v, ok := obb.Field1(); ok {
-            err := f.download(address, f.app.Obb(v))
-            if err != nil {
-               return err
-            }
-         }
-      }
-   }
-   if v, ok := deliver.Url(); ok {
-      err := f.download(v, f.app.Apk(""))
-      if err != nil {
-         return err
-      }
-   }
-   return nil
-}
-
-func (f flags) download(address, name string) error {
+func download(address, name string) error {
    dst, err := os.Create(name)
    if err != nil {
       return err
@@ -130,16 +139,7 @@ func (f flags) download(address, name string) error {
    return nil
 }
 
-func (f flags) do_acquire() error {
-   var checkin play.GoogleCheckin
-   auth, err := f.client(&checkin)
-   if err != nil {
-      return err
-   }
-   return auth.Acquire(checkin, f.app.Id)
-}
-
-func (f flags) do_auth() error {
+func (f *flags) do_auth() error {
    var token play.GoogleToken
    err := token.New(f.code)
    if err != nil {
@@ -147,10 +147,9 @@ func (f flags) do_auth() error {
    }
    return os.WriteFile(f.home + "/token.txt", token.Raw, 0666)
 }
-
-func (f flags) do_details() (*play.Details, error) {
-   var checkin play.GoogleCheckin
-   auth, err := f.client(&checkin)
+func (f *flags) do_details() (*play.Details, error) {
+   checkin := &play.GoogleCheckin{}
+   auth, err := f.client(checkin)
    if err != nil {
       return nil, err
    }

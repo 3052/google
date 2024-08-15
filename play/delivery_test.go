@@ -13,7 +13,7 @@ func TestDelivery(t *testing.T) {
    }
    home += "/google/play"
    var token GoogleToken
-   token.Data, err = os.ReadFile(home + "/token.txt")
+   token.Raw, err = os.ReadFile(home + "/token.txt")
    if err != nil {
       t.Fatal(err)
    }
@@ -26,7 +26,7 @@ func TestDelivery(t *testing.T) {
       t.Fatal(err)
    }
    var checkin GoogleCheckin
-   checkin.Data, err = os.ReadFile(home + "/x86.txt")
+   checkin.Raw, err = os.ReadFile(home + "/x86.txt")
    if err != nil {
       t.Fatal(err)
    }
@@ -35,7 +35,7 @@ func TestDelivery(t *testing.T) {
       t.Fatal(err)
    }
    app := StoreApp{"com.google.android.youtube", 1524221376}
-   deliver, err := auth.Delivery(checkin, app, false)
+   deliver, err := auth.Delivery(&checkin, &app, false)
    if err != nil {
       t.Fatal(err)
    }

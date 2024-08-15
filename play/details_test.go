@@ -14,7 +14,7 @@ func TestDetails(t *testing.T) {
    }
    home += "/google-play"
    var token GoogleToken
-   token.Data, err = os.ReadFile(home + "/token.txt")
+   token.Raw, err = os.ReadFile(home + "/token.txt")
    if err != nil {
       t.Fatal(err)
    }
@@ -28,7 +28,7 @@ func TestDetails(t *testing.T) {
    }
    for _, app := range apps {
       var checkin GoogleCheckin
-      checkin.Data, err = os.ReadFile(
+      checkin.Raw, err = os.ReadFile(
          fmt.Sprint(home, "/", Abi[app.abi], ".txt"),
       )
       if err != nil {
@@ -38,7 +38,7 @@ func TestDetails(t *testing.T) {
       if err != nil {
          t.Fatal(err)
       }
-      detail, err := auth.Details(checkin, app.id, false)
+      detail, err := auth.Details(&checkin, app.id, false)
       if err != nil {
          t.Fatal(err)
       }
