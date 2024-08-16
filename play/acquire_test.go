@@ -29,9 +29,7 @@ func TestAcquire(t *testing.T) {
    time.Sleep(time.Second)
    for _, app := range apps {
       var checkin GoogleCheckin
-      checkin.Raw, err = os.ReadFile(
-         fmt.Sprint(home, "/", Abi[app.abi], ".txt"),
-      )
+      checkin.Raw, err = os.ReadFile(home + "/" + app.abi + ".txt")
       if err != nil {
          t.Fatal(err)
       }

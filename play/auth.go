@@ -46,7 +46,7 @@ func (g *GoogleToken) New(oauth_token string) error {
 
 type GoogleToken struct {
    Values Values
-   Raw []byte
+   Raw    []byte
 }
 
 func (g *GoogleToken) Unmarshal() error {

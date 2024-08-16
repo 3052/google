@@ -9,24 +9,6 @@ import (
    "strconv"
 )
 
-func (o *Obb) Field1() (uint64, bool) {
-   if v, ok := <-o.Message.GetVarint(1); ok {
-      return uint64(v), true
-   }
-   return 0, false
-}
-
-func (o *Obb) Url() (string, bool) {
-   if v, ok := <-o.Message.GetBytes(4); ok {
-      return string(v), true
-   }
-   return "", false
-}
-
-type Obb struct {
-   Message protobuf.Message
-}
-
 func (a *Apk) Field1() (string, bool) {
    if v, ok := <-a.Message.GetBytes(1); ok {
       return string(v), true
@@ -120,4 +102,22 @@ func (g *GoogleAuth) Delivery(
    }
    message = <-message.Get(2)
    return &Delivery{message}, nil
+}
+
+func (o *Obb) Field1() (uint64, bool) {
+   if v, ok := <-o.Message.GetVarint(1); ok {
+      return uint64(v), true
+   }
+   return 0, false
+}
+
+func (o *Obb) Url() (string, bool) {
+   if v, ok := <-o.Message.GetBytes(4); ok {
+      return string(v), true
+   }
+   return "", false
+}
+
+type Obb struct {
+   Message protobuf.Message
 }

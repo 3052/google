@@ -10,6 +10,30 @@ import (
    "strings"
 )
 
+func (d *Details) field_13_1_17() chan uint64 {
+   v := <-d.Message.Get(13)
+   v = <-v.Get(1)
+   vs := make(chan uint64)
+   go func() {
+      for v := range v.Get(17) {
+         if v, ok := <-v.GetVarint(1); ok {
+            vs <- uint64(v)
+         }
+      }
+      close(vs)
+   }()
+   return vs
+}
+
+func (d *Details) Downloads() (uint64, bool) {
+   v := <-d.Message.Get(13)
+   v = <-v.Get(1)
+   if v, ok := <-v.GetVarint(70); ok {
+      return uint64(v), true
+   }
+   return 0, false
+}
+
 func (g *GoogleAuth) Details(
    checkin *GoogleCheckin, doc string, single bool,
 ) (*Details, error) {
@@ -131,15 +155,6 @@ func (d *Details) Name() (string, bool) {
    return "", false
 }
 
-func (d *Details) Downloads() (uint64, bool) {
-   v := <-d.Message.Get(13)
-   v = <-v.Get(1)
-   if v, ok := <-v.GetVarint(70); ok {
-      return uint64(v), true
-   }
-   return 0, false
-}
-
 func (d *Details) field_8_1() (float64, bool) {
    v := <-d.Message.Get(8)
    if v, ok := <-v.GetVarint(1); ok {
@@ -192,19 +207,4 @@ func (d *Details) field_13_1_82_1_1() (string, bool) {
       return string(v), true
    }
    return "", false
-}
-
-func (d *Details) field_13_1_17() chan uint64 {
-   v := <-d.Message.Get(13)
-   v = <-v.Get(1)
-   vs := make(chan uint64)
-   go func() {
-      for v := range v.Get(17) {
-         if v, ok := <-v.GetVarint(1); ok {
-            vs <- uint64(v)
-         }
-      }
-      close(vs)
-   }()
-   return vs
 }

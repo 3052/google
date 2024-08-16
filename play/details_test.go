@@ -3,6 +3,7 @@ package play
 import (
    "fmt"
    "os"
+   "path/filepath"
    "testing"
    "time"
 )
@@ -12,7 +13,7 @@ func TestDetails(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   home += "/google-play"
+   home = filepath.ToSlash(home) + "/google-play"
    var token GoogleToken
    token.Raw, err = os.ReadFile(home + "/token.txt")
    if err != nil {
@@ -26,11 +27,13 @@ func TestDetails(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
+   var max_app struct {
+      downloads uint64
+      id string
+   }
    for _, app := range apps {
       var checkin GoogleCheckin
-      checkin.Raw, err = os.ReadFile(
-         fmt.Sprint(home, "/", Abi[app.abi], ".txt"),
-      )
+      checkin.Raw, err = os.ReadFile(home + "/" + app.abi + ".txt")
       if err != nil {
          t.Fatal(err)
       }
@@ -42,11 +45,13 @@ func TestDetails(t *testing.T) {
       if err != nil {
          t.Fatal(err)
       }
-      if _, ok := detail.Downloads(); !ok {
+      if v, ok := detail.Downloads(); ok {
+         if v > max_app.downloads {
+            max_app.downloads = v
+            max_app.id = app.id
+         }
+      } else {
          t.Fatal("downloads")
-      }
-      if _, ok := detail.Name(); !ok {
-         t.Fatal("name")
       }
       if _, ok := detail.field_8_1(); !ok {
          t.Fatal("field 8 1")
@@ -77,6 +82,9 @@ func TestDetails(t *testing.T) {
       if _, ok := detail.field_13_1_82_1_1(); !ok {
          t.Fatal("field 13 1 82 1 1")
       }
+      if _, ok := detail.Name(); !ok {
+         t.Fatal("name")
+      }
       if _, ok := detail.size(); !ok {
          t.Fatal("size")
       }
@@ -86,4 +94,5 @@ func TestDetails(t *testing.T) {
       fmt.Printf("%#v,\n", app)
       time.Sleep(99 * time.Millisecond)
    }
+   fmt.Println("max(downloads) = ", max_app.id)
 }

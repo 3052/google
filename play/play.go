@@ -10,6 +10,16 @@ import (
    "time"
 )
 
+// developer.android.com/ndk/guides/abis
+var Abi = []string{
+   // com.google.android.youtube
+   "x86",
+   // com.sygic.aura
+   "armeabi-v7a",
+   // com.kakaogames.twodin
+   "arm64-v8a",
+}
+
 var Device = GoogleDevice{
    Feature: []string{
       // app.source.getcontact
@@ -110,16 +120,6 @@ const gl_es_version = 0x30001
 
 const google_play_store = 82941300
 
-// developer.android.com/ndk/guides/abis
-var Abi = []string{
-   // com.google.android.youtube
-   "x86",
-   // com.sygic.aura
-   "armeabi-v7a",
-   // com.kakaogames.twodin
-   "arm64-v8a",
-}
-
 func (s *StoreApp) Obb(value uint64) string {
    var b []byte
    if value >= 1 {
@@ -151,7 +151,7 @@ func user_agent(req *http.Request, single bool) {
 }
 
 func authorization(req *http.Request, auth *GoogleAuth) {
-   req.Header.Set("authorization", "Bearer " + auth.auth())
+   req.Header.Set("authorization", "Bearer "+auth.auth())
 }
 
 func x_dfe_device_id(req *http.Request, checkin *GoogleCheckin) error {
