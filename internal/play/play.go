@@ -10,6 +10,16 @@ import (
    "time"
 )
 
+func (f *flags) do_auth() error {
+   var token play.GoogleToken
+   err := token.New(f.code)
+   if err != nil {
+      return err
+   }
+   os.Mkdir(f.home, 0666)
+   return os.WriteFile(f.home + "/token.txt", token.Raw, 0666)
+}
+
 func (f *flags) do_delivery() error {
    checkin := &play.GoogleCheckin{}
    auth, err := f.client(checkin)
@@ -139,14 +149,6 @@ func download(address, name string) error {
    return nil
 }
 
-func (f *flags) do_auth() error {
-   var token play.GoogleToken
-   err := token.New(f.code)
-   if err != nil {
-      return err
-   }
-   return os.WriteFile(f.home + "/token.txt", token.Raw, 0666)
-}
 func (f *flags) do_details() (*play.Details, error) {
    checkin := &play.GoogleCheckin{}
    auth, err := f.client(checkin)
