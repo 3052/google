@@ -9,9 +9,9 @@ import (
 )
 
 func (g *GoogleAuth) Acquire(checkin *GoogleCheckin, doc string) error {
-   var message protobuf.Message
-   message.Add(1, func(m *protobuf.Message) {
-      m.Add(1, func(m *protobuf.Message) {
+   message := protobuf.Message{}
+   message.Add(1, func(m protobuf.Message) {
+      m.Add(1, func(m protobuf.Message) {
          m.AddBytes(1, []byte(doc))
          m.AddVarint(2, 1)
          m.AddVarint(3, 3)
@@ -21,22 +21,20 @@ func (g *GoogleAuth) Acquire(checkin *GoogleCheckin, doc string) error {
    message.AddVarint(13, 1)
    req, err := http.NewRequest(
       "POST", "https://android.clients.google.com/fdfe/acquire",
-      bytes.NewReader(message.Encode()),
+      bytes.NewReader(message.Marshal()),
    )
    if err != nil {
       return err
    }
    authorization(req, g)
-   err = x_dfe_device_id(req, checkin)
-   if err != nil {
+   if err = x_dfe_device_id(req, checkin); err != nil {
       return err
    }
    // with a new device, this needs to be included in the first request to
    // /fdfe/acquire, or you get:
    // Please open my apps to establish a connection with the server.
    // on following requests you can omit it
-   err = x_ps_rh(req, checkin)
-   if err != nil {
+   if err = x_ps_rh(req, checkin); err != nil {
       return err
    }
    resp, err := http.DefaultClient.Do(req)
@@ -53,35 +51,35 @@ func (g *GoogleAuth) Acquire(checkin *GoogleCheckin, doc string) error {
    if err != nil {
       return err
    }
-   err = message.Consume(body)
-   if err != nil {
+   message = protobuf.Message{}
+   if err = message.Unmarshal(body); err != nil {
       return err
    }
-   message = <-message.Get(1)
-   message = <-message.Get(94)
-   message = <-message.Get(1)
-   message = <-message.Get(2)
-   if message, ok := <-message.Get(147291249); ok {
-      return &acquire_error{message}
+   unknown := <-message.GetUnknown(1)
+   unknown = <-unknown.Get(94)
+   unknown = <-unknown.Get(1)
+   unknown = <-unknown.Get(2)
+   if unknown, ok := <-unknown.Get(147291249); ok {
+      return &acquire_error{unknown}
    }
    return nil
 }
 
 type acquire_error struct {
-   message protobuf.Message
+   unknown protobuf.UnknownMessage
 }
 
 func (a *acquire_error) Error() string {
-   var b []byte
-   for v := range a.message.Get(1) {
-      v = <-v.Get(10)
-      v = <-v.Get(1)
-      if v, ok := <-v.GetBytes(1); ok {
-         if b != nil {
-            b = append(b, '\n')
+   var text []byte
+   for u := range a.unknown.Get(1) {
+      u = <-u.Get(10)
+      u = <-u.Get(1)
+      if v, ok := <-u.GetBytes(1); ok {
+         if text != nil {
+            text = append(text, '\n')
          }
-         b = append(b, v...)
+         text = append(text, v...)
       }
    }
-   return string(b)
+   return string(text)
 }

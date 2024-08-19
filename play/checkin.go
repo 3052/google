@@ -8,31 +8,15 @@ import (
    "net/http"
 )
 
-type GoogleCheckin struct {
-   Message protobuf.Message
-   Raw     []byte
-}
-
-func (g *GoogleCheckin) device_id() (uint64, error) {
-   if v, ok := <-g.Message.GetFixed64(7); ok {
-      return uint64(v), nil
-   }
-   return 0, errors.New("x-dfe-device-id")
-}
-
-func (g *GoogleCheckin) Unmarshal() error {
-   return g.Message.Consume(g.Raw)
-}
-
 func (g *GoogleDevice) Checkin() (*GoogleCheckin, error) {
-   var message protobuf.Message
-   message.Add(4, func(m *protobuf.Message) {
-      m.Add(1, func(m *protobuf.Message) {
+   message := protobuf.Message{}
+   message.Add(4, func(m protobuf.Message) {
+      m.Add(1, func(m protobuf.Message) {
          m.AddVarint(10, android_api)
       })
    })
    message.AddVarint(14, 3)
-   message.Add(18, func(m *protobuf.Message) {
+   message.Add(18, func(m protobuf.Message) {
       m.AddVarint(1, 3)
       m.AddVarint(2, 2)
       m.AddVarint(3, 2)
@@ -50,7 +34,7 @@ func (g *GoogleDevice) Checkin() (*GoogleCheckin, error) {
       }
       // you cannot swap the next two lines:
       for _, v := range g.Feature {
-         m.Add(26, func(m *protobuf.Message) {
+         m.Add(26, func(m protobuf.Message) {
             m.AddBytes(1, []byte(v))
          })
       }
@@ -58,7 +42,7 @@ func (g *GoogleDevice) Checkin() (*GoogleCheckin, error) {
    resp, err := http.Post(
       "https://android.googleapis.com/checkin",
       "application/x-protobuffer",
-      bytes.NewReader(message.Encode()),
+      bytes.NewReader(message.Marshal()),
    )
    if err != nil {
       return nil, err
@@ -72,4 +56,21 @@ func (g *GoogleDevice) Checkin() (*GoogleCheckin, error) {
       return nil, err
    }
    return &GoogleCheckin{Raw: body}, nil
+}
+
+type GoogleCheckin struct {
+   Message protobuf.Message
+   Raw     []byte
+}
+
+func (g *GoogleCheckin) Unmarshal() error {
+   g.Message = protobuf.Message{}
+   return g.Message.Unmarshal(g.Raw)
+}
+
+func (g *GoogleCheckin) device_id() (uint64, error) {
+   if v, ok := <-g.Message.GetFixed64(7); ok {
+      return uint64(v), nil
+   }
+   return 0, errors.New("x-dfe-device-id")
 }

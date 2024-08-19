@@ -169,18 +169,18 @@ func x_ps_rh(req *http.Request, checkin *GoogleCheckin) error {
       return err
    }
    var message protobuf.Message
-   message.Add(1, func(m *protobuf.Message) {
-      m.Add(1, func(m *protobuf.Message) {
-         m.Add(3, func(m *protobuf.Message) {
+   message.Add(1, func(m protobuf.Message) {
+      m.Add(1, func(m protobuf.Message) {
+         m.Add(3, func(m protobuf.Message) {
             m.AddBytes(1, fmt.Append(nil, id))
-            m.Add(2, func(m *protobuf.Message) {
+            m.Add(2, func(m protobuf.Message) {
                now := time.Now().UnixMicro()
                m.AddBytes(1, fmt.Append(nil, now))
             })
          })
       })
    })
-   data, err := compress_gzip(message.Encode())
+   data, err := compress_gzip(message.Marshal())
    if err != nil {
       return err
    }

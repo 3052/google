@@ -64,7 +64,7 @@ func (g *GoogleAuth) Details(
       return nil, err
    }
    var message protobuf.Message
-   err = message.Consume(body)
+   err = message.Unmarshal(body)
    if err != nil {
       return nil, err
    }

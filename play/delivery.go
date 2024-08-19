@@ -9,6 +9,50 @@ import (
    "strconv"
 )
 
+///
+
+func (g *GoogleAuth) Delivery(
+   checkin *GoogleCheckin, app *StoreApp, single bool,
+) (*Delivery, error) {
+   req, err := http.NewRequest("", "https://android.clients.google.com", nil)
+   if err != nil {
+      return nil, err
+   }
+   req.URL.Path = "/fdfe/delivery"
+   req.URL.RawQuery = url.Values{
+      "doc": {app.Id},
+      "vc":  {strconv.FormatUint(app.Version, 10)},
+   }.Encode()
+   authorization(req, g)
+   user_agent(req, single)
+   if err = x_dfe_device_id(req, checkin); err != nil {
+      return nil, err
+   }
+   resp, err := http.DefaultClient.Do(req)
+   if err != nil {
+      return nil, err
+   }
+   defer resp.Body.Close()
+   body, err := io.ReadAll(resp.Body)
+   if err != nil {
+      return nil, err
+   }
+   message := protobuf.Message{}
+   if err = message.Unmarshal(body); err != nil {
+      return nil, err
+   }
+   unknown := <-message.GetUnknown(1)
+   unknown = <-unknown.Get(21)
+   switch <-unknown.GetVarint(1) {
+   case 3:
+      return nil, errors.New("acquire")
+   case 5:
+      return nil, errors.New("version")
+   }
+   unknown = <-unknown.Get(2)
+   return &Delivery{unknown}, nil
+}
+
 func (a *Apk) Url() (string, bool) {
    if v, ok := <-a.Message.GetBytes(5); ok {
       return string(v), true
@@ -72,50 +116,6 @@ func (d *Delivery) Url() (string, bool) {
 
 type Delivery struct {
    Message protobuf.Message
-}
-
-func (g *GoogleAuth) Delivery(
-   checkin *GoogleCheckin, app *StoreApp, single bool,
-) (*Delivery, error) {
-   req, err := http.NewRequest("", "https://android.clients.google.com", nil)
-   if err != nil {
-      return nil, err
-   }
-   req.URL.Path = "/fdfe/delivery"
-   req.URL.RawQuery = url.Values{
-      "doc": {app.Id},
-      "vc":  {strconv.FormatUint(app.Version, 10)},
-   }.Encode()
-   authorization(req, g)
-   user_agent(req, single)
-   err = x_dfe_device_id(req, checkin)
-   if err != nil {
-      return nil, err
-   }
-   resp, err := http.DefaultClient.Do(req)
-   if err != nil {
-      return nil, err
-   }
-   defer resp.Body.Close()
-   body, err := io.ReadAll(resp.Body)
-   if err != nil {
-      return nil, err
-   }
-   var message protobuf.Message
-   err = message.Consume(body)
-   if err != nil {
-      return nil, err
-   }
-   message = <-message.Get(1)
-   message = <-message.Get(21)
-   switch <-message.GetVarint(1) {
-   case 3:
-      return nil, errors.New("acquire")
-   case 5:
-      return nil, errors.New("version")
-   }
-   message = <-message.Get(2)
-   return &Delivery{message}, nil
 }
 
 type Obb struct {
