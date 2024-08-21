@@ -71,10 +71,10 @@ type acquire_error struct {
 
 func (a *acquire_error) Error() string {
    var text []byte
-   for m := range a.message.Get(1) {
-      m = <-m.Get(10)
-      m = <-m.Get(1)
-      if v, ok := <-m.GetBytes(1); ok {
+   for v := range a.message.Get(1) {
+      v = <-v.Get(10)
+      v = <-v.Get(1)
+      if v, ok := <-v.GetBytes(1); ok {
          if text != nil {
             text = append(text, '\n')
          }

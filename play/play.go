@@ -168,7 +168,7 @@ func x_ps_rh(req *http.Request, checkin *GoogleCheckin) error {
    if err != nil {
       return err
    }
-   var message protobuf.Message
+   message := protobuf.Message{}
    message.Add(1, func(m protobuf.Message) {
       m.Add(1, func(m protobuf.Message) {
          m.Add(3, func(m protobuf.Message) {

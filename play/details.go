@@ -10,6 +10,15 @@ import (
    "strings"
 )
 
+func (d *Details) Downloads() (uint64, bool) {
+   v := <-d.Message.Get(13)
+   v = <-v.Get(1)
+   if v, ok := <-v.GetVarint(70); ok {
+      return uint64(v), true
+   }
+   return 0, false
+}
+
 func (g *GoogleAuth) Details(
    checkin *GoogleCheckin, doc string, single bool,
 ) (*Details, error) {
@@ -53,23 +62,23 @@ func (g *GoogleAuth) Details(
 func (d *Details) String() string {
    var b []byte
    b = append(b, "details[8] ="...)
-   if v, ok := d.field_8_1(); ok {
-      b = fmt.Append(b, " ", v)
+   if value, ok := d.field_8_1(); ok {
+      b = fmt.Append(b, " ", value)
    }
-   if v, ok := d.field_8_2(); ok {
-      b = fmt.Append(b, " ", v)
+   if value, ok := d.field_8_2(); ok {
+      b = fmt.Append(b, " ", value)
    }
    b = append(b, "\ndetails[13][1][4] ="...)
-   if v, ok := d.field_13_1_4(); ok {
-      b = fmt.Append(b, " ", v)
+   if value, ok := d.field_13_1_4(); ok {
+      b = fmt.Append(b, " ", value)
    }
    b = append(b, "\ndetails[13][1][12] ="...)
-   if v, ok := d.field_13_1_12(); ok {
-      b = fmt.Append(b, " ", v)
+   if value, ok := d.field_13_1_12(); ok {
+      b = fmt.Append(b, " ", value)
    }
    b = append(b, "\ndetails[13][1][16] ="...)
-   if v, ok := d.field_13_1_16(); ok {
-      b = fmt.Append(b, " ", v)
+   if value, ok := d.field_13_1_16(); ok {
+      b = fmt.Append(b, " ", value)
    }
    b = append(b, "\ndetails[13][1][17] ="...)
    for file := range d.field_13_1_17() {
@@ -80,35 +89,35 @@ func (d *Details) String() string {
       }
    }
    b = append(b, "\ndetails[13][1][82][1][1] ="...)
-   if v, ok := d.field_13_1_82_1_1(); ok {
-      b = fmt.Append(b, " ", v)
+   if value, ok := d.field_13_1_82_1_1(); ok {
+      b = fmt.Append(b, " ", value)
    }
    b = append(b, "\ndownloads ="...)
-   if v, ok := d.Downloads(); ok {
-      b = fmt.Append(b, " ", text.Cardinal(v))
+   if value, ok := d.Downloads(); ok {
+      b = fmt.Append(b, " ", text.Cardinal(value))
    }
    b = append(b, "\nname ="...)
-   if v, ok := d.Name(); ok {
-      b = fmt.Append(b, " ", v)
+   if value, ok := d.Name(); ok {
+      b = fmt.Append(b, " ", value)
    }
    b = append(b, "\nsize ="...)
-   if v, ok := d.size(); ok {
-      b = fmt.Append(b, " ", text.Size(v))
+   if value, ok := d.size(); ok {
+      b = fmt.Append(b, " ", text.Size(value))
    }
    b = append(b, "\nversion code ="...)
-   if v, ok := d.version_code(); ok {
-      b = fmt.Append(b, " ", v)
+   if value, ok := d.version_code(); ok {
+      b = fmt.Append(b, " ", value)
    }
    return string(b)
 }
 
 func (d *Details) field_13_1_17() chan uint64 {
-   m := <-d.Message.Get(13)
-   m = <-m.Get(1)
+   v := <-d.Message.Get(13)
+   v = <-v.Get(1)
    vs := make(chan uint64)
    go func() {
-      for m := range m.Get(17) {
-         if v, ok := <-m.GetVarint(1); ok {
+      for v := range v.Get(17) {
+         if v, ok := <-v.GetVarint(1); ok {
             vs <- uint64(v)
          }
       }
@@ -117,19 +126,10 @@ func (d *Details) field_13_1_17() chan uint64 {
    return vs
 }
 
-func (d *Details) Downloads() (uint64, bool) {
-   m := <-d.Message.Get(13)
-   m = <-m.Get(1)
-   if v, ok := <-v.GetVarint(70); ok {
-      return uint64(v), true
-   }
-   return 0, false
-}
-
 func (d *Details) field_13_1_12() (string, bool) {
-   m := <-d.Message.Get(13)
-   m = <-m.Get(1)
-   if v, ok := <-m.GetBytes(12); ok {
+   v := <-d.Message.Get(13)
+   v = <-v.Get(1)
+   if v, ok := <-v.GetBytes(12); ok {
       return string(v), true
    }
    return "", false
@@ -147,63 +147,63 @@ func (d *Details) Name() (string, bool) {
 }
 
 func (d *Details) field_13_1_16() (string, bool) {
-   m := <-d.Message.Get(13)
-   m = <-m.Get(1)
-   if v, ok := <-m.GetBytes(16); ok {
+   v := <-d.Message.Get(13)
+   v = <-v.Get(1)
+   if v, ok := <-v.GetBytes(16); ok {
       return string(v), true
    }
    return "", false
 }
 
 func (d *Details) field_8_1() (float64, bool) {
-   m := <-d.Message.Get(8)
-   if v, ok := <-m.GetVarint(1); ok {
+   v := <-d.Message.Get(8)
+   if v, ok := <-v.GetVarint(1); ok {
       return float64(v) / 1_000_000, true
    }
    return 0, false
 }
 
 func (d *Details) field_13_1_4() (string, bool) {
-   m := <-d.Message.Get(13)
-   m = <-m.Get(1)
-   if v, ok := <-m.GetBytes(4); ok {
+   v := <-d.Message.Get(13)
+   v = <-v.Get(1)
+   if v, ok := <-v.GetBytes(4); ok {
       return string(v), true
    }
    return "", false
 }
 
 func (d *Details) field_8_2() (string, bool) {
-   m := <-d.Message.Get(8)
-   if v, ok := <-m.GetBytes(2); ok {
+   v := <-d.Message.Get(8)
+   if v, ok := <-v.GetBytes(2); ok {
       return string(v), true
    }
    return "", false
 }
 
 func (d *Details) size() (uint64, bool) {
-   m := <-d.Message.Get(13)
-   m = <-m.Get(1)
-   if v, ok := <-m.GetVarint(9); ok {
+   v := <-d.Message.Get(13)
+   v = <-v.Get(1)
+   if v, ok := <-v.GetVarint(9); ok {
       return uint64(v), true
    }
    return 0, false
 }
 
 func (d *Details) version_code() (uint64, bool) {
-   m := <-d.Message.Get(13)
-   m = <-m.Get(1)
-   if v, ok := <-m.GetVarint(3); ok {
+   v := <-d.Message.Get(13)
+   v = <-v.Get(1)
+   if v, ok := <-v.GetVarint(3); ok {
       return uint64(v), true
    }
    return 0, false
 }
 
 func (d *Details) field_13_1_82_1_1() (string, bool) {
-   m := <-d.Message.Get(13)
-   m = <-m.Get(1)
-   m = <-m.Get(82)
-   m = <-m.Get(1)
-   if v, ok := <-m.GetBytes(1); ok {
+   v := <-d.Message.Get(13)
+   v = <-v.Get(1)
+   v = <-v.Get(82)
+   v = <-v.Get(1)
+   if v, ok := <-v.GetBytes(1); ok {
       return string(v), true
    }
    return "", false

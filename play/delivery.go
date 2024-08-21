@@ -9,6 +9,57 @@ import (
    "strconv"
 )
 
+type Apk struct {
+   Message protobuf.Message
+}
+
+func (a *Apk) Url() (string, bool) {
+   if v, ok := <-a.Message.GetBytes(5); ok {
+      return string(v), true
+   }
+   return "", false
+}
+
+func (a *Apk) Field1() (string, bool) {
+   if v, ok := <-a.Message.GetBytes(1); ok {
+      return string(v), true
+   }
+   return "", false
+}
+
+func (d *Delivery) Url() (string, bool) {
+   if v, ok := <-d.Message.GetBytes(3); ok {
+      return string(v), true
+   }
+   return "", false
+}
+
+func (d *Delivery) Obb() chan Obb {
+   vs := make(chan Obb)
+   go func() {
+      for v := range d.Message.Get(4) {
+         vs <- Obb{v}
+      }
+      close(vs)
+   }()
+   return vs
+}
+
+func (d *Delivery) Apk() chan Apk {
+   vs := make(chan Apk)
+   go func() {
+      for v := range d.Message.Get(15) {
+         vs <- Apk{v}
+      }
+      close(vs)
+   }()
+   return vs
+}
+
+type Delivery struct {
+   Message protobuf.Message
+}
+
 func (g *GoogleAuth) Delivery(
    checkin *GoogleCheckin, app *StoreApp, single bool,
 ) (*Delivery, error) {
@@ -51,24 +102,6 @@ func (g *GoogleAuth) Delivery(
    return &Delivery{message}, nil
 }
 
-type Apk struct {
-   Message protobuf.Message
-}
-
-func (a *Apk) Url() (string, bool) {
-   if v, ok := <-a.Message.GetBytes(5); ok {
-      return string(v), true
-   }
-   return "", false
-}
-
-func (a *Apk) Field1() (string, bool) {
-   if v, ok := <-a.Message.GetBytes(1); ok {
-      return string(v), true
-   }
-   return "", false
-}
-
 func (o *Obb) Url() (string, bool) {
    if v, ok := <-o.Message.GetBytes(4); ok {
       return string(v), true
@@ -83,39 +116,6 @@ func (o *Obb) Field1() (uint64, bool) {
    return 0, false
 }
 
-type Delivery struct {
-   Message protobuf.Message
-}
-
 type Obb struct {
    Message protobuf.Message
-}
-
-func (d *Delivery) Url() (string, bool) {
-   if v, ok := <-d.Message.GetBytes(3); ok {
-      return string(v), true
-   }
-   return "", false
-}
-
-func (d *Delivery) Obb() chan Obb {
-   vs := make(chan Obb)
-   go func() {
-      for v := range d.Message.Get(4) {
-         vs <- Obb{v}
-      }
-      close(vs)
-   }()
-   return vs
-}
-
-func (d *Delivery) Apk() chan Apk {
-   vs := make(chan Apk)
-   go func() {
-      for v := range d.Message.Get(15) {
-         vs <- Apk{v}
-      }
-      close(vs)
-   }()
-   return vs
 }

@@ -8,19 +8,19 @@ import (
 )
 
 func (g *GoogleDevice) Sync(checkin *GoogleCheckin) error {
-   var message protobuf.Message
+   message := protobuf.Message{}
    message.Add(1, func(m protobuf.Message) {
       m.Add(10, func(m protobuf.Message) {
-         for _, v := range g.Feature {
+         for _, value := range g.Feature {
             m.Add(1, func(m protobuf.Message) {
-               m.AddBytes(1, []byte(v))
+               m.AddBytes(1, []byte(value))
             })
          }
-         for _, v := range g.Library {
-            m.AddBytes(2, []byte(v))
+         for _, value := range g.Library {
+            m.AddBytes(2, []byte(value))
          }
-         for _, v := range g.Texture {
-            m.AddBytes(4, []byte(v))
+         for _, value := range g.Texture {
+            m.AddBytes(4, []byte(value))
          }
       })
    })
@@ -51,8 +51,7 @@ func (g *GoogleDevice) Sync(checkin *GoogleCheckin) error {
    if err != nil {
       return err
    }
-   err = x_dfe_device_id(req, checkin)
-   if err != nil {
+   if err = x_dfe_device_id(req, checkin); err != nil {
       return err
    }
    resp, err := http.DefaultClient.Do(req)

@@ -8,6 +8,23 @@ import (
    "net/http"
 )
 
+type GoogleCheckin struct {
+   Message protobuf.Message
+   Raw     []byte
+}
+
+func (g *GoogleCheckin) Unmarshal() error {
+   g.Message = protobuf.Message{}
+   return g.Message.Unmarshal(g.Raw)
+}
+
+func (g *GoogleCheckin) device_id() (uint64, error) {
+   if v, ok := <-g.Message.GetFixed64(7); ok {
+      return uint64(v), nil
+   }
+   return 0, errors.New("x-dfe-device-id")
+}
+
 func (g *GoogleDevice) Checkin() (*GoogleCheckin, error) {
    message := protobuf.Message{}
    message.Add(4, func(m protobuf.Message) {
@@ -25,17 +42,17 @@ func (g *GoogleDevice) Checkin() (*GoogleCheckin, error) {
       m.AddVarint(6, 1)
       m.AddVarint(7, 420)
       m.AddVarint(8, gl_es_version)
-      for _, v := range g.Library {
-         m.AddBytes(9, []byte(v))
+      for _, library := range g.Library {
+         m.AddBytes(9, []byte(library))
       }
       m.AddBytes(11, []byte(g.Abi))
-      for _, v := range g.Texture {
-         m.AddBytes(15, []byte(v))
+      for _, texture := range g.Texture {
+         m.AddBytes(15, []byte(texture))
       }
       // you cannot swap the next two lines:
-      for _, v := range g.Feature {
+      for _, feature := range g.Feature {
          m.Add(26, func(m protobuf.Message) {
-            m.AddBytes(1, []byte(v))
+            m.AddBytes(1, []byte(feature))
          })
       }
    })
@@ -56,21 +73,4 @@ func (g *GoogleDevice) Checkin() (*GoogleCheckin, error) {
       return nil, err
    }
    return &GoogleCheckin{Raw: data}, nil
-}
-
-type GoogleCheckin struct {
-   Message protobuf.Message
-   Raw     []byte
-}
-
-func (g *GoogleCheckin) Unmarshal() error {
-   g.Message = protobuf.Message{}
-   return g.Message.Unmarshal(g.Raw)
-}
-
-func (g *GoogleCheckin) device_id() (uint64, error) {
-   if v, ok := <-g.Message.GetFixed64(7); ok {
-      return uint64(v), nil
-   }
-   return 0, errors.New("x-dfe-device-id")
 }
