@@ -51,11 +51,11 @@ func (g *GoogleDevice) Checkin() (*GoogleCheckin, error) {
    if resp.StatusCode != http.StatusOK {
       return nil, errors.New(resp.Status)
    }
-   body, err := io.ReadAll(resp.Body)
+   data, err := io.ReadAll(resp.Body)
    if err != nil {
       return nil, err
    }
-   return &GoogleCheckin{Raw: body}, nil
+   return &GoogleCheckin{Raw: data}, nil
 }
 
 type GoogleCheckin struct {

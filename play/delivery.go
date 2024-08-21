@@ -9,8 +9,6 @@ import (
    "strconv"
 )
 
-///
-
 func (g *GoogleAuth) Delivery(
    checkin *GoogleCheckin, app *StoreApp, single bool,
 ) (*Delivery, error) {
@@ -33,24 +31,28 @@ func (g *GoogleAuth) Delivery(
       return nil, err
    }
    defer resp.Body.Close()
-   body, err := io.ReadAll(resp.Body)
+   data, err := io.ReadAll(resp.Body)
    if err != nil {
       return nil, err
    }
    message := protobuf.Message{}
-   if err = message.Unmarshal(body); err != nil {
+   if err = message.Unmarshal(data); err != nil {
       return nil, err
    }
-   unknown := <-message.GetUnknown(1)
-   unknown = <-unknown.Get(21)
-   switch <-unknown.GetVarint(1) {
+   message = <-message.Get(1)
+   message = <-message.Get(21)
+   switch <-message.GetVarint(1) {
    case 3:
       return nil, errors.New("acquire")
    case 5:
       return nil, errors.New("version")
    }
-   unknown = <-unknown.Get(2)
-   return &Delivery{unknown}, nil
+   message = <-message.Get(2)
+   return &Delivery{message}, nil
+}
+
+type Apk struct {
+   Message protobuf.Message
 }
 
 func (a *Apk) Url() (string, bool) {
@@ -67,10 +69,6 @@ func (a *Apk) Field1() (string, bool) {
    return "", false
 }
 
-type Apk struct {
-   Message protobuf.Message
-}
-
 func (o *Obb) Url() (string, bool) {
    if v, ok := <-o.Message.GetBytes(4); ok {
       return string(v), true
@@ -83,6 +81,21 @@ func (o *Obb) Field1() (uint64, bool) {
       return uint64(v), true
    }
    return 0, false
+}
+
+type Delivery struct {
+   Message protobuf.Message
+}
+
+type Obb struct {
+   Message protobuf.Message
+}
+
+func (d *Delivery) Url() (string, bool) {
+   if v, ok := <-d.Message.GetBytes(3); ok {
+      return string(v), true
+   }
+   return "", false
 }
 
 func (d *Delivery) Obb() chan Obb {
@@ -105,19 +118,4 @@ func (d *Delivery) Apk() chan Apk {
       close(vs)
    }()
    return vs
-}
-
-func (d *Delivery) Url() (string, bool) {
-   if v, ok := <-d.Message.GetBytes(3); ok {
-      return string(v), true
-   }
-   return "", false
-}
-
-type Delivery struct {
-   Message protobuf.Message
-}
-
-type Obb struct {
-   Message protobuf.Message
 }

@@ -47,34 +47,34 @@ func (g *GoogleAuth) Acquire(checkin *GoogleCheckin, doc string) error {
       resp.Write(&b)
       return errors.New(b.String())
    }
-   body, err := io.ReadAll(resp.Body)
+   data, err := io.ReadAll(resp.Body)
    if err != nil {
       return err
    }
    message = protobuf.Message{}
-   if err = message.Unmarshal(body); err != nil {
+   if err = message.Unmarshal(data); err != nil {
       return err
    }
-   unknown := <-message.GetUnknown(1)
-   unknown = <-unknown.Get(94)
-   unknown = <-unknown.Get(1)
-   unknown = <-unknown.Get(2)
-   if unknown, ok := <-unknown.Get(147291249); ok {
-      return &acquire_error{unknown}
+   message = <-message.Get(1)
+   message = <-message.Get(94)
+   message = <-message.Get(1)
+   message = <-message.Get(2)
+   if message, ok := <-message.Get(147291249); ok {
+      return &acquire_error{message}
    }
    return nil
 }
 
 type acquire_error struct {
-   unknown protobuf.UnknownMessage
+   message protobuf.Message
 }
 
 func (a *acquire_error) Error() string {
    var text []byte
-   for u := range a.unknown.Get(1) {
-      u = <-u.Get(10)
-      u = <-u.Get(1)
-      if v, ok := <-u.GetBytes(1); ok {
+   for m := range a.message.Get(1) {
+      m = <-m.Get(10)
+      m = <-m.Get(1)
+      if v, ok := <-m.GetBytes(1); ok {
          if text != nil {
             text = append(text, '\n')
          }
