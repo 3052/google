@@ -10,6 +10,8 @@ import (
    "time"
 )
 
+const google_play_store = 82941300
+
 func user_agent(req *http.Request, single bool) {
    var b []byte
    // `sdk` is needed for `/fdfe/delivery`
@@ -136,8 +138,6 @@ type StoreApp struct {
 // com.axis.drawingdesk.v3
 // so lets lie for now
 const gl_es_version = 0x30001
-
-const google_play_store = 82941300
 
 func (s *StoreApp) Obb(value uint64) string {
    var b []byte
