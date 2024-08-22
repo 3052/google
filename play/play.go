@@ -10,6 +10,25 @@ import (
    "time"
 )
 
+func user_agent(req *http.Request, single bool) {
+   var b []byte
+   // `sdk` is needed for `/fdfe/delivery`
+   b = append(b, "Android-Finsky (sdk="...)
+   // with `/fdfe/acquire`, requests will be rejected with certain apps, if the
+   // device was created with too low a version here:
+   b = fmt.Append(b, android_api)
+   b = append(b, ",versionCode="...)
+   // for multiple APKs just tell the truth. for single APK we have to lie.
+   // below value is the last version that works.
+   if single {
+      b = fmt.Append(b, 80919999)
+   } else {
+      b = fmt.Append(b, google_play_store)
+   }
+   b = append(b, ')')
+   req.Header.Set("user-agent", string(b))
+}
+
 // developer.android.com/ndk/guides/abis
 var Abi = []string{
    // com.google.android.youtube
@@ -129,25 +148,6 @@ func (s *StoreApp) Obb(value uint64) string {
    }
    b = fmt.Append(b, ".", s.Version, ".", s.Id, ".obb")
    return string(b)
-}
-
-func user_agent(req *http.Request, single bool) {
-   var b []byte
-   // `sdk` is needed for `/fdfe/delivery`
-   b = append(b, "Android-Finsky (sdk="...)
-   // with `/fdfe/acquire`, requests will be rejected with certain apps, if the
-   // device was created with too low a version here:
-   b = fmt.Append(b, android_api)
-   b = append(b, ",versionCode="...)
-   // for multiple APKs just tell the truth. for single APK we have to lie.
-   // below value is the last version that works.
-   if single {
-      b = fmt.Append(b, 80919999)
-   } else {
-      b = fmt.Append(b, google_play_store)
-   }
-   b = append(b, ')')
-   req.Header.Set("user-agent", string(b))
 }
 
 func authorization(req *http.Request, auth *GoogleAuth) {
