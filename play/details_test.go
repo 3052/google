@@ -76,7 +76,7 @@ func TestDetails(t *testing.T) {
          }
          return p.Format("2006-01-02")
       }()
-      if _, ok := <-detail.field_13_1_17(); !ok {
+      if _, ok := detail.field_13_1_17()(); !ok {
          t.Fatal("field 13 1 17")
       }
       if _, ok := detail.field_13_1_82_1_1(); !ok {

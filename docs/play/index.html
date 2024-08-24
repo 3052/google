@@ -14,7 +14,7 @@
   <body>
     <nav>
         <a href="..">154.pages.dev/google</a>/play<span class="navbar-right">
-          v1.5.4 | <a href="..">Root</a> | <a href="#pkg-index">Index</a></span>
+          v1.5.5 | <a href="..">Root</a> | <a href="#pkg-index">Index</a></span>
       </nav>
     <main><h2 id="pkg-overview">package play</h2>
 <pre class="chroma"><span class="kn">import</span> <span class="s">&#34;154.pages.dev/google/play&#34;</span></pre>
@@ -30,8 +30,8 @@
   <li>
       <a href="#Delivery">type Delivery</a>
       <ul>
-          <li><a href="#Delivery.Apk">func (d *Delivery) Apk() chan Apk</a></li>
-          <li><a href="#Delivery.Obb">func (d *Delivery) Obb() chan Obb</a></li>
+          <li><a href="#Delivery.Apk">func (d *Delivery) Apk() func() (*Apk, bool)</a></li>
+          <li><a href="#Delivery.Obb">func (d *Delivery) Obb() func() (*Obb, bool)</a></li>
           <li><a href="#Delivery.Url">func (d *Delivery) Url() (string, bool)</a></li>
           </ul>
       </li>
@@ -169,9 +169,9 @@
 	<span id="Delivery.Message"><span class="nx">Message</span></span> <a href="https://pkg.go.dev/154.pages.dev/protobuf"><span class="nx">protobuf</span></a><span class="p">.</span><a href="https://pkg.go.dev/154.pages.dev/protobuf#Message"><span class="nx">Message</span></a>
 <span class="p">}</span></pre>
     <h4 id="Delivery.Apk">func (*Delivery) Apk</h4>
-  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <span class="o">*</span><a href="#Delivery"><span class="nx">Delivery</span></a><span class="p">)</span> <span class="nf">Apk</span><span class="p">()</span> <span class="kd">chan</span> <a href="#Apk"><span class="nx">Apk</span></a></pre>
+  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <span class="o">*</span><a href="#Delivery"><span class="nx">Delivery</span></a><span class="p">)</span> <span class="nf">Apk</span><span class="p">()</span> <span class="kd">func</span><span class="p">()</span> <span class="p">(</span><span class="o">*</span><a href="#Apk"><span class="nx">Apk</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
   <h4 id="Delivery.Obb">func (*Delivery) Obb</h4>
-  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <span class="o">*</span><a href="#Delivery"><span class="nx">Delivery</span></a><span class="p">)</span> <span class="nf">Obb</span><span class="p">()</span> <span class="kd">chan</span> <a href="#Obb"><span class="nx">Obb</span></a></pre>
+  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <span class="o">*</span><a href="#Delivery"><span class="nx">Delivery</span></a><span class="p">)</span> <span class="nf">Obb</span><span class="p">()</span> <span class="kd">func</span><span class="p">()</span> <span class="p">(</span><span class="o">*</span><a href="#Obb"><span class="nx">Obb</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
   <h4 id="Delivery.Url">func (*Delivery) Url</h4>
   <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <span class="o">*</span><a href="#Delivery"><span class="nx">Delivery</span></a><span class="p">)</span> <span class="nf">Url</span><span class="p">()</span> <span class="p">(</span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
   <h3 id="Details">type Details</h3>

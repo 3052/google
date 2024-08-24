@@ -10,6 +10,17 @@ import (
    "strings"
 )
 
+func (d *Details) field_13_1_17() func() (uint64, bool) {
+   m, _ := d.Message.Get(13)()
+   m, _ = m.Get(1)()
+   next := m.Get(17)
+   return func() (uint64, bool) {
+      m, _ = next()
+      v, ok := m.GetVarint(1)()
+      return uint64(v), ok
+   }
+}
+
 func (g *GoogleAuth) Details(
    checkin *GoogleCheckin, doc string, single bool,
 ) (*Details, error) {
@@ -49,113 +60,76 @@ func (g *GoogleAuth) Details(
    return &Details{message}, nil
 }
 
-///
-
-func (d *Details) Downloads() (uint64, bool) {
-   v := <-d.Message.Get(13)
-   v = <-v.Get(1)
-   if v, ok := <-v.GetVarint(70); ok {
-      return uint64(v), true
-   }
-   return 0, false
-}
-
-func (d *Details) field_13_1_17() chan uint64 {
-   v := <-d.Message.Get(13)
-   v = <-v.Get(1)
-   vs := make(chan uint64)
-   go func() {
-      for v := range v.Get(17) {
-         if v, ok := <-v.GetVarint(1); ok {
-            vs <- uint64(v)
-         }
-      }
-      close(vs)
-   }()
-   return vs
-}
-
-func (d *Details) field_13_1_12() (string, bool) {
-   v := <-d.Message.Get(13)
-   v = <-v.Get(1)
-   if v, ok := <-v.GetBytes(12); ok {
-      return string(v), true
-   }
-   return "", false
-}
-
 type Details struct {
    Message protobuf.Message
 }
 
+func (d *Details) Downloads() (uint64, bool) {
+   m, _ := d.Message.Get(13)()
+   m, _ = m.Get(1)()
+   v, ok := m.GetVarint(70)()
+   return uint64(v), ok
+}
+
+func (d *Details) field_13_1_12() (string, bool) {
+   m, _ := d.Message.Get(13)()
+   m, _ = m.Get(1)()
+   v, ok := m.GetBytes(12)()
+   return string(v), ok
+}
+
 func (d *Details) Name() (string, bool) {
-   if v, ok := <-d.Message.GetBytes(5); ok {
-      return string(v), true
-   }
-   return "", false
+   v, ok := d.Message.GetBytes(5)()
+   return string(v), ok
 }
 
 func (d *Details) field_13_1_16() (string, bool) {
-   v := <-d.Message.Get(13)
-   v = <-v.Get(1)
-   if v, ok := <-v.GetBytes(16); ok {
-      return string(v), true
-   }
-   return "", false
-}
-
-func (d *Details) field_8_1() (float64, bool) {
-   v := <-d.Message.Get(8)
-   if v, ok := <-v.GetVarint(1); ok {
-      return float64(v) / 1_000_000, true
-   }
-   return 0, false
+   m, _ := d.Message.Get(13)()
+   m, _ = m.Get(1)()
+   v, ok := m.GetBytes(16)()
+   return string(v), ok
 }
 
 func (d *Details) field_13_1_4() (string, bool) {
-   v := <-d.Message.Get(13)
-   v = <-v.Get(1)
-   if v, ok := <-v.GetBytes(4); ok {
-      return string(v), true
-   }
-   return "", false
+   m, _ := d.Message.Get(13)()
+   m, _ = m.Get(1)()
+   v, ok := m.GetBytes(4)()
+   return string(v), ok
 }
 
 func (d *Details) field_8_2() (string, bool) {
-   v := <-d.Message.Get(8)
-   if v, ok := <-v.GetBytes(2); ok {
-      return string(v), true
-   }
-   return "", false
+   m, _ := d.Message.Get(8)()
+   v, ok := m.GetBytes(2)()
+   return string(v), ok
 }
 
 func (d *Details) size() (uint64, bool) {
-   v := <-d.Message.Get(13)
-   v = <-v.Get(1)
-   if v, ok := <-v.GetVarint(9); ok {
-      return uint64(v), true
-   }
-   return 0, false
+   m, _ := d.Message.Get(13)()
+   m, _ = m.Get(1)()
+   v, ok := m.GetVarint(9)()
+   return uint64(v), ok
 }
 
 func (d *Details) version_code() (uint64, bool) {
-   v := <-d.Message.Get(13)
-   v = <-v.Get(1)
-   if v, ok := <-v.GetVarint(3); ok {
-      return uint64(v), true
-   }
-   return 0, false
+   m, _ := d.Message.Get(13)()
+   m, _ = m.Get(1)()
+   v, ok := m.GetVarint(3)()
+   return uint64(v), ok
 }
 
 func (d *Details) field_13_1_82_1_1() (string, bool) {
-   v := <-d.Message.Get(13)
-   v = <-v.Get(1)
-   v = <-v.Get(82)
-   v = <-v.Get(1)
-   if v, ok := <-v.GetBytes(1); ok {
-      return string(v), true
-   }
-   return "", false
+   m, _ := d.Message.Get(13)()
+   m, _ = m.Get(1)()
+   m, _ = m.Get(82)()
+   m, _ = m.Get(1)()
+   v, ok := m.GetBytes(1)()
+   return string(v), ok
+}
+
+func (d *Details) field_8_1() (float64, bool) {
+   m, _ := d.Message.Get(8)()
+   v, ok := m.GetVarint(1)()
+   return float64(v) / 1_000_000, ok
 }
 
 func (d *Details) String() string {
@@ -180,8 +154,13 @@ func (d *Details) String() string {
       b = fmt.Append(b, " ", value)
    }
    b = append(b, "\ndetails[13][1][17] ="...)
-   for file := range d.field_13_1_17() {
-      if file >= 1 {
+   next := d.field_13_1_17()
+   for {
+      value, ok := next()
+      if !ok {
+         break
+      }
+      if value >= 1 {
          b = append(b, " OBB"...)
       } else {
          b = append(b, " APK"...)

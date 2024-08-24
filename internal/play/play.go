@@ -10,16 +10,6 @@ import (
    "time"
 )
 
-func (f *flags) do_auth() error {
-   var token play.GoogleToken
-   err := token.New(f.code)
-   if err != nil {
-      return err
-   }
-   os.Mkdir(f.home, 0666)
-   return os.WriteFile(f.home + "/token.txt", token.Raw, 0666)
-}
-
 func (f *flags) do_delivery() error {
    checkin := &play.GoogleCheckin{}
    auth, err := f.client(checkin)
@@ -30,7 +20,12 @@ func (f *flags) do_delivery() error {
    if err != nil {
       return err
    }
-   for apk := range deliver.Apk() {
+   apks := deliver.Apk()
+   for {
+      apk, ok := apks()
+      if !ok {
+         break
+      }
       if address, ok := apk.Url(); ok {
          if v, ok := apk.Field1(); ok {
             err := download(address, f.app.Apk(v))
@@ -40,7 +35,12 @@ func (f *flags) do_delivery() error {
          }
       }
    }
-   for obb := range deliver.Obb() {
+   obbs := deliver.Obb()
+   for {
+      obb, ok := obbs()
+      if !ok {
+         break
+      }
       if address, ok := obb.Url(); ok {
          if v, ok := obb.Field1(); ok {
             err := download(address, f.app.Obb(v))
@@ -156,4 +156,14 @@ func (f *flags) do_details() (*play.Details, error) {
       return nil, err
    }
    return auth.Details(checkin, f.app.Id, f.single)
+}
+
+func (f *flags) do_auth() error {
+   var token play.GoogleToken
+   err := token.New(f.code)
+   if err != nil {
+      return err
+   }
+   os.Mkdir(f.home, 0666)
+   return os.WriteFile(f.home + "/token.txt", token.Raw, 0666)
 }

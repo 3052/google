@@ -18,13 +18,6 @@ func (g *GoogleCheckin) Unmarshal() error {
    return g.Message.Unmarshal(g.Raw)
 }
 
-func (g *GoogleCheckin) device_id() (uint64, error) {
-   if v, ok := g.Message.GetFixed64(7)(); ok {
-      return uint64(v), nil
-   }
-   return 0, errors.New("x-dfe-device-id")
-}
-
 func (g *GoogleDevice) Checkin() (*GoogleCheckin, error) {
    message := protobuf.Message{}
    message.Add(4, func(m protobuf.Message) {
@@ -74,3 +67,11 @@ func (g *GoogleDevice) Checkin() (*GoogleCheckin, error) {
    }
    return &GoogleCheckin{Raw: data}, nil
 }
+
+func (g *GoogleCheckin) device_id() (uint64, error) {
+   if v, ok := g.Message.GetFixed64(7)(); ok {
+      return uint64(v), nil
+   }
+   return 0, errors.New("x-dfe-device-id")
+}
+
