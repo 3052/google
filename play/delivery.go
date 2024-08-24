@@ -14,51 +14,31 @@ type Apk struct {
 }
 
 func (a *Apk) Url() (string, bool) {
-   if v, ok := <-a.Message.GetBytes(5); ok {
+   if v, ok := a.Message.GetBytes(5)(); ok {
       return string(v), true
    }
    return "", false
 }
 
 func (a *Apk) Field1() (string, bool) {
-   if v, ok := <-a.Message.GetBytes(1); ok {
+   if v, ok := a.Message.GetBytes(1)(); ok {
       return string(v), true
    }
    return "", false
 }
 
 func (d *Delivery) Url() (string, bool) {
-   if v, ok := <-d.Message.GetBytes(3); ok {
+   if v, ok := d.Message.GetBytes(3)(); ok {
       return string(v), true
    }
    return "", false
 }
 
-func (d *Delivery) Obb() chan Obb {
-   vs := make(chan Obb)
-   go func() {
-      for v := range d.Message.Get(4) {
-         vs <- Obb{v}
-      }
-      close(vs)
-   }()
-   return vs
-}
-
-func (d *Delivery) Apk() chan Apk {
-   vs := make(chan Apk)
-   go func() {
-      for v := range d.Message.Get(15) {
-         vs <- Apk{v}
-      }
-      close(vs)
-   }()
-   return vs
-}
-
 type Delivery struct {
    Message protobuf.Message
 }
+
+///
 
 func (g *GoogleAuth) Delivery(
    checkin *GoogleCheckin, app *StoreApp, single bool,
@@ -90,27 +70,27 @@ func (g *GoogleAuth) Delivery(
    if err = message.Unmarshal(data); err != nil {
       return nil, err
    }
-   message = <-message.Get(1)
-   message = <-message.Get(21)
-   switch <-message.GetVarint(1) {
+   message, _ = message.Get(1)()
+   message, _ = message.Get(21)()
+   switch v, _ := message.GetVarint(1)(); v {
    case 3:
       return nil, errors.New("acquire")
    case 5:
       return nil, errors.New("version")
    }
-   message = <-message.Get(2)
+   message, _ = message.Get(2)()
    return &Delivery{message}, nil
 }
 
 func (o *Obb) Url() (string, bool) {
-   if v, ok := <-o.Message.GetBytes(4); ok {
+   if v, ok := o.Message.GetBytes(4)(); ok {
       return string(v), true
    }
    return "", false
 }
 
 func (o *Obb) Field1() (uint64, bool) {
-   if v, ok := <-o.Message.GetVarint(1); ok {
+   if v, ok := o.Message.GetVarint(1)(); ok {
       return uint64(v), true
    }
    return 0, false
@@ -118,4 +98,24 @@ func (o *Obb) Field1() (uint64, bool) {
 
 type Obb struct {
    Message protobuf.Message
+}
+
+func (d *Delivery) Obb() func() (*Obb, bool) {
+   next := d.Message.Get(4)
+   return func() (*Obb, bool) {
+      if v, ok := next(); ok {
+         return &Obb{v}, true
+      }
+      return nil, false
+   }
+}
+
+func (d *Delivery) Apk() func() (*Apk, bool) {
+   next := d.Message.Get(15)
+   return func() (*Apk, bool) {
+      if v, ok := next(); ok {
+         return &Apk{v}, true
+      }
+      return nil, false
+   }
 }

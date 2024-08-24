@@ -10,15 +10,6 @@ import (
    "strings"
 )
 
-func (d *Details) Downloads() (uint64, bool) {
-   v := <-d.Message.Get(13)
-   v = <-v.Get(1)
-   if v, ok := <-v.GetVarint(70); ok {
-      return uint64(v), true
-   }
-   return 0, false
-}
-
 func (g *GoogleAuth) Details(
    checkin *GoogleCheckin, doc string, single bool,
 ) (*Details, error) {
@@ -49,66 +40,24 @@ func (g *GoogleAuth) Details(
       return nil, err
    }
    message := protobuf.Message{}
-   err = message.Unmarshal(data)
-   if err != nil {
+   if err = message.Unmarshal(data); err != nil {
       return nil, err
    }
-   message = <-message.Get(1)
-   message = <-message.Get(2)
-   message = <-message.Get(4)
+   message, _ = message.Get(1)()
+   message, _ = message.Get(2)()
+   message, _ = message.Get(4)()
    return &Details{message}, nil
 }
 
-func (d *Details) String() string {
-   var b []byte
-   b = append(b, "details[8] ="...)
-   if value, ok := d.field_8_1(); ok {
-      b = fmt.Append(b, " ", value)
+///
+
+func (d *Details) Downloads() (uint64, bool) {
+   v := <-d.Message.Get(13)
+   v = <-v.Get(1)
+   if v, ok := <-v.GetVarint(70); ok {
+      return uint64(v), true
    }
-   if value, ok := d.field_8_2(); ok {
-      b = fmt.Append(b, " ", value)
-   }
-   b = append(b, "\ndetails[13][1][4] ="...)
-   if value, ok := d.field_13_1_4(); ok {
-      b = fmt.Append(b, " ", value)
-   }
-   b = append(b, "\ndetails[13][1][12] ="...)
-   if value, ok := d.field_13_1_12(); ok {
-      b = fmt.Append(b, " ", value)
-   }
-   b = append(b, "\ndetails[13][1][16] ="...)
-   if value, ok := d.field_13_1_16(); ok {
-      b = fmt.Append(b, " ", value)
-   }
-   b = append(b, "\ndetails[13][1][17] ="...)
-   for file := range d.field_13_1_17() {
-      if file >= 1 {
-         b = append(b, " OBB"...)
-      } else {
-         b = append(b, " APK"...)
-      }
-   }
-   b = append(b, "\ndetails[13][1][82][1][1] ="...)
-   if value, ok := d.field_13_1_82_1_1(); ok {
-      b = fmt.Append(b, " ", value)
-   }
-   b = append(b, "\ndownloads ="...)
-   if value, ok := d.Downloads(); ok {
-      b = fmt.Append(b, " ", text.Cardinal(value))
-   }
-   b = append(b, "\nname ="...)
-   if value, ok := d.Name(); ok {
-      b = fmt.Append(b, " ", value)
-   }
-   b = append(b, "\nsize ="...)
-   if value, ok := d.size(); ok {
-      b = fmt.Append(b, " ", text.Size(value))
-   }
-   b = append(b, "\nversion code ="...)
-   if value, ok := d.version_code(); ok {
-      b = fmt.Append(b, " ", value)
-   }
-   return string(b)
+   return 0, false
 }
 
 func (d *Details) field_13_1_17() chan uint64 {
@@ -207,4 +156,56 @@ func (d *Details) field_13_1_82_1_1() (string, bool) {
       return string(v), true
    }
    return "", false
+}
+
+func (d *Details) String() string {
+   var b []byte
+   b = append(b, "details[8] ="...)
+   if value, ok := d.field_8_1(); ok {
+      b = fmt.Append(b, " ", value)
+   }
+   if value, ok := d.field_8_2(); ok {
+      b = fmt.Append(b, " ", value)
+   }
+   b = append(b, "\ndetails[13][1][4] ="...)
+   if value, ok := d.field_13_1_4(); ok {
+      b = fmt.Append(b, " ", value)
+   }
+   b = append(b, "\ndetails[13][1][12] ="...)
+   if value, ok := d.field_13_1_12(); ok {
+      b = fmt.Append(b, " ", value)
+   }
+   b = append(b, "\ndetails[13][1][16] ="...)
+   if value, ok := d.field_13_1_16(); ok {
+      b = fmt.Append(b, " ", value)
+   }
+   b = append(b, "\ndetails[13][1][17] ="...)
+   for file := range d.field_13_1_17() {
+      if file >= 1 {
+         b = append(b, " OBB"...)
+      } else {
+         b = append(b, " APK"...)
+      }
+   }
+   b = append(b, "\ndetails[13][1][82][1][1] ="...)
+   if value, ok := d.field_13_1_82_1_1(); ok {
+      b = fmt.Append(b, " ", value)
+   }
+   b = append(b, "\ndownloads ="...)
+   if value, ok := d.Downloads(); ok {
+      b = fmt.Append(b, " ", text.Cardinal(value))
+   }
+   b = append(b, "\nname ="...)
+   if value, ok := d.Name(); ok {
+      b = fmt.Append(b, " ", value)
+   }
+   b = append(b, "\nsize ="...)
+   if value, ok := d.size(); ok {
+      b = fmt.Append(b, " ", text.Size(value))
+   }
+   b = append(b, "\nversion code ="...)
+   if value, ok := d.version_code(); ok {
+      b = fmt.Append(b, " ", value)
+   }
+   return string(b)
 }

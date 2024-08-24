@@ -55,11 +55,11 @@ func (g *GoogleAuth) Acquire(checkin *GoogleCheckin, doc string) error {
    if err = message.Unmarshal(data); err != nil {
       return err
    }
-   message = <-message.Get(1)
-   message = <-message.Get(94)
-   message = <-message.Get(1)
-   message = <-message.Get(2)
-   if message, ok := <-message.Get(147291249); ok {
+   message, _ = message.Get(1)()
+   message, _ = message.Get(94)()
+   message, _ = message.Get(1)()
+   message, _ = message.Get(2)()
+   if message, ok := message.Get(147291249)(); ok {
       return &acquire_error{message}
    }
    return nil
@@ -71,10 +71,15 @@ type acquire_error struct {
 
 func (a *acquire_error) Error() string {
    var text []byte
-   for v := range a.message.Get(1) {
-      v = <-v.Get(10)
-      v = <-v.Get(1)
-      if v, ok := <-v.GetBytes(1); ok {
+   next := a.message.Get(1)
+   for {
+      v, ok := next()
+      if !ok {
+         break
+      }
+      v, _ = v.Get(10)()
+      v, _ = v.Get(1)()
+      if v, ok := v.GetBytes(1)(); ok {
          if text != nil {
             text = append(text, '\n')
          }

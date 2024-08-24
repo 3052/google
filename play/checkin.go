@@ -19,7 +19,7 @@ func (g *GoogleCheckin) Unmarshal() error {
 }
 
 func (g *GoogleCheckin) device_id() (uint64, error) {
-   if v, ok := <-g.Message.GetFixed64(7); ok {
+   if v, ok := g.Message.GetFixed64(7)(); ok {
       return uint64(v), nil
    }
    return 0, errors.New("x-dfe-device-id")
