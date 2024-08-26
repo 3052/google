@@ -76,7 +76,7 @@ func (f *flags) do_device() error {
    if err != nil {
       return err
    }
-   err = os.WriteFile(f.device_path(), checkin.Raw, 0666)
+   err = os.WriteFile(f.device_path(), checkin.Raw, os.ModePerm)
    if err != nil {
       return err
    }
@@ -164,6 +164,6 @@ func (f *flags) do_auth() error {
    if err != nil {
       return err
    }
-   os.Mkdir(f.home, 0666)
-   return os.WriteFile(f.home + "/token.txt", token.Raw, 0666)
+   os.Mkdir(f.home, os.ModePerm)
+   return os.WriteFile(f.home + "/token.txt", token.Raw, os.ModePerm)
 }

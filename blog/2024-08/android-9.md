@@ -1,30 +1,36 @@
 # Android 9
 
-here is the current version of System Image API 28:
+note if remount fails you might need to just retry it
 
-<http://dl.google.com/android/repository/sys-img/google_apis/x86-28_r12.zip>
-
-what is the oldest version?
-
-<http://dl.google.com/android/repository/sys-img/google_apis/x86-28_r01.zip>
-
-~~~
-package: name='com.google.android.gms' versionCode='16089022'
-versionName='16.0.89 (040700-239467275)' platformBuildVersionName='Q'
-~~~
-
-note if remount fails you might need to just retry it. this seems to be the
-first version using `/fdfe/sync` only:
-
-~~~
-play -a com.android.vending -v 82941300
-~~~
+https://android.stackexchange.com/questions/218850/android-studio-emulator
 
 then:
 
+https://opengapps.org
+
+1. x86
+2. android 9
+3. pico
+
 ~~~
-emulator -avd Pixel_6_API_30 -writable-system
+Core\gmscore-x86.tar.lz\gmscore-x86.tar\gmscore-x86\nodpi\priv-app\
+PrebuiltGmsCorePi\PrebuiltGmsCorePi.apk
+
+Core\gsfcore-all.tar.lz\gsfcore-all.tar\gsfcore-all\nodpi\priv-app\
+GoogleServicesFramework\GoogleServicesFramework.apk
+
+Core\vending-x86.tar.lz\vending-x86.tar\vending-x86\nodpi\priv-app\
+Phonesky\Phonesky.apk
+~~~
+
+yes, Phonesky is required
+
+~~~
+emulator -avd Pixel_2_API_28 -writable-system
+adb root
 adb remount
-adb push com.android.vending-82941300.apk /system/priv-app
+adb push GoogleServicesFramework.apk /system/priv-app
+adb push Phonesky.apk /system/priv-app
+adb push PrebuiltGmsCorePi.apk /system/priv-app
 adb reboot
 ~~~

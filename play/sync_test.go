@@ -20,7 +20,7 @@ func TestSync(t *testing.T) {
       if err != nil {
          t.Fatal(err)
       }
-      err = os.WriteFile(home+"/"+each+".txt", checkin.Raw, 0666)
+      err = os.WriteFile(home+"/"+each+".txt", checkin.Raw, os.ModePerm)
       if err != nil {
          t.Fatal(err)
       }
