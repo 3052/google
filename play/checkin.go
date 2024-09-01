@@ -74,4 +74,3 @@ func (g *GoogleCheckin) device_id() (uint64, error) {
    }
    return 0, errors.New("x-dfe-device-id")
 }
-
