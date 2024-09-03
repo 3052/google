@@ -61,11 +61,12 @@ func (g *GoogleDevice) Checkin() (*GoogleCheckin, error) {
    if resp.StatusCode != http.StatusOK {
       return nil, errors.New(resp.Status)
    }
-   data, err := io.ReadAll(resp.Body)
+   var checkin GoogleCheckin
+   checkin.Raw, err = io.ReadAll(resp.Body)
    if err != nil {
       return nil, err
    }
-   return &GoogleCheckin{Raw: data}, nil
+   return &checkin, nil
 }
 
 func (g *GoogleCheckin) device_id() (uint64, error) {
