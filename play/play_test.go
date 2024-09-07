@@ -1,5 +1,36 @@
 package play
 
+import (
+   "fmt"
+   "reflect"
+   "testing"
+)
+
+func TestSize(t *testing.T) {
+   size := reflect.TypeOf(&struct{}{}).Size()
+   for _, test := range size_tests {
+      if reflect.TypeOf(test).Size() > size {
+         fmt.Printf("*%T\n", test)
+      } else {
+         fmt.Printf("%T\n", test)
+      }
+   }
+}
+
+var size_tests = []any{
+   Apk{},
+   Delivery{},
+   Details{},
+   GoogleAuth{},
+   GoogleCheckin{},
+   GoogleDevice{},
+   GoogleToken{},
+   Obb{},
+   StoreApp{},
+   Values{},
+   acquire_error{},
+}
+
 var apps = []app_type{
 {date:"2023-10-31", abi:"x86-leanback", id:"com.roku.web.trc"},
 {date:"2024-06-15", abi:"x86", id:"kr.sira.metal"},
