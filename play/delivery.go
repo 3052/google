@@ -27,8 +27,8 @@ func (g *GoogleAuth) Delivery(
    }.Encode()
    authorization(req, g)
    user_agent(req, single)
-   if err = x_dfe_device_id(req, checkin); err != nil {
-      return nil, err
+   if !x_dfe_device_id(req, checkin) {
+      return nil, checkin.field_7_error()
    }
    resp, err := http.DefaultClient.Do(req)
    if err != nil {

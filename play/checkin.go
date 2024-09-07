@@ -69,9 +69,11 @@ func (g *GoogleDevice) Checkin() (*GoogleCheckin, error) {
    return &checkin, nil
 }
 
-func (g *GoogleCheckin) device_id() (uint64, error) {
-   if v, ok := g.Message.GetFixed64(7)(); ok {
-      return uint64(v), nil
-   }
-   return 0, errors.New("x-dfe-device-id")
+func (g *GoogleCheckin) field_7() (uint64, bool) {
+   v, ok := g.Message.GetFixed64(7)()
+   return uint64(v), ok
+}
+
+func (GoogleCheckin) field_7_error() error {
+   return errors.New("GoogleCheckin.field_7")
 }

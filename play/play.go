@@ -10,6 +10,39 @@ import (
    "time"
 )
 
+func x_dfe_device_id(req *http.Request, checkin *GoogleCheckin) bool {
+   if v, ok := checkin.field_7(); ok {
+      req.Header.Set("x-dfe-device-id", fmt.Sprintf("%x", v))
+      return true
+   }
+   return false
+}
+
+func x_ps_rh(req *http.Request, checkin *GoogleCheckin) error {
+   field_7, ok := checkin.field_7()
+   if !ok {
+      return checkin.field_7_error()
+   }
+   message := protobuf.Message{}
+   message.Add(1, func(m protobuf.Message) {
+      m.Add(1, func(m protobuf.Message) {
+         m.Add(3, func(m protobuf.Message) {
+            m.AddBytes(1, fmt.Append(nil, field_7))
+            m.Add(2, func(m protobuf.Message) {
+               now := time.Now().UnixMicro()
+               m.AddBytes(1, fmt.Append(nil, now))
+            })
+         })
+      })
+   })
+   data, err := compress_gzip(message.Marshal())
+   if err != nil {
+      return err
+   }
+   req.Header.Set("x-ps-rh", base64.URLEncoding.EncodeToString(data))
+   return nil
+}
+
 const google_play_store = 82941300
 
 func user_agent(req *http.Request, single bool) {
@@ -152,38 +185,4 @@ func (s *StoreApp) Obb(value uint64) string {
 
 func authorization(req *http.Request, auth *GoogleAuth) {
    req.Header.Set("authorization", "Bearer "+auth.auth())
-}
-
-func x_dfe_device_id(req *http.Request, checkin *GoogleCheckin) error {
-   id, err := checkin.device_id()
-   if err != nil {
-      return err
-   }
-   req.Header.Set("x-dfe-device-id", fmt.Sprintf("%x", id))
-   return nil
-}
-
-func x_ps_rh(req *http.Request, checkin *GoogleCheckin) error {
-   id, err := checkin.device_id()
-   if err != nil {
-      return err
-   }
-   message := protobuf.Message{}
-   message.Add(1, func(m protobuf.Message) {
-      m.Add(1, func(m protobuf.Message) {
-         m.Add(3, func(m protobuf.Message) {
-            m.AddBytes(1, fmt.Append(nil, id))
-            m.Add(2, func(m protobuf.Message) {
-               now := time.Now().UnixMicro()
-               m.AddBytes(1, fmt.Append(nil, now))
-            })
-         })
-      })
-   })
-   data, err := compress_gzip(message.Marshal())
-   if err != nil {
-      return err
-   }
-   req.Header.Set("x-ps-rh", base64.URLEncoding.EncodeToString(data))
-   return nil
 }

@@ -32,9 +32,8 @@ func (g *GoogleAuth) Details(
    req.URL.RawQuery = "doc=" + doc
    authorization(req, g)
    user_agent(req, single)
-   err = x_dfe_device_id(req, checkin)
-   if err != nil {
-      return nil, err
+   if !x_dfe_device_id(req, checkin) {
+      return nil, checkin.field_7_error()
    }
    resp, err := http.DefaultClient.Do(req)
    if err != nil {

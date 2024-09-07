@@ -51,8 +51,8 @@ func (g *GoogleDevice) Sync(checkin *GoogleCheckin) error {
    if err != nil {
       return err
    }
-   if err = x_dfe_device_id(req, checkin); err != nil {
-      return err
+   if !x_dfe_device_id(req, checkin) {
+      return checkin.field_7_error()
    }
    resp, err := http.DefaultClient.Do(req)
    if err != nil {

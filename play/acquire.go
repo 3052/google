@@ -27,8 +27,8 @@ func (g *GoogleAuth) Acquire(checkin *GoogleCheckin, doc string) error {
       return err
    }
    authorization(req, g)
-   if err = x_dfe_device_id(req, checkin); err != nil {
-      return err
+   if !x_dfe_device_id(req, checkin) {
+      return checkin.field_7_error()
    }
    // with a new device, this needs to be included in the first request to
    // /fdfe/acquire, or you get:
