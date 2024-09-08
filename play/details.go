@@ -10,7 +10,7 @@ import (
    "strings"
 )
 
-func (d *Details) field_13_1_17() func() (uint64, bool) {
+func (d Details) field_13_1_17() func() (uint64, bool) {
    m, _ := d.Message.Get(13)()
    m, _ = m.Get(1)()
    next := m.Get(17)
@@ -21,7 +21,7 @@ func (d *Details) field_13_1_17() func() (uint64, bool) {
    }
 }
 
-func (g *GoogleAuth) Details(
+func (g GoogleAuth) Details(
    checkin *GoogleCheckin, doc string, single bool,
 ) (*Details, error) {
    req, err := http.NewRequest("", "https://android.clients.google.com", nil)
@@ -63,60 +63,60 @@ type Details struct {
    Message protobuf.Message
 }
 
-func (d *Details) Downloads() (uint64, bool) {
+func (d Details) Downloads() (uint64, bool) {
    m, _ := d.Message.Get(13)()
    m, _ = m.Get(1)()
    v, ok := m.GetVarint(70)()
    return uint64(v), ok
 }
 
-func (d *Details) field_13_1_12() (string, bool) {
+func (d Details) field_13_1_12() (string, bool) {
    m, _ := d.Message.Get(13)()
    m, _ = m.Get(1)()
    v, ok := m.GetBytes(12)()
    return string(v), ok
 }
 
-func (d *Details) Name() (string, bool) {
+func (d Details) Name() (string, bool) {
    v, ok := d.Message.GetBytes(5)()
    return string(v), ok
 }
 
-func (d *Details) field_13_1_16() (string, bool) {
+func (d Details) field_13_1_16() (string, bool) {
    m, _ := d.Message.Get(13)()
    m, _ = m.Get(1)()
    v, ok := m.GetBytes(16)()
    return string(v), ok
 }
 
-func (d *Details) field_13_1_4() (string, bool) {
+func (d Details) field_13_1_4() (string, bool) {
    m, _ := d.Message.Get(13)()
    m, _ = m.Get(1)()
    v, ok := m.GetBytes(4)()
    return string(v), ok
 }
 
-func (d *Details) field_8_2() (string, bool) {
+func (d Details) field_8_2() (string, bool) {
    m, _ := d.Message.Get(8)()
    v, ok := m.GetBytes(2)()
    return string(v), ok
 }
 
-func (d *Details) size() (uint64, bool) {
+func (d Details) size() (uint64, bool) {
    m, _ := d.Message.Get(13)()
    m, _ = m.Get(1)()
    v, ok := m.GetVarint(9)()
    return uint64(v), ok
 }
 
-func (d *Details) version_code() (uint64, bool) {
+func (d Details) version_code() (uint64, bool) {
    m, _ := d.Message.Get(13)()
    m, _ = m.Get(1)()
    v, ok := m.GetVarint(3)()
    return uint64(v), ok
 }
 
-func (d *Details) field_13_1_82_1_1() (string, bool) {
+func (d Details) field_13_1_82_1_1() (string, bool) {
    m, _ := d.Message.Get(13)()
    m, _ = m.Get(1)()
    m, _ = m.Get(82)()
@@ -125,13 +125,13 @@ func (d *Details) field_13_1_82_1_1() (string, bool) {
    return string(v), ok
 }
 
-func (d *Details) field_8_1() (float64, bool) {
+func (d Details) field_8_1() (float64, bool) {
    m, _ := d.Message.Get(8)()
    v, ok := m.GetVarint(1)()
    return float64(v) / 1_000_000, ok
 }
 
-func (d *Details) String() string {
+func (d Details) String() string {
    var b []byte
    b = append(b, "details[8] ="...)
    if value, ok := d.field_8_1(); ok {

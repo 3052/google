@@ -13,7 +13,7 @@ type Apk struct {
    Message protobuf.Message
 }
 
-func (g *GoogleAuth) Delivery(
+func (g GoogleAuth) Delivery(
    checkin *GoogleCheckin, app *StoreApp, single bool,
 ) (*Delivery, error) {
    req, err := http.NewRequest("", "https://android.clients.google.com", nil)
@@ -55,13 +55,8 @@ func (g *GoogleAuth) Delivery(
    return &Delivery{message}, nil
 }
 
-func (a *Apk) Url() (string, bool) {
+func (a Apk) Url() (string, bool) {
    v, ok := a.Message.GetBytes(5)()
-   return string(v), ok
-}
-
-func (a *Apk) Field1() (string, bool) {
-   v, ok := a.Message.GetBytes(1)()
    return string(v), ok
 }
 
@@ -73,22 +68,27 @@ type Obb struct {
    Message protobuf.Message
 }
 
-func (d *Delivery) Url() (string, bool) {
+func (a Apk) Field1() (string, bool) {
+   v, ok := a.Message.GetBytes(1)()
+   return string(v), ok
+}
+
+func (d Delivery) Url() (string, bool) {
    v, ok := d.Message.GetBytes(3)()
    return string(v), ok
 }
 
-func (o *Obb) Url() (string, bool) {
+func (o Obb) Url() (string, bool) {
    v, ok := o.Message.GetBytes(4)()
    return string(v), ok
 }
 
-func (o *Obb) Field1() (uint64, bool) {
+func (o Obb) Field1() (uint64, bool) {
    v, ok := o.Message.GetVarint(1)()
    return uint64(v), ok
 }
 
-func (d *Delivery) Obb() func() (*Obb, bool) {
+func (d Delivery) Obb() func() (*Obb, bool) {
    next := d.Message.Get(4)
    return func() (*Obb, bool) {
       m, ok := next()
@@ -96,7 +96,7 @@ func (d *Delivery) Obb() func() (*Obb, bool) {
    }
 }
 
-func (d *Delivery) Apk() func() (*Apk, bool) {
+func (d Delivery) Apk() func() (*Apk, bool) {
    next := d.Message.Get(15)
    return func() (*Apk, bool) {
       m, ok := next()

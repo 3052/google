@@ -12,7 +12,7 @@ type GoogleAuth struct {
    Values Values
 }
 
-func (g *GoogleAuth) auth() string {
+func (g GoogleAuth) auth() string {
    return g.Values["Auth"]
 }
 
@@ -72,12 +72,12 @@ func (g *GoogleToken) Auth() (*GoogleAuth, error) {
       resp.Write(&b)
       return nil, errors.New(b.String())
    }
-   body, err := io.ReadAll(resp.Body)
+   data, err := io.ReadAll(resp.Body)
    if err != nil {
       return nil, err
    }
    query := Values{}
-   query.Set(string(body))
+   query.Set(string(data))
    return &GoogleAuth{query}, nil
 }
 

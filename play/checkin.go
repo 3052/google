@@ -74,6 +74,6 @@ func (g *GoogleCheckin) field_7() (uint64, bool) {
    return uint64(v), ok
 }
 
-func (GoogleCheckin) field_7_error() error {
+func (*GoogleCheckin) field_7_error() error {
    return errors.New("GoogleCheckin.field_7")
 }

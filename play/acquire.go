@@ -8,7 +8,7 @@ import (
    "net/http"
 )
 
-func (g *GoogleAuth) Acquire(checkin *GoogleCheckin, doc string) error {
+func (g GoogleAuth) Acquire(checkin *GoogleCheckin, doc string) error {
    message := protobuf.Message{}
    message.Add(1, func(m protobuf.Message) {
       m.Add(1, func(m protobuf.Message) {
@@ -69,7 +69,7 @@ type acquire_error struct {
    message protobuf.Message
 }
 
-func (a *acquire_error) Error() string {
+func (a acquire_error) Error() string {
    var text []byte
    next := a.message.Get(1)
    for {

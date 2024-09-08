@@ -73,7 +73,12 @@ know how to reverse that, and I did not find any implementations online.
 ## license
 
 software is not licensed for commercial use. if you wish to purchase a
-commercial license, contact me.
+commercial license, contact me
+
+## support
+
+because of repeated abuse, as of november 5 2023, I no longer offer free
+discussion of this software. if you are interested in paid support, contact me
 
 <dl>
    <dt>email</dt>

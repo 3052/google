@@ -146,16 +146,6 @@ type GoogleDevice struct {
    Texture []string
 }
 
-func (s *StoreApp) Apk(value string) string {
-   var b []byte
-   b = fmt.Append(b, s.Id, "-")
-   if value != "" {
-      b = fmt.Append(b, value, "-")
-   }
-   b = fmt.Append(b, s.Version, ".apk")
-   return string(b)
-}
-
 // com.roku.web.trc
 const Leanback = "android.software.leanback"
 
@@ -172,6 +162,20 @@ type StoreApp struct {
 // so lets lie for now
 const gl_es_version = 0x30001
 
+func authorization(req *http.Request, auth GoogleAuth) {
+   req.Header.Set("authorization", "Bearer "+auth.auth())
+}
+
+func (s *StoreApp) Apk(value string) string {
+   var b []byte
+   b = fmt.Append(b, s.Id, "-")
+   if value != "" {
+      b = fmt.Append(b, value, "-")
+   }
+   b = fmt.Append(b, s.Version, ".apk")
+   return string(b)
+}
+
 func (s *StoreApp) Obb(value uint64) string {
    var b []byte
    if value >= 1 {
@@ -181,8 +185,4 @@ func (s *StoreApp) Obb(value uint64) string {
    }
    b = fmt.Append(b, ".", s.Version, ".", s.Id, ".obb")
    return string(b)
-}
-
-func authorization(req *http.Request, auth *GoogleAuth) {
-   req.Header.Set("authorization", "Bearer "+auth.auth())
 }
