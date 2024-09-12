@@ -10,59 +10,7 @@ import (
    "time"
 )
 
-func x_dfe_device_id(req *http.Request, checkin *GoogleCheckin) bool {
-   if v, ok := checkin.field_7(); ok {
-      req.Header.Set("x-dfe-device-id", fmt.Sprintf("%x", v))
-      return true
-   }
-   return false
-}
-
-func x_ps_rh(req *http.Request, checkin *GoogleCheckin) error {
-   field_7, ok := checkin.field_7()
-   if !ok {
-      return checkin.field_7_error()
-   }
-   message := protobuf.Message{}
-   message.Add(1, func(m protobuf.Message) {
-      m.Add(1, func(m protobuf.Message) {
-         m.Add(3, func(m protobuf.Message) {
-            m.AddBytes(1, fmt.Append(nil, field_7))
-            m.Add(2, func(m protobuf.Message) {
-               now := time.Now().UnixMicro()
-               m.AddBytes(1, fmt.Append(nil, now))
-            })
-         })
-      })
-   })
-   data, err := compress_gzip(message.Marshal())
-   if err != nil {
-      return err
-   }
-   req.Header.Set("x-ps-rh", base64.URLEncoding.EncodeToString(data))
-   return nil
-}
-
 const google_play_store = 82941300
-
-func user_agent(req *http.Request, single bool) {
-   var b []byte
-   // `sdk` is needed for `/fdfe/delivery`
-   b = append(b, "Android-Finsky (sdk="...)
-   // with `/fdfe/acquire`, requests will be rejected with certain apps, if the
-   // device was created with too low a version here:
-   b = fmt.Append(b, android_api)
-   b = append(b, ",versionCode="...)
-   // for multiple APKs just tell the truth. for single APK we have to lie.
-   // below value is the last version that works.
-   if single {
-      b = fmt.Append(b, 80919999)
-   } else {
-      b = fmt.Append(b, google_play_store)
-   }
-   b = append(b, ')')
-   req.Header.Set("user-agent", string(b))
-}
 
 // developer.android.com/ndk/guides/abis
 var Abi = []string{
@@ -164,6 +112,60 @@ const gl_es_version = 0x30001
 
 func authorization(req *http.Request, auth GoogleAuth) {
    req.Header.Set("authorization", "Bearer "+auth.auth())
+}
+
+///
+
+func x_dfe_device_id(req *http.Request, checkin *GoogleCheckin) bool {
+   if v, ok := checkin.field_7(); ok {
+      req.Header.Set("x-dfe-device-id", fmt.Sprintf("%x", v))
+      return true
+   }
+   return false
+}
+
+func x_ps_rh(req *http.Request, checkin *GoogleCheckin) error {
+   field_7, ok := checkin.field_7()
+   if !ok {
+      return checkin.field_7_error()
+   }
+   message := protobuf.Message{}
+   message.Add(1, func(m protobuf.Message) {
+      m.Add(1, func(m protobuf.Message) {
+         m.Add(3, func(m protobuf.Message) {
+            m.AddBytes(1, fmt.Append(nil, field_7))
+            m.Add(2, func(m protobuf.Message) {
+               now := time.Now().UnixMicro()
+               m.AddBytes(1, fmt.Append(nil, now))
+            })
+         })
+      })
+   })
+   data, err := compress_gzip(message.Marshal())
+   if err != nil {
+      return err
+   }
+   req.Header.Set("x-ps-rh", base64.URLEncoding.EncodeToString(data))
+   return nil
+}
+
+func user_agent(req *http.Request, single bool) {
+   var b []byte
+   // `sdk` is needed for `/fdfe/delivery`
+   b = append(b, "Android-Finsky (sdk="...)
+   // with `/fdfe/acquire`, requests will be rejected with certain apps, if the
+   // device was created with too low a version here:
+   b = fmt.Append(b, android_api)
+   b = append(b, ",versionCode="...)
+   // for multiple APKs just tell the truth. for single APK we have to lie.
+   // below value is the last version that works.
+   if single {
+      b = fmt.Append(b, 80919999)
+   } else {
+      b = fmt.Append(b, google_play_store)
+   }
+   b = append(b, ')')
+   req.Header.Set("user-agent", string(b))
 }
 
 func (s *StoreApp) Apk(value string) string {
