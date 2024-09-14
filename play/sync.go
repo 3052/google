@@ -8,6 +8,10 @@ import (
 )
 
 func (g *GoogleDevice) Sync(checkin *GoogleCheckin) error {
+   field_7, ok := checkin.field_7()
+   if !ok {
+      return checkin.field_7_error()
+   }
    message := protobuf.Message{}
    message.Add(1, func(m protobuf.Message) {
       m.Add(10, func(m protobuf.Message) {
@@ -51,9 +55,7 @@ func (g *GoogleDevice) Sync(checkin *GoogleCheckin) error {
    if err != nil {
       return err
    }
-   if !x_dfe_device_id(req, checkin) {
-      return checkin.field_7_error()
-   }
+   x_dfe_device_id(req, field_7)
    resp, err := http.DefaultClient.Do(req)
    if err != nil {
       return err

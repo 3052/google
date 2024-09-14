@@ -21,44 +21,6 @@ func (d Details) field_13_1_17() func() (uint64, bool) {
    }
 }
 
-func (g GoogleAuth) Details(
-   checkin *GoogleCheckin, doc string, single bool,
-) (*Details, error) {
-   req, err := http.NewRequest("", "https://android.clients.google.com", nil)
-   if err != nil {
-      return nil, err
-   }
-   req.URL.Path = "/fdfe/details"
-   req.URL.RawQuery = "doc=" + doc
-   authorization(req, g)
-   user_agent(req, single)
-   if !x_dfe_device_id(req, checkin) {
-      return nil, checkin.field_7_error()
-   }
-   resp, err := http.DefaultClient.Do(req)
-   if err != nil {
-      return nil, err
-   }
-   defer resp.Body.Close()
-   if resp.StatusCode != http.StatusOK {
-      var b strings.Builder
-      resp.Write(&b)
-      return nil, errors.New(b.String())
-   }
-   data, err := io.ReadAll(resp.Body)
-   if err != nil {
-      return nil, err
-   }
-   message := protobuf.Message{}
-   if err = message.Unmarshal(data); err != nil {
-      return nil, err
-   }
-   message, _ = message.Get(1)()
-   message, _ = message.Get(2)()
-   message, _ = message.Get(4)()
-   return &Details{message}, nil
-}
-
 type Details struct {
    Message protobuf.Message
 }
@@ -186,4 +148,44 @@ func (d Details) String() string {
       b = fmt.Append(b, " ", value)
    }
    return string(b)
+}
+
+func (g GoogleAuth) Details(
+   checkin *GoogleCheckin, doc string, single bool,
+) (*Details, error) {
+   field_7, ok := checkin.field_7()
+   if !ok {
+      return nil, checkin.field_7_error()
+   }
+   req, err := http.NewRequest("", "https://android.clients.google.com", nil)
+   if err != nil {
+      return nil, err
+   }
+   req.URL.Path = "/fdfe/details"
+   req.URL.RawQuery = "doc=" + doc
+   authorization(req, g)
+   user_agent(req, single)
+   x_dfe_device_id(req, field_7)
+   resp, err := http.DefaultClient.Do(req)
+   if err != nil {
+      return nil, err
+   }
+   defer resp.Body.Close()
+   if resp.StatusCode != http.StatusOK {
+      var b strings.Builder
+      resp.Write(&b)
+      return nil, errors.New(b.String())
+   }
+   data, err := io.ReadAll(resp.Body)
+   if err != nil {
+      return nil, err
+   }
+   message := protobuf.Message{}
+   if err = message.Unmarshal(data); err != nil {
+      return nil, err
+   }
+   message, _ = message.Get(1)()
+   message, _ = message.Get(2)()
+   message, _ = message.Get(4)()
+   return &Details{message}, nil
 }

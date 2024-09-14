@@ -104,39 +104,6 @@ func authorization(req *http.Request, auth GoogleAuth) {
    req.Header.Set("authorization", "Bearer "+auth.auth())
 }
 
-func x_ps_rh(req *http.Request, checkin *GoogleCheckin) error {
-   field_7, ok := checkin.field_7()
-   if !ok {
-      return checkin.field_7_error()
-   }
-   message := protobuf.Message{}
-   message.Add(1, func(m protobuf.Message) {
-      m.Add(1, func(m protobuf.Message) {
-         m.Add(3, func(m protobuf.Message) {
-            m.AddBytes(1, strconv.AppendUint(nil, field_7, 10))
-            m.Add(2, func(m protobuf.Message) {
-               now := time.Now().UnixMicro()
-               m.AddBytes(1, strconv.AppendInt(nil, now, 10))
-            })
-         })
-      })
-   })
-   data, err := compress_gzip(message.Marshal())
-   if err != nil {
-      return err
-   }
-   req.Header.Set("x-ps-rh", base64.URLEncoding.EncodeToString(data))
-   return nil
-}
-
-func x_dfe_device_id(req *http.Request, checkin *GoogleCheckin) bool {
-   if v, ok := checkin.field_7(); ok {
-      req.Header.Set("x-dfe-device-id", strconv.FormatUint(v, 16))
-      return true
-   }
-   return false
-}
-
 func (s *StoreApp) Apk(value string) string {
    b := []byte(s.Id)
    b = append(b, '-')
@@ -189,4 +156,29 @@ func user_agent(req *http.Request, single bool) {
    }
    b = append(b, ')')
    req.Header.Set("user-agent", string(b))
+}
+
+func x_ps_rh(req *http.Request, field_7 uint64) error {
+   message := protobuf.Message{}
+   message.Add(1, func(m protobuf.Message) {
+      m.Add(1, func(m protobuf.Message) {
+         m.Add(3, func(m protobuf.Message) {
+            m.AddBytes(1, strconv.AppendUint(nil, field_7, 10))
+            m.Add(2, func(m protobuf.Message) {
+               now := time.Now().UnixMicro()
+               m.AddBytes(1, strconv.AppendInt(nil, now, 10))
+            })
+         })
+      })
+   })
+   data, err := compress_gzip(message.Marshal())
+   if err != nil {
+      return err
+   }
+   req.Header.Set("x-ps-rh", base64.URLEncoding.EncodeToString(data))
+   return nil
+}
+
+func x_dfe_device_id(req *http.Request, field_7 uint64) {
+   req.Header.Set("x-dfe-device-id", strconv.FormatUint(field_7, 16))
 }
