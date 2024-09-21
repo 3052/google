@@ -34,6 +34,7 @@ proxy:
 
 ~~~
 adb shell settings put global http_proxy 192.168.56.1:8080
+adb shell settings put global http_proxy :0
 ~~~
 
 Note if you restart the device, you need to install system certificate again.

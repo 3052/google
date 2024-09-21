@@ -9,6 +9,54 @@ import (
    "strconv"
 )
 
+func (g GoogleAuth) Delivery(
+   checkin *GoogleCheckin, app *StoreApp, single bool,
+) (*Delivery, error) {
+   field_7, ok := checkin.field_7()
+   if !ok {
+      return nil, checkin.field_7_error()
+   }
+   req, err := http.NewRequest("", "https://android.clients.google.com", nil)
+   if err != nil {
+      return nil, err
+   }
+   req.URL.Path = "/fdfe/delivery"
+   req.URL.RawQuery = url.Values{
+      "doc": {app.Id},
+      "vc":  {strconv.FormatUint(app.Version, 10)},
+   }.Encode()
+   authorization(req, g)
+   user_agent(req, single)
+   x_dfe_device_id(req, field_7)
+   resp, err := http.DefaultClient.Do(req)
+   if err != nil {
+      return nil, err
+   }
+   defer resp.Body.Close()
+   if resp.StatusCode != http.StatusOK {
+      return nil, errors.New(resp.Status)
+   }
+   data, err := io.ReadAll(resp.Body)
+   if err != nil {
+      return nil, err
+   }
+   message := protobuf.Message{}
+   err = message.Unmarshal(data)
+   if err != nil {
+      return nil, err
+   }
+   message, _ = message.Get(1)()
+   message, _ = message.Get(21)()
+   switch v, _ := message.GetVarint(1)(); v {
+   case 2:
+      return nil, errors.New("version")
+   case 3:
+      return nil, errors.New("acquire")
+   }
+   message, _ = message.Get(2)()
+   return &Delivery{message}, nil
+}
+
 type Apk struct {
    Message protobuf.Message
 }
@@ -60,48 +108,4 @@ func (d Delivery) Apk() func() (*Apk, bool) {
       m, ok := next()
       return &Apk{m}, ok
    }
-}
-
-func (g GoogleAuth) Delivery(
-   checkin *GoogleCheckin, app *StoreApp, single bool,
-) (*Delivery, error) {
-   field_7, ok := checkin.field_7()
-   if !ok {
-      return nil, checkin.field_7_error()
-   }
-   req, err := http.NewRequest("", "https://android.clients.google.com", nil)
-   if err != nil {
-      return nil, err
-   }
-   req.URL.Path = "/fdfe/delivery"
-   req.URL.RawQuery = url.Values{
-      "doc": {app.Id},
-      "vc":  {strconv.FormatUint(app.Version, 10)},
-   }.Encode()
-   authorization(req, g)
-   user_agent(req, single)
-   x_dfe_device_id(req, field_7)
-   resp, err := http.DefaultClient.Do(req)
-   if err != nil {
-      return nil, err
-   }
-   defer resp.Body.Close()
-   data, err := io.ReadAll(resp.Body)
-   if err != nil {
-      return nil, err
-   }
-   message := protobuf.Message{}
-   if err = message.Unmarshal(data); err != nil {
-      return nil, err
-   }
-   message, _ = message.Get(1)()
-   message, _ = message.Get(21)()
-   switch v, _ := message.GetVarint(1)(); v {
-   case 3:
-      return nil, errors.New("acquire")
-   case 5:
-      return nil, errors.New("version")
-   }
-   message, _ = message.Get(2)()
-   return &Delivery{message}, nil
 }
