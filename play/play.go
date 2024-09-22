@@ -14,6 +14,7 @@ import (
 var Abi = []string{
    // com.google.android.youtube
    "x86",
+   "x86_64",
    // com.sygic.aura
    "armeabi-v7a",
    // com.kakaogames.twodin
