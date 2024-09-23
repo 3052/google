@@ -10,6 +10,8 @@ import (
    "strconv"
 )
 
+const android_api = 31
+
 // developer.android.com/ndk/guides/abis
 var Abi = []string{
    // com.google.android.youtube
@@ -136,8 +138,6 @@ type StoreApp struct {
    Id      string
    Version uint64
 }
-
-const android_api = 31
 
 const google_play_store = 82941300
 
