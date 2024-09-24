@@ -10,6 +10,26 @@ import (
    "strconv"
 )
 
+func user_agent(req *http.Request, single bool) {
+   // `sdk` is needed for `/fdfe/delivery`
+   b := []byte("Android-Finsky (sdk=")
+   // with `/fdfe/acquire`, requests will be rejected with certain apps, if the
+   // device was created with too low a version here:
+   b = strconv.AppendInt(b, android_api, 10)
+   b = append(b, ",versionCode="...)
+   // for multiple APKs just tell the truth. for single APK we have to lie.
+   // below value is the last version that works.
+   if single {
+      b = strconv.AppendInt(b, 80919999, 10)
+   } else {
+      b = strconv.AppendInt(b, google_play_store, 10)
+   }
+   b = append(b, ')')
+   req.Header.Set("user-agent", string(b))
+}
+
+const google_play_store = 82941300
+
 const android_api = 31
 
 // developer.android.com/ndk/guides/abis
@@ -139,47 +159,29 @@ type StoreApp struct {
    Version uint64
 }
 
-const google_play_store = 82941300
-
-func user_agent(req *http.Request, single bool) {
-   // `sdk` is needed for `/fdfe/delivery`
-   b := []byte("Android-Finsky (sdk=")
-   // with `/fdfe/acquire`, requests will be rejected with certain apps, if the
-   // device was created with too low a version here:
-   b = strconv.AppendInt(b, android_api, 10)
-   b = append(b, ",versionCode="...)
-   // for multiple APKs just tell the truth. for single APK we have to lie.
-   // below value is the last version that works.
-   if single {
-      b = strconv.AppendInt(b, 80919999, 10)
-   } else {
-      b = strconv.AppendInt(b, google_play_store, 10)
-   }
-   b = append(b, ')')
-   req.Header.Set("user-agent", string(b))
+func x_dfe_device_id(req *http.Request, field_7 uint64) {
+   req.Header.Set("x-dfe-device-id", strconv.FormatUint(field_7, 16))
 }
 
 func x_ps_rh(req *http.Request, field_7 uint64) error {
-   message := protobuf.Message{}
-   message.Add(1, func(m protobuf.Message) {
-      m.Add(1, func(m protobuf.Message) {
-         m.Add(3, func(m protobuf.Message) {
-            m.AddBytes(1, strconv.AppendUint(nil, field_7, 10))
-            m.Add(2, func(m protobuf.Message) {
-               now := time.Now().UnixMicro()
-               m.AddBytes(1, strconv.AppendInt(nil, now, 10))
-            })
-         })
-      })
-   })
+   id := strconv.FormatUint(field_7, 10)
+   now := strconv.FormatInt(time.Now().UnixMicro(), 10)
+   message := protobuf.Message{
+      1: {protobuf.Message{
+         1: {protobuf.Message{
+            3: {protobuf.Message{
+               1: {protobuf.Bytes(id)},
+               2: {protobuf.Message{
+                  1: {protobuf.Bytes(now)},
+               }},
+            }},
+         }},
+      }},
+   }
    data, err := compress_gzip(message.Marshal())
    if err != nil {
       return err
    }
    req.Header.Set("x-ps-rh", base64.URLEncoding.EncodeToString(data))
    return nil
-}
-
-func x_dfe_device_id(req *http.Request, field_7 uint64) {
-   req.Header.Set("x-dfe-device-id", strconv.FormatUint(field_7, 16))
 }

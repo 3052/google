@@ -13,16 +13,17 @@ func (g GoogleAuth) Acquire(checkin *GoogleCheckin, id string) error {
    if !ok {
       return checkin.field_7_error()
    }
-   message := protobuf.Message{}
-   message.Add(1, func(m protobuf.Message) {
-      m.Add(1, func(m protobuf.Message) {
-         m.AddBytes(1, []byte(id))
-         m.AddVarint(2, 1)
-         m.AddVarint(3, 3)
-      })
-      m.AddVarint(2, 1)
-   })
-   message.AddVarint(13, 1)
+   message := protobuf.Message{
+      1: {protobuf.Message{
+         1: {protobuf.Message{
+            1: {protobuf.Bytes(id)},
+            2: {protobuf.Varint(1)},
+            3: {protobuf.Varint(3)},
+         }},
+         2: {protobuf.Varint(1)},
+      }},
+      13: {protobuf.Varint(1)},
+   }
    req, err := http.NewRequest(
       "POST", "https://android.clients.google.com/fdfe/acquire",
       bytes.NewReader(message.Marshal()),
@@ -55,7 +56,8 @@ func (g GoogleAuth) Acquire(checkin *GoogleCheckin, id string) error {
       return err
    }
    message = protobuf.Message{}
-   if err = message.Unmarshal(data); err != nil {
+   err = message.Unmarshal(data)
+   if err != nil {
       return err
    }
    message, _ = message.Get(1)()

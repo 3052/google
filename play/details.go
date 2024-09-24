@@ -181,7 +181,8 @@ func (g GoogleAuth) Details(
       return nil, err
    }
    message := protobuf.Message{}
-   if err = message.Unmarshal(data); err != nil {
+   err = message.Unmarshal(data)
+   if err != nil {
       return nil, err
    }
    message, _ = message.Get(1)()

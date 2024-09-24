@@ -8,16 +8,6 @@ import (
    "net/http"
 )
 
-type GoogleCheckin struct {
-   Message protobuf.Message
-   Raw     []byte
-}
-
-func (g *GoogleCheckin) Unmarshal() error {
-   g.Message = protobuf.Message{}
-   return g.Message.Unmarshal(g.Raw)
-}
-
 func (g *GoogleDevice) Checkin() (*GoogleCheckin, error) {
    message := protobuf.Message{}
    message.Add(4, func(m protobuf.Message) {
@@ -42,8 +32,8 @@ func (g *GoogleDevice) Checkin() (*GoogleCheckin, error) {
       for _, texture := range g.Texture {
          m.AddBytes(15, []byte(texture))
       }
-      // you cannot swap the next two lines:
       for _, feature := range g.Feature {
+         // this line needs to be in the loop:
          m.Add(26, func(m protobuf.Message) {
             m.AddBytes(1, []byte(feature))
          })
@@ -67,6 +57,16 @@ func (g *GoogleDevice) Checkin() (*GoogleCheckin, error) {
       return nil, err
    }
    return &checkin, nil
+}
+
+type GoogleCheckin struct {
+   Message protobuf.Message
+   Raw     []byte
+}
+
+func (g *GoogleCheckin) Unmarshal() error {
+   g.Message = protobuf.Message{}
+   return g.Message.Unmarshal(g.Raw)
 }
 
 func (g *GoogleCheckin) field_7() (uint64, bool) {
