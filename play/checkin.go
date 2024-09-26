@@ -10,13 +10,13 @@ import (
 
 func (g *GoogleDevice) Checkin() (*GoogleCheckin, error) {
    message := protobuf.Message{}
-   message.Add(4, func(m protobuf.Message) {
-      m.Add(1, func(m protobuf.Message) {
+   message.AddFunc(4, func(m protobuf.Message) {
+      m.AddFunc(1, func(m protobuf.Message) {
          m.AddVarint(10, android_api)
       })
    })
    message.AddVarint(14, 3)
-   message.Add(18, func(m protobuf.Message) {
+   message.AddFunc(18, func(m protobuf.Message) {
       m.AddVarint(1, 3)
       m.AddVarint(2, 2)
       m.AddVarint(3, 2)
@@ -34,7 +34,7 @@ func (g *GoogleDevice) Checkin() (*GoogleCheckin, error) {
       }
       for _, feature := range g.Feature {
          // this line needs to be in the loop:
-         m.Add(26, func(m protobuf.Message) {
+         m.AddFunc(26, func(m protobuf.Message) {
             m.AddBytes(1, []byte(feature))
          })
       }
@@ -69,11 +69,9 @@ func (g *GoogleCheckin) Unmarshal() error {
    return g.Message.Unmarshal(g.Raw)
 }
 
-func (g *GoogleCheckin) field_7() (uint64, bool) {
-   v, ok := g.Message.GetFixed64(7)()
-   return uint64(v), ok
-}
-
-func (*GoogleCheckin) field_7_error() error {
-   return errors.New("GoogleCheckin.field_7")
+func (g *GoogleCheckin) field_7() (uint64, error) {
+   if v, ok := g.Message.GetFixed64(7)(); ok {
+      return uint64(v), nil
+   }
+   return 0, errors.New("GoogleCheckin.field_7")
 }

@@ -12,9 +12,9 @@ import (
 func (g GoogleAuth) Delivery(
    checkin *GoogleCheckin, app *StoreApp, single bool,
 ) (*Delivery, error) {
-   field_7, ok := checkin.field_7()
-   if !ok {
-      return nil, checkin.field_7_error()
+   field_7, err := checkin.field_7()
+   if err != nil {
+      return nil, err
    }
    req, err := http.NewRequest("", "https://android.clients.google.com", nil)
    if err != nil {

@@ -9,9 +9,9 @@ import (
 )
 
 func (g GoogleAuth) Acquire(checkin *GoogleCheckin, id string) error {
-   field_7, ok := checkin.field_7()
-   if !ok {
-      return checkin.field_7_error()
+   field_7, err := checkin.field_7()
+   if err != nil {
+      return err
    }
    message := protobuf.Message{
       1: {protobuf.Message{
