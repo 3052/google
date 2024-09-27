@@ -13,10 +13,10 @@ func (g *GoogleDevice) Sync(checkin *GoogleCheckin) error {
       return err
    }
    message := protobuf.Message{}
-   message.AddFunc(1, func(m protobuf.Message) {
-      m.AddFunc(10, func(m protobuf.Message) {
+   message.Add(1, func(m protobuf.Message) {
+      m.Add(10, func(m protobuf.Message) {
          for _, value := range g.Feature {
-            m.AddFunc(1, func(m protobuf.Message) {
+            m.Add(1, func(m protobuf.Message) {
                m.AddBytes(1, []byte(value))
             })
          }
@@ -28,23 +28,23 @@ func (g *GoogleDevice) Sync(checkin *GoogleCheckin) error {
          }
       })
    })
-   message.AddFunc(1, func(m protobuf.Message) {
-      m.AddFunc(15, func(m protobuf.Message) {
+   message.Add(1, func(m protobuf.Message) {
+      m.Add(15, func(m protobuf.Message) {
          m.AddBytes(4, []byte(g.Abi))
       })
    })
-   message.AddFunc(1, func(m protobuf.Message) {
-      m.AddFunc(18, func(m protobuf.Message) {
+   message.Add(1, func(m protobuf.Message) {
+      m.Add(18, func(m protobuf.Message) {
          m.AddBytes(1, []byte("am-unknown")) // X-DFE-Client-Id
       })
    })
-   message.AddFunc(1, func(m protobuf.Message) {
-      m.AddFunc(19, func(m protobuf.Message) {
+   message.Add(1, func(m protobuf.Message) {
+      m.Add(19, func(m protobuf.Message) {
          m.AddVarint(2, google_play_store)
       })
    })
-   message.AddFunc(1, func(m protobuf.Message) {
-      m.AddFunc(21, func(m protobuf.Message) {
+   message.Add(1, func(m protobuf.Message) {
+      m.Add(21, func(m protobuf.Message) {
          m.AddVarint(6, gl_es_version)
       })
    })
