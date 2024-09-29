@@ -3,7 +3,7 @@ module 154.pages.dev/google
 go 1.22.0
 
 require (
-	154.pages.dev/protobuf v1.3.2
+	154.pages.dev/protobuf v1.3.5
 	154.pages.dev/text v1.3.0
 )
 
