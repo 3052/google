@@ -10,39 +10,6 @@ import (
    "strconv"
 )
 
-func user_agent(req *http.Request, single bool) {
-   // `sdk` is needed for `/fdfe/delivery`
-   b := []byte("Android-Finsky (sdk=")
-   // with `/fdfe/acquire`, requests will be rejected with certain apps, if the
-   // device was created with too low a version here:
-   b = strconv.AppendInt(b, android_api, 10)
-   b = append(b, ",versionCode="...)
-   // for multiple APKs just tell the truth. for single APK we have to lie.
-   // below value is the last version that works.
-   if single {
-      b = strconv.AppendInt(b, 80919999, 10)
-   } else {
-      b = strconv.AppendInt(b, google_play_store, 10)
-   }
-   b = append(b, ')')
-   req.Header.Set("user-agent", string(b))
-}
-
-const google_play_store = 82941300
-
-const android_api = 31
-
-// developer.android.com/ndk/guides/abis
-var Abi = []string{
-   // com.google.android.youtube
-   "x86",
-   "x86_64",
-   // com.sygic.aura
-   "armeabi-v7a",
-   // com.kakaogames.twodin
-   "arm64-v8a",
-}
-
 var Device = GoogleDevice{
    Feature: []string{
       // app.source.getcontact
@@ -92,6 +59,39 @@ var Device = GoogleDevice{
       // com.kakaogames.twodin
       "GL_KHR_texture_compression_astc_ldr",
    },
+}
+
+func user_agent(req *http.Request, single bool) {
+   // `sdk` is needed for `/fdfe/delivery`
+   b := []byte("Android-Finsky (sdk=")
+   // with `/fdfe/acquire`, requests will be rejected with certain apps, if the
+   // device was created with too low a version here:
+   b = strconv.AppendInt(b, android_api, 10)
+   b = append(b, ",versionCode="...)
+   // for multiple APKs just tell the truth. for single APK we have to lie.
+   // below value is the last version that works.
+   if single {
+      b = strconv.AppendInt(b, 80919999, 10)
+   } else {
+      b = strconv.AppendInt(b, google_play_store, 10)
+   }
+   b = append(b, ')')
+   req.Header.Set("user-agent", string(b))
+}
+
+const google_play_store = 82941300
+
+const android_api = 31
+
+// developer.android.com/ndk/guides/abis
+var Abi = []string{
+   // com.google.android.youtube
+   "x86",
+   "x86_64",
+   // com.sygic.aura
+   "armeabi-v7a",
+   // com.kakaogames.twodin
+   "arm64-v8a",
 }
 
 func compress_gzip(data []byte) ([]byte, error) {
