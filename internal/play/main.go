@@ -18,19 +18,17 @@ func main() {
    }
    flag.BoolVar(&f.acquire, "a", false, "acquire")
    flag.StringVar(
-      &play.Device.Abi, "b", play.Abi[0], strings.Join(play.Abi[1:], " "),
+      &play.Device.Abi, "abi", play.Abi[0], strings.Join(play.Abi[1:], " "),
    )
-   flag.Uint64Var(&f.app.Version, "c", 0, "version code")
-   flag.BoolVar(&f.checkin, "d", false, "checkin and sync device")
-   flag.StringVar(&f.app.Id, "i", "", "app ID")
-   {
-      var b strings.Builder
-      b.WriteString("oauth_token from ")
-      b.WriteString("accounts.google.com/embedded/setup/v2/android")
-      flag.StringVar(&f.code, "o", "", b.String())
-   }
+   flag.StringVar(
+      &f.auth, "auth", "", "accounts.google.com/embedded/setup/v2/android",
+   )
+   flag.BoolVar(&f.checkin, "checkin", false, "checkin request")
+   flag.StringVar(&f.app.Id, "i", "", "ID")
+   flag.BoolVar(&f.leanback, "leanback", false, play.Leanback)
    flag.BoolVar(&f.single, "s", false, "single APK")
-   flag.BoolVar(&f.leanback, "t", false, play.Leanback)
+   flag.BoolVar(&f.sync, "sync", false, "sync request")
+   flag.Uint64Var(&f.app.Version, "v", 0, "version code")
    flag.Parse()
    text.Transport{}.Set(true)
    switch {
@@ -53,19 +51,35 @@ func main() {
          }
          fmt.Println(details)
       }
-   case f.code != "":
+   case f.auth != "":
       err := f.do_auth()
       if err != nil {
          panic(err)
       }
    case f.checkin:
-      err := f.do_device()
+      err := f.do_checkin()
+      if err != nil {
+         panic(err)
+      }
+   case f.sync:
+      err := f.do_sync()
       if err != nil {
          panic(err)
       }
    default:
       flag.Usage()
    }
+}
+
+type flags struct {
+   app play.StoreApp
+   sync bool
+   single bool
+   leanback bool
+   home string
+   checkin bool
+   auth string
+   acquire bool
 }
 
 func (f *flags) New() error {
@@ -76,14 +90,4 @@ func (f *flags) New() error {
    }
    f.home = filepath.ToSlash(f.home) + "/google-play"
    return nil
-}
-
-type flags struct {
-   acquire bool
-   app play.StoreApp
-   code string
-   checkin bool
-   home string
-   single bool
-   leanback bool
 }

@@ -27,10 +27,6 @@ func TestDetails(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   var max_app struct {
-      downloads uint64
-      id string
-   }
    for _, app := range apps {
       var checkin GoogleCheckin
       checkin.Raw, err = os.ReadFile(home + "/" + app.abi + ".txt")
@@ -45,12 +41,7 @@ func TestDetails(t *testing.T) {
       if err != nil {
          t.Fatal(err)
       }
-      if v, ok := detail.Downloads(); ok {
-         if v > max_app.downloads {
-            max_app.downloads = v
-            max_app.id = app.id
-         }
-      } else {
+      if _, ok := detail.Downloads(); !ok {
          t.Fatal("downloads")
       }
       if _, ok := detail.field_8_1(); !ok {
@@ -94,5 +85,4 @@ func TestDetails(t *testing.T) {
       fmt.Printf("%#v,\n", app)
       time.Sleep(99 * time.Millisecond)
    }
-   fmt.Println("max(downloads) = ", max_app.id)
 }

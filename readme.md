@@ -16,15 +16,21 @@ Account. then get authorization code (`oauth_token`) cookie from
 authorization code for refresh token (`aas_et`):
 
 ~~~
-play -o oauth2_4/0Adeu5B...
+play -auth oauth2_4/0Adeu5B...
 ~~~
 
 [1]://firefox-source-docs.mozilla.org/devtools-user/storage_inspector
 
-create a file containing `X-DFE-Device-ID` (GSF ID) for future requests:
+do `/checkin` request:
 
 ~~~
-play -d
+play -checkin
+~~~
+
+do `/fdfe/sync` request:
+
+~~~
+play -sync
 ~~~
 
 get app details:
@@ -54,7 +60,7 @@ provided by the previous details command. if APK is split, all pieces will be
 downloaded:
 
 ~~~
-play -i com.google.android.youtube -c 1547296192
+play -i com.google.android.youtube -v 1547296192
 ~~~
 
 ## goals

@@ -3,12 +3,50 @@ package main
 import (
    "154.pages.dev/google/play"
    "154.pages.dev/text"
-   "fmt"
    "net/http"
    "os"
    "strings"
-   "time"
 )
+
+func (f *flags) do_sync() error {
+   var (
+      checkin play.GoogleCheckin
+      err error
+   )
+   checkin.Raw, err = os.ReadFile(f.device_path())
+   if err != nil {
+      return err
+   }
+   err = checkin.Unmarshal()
+   if err != nil {
+      return err
+   }
+   if f.leanback {
+      play.Device.Feature = append(play.Device.Feature, play.Leanback)
+   }
+   return play.Device.Sync(&checkin)
+}
+
+func (f *flags) do_checkin() error {
+   if f.leanback {
+      play.Device.Feature = append(play.Device.Feature, play.Leanback)
+   }
+   checkin, err := play.Device.Checkin()
+   if err != nil {
+      return err
+   }
+   return os.WriteFile(f.device_path(), checkin.Raw, os.ModePerm)
+}
+
+func (f *flags) do_auth() error {
+   var token play.GoogleToken
+   err := token.New(f.auth)
+   if err != nil {
+      return err
+   }
+   os.Mkdir(f.home, os.ModePerm)
+   return os.WriteFile(f.home + "/token.txt", token.Raw, os.ModePerm)
+}
 
 func (f *flags) do_delivery() error {
    checkin := &play.GoogleCheckin{}
@@ -66,27 +104,6 @@ func (f *flags) do_acquire() error {
       return err
    }
    return auth.Acquire(checkin, f.app.Id)
-}
-
-func (f *flags) do_device() error {
-   if f.leanback {
-      play.Device.Feature = append(play.Device.Feature, play.Leanback)
-   }
-   checkin, err := play.Device.Checkin()
-   if err != nil {
-      return err
-   }
-   err = os.WriteFile(f.device_path(), checkin.Raw, os.ModePerm)
-   if err != nil {
-      return err
-   }
-   err = checkin.Unmarshal()
-   if err != nil {
-      return err
-   }
-   fmt.Println("Sleep(9*time.Second)")
-   time.Sleep(9*time.Second)
-   return play.Device.Sync(checkin)
 }
 
 func (f *flags) device_path() string {
@@ -156,14 +173,4 @@ func (f *flags) do_details() (*play.Details, error) {
       return nil, err
    }
    return auth.Details(checkin, f.app.Id, f.single)
-}
-
-func (f *flags) do_auth() error {
-   var token play.GoogleToken
-   err := token.New(f.code)
-   if err != nil {
-      return err
-   }
-   os.Mkdir(f.home, os.ModePerm)
-   return os.WriteFile(f.home + "/token.txt", token.Raw, os.ModePerm)
 }
