@@ -24,10 +24,8 @@ var Device = GoogleDevice{
       "android.hardware.microphone",
       // com.google.android.apps.walletnfcrel
       "android.software.device_admin",
-      
       // com.google.android.apps.youtube.music.pwa
-      //"org.chromium.arc",
-      
+      "org.chromium.arc",
       // com.google.android.youtube
       "android.hardware.touchscreen",
       "android.hardware.wifi",
