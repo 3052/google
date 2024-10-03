@@ -10,6 +10,14 @@ import (
    "strconv"
 )
 
+// com.roku.web.trc
+const Leanback = "android.software.leanback"
+
+// the device actually uses 0x30000, but some apps require a higher version:
+// com.axis.drawingdesk.v3
+// so lets lie for now
+const gl_es_version = 0x30001
+
 var Device = GoogleDevice{
    Feature: []string{
       // app.source.getcontact
@@ -24,8 +32,6 @@ var Device = GoogleDevice{
       "android.hardware.microphone",
       // com.google.android.apps.walletnfcrel
       "android.software.device_admin",
-      // com.google.android.apps.youtube.music.pwa
-      "org.chromium.arc",
       // com.google.android.youtube
       "android.hardware.touchscreen",
       "android.hardware.wifi",
@@ -116,14 +122,6 @@ type GoogleDevice struct {
    Library []string
    Texture []string
 }
-
-// com.roku.web.trc
-const Leanback = "android.software.leanback"
-
-// the device actually uses 0x30000, but some apps require a higher version:
-// com.axis.drawingdesk.v3
-// so lets lie for now
-const gl_es_version = 0x30001
 
 func authorization(req *http.Request, auth GoogleAuth) {
    req.Header.Set("authorization", "Bearer "+auth.auth())

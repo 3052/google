@@ -1,7 +1,6 @@
 package play
 
 var apps = []app_type{
-{date:"2023-08-29", abi:"x86", id:"com.google.android.apps.youtube.music.pwa"},
 {date:"2023-10-31", abi:"x86-leanback", id:"com.roku.web.trc"},
 {date:"2024-06-15", abi:"x86", id:"kr.sira.metal"},
 {date:"2024-07-12", abi:"x86", id:"com.amctve.amcfullepisodes"},

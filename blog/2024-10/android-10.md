@@ -3,6 +3,7 @@
 API 29
 
 ~~~
+emulator -avd Pixel_6_API_30 -writable-system
 adb remount
 adb push com.android.vending-82941300.apk /system/priv-app
 adb push privapp-permissions.xml /etc/permissions
@@ -24,7 +25,7 @@ what is the oldest version?
 this seems to be the first version using `/fdfe/sync` only:
 
 ~~~
-play -d com.android.vending -v 82941300
+play -i com.android.vending -v 82941300
 ~~~
 
 note APK is here:
