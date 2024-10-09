@@ -1,7 +1,7 @@
 package play
 
 import (
-   "154.pages.dev/protobuf"
+   "41.neocities.org/protobuf"
    "errors"
    "io"
    "net/http"
