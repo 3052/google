@@ -38,15 +38,15 @@ get app details:
 ~~~
 > play -i com.google.android.youtube
 details[8] = 0 USD
-details[13][1][4] = 19.28.35
-details[13][1][12] = https://www.youtube.com
-details[13][1][16] = Jul 17, 2024
+details[13][1][4] = 19.40.35
+details[13][1][16] = Oct 7, 2024
 details[13][1][17] = APK APK APK APK
 details[13][1][82][1][1] = 8.0 and up
-downloads = 16.79 billion
+details[15][18] = http://www.google.com/policies/privacy
+downloads = 17.34 billion
 name = YouTube
-size = 120.89 megabyte
-version code = 1547296192
+size = 122.17 megabyte
+version code = 1548869056
 ~~~
 
 acquire app. only needs to be done once per Google account:
@@ -60,7 +60,7 @@ provided by the previous details command. if APK is split, all pieces will be
 downloaded:
 
 ~~~
-play -i com.google.android.youtube -v 1547296192
+play -i com.google.android.youtube -v 1548869056
 ~~~
 
 ## goals
