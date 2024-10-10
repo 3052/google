@@ -13,11 +13,11 @@
 </head>
   <body>
     <nav>
-        <a href="..">154.pages.dev/google</a>/play<span class="navbar-right">
-          v1.5.7 | <a href="..">Root</a> | <a href="#pkg-index">Index</a></span>
+        <a href="..">41.neocities.org/google</a>/play<span class="navbar-right">
+          v1.5.8 | <a href="..">Root</a> | <a href="#pkg-index">Index</a></span>
       </nav>
     <main><h2 id="pkg-overview">package play</h2>
-<pre class="chroma"><span class="kn">import</span> <span class="s">&#34;154.pages.dev/google/play&#34;</span></pre>
+<pre class="chroma"><span class="kn">import</span> <span class="s">&#34;41.neocities.org/google/play&#34;</span></pre>
 <h3 id="pkg-index">Index</h3>
 <ul>
   <li><a href="#pkg-constants">Constants</a></li><li><a href="#pkg-variables">Variables</a></li><li>
@@ -99,6 +99,7 @@
   <pre class="chroma"><span class="kd">var</span> <span id="Abi"><span class="nx">Abi</span></span> <span class="p">=</span> <span class="p">[]</span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">{</span>
 
 	<span class="s">&#34;x86&#34;</span><span class="p">,</span>
+	<span class="s">&#34;x86_64&#34;</span><span class="p">,</span>
 
 	<span class="s">&#34;armeabi-v7a&#34;</span><span class="p">,</span>
 
@@ -158,7 +159,7 @@
   <h3 id="pkg-types">Types</h3>
   <h3 id="Apk">type Apk</h3>
     <pre class="chroma"><span class="kd">type</span> <span class="nx">Apk</span> <span class="kd">struct</span> <span class="p">{</span>
-	<span id="Apk.Message"><span class="nx">Message</span></span> <a href="https://pkg.go.dev/154.pages.dev/protobuf"><span class="nx">protobuf</span></a><span class="p">.</span><a href="https://pkg.go.dev/154.pages.dev/protobuf#Message"><span class="nx">Message</span></a>
+	<span id="Apk.Message"><span class="nx">Message</span></span> <a href="https://pkg.go.dev/41.neocities.org/protobuf"><span class="nx">protobuf</span></a><span class="p">.</span><a href="https://pkg.go.dev/41.neocities.org/protobuf#Message"><span class="nx">Message</span></a>
 <span class="p">}</span></pre>
     <h4 id="Apk.Field1">func (Apk) Field1</h4>
   <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">a</span> <a href="#Apk"><span class="nx">Apk</span></a><span class="p">)</span> <span class="nf">Field1</span><span class="p">()</span> <span class="p">(</span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
@@ -166,7 +167,7 @@
   <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">a</span> <a href="#Apk"><span class="nx">Apk</span></a><span class="p">)</span> <span class="nf">Url</span><span class="p">()</span> <span class="p">(</span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
   <h3 id="Delivery">type Delivery</h3>
     <pre class="chroma"><span class="kd">type</span> <span class="nx">Delivery</span> <span class="kd">struct</span> <span class="p">{</span>
-	<span id="Delivery.Message"><span class="nx">Message</span></span> <a href="https://pkg.go.dev/154.pages.dev/protobuf"><span class="nx">protobuf</span></a><span class="p">.</span><a href="https://pkg.go.dev/154.pages.dev/protobuf#Message"><span class="nx">Message</span></a>
+	<span id="Delivery.Message"><span class="nx">Message</span></span> <a href="https://pkg.go.dev/41.neocities.org/protobuf"><span class="nx">protobuf</span></a><span class="p">.</span><a href="https://pkg.go.dev/41.neocities.org/protobuf#Message"><span class="nx">Message</span></a>
 <span class="p">}</span></pre>
     <h4 id="Delivery.Apk">func (Delivery) Apk</h4>
   <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Delivery"><span class="nx">Delivery</span></a><span class="p">)</span> <span class="nf">Apk</span><span class="p">()</span> <span class="kd">func</span><span class="p">()</span> <span class="p">(</span><span class="o">*</span><a href="#Apk"><span class="nx">Apk</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
@@ -176,7 +177,7 @@
   <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Delivery"><span class="nx">Delivery</span></a><span class="p">)</span> <span class="nf">Url</span><span class="p">()</span> <span class="p">(</span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
   <h3 id="Details">type Details</h3>
     <pre class="chroma"><span class="kd">type</span> <span class="nx">Details</span> <span class="kd">struct</span> <span class="p">{</span>
-	<span id="Details.Message"><span class="nx">Message</span></span> <a href="https://pkg.go.dev/154.pages.dev/protobuf"><span class="nx">protobuf</span></a><span class="p">.</span><a href="https://pkg.go.dev/154.pages.dev/protobuf#Message"><span class="nx">Message</span></a>
+	<span id="Details.Message"><span class="nx">Message</span></span> <a href="https://pkg.go.dev/41.neocities.org/protobuf"><span class="nx">protobuf</span></a><span class="p">.</span><a href="https://pkg.go.dev/41.neocities.org/protobuf#Message"><span class="nx">Message</span></a>
 <span class="p">}</span></pre>
     <h4 id="Details.Downloads">func (Details) Downloads</h4>
   <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <a href="#Details"><span class="nx">Details</span></a><span class="p">)</span> <span class="nf">Downloads</span><span class="p">()</span> <span class="p">(</span><a href="https://pkg.go.dev/builtin#uint64"><span class="kt">uint64</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>
@@ -200,7 +201,7 @@
 <span class="p">)</span> <span class="p">(</span><span class="o">*</span><a href="#Details"><span class="nx">Details</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a><span class="p">)</span></pre>
   <h3 id="GoogleCheckin">type GoogleCheckin</h3>
     <pre class="chroma"><span class="kd">type</span> <span class="nx">GoogleCheckin</span> <span class="kd">struct</span> <span class="p">{</span>
-	<span id="GoogleCheckin.Message"><span class="nx">Message</span></span> <a href="https://pkg.go.dev/154.pages.dev/protobuf"><span class="nx">protobuf</span></a><span class="p">.</span><a href="https://pkg.go.dev/154.pages.dev/protobuf#Message"><span class="nx">Message</span></a>
+	<span id="GoogleCheckin.Message"><span class="nx">Message</span></span> <a href="https://pkg.go.dev/41.neocities.org/protobuf"><span class="nx">protobuf</span></a><span class="p">.</span><a href="https://pkg.go.dev/41.neocities.org/protobuf#Message"><span class="nx">Message</span></a>
 	<span id="GoogleCheckin.Raw"><span class="nx">Raw</span></span>     <span class="p">[]</span><a href="https://pkg.go.dev/builtin#byte"><span class="kt">byte</span></a>
 <span class="p">}</span></pre>
     <h4 id="GoogleCheckin.Unmarshal">func (*GoogleCheckin) Unmarshal</h4>
@@ -229,7 +230,7 @@
   <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">g</span> <span class="o">*</span><a href="#GoogleToken"><span class="nx">GoogleToken</span></a><span class="p">)</span> <span class="nf">Unmarshal</span><span class="p">()</span> <a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a></pre>
   <h3 id="Obb">type Obb</h3>
     <pre class="chroma"><span class="kd">type</span> <span class="nx">Obb</span> <span class="kd">struct</span> <span class="p">{</span>
-	<span id="Obb.Message"><span class="nx">Message</span></span> <a href="https://pkg.go.dev/154.pages.dev/protobuf"><span class="nx">protobuf</span></a><span class="p">.</span><a href="https://pkg.go.dev/154.pages.dev/protobuf#Message"><span class="nx">Message</span></a>
+	<span id="Obb.Message"><span class="nx">Message</span></span> <a href="https://pkg.go.dev/41.neocities.org/protobuf"><span class="nx">protobuf</span></a><span class="p">.</span><a href="https://pkg.go.dev/41.neocities.org/protobuf#Message"><span class="nx">Message</span></a>
 <span class="p">}</span></pre>
     <h4 id="Obb.Field1">func (Obb) Field1</h4>
   <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">o</span> <a href="#Obb"><span class="nx">Obb</span></a><span class="p">)</span> <span class="nf">Field1</span><span class="p">()</span> <span class="p">(</span><a href="https://pkg.go.dev/builtin#uint64"><span class="kt">uint64</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#bool"><span class="kt">bool</span></a><span class="p">)</span></pre>

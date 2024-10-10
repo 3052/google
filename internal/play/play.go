@@ -1,8 +1,8 @@
 package main
 
 import (
-   "154.pages.dev/google/play"
-   "154.pages.dev/text"
+   "41.neocities.org/google/play"
+   "41.neocities.org/text"
    "net/http"
    "os"
    "strings"

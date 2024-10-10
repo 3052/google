@@ -2,7 +2,7 @@ package play
 
 import (
    "41.neocities.org/protobuf"
-   "154.pages.dev/text"
+   "41.neocities.org/text"
    "errors"
    "fmt"
    "io"
