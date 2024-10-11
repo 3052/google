@@ -7,11 +7,7 @@ import (
    "net/http"
 )
 
-func (g *GoogleDevice) Sync(checkin *GoogleCheckin) error {
-   field_7, err := checkin.field_7()
-   if err != nil {
-      return err
-   }
+func (g *GoogleDevice) Sync(check *GoogleCheckin) error {
    message := protobuf.Message{}
    message.Add(1, func(m protobuf.Message) {
       m.Add(10, func(m protobuf.Message) {
@@ -55,7 +51,7 @@ func (g *GoogleDevice) Sync(checkin *GoogleCheckin) error {
    if err != nil {
       return err
    }
-   x_dfe_device_id(req, field_7)
+   x_dfe_device_id(req, check)
    resp, err := http.DefaultClient.Do(req)
    if err != nil {
       return err

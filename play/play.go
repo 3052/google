@@ -159,12 +159,12 @@ type StoreApp struct {
    Version uint64
 }
 
-func x_dfe_device_id(req *http.Request, field_7 uint64) {
-   req.Header.Set("x-dfe-device-id", strconv.FormatUint(field_7, 16))
+func x_dfe_device_id(req *http.Request, check *GoogleCheckin) {
+   req.Header.Set("x-dfe-device-id", strconv.FormatUint(check.field_7(), 16))
 }
 
-func x_ps_rh(req *http.Request, field_7 uint64) error {
-   id := strconv.FormatUint(field_7, 10)
+func x_ps_rh(req *http.Request, check *GoogleCheckin) error {
+   id := strconv.FormatUint(check.field_7(), 10)
    now := strconv.FormatInt(time.Now().UnixMicro(), 10)
    message := protobuf.Message{
       1: {protobuf.Message{

@@ -10,67 +10,55 @@ import (
    "strings"
 )
 
-// com.google.android.youtube.tvkids
-func (d Details) field_15_18() string {
-   m, _ := d.Message.Get(15)()
-   b, _ := m.GetBytes(18)()
-   return string(b)
+type Details struct {
+   Message protobuf.Message
 }
 
-func (d Details) String() string {
-   var b []byte
-   b = append(b, "details[8] ="...)
-   if value, ok := d.field_8_1(); ok {
-      b = fmt.Append(b, " ", value)
+func (g GoogleAuth) Details(
+   check *GoogleCheckin, doc string, single bool,
+) (*Details, error) {
+   req, err := http.NewRequest("", "https://android.clients.google.com", nil)
+   if err != nil {
+      return nil, err
    }
-   if value, ok := d.field_8_2(); ok {
-      b = fmt.Append(b, " ", value)
+   req.URL.Path = "/fdfe/details"
+   req.URL.RawQuery = "doc=" + doc
+   authorization(req, g)
+   user_agent(req, single)
+   x_dfe_device_id(req, check)
+   resp, err := http.DefaultClient.Do(req)
+   if err != nil {
+      return nil, err
    }
-   b = append(b, "\ndetails[13][1][4] ="...)
-   if value, ok := d.field_13_1_4(); ok {
-      b = fmt.Append(b, " ", value)
+   defer resp.Body.Close()
+   if resp.StatusCode != http.StatusOK {
+      var b strings.Builder
+      resp.Write(&b)
+      return nil, errors.New(b.String())
    }
-   b = append(b, "\ndetails[13][1][16] ="...)
-   if value, ok := d.field_13_1_16(); ok {
-      b = fmt.Append(b, " ", value)
+   data, err := io.ReadAll(resp.Body)
+   if err != nil {
+      return nil, err
    }
-   b = append(b, "\ndetails[13][1][17] ="...)
-   next := d.field_13_1_17()
-   for {
-      value, ok := next()
-      if !ok {
-         break
-      }
-      if value >= 1 {
-         b = append(b, " OBB"...)
-      } else {
-         b = append(b, " APK"...)
-      }
+   message := protobuf.Message{}
+   err = message.Unmarshal(data)
+   if err != nil {
+      return nil, err
    }
-   b = append(b, "\ndetails[13][1][82][1][1] ="...)
-   if value, ok := d.field_13_1_82_1_1(); ok {
-      b = fmt.Append(b, " ", value)
-   }
-   b = append(b, "\ndetails[15][18] = "...)
-   b = append(b, d.field_15_18()...)
-   b = append(b, "\ndownloads ="...)
-   if value, ok := d.Downloads(); ok {
-      b = fmt.Append(b, " ", text.Cardinal(value))
-   }
-   b = append(b, "\nname ="...)
-   if value, ok := d.Name(); ok {
-      b = fmt.Append(b, " ", value)
-   }
-   b = append(b, "\nsize ="...)
-   if value, ok := d.size(); ok {
-      b = fmt.Append(b, " ", text.Size(value))
-   }
-   b = append(b, "\nversion code ="...)
-   if value, ok := d.version_code(); ok {
-      b = fmt.Append(b, " ", value)
-   }
-   return string(b)
+   message, _ = message.Get(1)()
+   message, _ = message.Get(2)()
+   message, _ = message.Get(4)()
+   return &Details{message}, nil
 }
+
+// com.google.android.youtube.tvkids
+func (d Details) field_15_18() string {
+   message, _ := d.Message.Get(15)()
+   value, _ := message.GetBytes(18)()
+   return string(value)
+}
+
+///
 
 func (d Details) field_13_1_17() func() (uint64, bool) {
    m, _ := d.Message.Get(13)()
@@ -81,10 +69,6 @@ func (d Details) field_13_1_17() func() (uint64, bool) {
       v, ok := m.GetVarint(1)()
       return uint64(v), ok
    }
-}
-
-type Details struct {
-   Message protobuf.Message
 }
 
 func (d Details) Downloads() (uint64, bool) {
@@ -148,43 +132,57 @@ func (d Details) field_8_1() (float64, bool) {
    return float64(v) / 1_000_000, ok
 }
 
-func (g GoogleAuth) Details(
-   checkin *GoogleCheckin, doc string, single bool,
-) (*Details, error) {
-   field_7, err := checkin.field_7()
-   if err != nil {
-      return nil, err
+func (d Details) String() string {
+   var b []byte
+   b = append(b, "details[8] ="...)
+   if value, ok := d.field_8_1(); ok {
+      b = fmt.Append(b, " ", value)
    }
-   req, err := http.NewRequest("", "https://android.clients.google.com", nil)
-   if err != nil {
-      return nil, err
+   if value, ok := d.field_8_2(); ok {
+      b = fmt.Append(b, " ", value)
    }
-   req.URL.Path = "/fdfe/details"
-   req.URL.RawQuery = "doc=" + doc
-   authorization(req, g)
-   user_agent(req, single)
-   x_dfe_device_id(req, field_7)
-   resp, err := http.DefaultClient.Do(req)
-   if err != nil {
-      return nil, err
+   b = append(b, "\ndetails[13][1][4] ="...)
+   if value, ok := d.field_13_1_4(); ok {
+      b = fmt.Append(b, " ", value)
    }
-   defer resp.Body.Close()
-   if resp.StatusCode != http.StatusOK {
-      var b strings.Builder
-      resp.Write(&b)
-      return nil, errors.New(b.String())
+   b = append(b, "\ndetails[13][1][16] ="...)
+   if value, ok := d.field_13_1_16(); ok {
+      b = fmt.Append(b, " ", value)
    }
-   data, err := io.ReadAll(resp.Body)
-   if err != nil {
-      return nil, err
+   b = append(b, "\ndetails[13][1][17] ="...)
+   next := d.field_13_1_17()
+   for {
+      value, ok := next()
+      if !ok {
+         break
+      }
+      if value >= 1 {
+         b = append(b, " OBB"...)
+      } else {
+         b = append(b, " APK"...)
+      }
    }
-   message := protobuf.Message{}
-   err = message.Unmarshal(data)
-   if err != nil {
-      return nil, err
+   b = append(b, "\ndetails[13][1][82][1][1] ="...)
+   if value, ok := d.field_13_1_82_1_1(); ok {
+      b = fmt.Append(b, " ", value)
    }
-   message, _ = message.Get(1)()
-   message, _ = message.Get(2)()
-   message, _ = message.Get(4)()
-   return &Details{message}, nil
+   b = append(b, "\ndetails[15][18] = "...)
+   b = append(b, d.field_15_18()...)
+   b = append(b, "\ndownloads ="...)
+   if value, ok := d.Downloads(); ok {
+      b = fmt.Append(b, " ", text.Cardinal(value))
+   }
+   b = append(b, "\nname ="...)
+   if value, ok := d.Name(); ok {
+      b = fmt.Append(b, " ", value)
+   }
+   b = append(b, "\nsize ="...)
+   if value, ok := d.size(); ok {
+      b = fmt.Append(b, " ", text.Size(value))
+   }
+   b = append(b, "\nversion code ="...)
+   if value, ok := d.version_code(); ok {
+      b = fmt.Append(b, " ", value)
+   }
+   return string(b)
 }

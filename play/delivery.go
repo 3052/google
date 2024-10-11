@@ -10,12 +10,8 @@ import (
 )
 
 func (g GoogleAuth) Delivery(
-   checkin *GoogleCheckin, app *StoreApp, single bool,
+   check *GoogleCheckin, app *StoreApp, single bool,
 ) (*Delivery, error) {
-   field_7, err := checkin.field_7()
-   if err != nil {
-      return nil, err
-   }
    req, err := http.NewRequest("", "https://android.clients.google.com", nil)
    if err != nil {
       return nil, err
@@ -27,7 +23,7 @@ func (g GoogleAuth) Delivery(
    }.Encode()
    authorization(req, g)
    user_agent(req, single)
-   x_dfe_device_id(req, field_7)
+   x_dfe_device_id(req, check)
    resp, err := http.DefaultClient.Do(req)
    if err != nil {
       return nil, err
@@ -61,11 +57,6 @@ type Apk struct {
    Message protobuf.Message
 }
 
-func (a Apk) Url() (string, bool) {
-   v, ok := a.Message.GetBytes(5)()
-   return string(v), ok
-}
-
 type Delivery struct {
    Message protobuf.Message
 }
@@ -74,38 +65,43 @@ type Obb struct {
    Message protobuf.Message
 }
 
-func (a Apk) Field1() (string, bool) {
-   v, ok := a.Message.GetBytes(1)()
-   return string(v), ok
+func (a Apk) Url() string {
+   value, _ := a.Message.GetBytes(5)()
+   return string(value)
 }
 
-func (d Delivery) Url() (string, bool) {
-   v, ok := d.Message.GetBytes(3)()
-   return string(v), ok
+func (a Apk) Field1() string {
+   value, _ := a.Message.GetBytes(1)()
+   return string(value)
 }
 
-func (o Obb) Url() (string, bool) {
-   v, ok := o.Message.GetBytes(4)()
-   return string(v), ok
+func (d Delivery) Url() string {
+   value, _ := d.Message.GetBytes(3)()
+   return string(value)
 }
 
-func (o Obb) Field1() (uint64, bool) {
-   v, ok := o.Message.GetVarint(1)()
-   return uint64(v), ok
+func (o Obb) Url() string {
+   value, _ := o.Message.GetBytes(4)()
+   return string(value)
 }
 
-func (d Delivery) Obb() func() (*Obb, bool) {
-   next := d.Message.Get(4)
-   return func() (*Obb, bool) {
-      m, ok := next()
-      return &Obb{m}, ok
+func (o Obb) Field1() uint64 {
+   value, _ := o.Message.GetVarint(1)()
+   return uint64(value)
+}
+
+func (d Delivery) Obb() func() (Obb, bool) {
+   values := d.Message.Get(4)
+   return func() (Obb, bool) {
+      value, ok := values()
+      return Obb{value}, ok
    }
 }
 
-func (d Delivery) Apk() func() (*Apk, bool) {
-   next := d.Message.Get(15)
-   return func() (*Apk, bool) {
-      m, ok := next()
-      return &Apk{m}, ok
+func (d Delivery) Apk() func() (Apk, bool) {
+   values := d.Message.Get(15)
+   return func() (Apk, bool) {
+      value, ok := values()
+      return Apk{value}, ok
    }
 }
