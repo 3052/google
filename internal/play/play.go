@@ -64,13 +64,9 @@ func (f *flags) do_delivery() error {
       if !ok {
          break
       }
-      if address, ok := apk.Url(); ok {
-         if v, ok := apk.Field1(); ok {
-            err := download(address, f.app.Apk(v))
-            if err != nil {
-               return err
-            }
-         }
+      err := download(apk.Url(), f.app.Apk(apk.Field1()))
+      if err != nil {
+         return err
       }
    }
    obbs := deliver.Obb()
@@ -79,20 +75,14 @@ func (f *flags) do_delivery() error {
       if !ok {
          break
       }
-      if address, ok := obb.Url(); ok {
-         if v, ok := obb.Field1(); ok {
-            err := download(address, f.app.Obb(v))
-            if err != nil {
-               return err
-            }
-         }
-      }
-   }
-   if v, ok := deliver.Url(); ok {
-      err := download(v, f.app.Apk(""))
+      err := download(obb.Url(), f.app.Obb(obb.Field1()))
       if err != nil {
          return err
       }
+   }
+   err = download(deliver.Url(), f.app.Apk(""))
+   if err != nil {
+      return err
    }
    return nil
 }
