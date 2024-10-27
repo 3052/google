@@ -4,7 +4,7 @@ go 1.22.0
 
 require (
 	41.neocities.org/protobuf v1.3.9
-	41.neocities.org/text v1.3.1
+	41.neocities.org/text v1.3.2
 )
 
 require google.golang.org/protobuf v1.35.1 // indirect
