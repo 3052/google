@@ -16,7 +16,7 @@ Account. then get authorization code (`oauth_token`) cookie from
 authorization code for refresh token (`aas_et`):
 
 ~~~
-play -auth oauth2_4/0Adeu5B...
+play -token oauth2_4/0Adeu5B...
 ~~~
 
 [1]://firefox-source-docs.mozilla.org/devtools-user/storage_inspector

@@ -20,14 +20,14 @@ func main() {
    flag.StringVar(
       &play.Device.Abi, "abi", play.Abi[0], strings.Join(play.Abi[1:], " "),
    )
-   flag.StringVar(
-      &f.auth, "auth", "", "accounts.google.com/embedded/setup/v2/android",
-   )
    flag.BoolVar(&f.checkin, "checkin", false, "checkin request")
    flag.StringVar(&f.app.Id, "i", "", "ID")
    flag.BoolVar(&f.leanback, "leanback", false, play.Leanback)
    flag.BoolVar(&f.single, "s", false, "single APK")
    flag.BoolVar(&f.sync, "sync", false, "sync request")
+   flag.StringVar(
+      &f.token, "token", "", "accounts.google.com/embedded/setup/v2/android",
+   )
    flag.Uint64Var(&f.app.Version, "v", 0, "version code")
    flag.Parse()
    text.Transport{}.Set(true)
@@ -51,7 +51,7 @@ func main() {
          }
          fmt.Println(details)
       }
-   case f.auth != "":
+   case f.token != "":
       err := f.do_auth()
       if err != nil {
          panic(err)
@@ -72,14 +72,14 @@ func main() {
 }
 
 type flags struct {
-   app play.StoreApp
-   sync bool
-   single bool
-   leanback bool
-   home string
-   checkin bool
-   auth string
    acquire bool
+   app play.StoreApp
+   checkin bool
+   home string
+   leanback bool
+   single bool
+   sync bool
+   token string
 }
 
 func (f *flags) New() error {

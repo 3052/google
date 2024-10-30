@@ -85,18 +85,18 @@ func OAuth(token string, data *[]byte) (*GoogleToken, error) {
       resp.Write(&b)
       return nil, errors.New(b.String())
    }
-   if data == nil {
-      data, err := io.ReadAll(resp.Body)
-      if err != nil {
-         return nil, err
-      }
-      var google GoogleToken
-      err = google.Unmarshal(data)
-      if err != nil {
-         return nil, err
-      }
-      return &google, nil
+   body, err := io.ReadAll(resp.Body)
+   if err != nil {
+      return nil, err
    }
-   *data, err = io.ReadAll(resp.Body)
-   return nil, err
+   if data != nil {
+      *data = body
+      return nil, nil
+   }
+   var google GoogleToken
+   err = google.Unmarshal(body)
+   if err != nil {
+      return nil, err
+   }
+   return &google, nil
 }
