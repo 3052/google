@@ -12,12 +12,20 @@ func (f *flags) do_checkin() error {
    if f.leanback {
       play.Device.Feature = append(play.Device.Feature, play.Leanback)
    }
-   var data []byte
-   _, err := play.Device.Checkin(&data)
+   data, err := play.Device.Checkin(nil)
    if err != nil {
       return err
    }
    return os.WriteFile(f.device_path(), data, os.ModePerm)
+}
+
+func (f *flags) do_auth() error {
+   data, err := (*play.GoogleToken).New(nil, f.token)
+   if err != nil {
+      return err
+   }
+   os.Mkdir(f.home, os.ModePerm)
+   return os.WriteFile(f.home + "/token.txt", data, os.ModePerm)
 }
 
 func (f *flags) do_sync() error {
@@ -34,16 +42,6 @@ func (f *flags) do_sync() error {
       play.Device.Feature = append(play.Device.Feature, play.Leanback)
    }
    return play.Device.Sync(&checkin)
-}
-
-func (f *flags) do_auth() error {
-   var data []byte
-   _, err := play.OAuth(f.token, &data)
-   if err != nil {
-      return err
-   }
-   os.Mkdir(f.home, os.ModePerm)
-   return os.WriteFile(f.home + "/token.txt", data, os.ModePerm)
 }
 
 func (f *flags) do_delivery() error {

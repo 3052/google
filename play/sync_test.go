@@ -16,8 +16,8 @@ func TestSync(t *testing.T) {
    for _, abi := range Abis {
       fmt.Println(abi)
       Device.Abi = abi
-      var data []byte
-      _, err := Device.Checkin(&data)
+      var checkin GoogleCheckin
+      data, err := Device.Checkin(&checkin)
       if err != nil {
          t.Fatal(err)
       }
@@ -26,11 +26,6 @@ func TestSync(t *testing.T) {
          t.Fatal(err)
       }
       time.Sleep(time.Second)
-      var checkin GoogleCheckin
-      err = checkin.Unmarshal(data)
-      if err != nil {
-         t.Fatal(err)
-      }
       err = Device.Sync(&checkin)
       if err != nil {
          t.Fatal(err)
