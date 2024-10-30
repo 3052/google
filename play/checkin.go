@@ -8,20 +8,6 @@ import (
    "net/http"
 )
 
-func (g *GoogleCheckin) Unmarshal(data []byte) error {
-   g.Message = protobuf.Message{}
-   return g.Message.Unmarshal(data)
-}
-
-func (g *GoogleCheckin) field_7() uint64 {
-   value, _ := g.Message.GetFixed64(7)()
-   return uint64(value)
-}
-
-type GoogleCheckin struct {
-   Message protobuf.Message
-}
-
 func (g *GoogleDevice) Checkin(data *[]byte) (*GoogleCheckin, error) {
    message := protobuf.Message{}
    message.Add(4, func(m protobuf.Message) {
@@ -79,4 +65,18 @@ func (g *GoogleDevice) Checkin(data *[]byte) (*GoogleCheckin, error) {
       return nil, err
    }
    return &checkin, nil
+}
+
+func (g *GoogleCheckin) Unmarshal(data []byte) error {
+   g.Message = protobuf.Message{}
+   return g.Message.Unmarshal(data)
+}
+
+type GoogleCheckin struct {
+   Message protobuf.Message
+}
+
+func (g *GoogleCheckin) field_7() uint64 {
+   value, _ := g.Message.GetFixed64(7)()
+   return uint64(value)
 }

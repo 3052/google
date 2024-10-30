@@ -14,7 +14,7 @@
   <body>
     <nav>
         <a href="..">41.neocities.org/google</a>/play<span class="navbar-right">
-          v1.5.9 | <a href="..">Root</a> | <a href="#pkg-index">Index</a></span>
+          v1.6.2 | <a href="..">Root</a> | <a href="#pkg-index">Index</a></span>
       </nav>
     <main><h2 id="pkg-overview">package play</h2>
 <pre class="chroma"><span class="kn">import</span> <span class="s">&#34;41.neocities.org/google/play&#34;</span></pre>
@@ -67,8 +67,8 @@
   <li>
       <a href="#GoogleToken">type GoogleToken</a>
       <ul>
-          <li><a href="#OAuth">func OAuth(token string, data *[]byte) (*GoogleToken, error)</a></li>
           <li><a href="#GoogleToken.Auth">func (g *GoogleToken) Auth() (*GoogleAuth, error)</a></li>
+          <li><a href="#GoogleToken.New">func (g *GoogleToken) New(token string, data *[]byte) error</a></li>
           <li><a href="#GoogleToken.Unmarshal">func (g *GoogleToken) Unmarshal(data []byte) error</a></li>
           </ul>
       </li>
@@ -220,10 +220,10 @@
     <pre class="chroma"><span class="kd">type</span> <span class="nx">GoogleToken</span> <span class="kd">struct</span> <span class="p">{</span>
 	<span id="GoogleToken.Values"><span class="nx">Values</span></span> <a href="#Values"><span class="nx">Values</span></a>
 <span class="p">}</span></pre>
-    <h4 id="OAuth">func OAuth</h4>
-  <pre class="chroma"><span class="kd">func</span> <span class="nf">OAuth</span><span class="p">(</span><span class="nx">token</span> <a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span> <span class="nx">data</span> <span class="o">*</span><span class="p">[]</span><a href="https://pkg.go.dev/builtin#byte"><span class="kt">byte</span></a><span class="p">)</span> <span class="p">(</span><span class="o">*</span><a href="#GoogleToken"><span class="nx">GoogleToken</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a><span class="p">)</span></pre>
-  <h4 id="GoogleToken.Auth">func (*GoogleToken) Auth</h4>
+    <h4 id="GoogleToken.Auth">func (*GoogleToken) Auth</h4>
   <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">g</span> <span class="o">*</span><a href="#GoogleToken"><span class="nx">GoogleToken</span></a><span class="p">)</span> <span class="nf">Auth</span><span class="p">()</span> <span class="p">(</span><span class="o">*</span><a href="#GoogleAuth"><span class="nx">GoogleAuth</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a><span class="p">)</span></pre>
+  <h4 id="GoogleToken.New">func (*GoogleToken) New</h4>
+  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">g</span> <span class="o">*</span><a href="#GoogleToken"><span class="nx">GoogleToken</span></a><span class="p">)</span> <span class="nf">New</span><span class="p">(</span><span class="nx">token</span> <a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span> <span class="nx">data</span> <span class="o">*</span><span class="p">[]</span><a href="https://pkg.go.dev/builtin#byte"><span class="kt">byte</span></a><span class="p">)</span> <a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a></pre>
   <h4 id="GoogleToken.Unmarshal">func (*GoogleToken) Unmarshal</h4>
   <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">g</span> <span class="o">*</span><a href="#GoogleToken"><span class="nx">GoogleToken</span></a><span class="p">)</span> <span class="nf">Unmarshal</span><span class="p">(</span><span class="nx">data</span> <span class="p">[]</span><a href="https://pkg.go.dev/builtin#byte"><span class="kt">byte</span></a><span class="p">)</span> <a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a></pre>
   <h3 id="Obb">type Obb</h3>
