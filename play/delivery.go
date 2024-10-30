@@ -9,6 +9,45 @@ import (
    "strconv"
 )
 
+func (a Apk) Url() string {
+   value, _ := a.Message.GetBytes(5)()
+   return string(value)
+}
+
+func (a Apk) Field1() string {
+   value, _ := a.Message.GetBytes(1)()
+   return string(value)
+}
+
+type Apk struct {
+   Message protobuf.Message
+}
+
+func (d Delivery) Url() string {
+   value, _ := d.Message.GetBytes(3)()
+   return string(value)
+}
+
+type Delivery struct {
+   Message protobuf.Message
+}
+
+func (d Delivery) Obb() func() (Obb, bool) {
+   values := d.Message.Get(4)
+   return func() (Obb, bool) {
+      value, ok := values()
+      return Obb{value}, ok
+   }
+}
+
+func (d Delivery) Apk() func() (Apk, bool) {
+   values := d.Message.Get(15)
+   return func() (Apk, bool) {
+      value, ok := values()
+      return Apk{value}, ok
+   }
+}
+
 func (g GoogleAuth) Delivery(
    check *GoogleCheckin, app *StoreApp, single bool,
 ) (*Delivery, error) {
@@ -53,33 +92,6 @@ func (g GoogleAuth) Delivery(
    return &Delivery{message}, nil
 }
 
-type Apk struct {
-   Message protobuf.Message
-}
-
-type Delivery struct {
-   Message protobuf.Message
-}
-
-type Obb struct {
-   Message protobuf.Message
-}
-
-func (a Apk) Url() string {
-   value, _ := a.Message.GetBytes(5)()
-   return string(value)
-}
-
-func (a Apk) Field1() string {
-   value, _ := a.Message.GetBytes(1)()
-   return string(value)
-}
-
-func (d Delivery) Url() string {
-   value, _ := d.Message.GetBytes(3)()
-   return string(value)
-}
-
 func (o Obb) Url() string {
    value, _ := o.Message.GetBytes(4)()
    return string(value)
@@ -90,18 +102,6 @@ func (o Obb) Field1() uint64 {
    return uint64(value)
 }
 
-func (d Delivery) Obb() func() (Obb, bool) {
-   values := d.Message.Get(4)
-   return func() (Obb, bool) {
-      value, ok := values()
-      return Obb{value}, ok
-   }
-}
-
-func (d Delivery) Apk() func() (Apk, bool) {
-   values := d.Message.Get(15)
-   return func() (Apk, bool) {
-      value, ok := values()
-      return Apk{value}, ok
-   }
+type Obb struct {
+   Message protobuf.Message
 }

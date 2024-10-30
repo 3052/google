@@ -47,18 +47,6 @@ func (g *GoogleToken) Auth() (*GoogleAuth, error) {
    return &GoogleAuth{query}, nil
 }
 
-func (v Values) Set(query string) error {
-   for query != "" {
-      var key string
-      key, query, _ = strings.Cut(query, "\n")
-      key, value, _ := strings.Cut(key, "=")
-      v[key] = value
-   }
-   return nil
-}
-
-type Values map[string]string
-
 type GoogleToken struct {
    Values Values
 }
@@ -100,3 +88,15 @@ func OAuth(token string, data *[]byte) (*GoogleToken, error) {
    }
    return &google, nil
 }
+
+func (v Values) Set(query string) error {
+   for query != "" {
+      var key string
+      key, query, _ = strings.Cut(query, "\n")
+      key, value, _ := strings.Cut(key, "=")
+      v[key] = value
+   }
+   return nil
+}
+
+type Values map[string]string
