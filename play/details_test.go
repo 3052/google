@@ -27,12 +27,12 @@ func TestDetails(t *testing.T) {
       t.Fatal(err)
    }
    for _, app := range apps {
-      var checkin GoogleCheckin
-      checkin.Raw, err = os.ReadFile(home + "/" + app.abi + ".txt")
+      data, err = os.ReadFile(home + "/" + app.abi + ".txt")
       if err != nil {
          t.Fatal(err)
       }
-      err = checkin.Unmarshal()
+      var checkin GoogleCheckin
+      err = checkin.Unmarshal(data)
       if err != nil {
          t.Fatal(err)
       }

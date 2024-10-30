@@ -91,17 +91,6 @@ const google_play_store = 82941300
 
 const android_api = 31
 
-// developer.android.com/ndk/guides/abis
-var Abi = []string{
-   // com.google.android.youtube
-   "x86",
-   "x86_64",
-   // com.sygic.aura
-   "armeabi-v7a",
-   // com.kakaogames.twodin
-   "arm64-v8a",
-}
-
 func compress_gzip(data []byte) ([]byte, error) {
    var buf bytes.Buffer
    w := gzip.NewWriter(&buf)
@@ -184,4 +173,15 @@ func x_ps_rh(req *http.Request, check *GoogleCheckin) error {
    }
    req.Header.Set("x-ps-rh", base64.URLEncoding.EncodeToString(data))
    return nil
+}
+
+// developer.android.com/ndk/guides/abis
+var Abis = []string{
+   // com.google.android.youtube
+   "x86",
+   "x86_64",
+   // com.sygic.aura
+   "armeabi-v7a",
+   // com.kakaogames.twodin
+   "arm64-v8a",
 }

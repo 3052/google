@@ -18,7 +18,7 @@ func main() {
    }
    flag.BoolVar(&f.acquire, "a", false, "acquire")
    flag.StringVar(
-      &play.Device.Abi, "abi", play.Abi[0], strings.Join(play.Abi[1:], " "),
+      &play.Device.Abi, "abi", play.Abis[0], strings.Join(play.Abis[1:], " "),
    )
    flag.BoolVar(&f.checkin, "checkin", false, "checkin request")
    flag.StringVar(&f.app.Id, "i", "", "ID")

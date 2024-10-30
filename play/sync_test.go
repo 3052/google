@@ -13,23 +13,25 @@ func TestSync(t *testing.T) {
       t.Fatal(err)
    }
    home += "/google-play"
-   for _, each := range Abi {
-      fmt.Println(each)
-      Device.Abi = each
-      checkin, err := Device.Checkin()
+   for _, abi := range Abis {
+      fmt.Println(abi)
+      Device.Abi = abi
+      var data []byte
+      _, err := Device.Checkin(&data)
       if err != nil {
          t.Fatal(err)
       }
-      err = os.WriteFile(home+"/"+each+".txt", checkin.Raw, os.ModePerm)
+      err = os.WriteFile(home+"/"+abi+".txt", data, os.ModePerm)
       if err != nil {
          t.Fatal(err)
       }
       time.Sleep(time.Second)
-      err = checkin.Unmarshal()
+      var checkin GoogleCheckin
+      err = checkin.Unmarshal(data)
       if err != nil {
          t.Fatal(err)
       }
-      err = Device.Sync(checkin)
+      err = Device.Sync(&checkin)
       if err != nil {
          t.Fatal(err)
       }

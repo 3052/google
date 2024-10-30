@@ -25,12 +25,12 @@ func TestDelivery(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   var checkin GoogleCheckin
-   checkin.Raw, err = os.ReadFile(home + "/x86.txt")
+   data, err = os.ReadFile(home + "/x86.txt")
    if err != nil {
       t.Fatal(err)
    }
-   err = checkin.Unmarshal()
+   var checkin GoogleCheckin
+   err = checkin.Unmarshal(data)
    if err != nil {
       t.Fatal(err)
    }
