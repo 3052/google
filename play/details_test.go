@@ -3,7 +3,6 @@ package play
 import (
    "fmt"
    "os"
-   "path/filepath"
    "testing"
    "time"
 )
@@ -13,13 +12,13 @@ func TestDetails(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   home = filepath.ToSlash(home) + "/google-play"
-   var token GoogleToken
-   token.Raw, err = os.ReadFile(home + "/token.txt")
+   home += "/google-play"
+   data, err := os.ReadFile(home + "/token.txt")
    if err != nil {
       t.Fatal(err)
    }
-   err = token.Unmarshal()
+   var token GoogleToken
+   err = token.Unmarshal(data)
    if err != nil {
       t.Fatal(err)
    }

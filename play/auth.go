@@ -47,8 +47,6 @@ func (g *GoogleToken) Auth() (*GoogleAuth, error) {
    return &GoogleAuth{query}, nil
 }
 
-type Values map[string]string
-
 func (v Values) Set(query string) error {
    for query != "" {
       var key string
@@ -59,38 +57,46 @@ func (v Values) Set(query string) error {
    return nil
 }
 
-///
+type Values map[string]string
 
-func (g *GoogleToken) New(oauth_token string) error {
+type GoogleToken struct {
+   Values Values
+}
+
+func (g *GoogleToken) Unmarshal(data []byte) error {
+   g.Values = Values{}
+   return g.Values.Set(string(data))
+}
+
+func OAuth(token string, data *[]byte) (*GoogleToken, error) {
    resp, err := http.PostForm(
       "https://android.googleapis.com/auth", url.Values{
          "ACCESS_TOKEN": {"1"},
-         "Token":        {oauth_token},
+         "Token":        {token},
          "service":      {"ac2dm"},
       },
    )
    if err != nil {
-      return err
+      return nil, err
    }
    defer resp.Body.Close()
    if resp.StatusCode != http.StatusOK {
       var b strings.Builder
       resp.Write(&b)
-      return errors.New(b.String())
+      return nil, errors.New(b.String())
    }
-   g.Raw, err = io.ReadAll(resp.Body)
-   if err != nil {
-      return err
+   if data == nil {
+      data, err := io.ReadAll(resp.Body)
+      if err != nil {
+         return nil, err
+      }
+      var google GoogleToken
+      err = google.Unmarshal(data)
+      if err != nil {
+         return nil, err
+      }
+      return &google, nil
    }
-   return nil
-}
-
-type GoogleToken struct {
-   Values Values
-   Raw    []byte
-}
-
-func (g *GoogleToken) Unmarshal() error {
-   g.Values = Values{}
-   return g.Values.Set(string(g.Raw))
+   *data, err = io.ReadAll(resp.Body)
+   return nil, err
 }
