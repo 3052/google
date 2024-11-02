@@ -8,26 +8,24 @@ import (
    "strings"
 )
 
+func (f *flags) do_checkin() error {
+   if f.leanback {
+      play.Device.Feature = append(play.Device.Feature, play.Leanback)
+   }
+   data, err := play.GoogleCheckin{}.Marshal(&play.Device)
+   if err != nil {
+      return err
+   }
+   return os.WriteFile(f.device_path(), data, os.ModePerm)
+}
+
 func (f *flags) do_auth() error {
-   var data []byte
-   err := (*play.GoogleToken).New(nil, f.token, &data)
+   data, err := play.GoogleToken{}.Marshal(f.token)
    if err != nil {
       return err
    }
    os.Mkdir(f.home, os.ModePerm)
    return os.WriteFile(f.home + "/token.txt", data, os.ModePerm)
-}
-
-func (f *flags) do_checkin() error {
-   if f.leanback {
-      play.Device.Feature = append(play.Device.Feature, play.Leanback)
-   }
-   var data []byte
-   _, err := play.Device.Checkin(&data)
-   if err != nil {
-      return err
-   }
-   return os.WriteFile(f.device_path(), data, os.ModePerm)
 }
 
 func (f *flags) do_sync() error {

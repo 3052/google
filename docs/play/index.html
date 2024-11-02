@@ -14,7 +14,7 @@
   <body>
     <nav>
         <a href="..">41.neocities.org/google</a>/play<span class="navbar-right">
-          v1.6.2 | <a href="..">Root</a> | <a href="#pkg-index">Index</a></span>
+          v1.6.3 | <a href="..">Root</a> | <a href="#pkg-index">Index</a></span>
       </nav>
     <main><h2 id="pkg-overview">package play</h2>
 <pre class="chroma"><span class="kn">import</span> <span class="s">&#34;41.neocities.org/google/play&#34;</span></pre>
@@ -54,13 +54,13 @@
   <li>
       <a href="#GoogleCheckin">type GoogleCheckin</a>
       <ul>
+          <li><a href="#GoogleCheckin.Marshal">func (GoogleCheckin) Marshal(device *GoogleDevice) ([]byte, error)</a></li>
           <li><a href="#GoogleCheckin.Unmarshal">func (g *GoogleCheckin) Unmarshal(data []byte) error</a></li>
           </ul>
       </li>
   <li>
       <a href="#GoogleDevice">type GoogleDevice</a>
       <ul>
-          <li><a href="#GoogleDevice.Checkin">func (g *GoogleDevice) Checkin(data *[]byte) (*GoogleCheckin, error)</a></li>
           <li><a href="#GoogleDevice.Sync">func (g *GoogleDevice) Sync(check *GoogleCheckin) error</a></li>
           </ul>
       </li>
@@ -68,7 +68,7 @@
       <a href="#GoogleToken">type GoogleToken</a>
       <ul>
           <li><a href="#GoogleToken.Auth">func (g *GoogleToken) Auth() (*GoogleAuth, error)</a></li>
-          <li><a href="#GoogleToken.New">func (g *GoogleToken) New(token string, data *[]byte) error</a></li>
+          <li><a href="#GoogleToken.Marshal">func (GoogleToken) Marshal(token string) ([]byte, error)</a></li>
           <li><a href="#GoogleToken.Unmarshal">func (g *GoogleToken) Unmarshal(data []byte) error</a></li>
           </ul>
       </li>
@@ -203,7 +203,9 @@
     <pre class="chroma"><span class="kd">type</span> <span class="nx">GoogleCheckin</span> <span class="kd">struct</span> <span class="p">{</span>
 	<span id="GoogleCheckin.Message"><span class="nx">Message</span></span> <a href="https://pkg.go.dev/41.neocities.org/protobuf"><span class="nx">protobuf</span></a><span class="p">.</span><a href="https://pkg.go.dev/41.neocities.org/protobuf#Message"><span class="nx">Message</span></a>
 <span class="p">}</span></pre>
-    <h4 id="GoogleCheckin.Unmarshal">func (*GoogleCheckin) Unmarshal</h4>
+    <h4 id="GoogleCheckin.Marshal">func (GoogleCheckin) Marshal</h4>
+  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><a href="#GoogleCheckin"><span class="nx">GoogleCheckin</span></a><span class="p">)</span> <span class="nf">Marshal</span><span class="p">(</span><span class="nx">device</span> <span class="o">*</span><a href="#GoogleDevice"><span class="nx">GoogleDevice</span></a><span class="p">)</span> <span class="p">([]</span><a href="https://pkg.go.dev/builtin#byte"><span class="kt">byte</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a><span class="p">)</span></pre>
+  <h4 id="GoogleCheckin.Unmarshal">func (*GoogleCheckin) Unmarshal</h4>
   <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">g</span> <span class="o">*</span><a href="#GoogleCheckin"><span class="nx">GoogleCheckin</span></a><span class="p">)</span> <span class="nf">Unmarshal</span><span class="p">(</span><span class="nx">data</span> <span class="p">[]</span><a href="https://pkg.go.dev/builtin#byte"><span class="kt">byte</span></a><span class="p">)</span> <a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a></pre>
   <h3 id="GoogleDevice">type GoogleDevice</h3>
     <pre class="chroma"><span class="kd">type</span> <span class="nx">GoogleDevice</span> <span class="kd">struct</span> <span class="p">{</span>
@@ -212,9 +214,7 @@
 	<span id="GoogleDevice.Library"><span class="nx">Library</span></span> <span class="p">[]</span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a>
 	<span id="GoogleDevice.Texture"><span class="nx">Texture</span></span> <span class="p">[]</span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a>
 <span class="p">}</span></pre>
-    <h4 id="GoogleDevice.Checkin">func (*GoogleDevice) Checkin</h4>
-  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">g</span> <span class="o">*</span><a href="#GoogleDevice"><span class="nx">GoogleDevice</span></a><span class="p">)</span> <span class="nf">Checkin</span><span class="p">(</span><span class="nx">data</span> <span class="o">*</span><span class="p">[]</span><a href="https://pkg.go.dev/builtin#byte"><span class="kt">byte</span></a><span class="p">)</span> <span class="p">(</span><span class="o">*</span><a href="#GoogleCheckin"><span class="nx">GoogleCheckin</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a><span class="p">)</span></pre>
-  <h4 id="GoogleDevice.Sync">func (*GoogleDevice) Sync</h4>
+    <h4 id="GoogleDevice.Sync">func (*GoogleDevice) Sync</h4>
   <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">g</span> <span class="o">*</span><a href="#GoogleDevice"><span class="nx">GoogleDevice</span></a><span class="p">)</span> <span class="nf">Sync</span><span class="p">(</span><span class="nx">check</span> <span class="o">*</span><a href="#GoogleCheckin"><span class="nx">GoogleCheckin</span></a><span class="p">)</span> <a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a></pre>
   <h3 id="GoogleToken">type GoogleToken</h3>
     <pre class="chroma"><span class="kd">type</span> <span class="nx">GoogleToken</span> <span class="kd">struct</span> <span class="p">{</span>
@@ -222,8 +222,8 @@
 <span class="p">}</span></pre>
     <h4 id="GoogleToken.Auth">func (*GoogleToken) Auth</h4>
   <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">g</span> <span class="o">*</span><a href="#GoogleToken"><span class="nx">GoogleToken</span></a><span class="p">)</span> <span class="nf">Auth</span><span class="p">()</span> <span class="p">(</span><span class="o">*</span><a href="#GoogleAuth"><span class="nx">GoogleAuth</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a><span class="p">)</span></pre>
-  <h4 id="GoogleToken.New">func (*GoogleToken) New</h4>
-  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">g</span> <span class="o">*</span><a href="#GoogleToken"><span class="nx">GoogleToken</span></a><span class="p">)</span> <span class="nf">New</span><span class="p">(</span><span class="nx">token</span> <a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span> <span class="nx">data</span> <span class="o">*</span><span class="p">[]</span><a href="https://pkg.go.dev/builtin#byte"><span class="kt">byte</span></a><span class="p">)</span> <a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a></pre>
+  <h4 id="GoogleToken.Marshal">func (GoogleToken) Marshal</h4>
+  <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><a href="#GoogleToken"><span class="nx">GoogleToken</span></a><span class="p">)</span> <span class="nf">Marshal</span><span class="p">(</span><span class="nx">token</span> <a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">)</span> <span class="p">([]</span><a href="https://pkg.go.dev/builtin#byte"><span class="kt">byte</span></a><span class="p">,</span> <a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a><span class="p">)</span></pre>
   <h4 id="GoogleToken.Unmarshal">func (*GoogleToken) Unmarshal</h4>
   <pre class="chroma"><span class="kd">func</span> <span class="p">(</span><span class="nx">g</span> <span class="o">*</span><a href="#GoogleToken"><span class="nx">GoogleToken</span></a><span class="p">)</span> <span class="nf">Unmarshal</span><span class="p">(</span><span class="nx">data</span> <span class="p">[]</span><a href="https://pkg.go.dev/builtin#byte"><span class="kt">byte</span></a><span class="p">)</span> <a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a></pre>
   <h3 id="Obb">type Obb</h3>

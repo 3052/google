@@ -3,6 +3,7 @@ package play
 import (
    "fmt"
    "os"
+   "reflect"
    "testing"
    "time"
 )
@@ -14,10 +15,11 @@ func TestSync(t *testing.T) {
    }
    home += "/google-play"
    for _, abi := range Abis {
-      fmt.Println(abi)
+      var checkin GoogleCheckin
       Device.Abi = abi
-      var data []byte
-      _, err := Device.Checkin(&data)
+      fmt.Println(abi)
+      time.Sleep(time.Second)
+      data, err := checkin.Marshal(&Device)
       if err != nil {
          t.Fatal(err)
       }
@@ -25,16 +27,39 @@ func TestSync(t *testing.T) {
       if err != nil {
          t.Fatal(err)
       }
-      time.Sleep(time.Second)
-      var checkin GoogleCheckin
       err = checkin.Unmarshal(data)
       if err != nil {
          t.Fatal(err)
       }
+      time.Sleep(time.Second)
       err = Device.Sync(&checkin)
       if err != nil {
          t.Fatal(err)
       }
-      time.Sleep(time.Second)
    }
+}
+
+func TestSize(t *testing.T) {
+   size := reflect.TypeOf(&struct{}{}).Size()
+   for _, test := range size_tests {
+      if reflect.TypeOf(test).Size() > size {
+         fmt.Printf("*%T\n", test)
+      } else {
+         fmt.Printf("%T\n", test)
+      }
+   }
+}
+
+var size_tests = []any{
+   Apk{},
+   Delivery{},
+   Details{},
+   GoogleAuth{},
+   GoogleCheckin{},
+   GoogleDevice{},
+   GoogleToken{},
+   Obb{},
+   StoreApp{},
+   Values{},
+   acquire_error{},
 }
