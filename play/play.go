@@ -91,10 +91,10 @@ const google_play_store = 82941300
 
 const android_api = 31
 
-func compress_gzip(data []byte) ([]byte, error) {
-   var buf bytes.Buffer
-   w := gzip.NewWriter(&buf)
-   _, err := w.Write(data)
+func compress_gzip(in []byte) ([]byte, error) {
+   var out bytes.Buffer
+   w := gzip.NewWriter(&out)
+   _, err := w.Write(in)
    if err != nil {
       return nil, err
    }
@@ -102,7 +102,7 @@ func compress_gzip(data []byte) ([]byte, error) {
    if err != nil {
       return nil, err
    }
-   return buf.Bytes(), nil
+   return out.Bytes(), nil
 }
 
 type GoogleDevice struct {
