@@ -91,7 +91,7 @@ discussion of this software. if you are interested in paid support, contact me
       <dd>srpen6@gmail.com</dd>
    <dt>Discord</dt>
       <dd>srpen6</dd>
-      <dd>https://discord.com/invite/WWq6rFb8Rf</dd>
+      <dd>https://discord.com/invite/rMFzDRQhSx</dd>
    <dt>PayPal</dt>
       <dd>https://paypal.com/donate?hosted_button_id=UEJBQQTU3VYDY</dd>
    <dt>Ethereum</dt>
