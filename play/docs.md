@@ -19,28 +19,28 @@ package `play`
     - [func (d Details) Name() (string, bool)](#func-details-name)
     - [func (d Details) String() string](#func-details-string)
   - [type GoogleAuth](#type-googleauth)
-    - [func (g GoogleAuth) Acquire(checkin *GoogleCheckin, id string) error](#func-googleauth-acquire)
+    - [func (g GoogleAuth) Acquire(checkin \*GoogleCheckin, id string) error](#func-googleauth-acquire)
     - [func (g GoogleAuth) Delivery(
-  check *GoogleCheckin, app *StoreApp, single bool,
-) (*Delivery, error)](#func-googleauth-delivery)
+  check \*GoogleCheckin, app \*StoreApp, single bool,
+) (\*Delivery, error)](#func-googleauth-delivery)
     - [func (g GoogleAuth) Details(
-  check *GoogleCheckin, doc string, single bool,
-) (*Details, error)](#func-googleauth-details)
+  check \*GoogleCheckin, doc string, single bool,
+) (\*Details, error)](#func-googleauth-details)
   - [type GoogleCheckin](#type-googlecheckin)
-    - [func (GoogleCheckin) Marshal(device *GoogleDevice) ([]byte, error)](#func-googlecheckin-marshal)
-    - [func (g *GoogleCheckin) Unmarshal(data []byte) error](#func-googlecheckin-unmarshal)
+    - [func (GoogleCheckin) Marshal(device \*GoogleDevice) ([]byte, error)](#func-googlecheckin-marshal)
+    - [func (g \*GoogleCheckin) Unmarshal(data []byte) error](#func-googlecheckin-unmarshal)
   - [type GoogleDevice](#type-googledevice)
-    - [func (g *GoogleDevice) Sync(check *GoogleCheckin) error](#func-googledevice-sync)
+    - [func (g \*GoogleDevice) Sync(check \*GoogleCheckin) error](#func-googledevice-sync)
   - [type GoogleToken](#type-googletoken)
-    - [func (g *GoogleToken) Auth() (*GoogleAuth, error)](#func-googletoken-auth)
+    - [func (g \*GoogleToken) Auth() (\*GoogleAuth, error)](#func-googletoken-auth)
     - [func (GoogleToken) Marshal(token string) ([]byte, error)](#func-googletoken-marshal)
-    - [func (g *GoogleToken) Unmarshal(data []byte) error](#func-googletoken-unmarshal)
+    - [func (g \*GoogleToken) Unmarshal(data []byte) error](#func-googletoken-unmarshal)
   - [type Obb](#type-obb)
     - [func (o Obb) Field1() uint64](#func-obb-field1)
     - [func (o Obb) Url() string](#func-obb-url)
   - [type StoreApp](#type-storeapp)
-    - [func (s *StoreApp) Apk(value string) string](#func-storeapp-apk)
-    - [func (s *StoreApp) Obb(value uint64) string](#func-storeapp-obb)
+    - [func (s \*StoreApp) Apk(value string) string](#func-storeapp-apk)
+    - [func (s \*StoreApp) Obb(value uint64) string](#func-storeapp-obb)
   - [type Values](#type-values)
     - [func (v Values) Set(query string) error](#func-values-set)
 - [Source files](#source-files)
@@ -240,7 +240,7 @@ type GoogleCheckin struct {
 func (GoogleCheckin) Marshal(device *GoogleDevice) ([]byte, error)
 ```
 
-### func (*GoogleCheckin) [Unmarshal](./checkin.go#L66)
+### func (\*GoogleCheckin) [Unmarshal](./checkin.go#L66)
 
 ```go
 func (g *GoogleCheckin) Unmarshal(data []byte) error
@@ -257,7 +257,7 @@ type GoogleDevice struct {
 }
 ```
 
-### func (*GoogleDevice) [Sync](./sync.go#L10)
+### func (\*GoogleDevice) [Sync](./sync.go#L10)
 
 ```go
 func (g *GoogleDevice) Sync(check *GoogleCheckin) error
@@ -271,7 +271,7 @@ type GoogleToken struct {
 }
 ```
 
-### func (*GoogleToken) [Auth](./auth.go#L52)
+### func (\*GoogleToken) [Auth](./auth.go#L52)
 
 ```go
 func (g *GoogleToken) Auth() (*GoogleAuth, error)
@@ -283,7 +283,7 @@ func (g *GoogleToken) Auth() (*GoogleAuth, error)
 func (GoogleToken) Marshal(token string) ([]byte, error)
 ```
 
-### func (*GoogleToken) [Unmarshal](./auth.go#L47)
+### func (\*GoogleToken) [Unmarshal](./auth.go#L47)
 
 ```go
 func (g *GoogleToken) Unmarshal(data []byte) error
@@ -320,13 +320,13 @@ type StoreApp struct {
 
 play.google.com/store/apps/details?id=com.google.android.apps.youtube.unplugged
 
-### func (*StoreApp) [Apk](./play.go#L119)
+### func (\*StoreApp) [Apk](./play.go#L119)
 
 ```go
 func (s *StoreApp) Apk(value string) string
 ```
 
-### func (*StoreApp) [Obb](./play.go#L131)
+### func (\*StoreApp) [Obb](./play.go#L131)
 
 ```go
 func (s *StoreApp) Obb(value uint64) string
