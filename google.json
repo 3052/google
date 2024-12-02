@@ -1,0 +1,13 @@
+{
+   "html": {
+      "output": "docs"
+   },
+   "modules": {
+      "google": {
+         "archive_ref_prefix": "tags/",
+         "ref": "v1.6.3",
+         "type": "github",
+         "url": "https://github.com/3052/google"
+      }
+   }
+}
