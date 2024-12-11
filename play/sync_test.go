@@ -3,7 +3,6 @@ package play
 import (
    "fmt"
    "os"
-   "reflect"
    "testing"
    "time"
 )
@@ -37,29 +36,4 @@ func TestSync(t *testing.T) {
          t.Fatal(err)
       }
    }
-}
-
-func TestSize(t *testing.T) {
-   size := reflect.TypeOf(&struct{}{}).Size()
-   for _, test := range size_tests {
-      if reflect.TypeOf(test).Size() > size {
-         fmt.Printf("*%T\n", test)
-      } else {
-         fmt.Printf("%T\n", test)
-      }
-   }
-}
-
-var size_tests = []any{
-   Apk{},
-   Delivery{},
-   Details{},
-   GoogleAuth{},
-   GoogleCheckin{},
-   GoogleDevice{},
-   GoogleToken{},
-   Obb{},
-   StoreApp{},
-   Values{},
-   acquire_error{},
 }

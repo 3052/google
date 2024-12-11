@@ -40,30 +40,28 @@ func (v Values) Set(query string) error {
    return nil
 }
 
-///
-
-type GoogleAuth struct {
-   Values Values
-}
-
-func (g GoogleAuth) auth() string {
-   return g.Values["Auth"]
-}
-
-func (g *GoogleToken) token() string {
-   return g.Values["Token"]
-}
-
-type GoogleToken struct {
-   Values Values
+func (g GoogleToken) token() string {
+   return g()["Token"]
 }
 
 func (g *GoogleToken) Unmarshal(data []byte) error {
-   g.Values = Values{}
-   return g.Values.Set(string(data))
+   v := Values{}
+   v.Set(string(data))
+   *g = func() Values {
+      return v
+   }
+   return nil
 }
 
-func (g *GoogleToken) Auth() (*GoogleAuth, error) {
+func (g GoogleAuth) auth() string {
+   return g()["Auth"]
+}
+
+type GoogleAuth func() Values
+
+type GoogleToken func() Values
+
+func (g GoogleToken) Auth() (GoogleAuth, error) {
    resp, err := http.PostForm(
       "https://android.googleapis.com/auth", url.Values{
          "Token":      {g.token()},
@@ -85,7 +83,10 @@ func (g *GoogleToken) Auth() (*GoogleAuth, error) {
    if err != nil {
       return nil, err
    }
-   query := Values{}
-   query.Set(string(data))
-   return &GoogleAuth{query}, nil
+   auth := func() Values {
+      v := Values{}
+      v.Set(string(data))
+      return v
+   }
+   return auth, nil
 }
