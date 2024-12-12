@@ -8,6 +8,20 @@ import (
    "strings"
 )
 
+type Values map[string]string
+
+func (v Values) Set(query string) error {
+   for query != "" {
+      var key string
+      key, query, _ = strings.Cut(query, "\n")
+      key, value, _ := strings.Cut(key, "=")
+      v[key] = value
+   }
+   return nil
+}
+
+type GoogleToken func() Values
+
 func (GoogleToken) Marshal(token string) ([]byte, error) {
    resp, err := http.PostForm(
       "https://android.googleapis.com/auth", url.Values{
@@ -28,18 +42,6 @@ func (GoogleToken) Marshal(token string) ([]byte, error) {
    return io.ReadAll(resp.Body)
 }
 
-type Values map[string]string
-
-func (v Values) Set(query string) error {
-   for query != "" {
-      var key string
-      key, query, _ = strings.Cut(query, "\n")
-      key, value, _ := strings.Cut(key, "=")
-      v[key] = value
-   }
-   return nil
-}
-
 func (g GoogleToken) token() string {
    return g()["Token"]
 }
@@ -58,8 +60,6 @@ func (g GoogleAuth) auth() string {
 }
 
 type GoogleAuth func() Values
-
-type GoogleToken func() Values
 
 func (g GoogleToken) Auth() (GoogleAuth, error) {
    resp, err := http.PostForm(

@@ -8,7 +8,7 @@ import (
    "net/http"
 )
 
-func (g GoogleAuth) Acquire(checkin *GoogleCheckin, id string) error {
+func (g GoogleAuth) Acquire(checkin GoogleCheckin, id string) error {
    message := protobuf.Message{
       1: {protobuf.Message{
          1: {protobuf.Message{
@@ -61,7 +61,7 @@ func (g GoogleAuth) Acquire(checkin *GoogleCheckin, id string) error {
    message, _ = message.Get(1)()
    message, _ = message.Get(2)()
    if message, ok := message.Get(147291249)(); ok {
-      return &acquire_error{message}
+      return acquire_error{message}
    }
    return nil
 }

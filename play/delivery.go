@@ -9,48 +9,9 @@ import (
    "strconv"
 )
 
-func (a Apk) Url() string {
-   value, _ := a.Message.GetBytes(5)()
-   return string(value)
-}
-
-func (a Apk) Field1() string {
-   value, _ := a.Message.GetBytes(1)()
-   return string(value)
-}
-
-type Apk struct {
-   Message protobuf.Message
-}
-
-func (d Delivery) Url() string {
-   value, _ := d.Message.GetBytes(3)()
-   return string(value)
-}
-
-type Delivery struct {
-   Message protobuf.Message
-}
-
-func (d Delivery) Obb() func() (Obb, bool) {
-   values := d.Message.Get(4)
-   return func() (Obb, bool) {
-      value, ok := values()
-      return Obb{value}, ok
-   }
-}
-
-func (d Delivery) Apk() func() (Apk, bool) {
-   values := d.Message.Get(15)
-   return func() (Apk, bool) {
-      value, ok := values()
-      return Apk{value}, ok
-   }
-}
-
 func (g GoogleAuth) Delivery(
-   check *GoogleCheckin, app *StoreApp, single bool,
-) (*Delivery, error) {
+   check GoogleCheckin, app *StoreApp, single bool,
+) (GoogleDelivery, error) {
    req, err := http.NewRequest("", "https://android.clients.google.com", nil)
    if err != nil {
       return nil, err
@@ -82,26 +43,65 @@ func (g GoogleAuth) Delivery(
    }
    message, _ = message.Get(1)()
    message, _ = message.Get(21)()
-   switch v, _ := message.GetVarint(1)(); v {
+   switch err, _ := message.GetVarint(1)(); err {
    case 2:
       return nil, errors.New("version")
    case 3:
       return nil, errors.New("acquire")
    }
    message, _ = message.Get(2)()
-   return &Delivery{message}, nil
+   return func() protobuf.Message {
+      return message
+   }, nil
+}
+
+func (g GoogleDelivery) Url() string {
+   data, _ := g().GetBytes(3)()
+   return string(data)
+}
+
+type GoogleDelivery func() protobuf.Message
+
+func (g GoogleDelivery) Apk() func() (Apk, bool) {
+   values := g().Get(15)
+   return func() (Apk, bool) {
+      value, ok := values()
+      return func() protobuf.Message {
+         return value
+      }, ok
+   }
+}
+
+func (a Apk) Url() string {
+   data, _ := a().GetBytes(5)()
+   return string(data)
+}
+
+type Apk func() protobuf.Message
+
+func (a Apk) Field1() string {
+   data, _ := a().GetBytes(1)()
+   return string(data)
 }
 
 func (o Obb) Url() string {
-   value, _ := o.Message.GetBytes(4)()
-   return string(value)
+   data, _ := o().GetBytes(4)()
+   return string(data)
 }
 
 func (o Obb) Field1() uint64 {
-   value, _ := o.Message.GetVarint(1)()
-   return uint64(value)
+   data, _ := o().GetVarint(1)()
+   return uint64(data)
 }
 
-type Obb struct {
-   Message protobuf.Message
+type Obb func() protobuf.Message
+
+func (g GoogleDelivery) Obb() func() (Obb, bool) {
+   values := g().Get(4)
+   return func() (Obb, bool) {
+      value, ok := values()
+      return func() protobuf.Message {
+         return value
+      }, ok
+   }
 }

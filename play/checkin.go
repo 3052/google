@@ -54,16 +54,21 @@ func (GoogleCheckin) Marshal(device *GoogleDevice) ([]byte, error) {
    return io.ReadAll(resp.Body)
 }
 
-func (g *GoogleCheckin) field_7() uint64 {
-   value, _ := g.Message.GetFixed64(7)()
-   return uint64(value)
-}
-
-type GoogleCheckin struct {
-   Message protobuf.Message
-}
-
 func (g *GoogleCheckin) Unmarshal(data []byte) error {
-   g.Message = protobuf.Message{}
-   return g.Message.Unmarshal(data)
+   value := protobuf.Message{}
+   err := value.Unmarshal(data)
+   if err != nil {
+      return err
+   }
+   *g = func() protobuf.Message {
+      return value
+   }
+   return nil
+}
+
+type GoogleCheckin func() protobuf.Message
+
+func (g GoogleCheckin) field_7() uint64 {
+   value, _ := g().GetFixed64(7)()
+   return uint64(value)
 }

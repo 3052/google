@@ -21,7 +21,7 @@ func (f *flags) do_checkin() error {
    if f.leanback {
       play.Device.Feature = append(play.Device.Feature, play.Leanback)
    }
-   data, err := play.GoogleCheckin{}.Marshal(&play.Device)
+   data, err := play.GoogleCheckin(nil).Marshal(&play.Device)
    if err != nil {
       return err
    }
@@ -41,12 +41,12 @@ func (f *flags) do_sync() error {
    if f.leanback {
       play.Device.Feature = append(play.Device.Feature, play.Leanback)
    }
-   return play.Device.Sync(&checkin)
+   return play.Device.Sync(checkin)
 }
 
 func (f *flags) do_delivery() error {
-   checkin := &play.GoogleCheckin{}
-   auth, err := f.client(checkin)
+   var checkin play.GoogleCheckin
+   auth, err := f.client(&checkin)
    if err != nil {
       return err
    }
@@ -88,8 +88,8 @@ func (f *flags) do_delivery() error {
 }
 
 func (f *flags) do_acquire() error {
-   checkin := &play.GoogleCheckin{}
-   auth, err := f.client(checkin)
+   var checkin play.GoogleCheckin
+   auth, err := f.client(&checkin)
    if err != nil {
       return err
    }
@@ -154,8 +154,8 @@ func download(address, name string) error {
 }
 
 func (f *flags) do_details() (*play.Details, error) {
-   checkin := &play.GoogleCheckin{}
-   auth, err := f.client(checkin)
+   var checkin play.GoogleCheckin
+   auth, err := f.client(&checkin)
    if err != nil {
       return nil, err
    }
