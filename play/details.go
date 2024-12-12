@@ -10,11 +10,9 @@ import (
    "strings"
 )
 
-///
-
 func (g GoogleAuth) Details(
    check GoogleCheckin, doc string, single bool,
-) (*Details, error) {
+) (GoogleDetails, error) {
    req, err := http.NewRequest("", "https://android.clients.google.com", nil)
    if err != nil {
       return nil, err
@@ -46,143 +44,120 @@ func (g GoogleAuth) Details(
    message, _ = message.Get(1)()
    message, _ = message.Get(2)()
    message, _ = message.Get(4)()
-   return &Details{message}, nil
+   return func() protobuf.Message {
+      return message
+   }, nil
 }
 
 // com.google.android.youtube.tvkids
-func (d Details) field_15_18() string {
-   message, _ := d.Message.Get(15)()
-   value, _ := message.GetBytes(18)()
+func (g GoogleDetails) field_15_18() string {
+   data, _ := g().Get(15)()
+   value, _ := data.GetBytes(18)()
    return string(value)
 }
 
-func (d Details) field_13_1_17() func() (uint64, bool) {
-   m, _ := d.Message.Get(13)()
-   m, _ = m.Get(1)()
-   next := m.Get(17)
+func (g GoogleDetails) Downloads() uint64 {
+   data, _ := g().Get(13)()
+   data, _ = data.Get(1)()
+   value, _ := data.GetVarint(70)()
+   return uint64(value)
+}
+
+func (g GoogleDetails) Name() string {
+   data, _ := g().GetBytes(5)()
+   return string(data)
+}
+
+func (g GoogleDetails) field_13_1_16() string {
+   data, _ := g().Get(13)()
+   data, _ = data.Get(1)()
+   value, _ := data.GetBytes(16)()
+   return string(value)
+}
+
+func (g GoogleDetails) field_13_1_4() string {
+   data, _ := g().Get(13)()
+   data, _ = data.Get(1)()
+   value, _ := data.GetBytes(4)()
+   return string(value)
+}
+
+func (g GoogleDetails) field_8_2() string {
+   data, _ := g().Get(8)()
+   value, _ := data.GetBytes(2)()
+   return string(value)
+}
+
+func (g GoogleDetails) size() uint64 {
+   data, _ := g().Get(13)()
+   data, _ = data.Get(1)()
+   value, _ := data.GetVarint(9)()
+   return uint64(value)
+}
+
+func (g GoogleDetails) version_code() uint64 {
+   data, _ := g().Get(13)()
+   data, _ = data.Get(1)()
+   value, _ := data.GetVarint(3)()
+   return uint64(value)
+}
+
+func (g GoogleDetails) field_8_1() float64 {
+   data, _ := g().Get(8)()
+   value, _ := data.GetVarint(1)()
+   return float64(value) / 1_000_000
+}
+
+func (g GoogleDetails) field_13_1_82_1_1() string {
+   data, _ := g().Get(13)()
+   data, _ = data.Get(1)()
+   data, _ = data.Get(82)()
+   data, _ = data.Get(1)()
+   value, _ := data.GetBytes(1)()
+   return string(value)
+}
+
+func (g GoogleDetails) field_13_1_17() func() (uint64, bool) {
+   value, _ := g().Get(13)()
+   value, _ = value.Get(1)()
+   values := value.Get(17)
    return func() (uint64, bool) {
-      m, _ = next()
-      v, ok := m.GetVarint(1)()
-      return uint64(v), ok
+      value, _ = values()
+      data, ok := value.GetVarint(1)()
+      return uint64(data), ok
    }
 }
 
-func (d Details) Downloads() (uint64, bool) {
-   m, _ := d.Message.Get(13)()
-   m, _ = m.Get(1)()
-   v, ok := m.GetVarint(70)()
-   return uint64(v), ok
-}
+type GoogleDetails func() protobuf.Message
 
-func (d Details) Name() (string, bool) {
-   v, ok := d.Message.GetBytes(5)()
-   return string(v), ok
-}
-
-func (d Details) field_13_1_16() (string, bool) {
-   m, _ := d.Message.Get(13)()
-   m, _ = m.Get(1)()
-   v, ok := m.GetBytes(16)()
-   return string(v), ok
-}
-
-func (d Details) field_13_1_4() (string, bool) {
-   m, _ := d.Message.Get(13)()
-   m, _ = m.Get(1)()
-   v, ok := m.GetBytes(4)()
-   return string(v), ok
-}
-
-func (d Details) field_8_2() (string, bool) {
-   m, _ := d.Message.Get(8)()
-   v, ok := m.GetBytes(2)()
-   return string(v), ok
-}
-
-func (d Details) size() (uint64, bool) {
-   m, _ := d.Message.Get(13)()
-   m, _ = m.Get(1)()
-   v, ok := m.GetVarint(9)()
-   return uint64(v), ok
-}
-
-func (d Details) version_code() (uint64, bool) {
-   m, _ := d.Message.Get(13)()
-   m, _ = m.Get(1)()
-   v, ok := m.GetVarint(3)()
-   return uint64(v), ok
-}
-
-func (d Details) field_13_1_82_1_1() (string, bool) {
-   m, _ := d.Message.Get(13)()
-   m, _ = m.Get(1)()
-   m, _ = m.Get(82)()
-   m, _ = m.Get(1)()
-   v, ok := m.GetBytes(1)()
-   return string(v), ok
-}
-
-func (d Details) field_8_1() (float64, bool) {
-   m, _ := d.Message.Get(8)()
-   v, ok := m.GetVarint(1)()
-   return float64(v) / 1_000_000, ok
-}
-
-func (d Details) String() string {
-   var b []byte
-   b = append(b, "details[8] ="...)
-   if value, ok := d.field_8_1(); ok {
-      b = fmt.Append(b, " ", value)
-   }
-   if value, ok := d.field_8_2(); ok {
-      b = fmt.Append(b, " ", value)
-   }
-   b = append(b, "\ndetails[13][1][4] ="...)
-   if value, ok := d.field_13_1_4(); ok {
-      b = fmt.Append(b, " ", value)
-   }
-   b = append(b, "\ndetails[13][1][16] ="...)
-   if value, ok := d.field_13_1_16(); ok {
-      b = fmt.Append(b, " ", value)
-   }
-   b = append(b, "\ndetails[13][1][17] ="...)
-   next := d.field_13_1_17()
+func (g GoogleDetails) String() string {
+   var data []byte
+   data = fmt.Appendln(data, "details[8] =", g.field_8_1(), g.field_8_2())
+   data = fmt.Appendln(data, "details[13][1][4] =", g.field_13_1_4())
+   data = fmt.Appendln(data, "details[13][1][16] =", g.field_13_1_16())
+   data = append(data, "details[13][1][17] ="...)
+   values := g.field_13_1_17()
    for {
-      value, ok := next()
+      value, ok := values()
       if !ok {
          break
       }
       if value >= 1 {
-         b = append(b, " OBB"...)
+         data = append(data, " OBB"...)
       } else {
-         b = append(b, " APK"...)
+         data = append(data, " APK"...)
       }
    }
-   b = append(b, "\ndetails[13][1][82][1][1] ="...)
-   if value, ok := d.field_13_1_82_1_1(); ok {
-      b = fmt.Append(b, " ", value)
-   }
-   b = append(b, "\ndetails[15][18] = "...)
-   b = append(b, d.field_15_18()...)
-   b = append(b, "\ndownloads ="...)
-   if value, ok := d.Downloads(); ok {
-      b = fmt.Append(b, " ", text.Cardinal(value))
-   }
-   b = append(b, "\nname ="...)
-   if value, ok := d.Name(); ok {
-      b = fmt.Append(b, " ", value)
-   }
-   b = append(b, "\nsize ="...)
-   if value, ok := d.size(); ok {
-      b = fmt.Append(b, " ", text.Size(value))
-   }
-   b = append(b, "\nversion code ="...)
-   if value, ok := d.version_code(); ok {
-      b = fmt.Append(b, " ", value)
-   }
-   return string(b)
-}
-
-type Details struct {
-   Message protobuf.Message
+   data = append(data, '\n')
+   data = fmt.Appendln(data, "details[13][1][82][1][1] =", g.field_13_1_82_1_1())
+   data = fmt.Appendln(data, "details[15][18] =", g.field_15_18())
+   data = fmt.Appendln(
+      data, "downloads =", text.Cardinal(g.Downloads()),
+   )
+   data = fmt.Appendln(data, "name =", g.Name())
+   data = fmt.Appendln(
+      data, "size =", text.Size(g.size()),
+   )
+   data = fmt.Appendln(data, "version code =", g.version_code())
+   return string(data)
 }
