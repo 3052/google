@@ -158,6 +158,6 @@ func (g GoogleDetails) String() string {
    data = fmt.Appendln(
       data, "size =", text.Size(g.size()),
    )
-   data = fmt.Appendln(data, "version code =", g.version_code())
+   data = fmt.Append(data, "version code = ", g.version_code())
    return string(data)
 }

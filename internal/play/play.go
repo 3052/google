@@ -153,7 +153,7 @@ func download(address, name string) error {
    return nil
 }
 
-func (f *flags) do_details() (*play.GoogleDetails, error) {
+func (f *flags) do_details() (play.GoogleDetails, error) {
    var checkin play.GoogleCheckin
    auth, err := f.client(&checkin)
    if err != nil {
