@@ -14,10 +14,10 @@ func TestSync(t *testing.T) {
    }
    home += "/google-play"
    for _, abi := range Abis {
-      var checkin GoogleCheckin
-      Device.Abi = abi
       fmt.Println(abi)
+      Device.Abi = abi
       time.Sleep(time.Second)
+      var checkin GoogleCheckin
       data, err := checkin.Marshal(&Device)
       if err != nil {
          t.Fatal(err)
@@ -31,7 +31,7 @@ func TestSync(t *testing.T) {
          t.Fatal(err)
       }
       time.Sleep(time.Second)
-      err = Device.Sync(&checkin)
+      err = Device.Sync(checkin)
       if err != nil {
          t.Fatal(err)
       }

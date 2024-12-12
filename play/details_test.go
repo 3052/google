@@ -36,49 +36,45 @@ func TestDetails(t *testing.T) {
       if err != nil {
          t.Fatal(err)
       }
-      detail, err := auth.Details(&checkin, app.id, false)
+      detail, err := auth.Details(checkin, app.id, false)
       if err != nil {
          t.Fatal(err)
       }
-      if _, ok := detail.Downloads(); !ok {
+      if detail.Downloads() == 0 {
          t.Fatal("downloads")
       }
-      if _, ok := detail.field_8_1(); !ok {
+      if detail.Name() == "" {
+         t.Fatal("name")
+      }
+      if detail.field_8_1() == 0 {
          t.Fatal("field 8 1")
       }
-      if _, ok := detail.field_8_2(); !ok {
+      if detail.field_8_2() == "" {
          t.Fatal("field 8 2")
       }
-      if _, ok := detail.field_13_1_4(); !ok {
+      if detail.field_13_1_4() == "" {
          t.Fatal("field 13 1 4")
       }
       app.date = func() string {
-         u, ok := detail.field_13_1_16()
-         if !ok {
-            t.Fatal("field 13 1 16")
-         }
-         p, err := time.Parse("Jan 2, 2006", u)
+         date, err := time.Parse("Jan 2, 2006", detail.field_13_1_16())
          if err != nil {
             t.Fatal(err)
          }
-         return p.Format("2006-01-02")
+         return date.Format("2006-01-02")
       }()
       if _, ok := detail.field_13_1_17()(); !ok {
          t.Fatal("field 13 1 17")
       }
-      if _, ok := detail.field_13_1_82_1_1(); !ok {
+      if detail.field_13_1_82_1_1() == "" {
          t.Fatal("field 13 1 82 1 1")
       }
       if detail.field_15_18() == "" {
          t.Fatal("field_15_18")
       }
-      if _, ok := detail.Name(); !ok {
-         t.Fatal("name")
-      }
-      if _, ok := detail.size(); !ok {
+      if detail.size() == 0 {
          t.Fatal("size")
       }
-      if _, ok := detail.version_code(); !ok {
+      if detail.version_code() == 0 {
          t.Fatal("version code")
       }
       fmt.Printf("%#v,\n", app)

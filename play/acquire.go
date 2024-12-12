@@ -60,32 +60,33 @@ func (g GoogleAuth) Acquire(checkin GoogleCheckin, id string) error {
    message, _ = message.Get(94)()
    message, _ = message.Get(1)()
    message, _ = message.Get(2)()
-   if message, ok := message.Get(147291249)(); ok {
-      return acquire_error{message}
+   message, ok := message.Get(147291249)()
+   if ok {
+      err := func() protobuf.Message {
+         return message
+      }
+      return acquire_error(err)
    }
    return nil
 }
 
-type acquire_error struct {
-   message protobuf.Message
-}
+type acquire_error func() protobuf.Message
 
 func (a acquire_error) Error() string {
-   var text []byte
-   next := a.message.Get(1)
+   var out []byte
+   messages := a().Get(1)
    for {
-      v, ok := next()
+      message, ok := messages()
       if !ok {
          break
       }
-      v, _ = v.Get(10)()
-      v, _ = v.Get(1)()
-      if v, ok := v.GetBytes(1)(); ok {
-         if text != nil {
-            text = append(text, '\n')
-         }
-         text = append(text, v...)
+      message, _ = message.Get(10)()
+      message, _ = message.Get(1)()
+      in, _ := message.GetBytes(1)()
+      if out != nil {
+         out = append(out, '\n')
       }
+      out = append(out, in...)
    }
-   return string(text)
+   return string(out)
 }

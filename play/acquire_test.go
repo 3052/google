@@ -38,7 +38,7 @@ func TestAcquire(t *testing.T) {
          t.Fatal(err)
       }
       fmt.Println(app.id)
-      err = auth.Acquire(&checkin, app.id)
+      err = auth.Acquire(checkin, app.id)
       if err != nil {
          t.Fatal(err)
       }
