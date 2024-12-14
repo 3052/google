@@ -8,6 +8,8 @@ import (
    "net/http"
 )
 
+type acquire_error func() protobuf.Message
+
 func (g GoogleAuth) Acquire(checkin GoogleCheckin, id string) error {
    message := protobuf.Message{
       1: {protobuf.Message{
@@ -69,8 +71,6 @@ func (g GoogleAuth) Acquire(checkin GoogleCheckin, id string) error {
    }
    return nil
 }
-
-type acquire_error func() protobuf.Message
 
 func (a acquire_error) Error() string {
    var out []byte
