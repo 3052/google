@@ -8,7 +8,26 @@ import (
    "net/http"
 )
 
-type acquire_error func() protobuf.Message
+func (a acquire_error) Error() string {
+   var out []byte
+   messages := protobuf.Message(a).Get(1)
+   for {
+      message, ok := messages()
+      if !ok {
+         break
+      }
+      message, _ = message.Get(10)()
+      message, _ = message.Get(1)()
+      in, _ := message.GetBytes(1)()
+      if out != nil {
+         out = append(out, '\n')
+      }
+      out = append(out, in...)
+   }
+   return string(out)
+}
+
+type acquire_error protobuf.Message
 
 func (g GoogleAuth) Acquire(checkin GoogleCheckin, id string) error {
    message := protobuf.Message{
@@ -64,29 +83,7 @@ func (g GoogleAuth) Acquire(checkin GoogleCheckin, id string) error {
    message, _ = message.Get(2)()
    message, ok := message.Get(147291249)()
    if ok {
-      err := func() protobuf.Message {
-         return message
-      }
-      return acquire_error(err)
+      return acquire_error(message)
    }
    return nil
-}
-
-func (a acquire_error) Error() string {
-   var out []byte
-   messages := a().Get(1)
-   for {
-      message, ok := messages()
-      if !ok {
-         break
-      }
-      message, _ = message.Get(10)()
-      message, _ = message.Get(1)()
-      in, _ := message.GetBytes(1)()
-      if out != nil {
-         out = append(out, '\n')
-      }
-      out = append(out, in...)
-   }
-   return string(out)
 }

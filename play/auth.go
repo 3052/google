@@ -8,6 +8,18 @@ import (
    "strings"
 )
 
+type Values map[string]string
+
+func (v Values) Set(query string) error {
+   for query != "" {
+      var key string
+      key, query, _ = strings.Cut(query, "\n")
+      key, value, _ := strings.Cut(key, "=")
+      v[key] = value
+   }
+   return nil
+}
+
 func (GoogleToken) Marshal(token string) ([]byte, error) {
    resp, err := http.PostForm(
       "https://android.googleapis.com/auth", url.Values{
@@ -28,7 +40,29 @@ func (GoogleToken) Marshal(token string) ([]byte, error) {
    return io.ReadAll(resp.Body)
 }
 
-func (g GoogleToken) Auth() (GoogleAuth, error) {
+type GoogleToken struct {
+   Values Values
+}
+
+func (g *GoogleToken) Unmarshal(data []byte) error {
+   g.Values = Values{}
+   g.Values.Set(string(data))
+   return nil
+}
+
+func (g GoogleToken) token() string {
+   return g.Values["Token"]
+}
+
+type GoogleAuth struct {
+   Values Values
+}
+
+func (g GoogleAuth) auth() string {
+   return g.Values["Auth"]
+}
+
+func (g GoogleToken) Auth() (*GoogleAuth, error) {
    resp, err := http.PostForm(
       "https://android.googleapis.com/auth", url.Values{
          "Token":      {g.token()},
@@ -50,43 +84,8 @@ func (g GoogleToken) Auth() (GoogleAuth, error) {
    if err != nil {
       return nil, err
    }
-   auth := func() Values {
-      v := Values{}
-      v.Set(string(data))
-      return v
-   }
-   return auth, nil
+   var auth GoogleAuth
+   auth.Values = Values{}
+   auth.Values.Set(string(data))
+   return &auth, nil
 }
-
-type Values map[string]string
-
-func (v Values) Set(query string) error {
-   for query != "" {
-      var key string
-      key, query, _ = strings.Cut(query, "\n")
-      key, value, _ := strings.Cut(key, "=")
-      v[key] = value
-   }
-   return nil
-}
-
-type GoogleToken func() Values
-
-func (g GoogleToken) token() string {
-   return g()["Token"]
-}
-
-func (g *GoogleToken) Unmarshal(data []byte) error {
-   v := Values{}
-   v.Set(string(data))
-   *g = func() Values {
-      return v
-   }
-   return nil
-}
-
-func (g GoogleAuth) auth() string {
-   return g()["Auth"]
-}
-
-type GoogleAuth func() Values

@@ -55,20 +55,15 @@ func (GoogleCheckin) Marshal(device *GoogleDevice) ([]byte, error) {
 }
 
 func (g *GoogleCheckin) Unmarshal(data []byte) error {
-   value := protobuf.Message{}
-   err := value.Unmarshal(data)
-   if err != nil {
-      return err
-   }
-   *g = func() protobuf.Message {
-      return value
-   }
-   return nil
+   g.Message = protobuf.Message{}
+   return g.Message.Unmarshal(data)
 }
 
-type GoogleCheckin func() protobuf.Message
+type GoogleCheckin struct {
+   Message protobuf.Message
+}
 
 func (g GoogleCheckin) field_7() uint64 {
-   value, _ := g().GetFixed64(7)()
+   value, _ := g.Message.GetFixed64(7)()
    return uint64(value)
 }

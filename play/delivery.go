@@ -11,7 +11,7 @@ import (
 
 func (g GoogleAuth) Delivery(
    check GoogleCheckin, app *StoreApp, single bool,
-) (GoogleDelivery, error) {
+) (*GoogleDelivery, error) {
    req, err := http.NewRequest("", "https://android.clients.google.com", nil)
    if err != nil {
       return nil, err
@@ -50,31 +50,16 @@ func (g GoogleAuth) Delivery(
       return nil, errors.New("acquire")
    }
    message, _ = message.Get(2)()
-   return func() protobuf.Message {
-      return message
-   }, nil
+   return &GoogleDelivery{message}, nil
 }
 
 func (g GoogleDelivery) Url() string {
-   data, _ := g().GetBytes(3)()
-   return string(data)
+   value, _ := g.Message.GetBytes(3)()
+   return string(value)
 }
 
-type GoogleDelivery func() protobuf.Message
-
-func (g GoogleDelivery) Apk() func() (Apk, bool) {
-   values := g().Get(15)
-   return func() (Apk, bool) {
-      value, ok := values()
-      return func() protobuf.Message {
-         return value
-      }, ok
-   }
-}
-
-func (a Apk) Url() string {
-   data, _ := a().GetBytes(5)()
-   return string(data)
+type GoogleDelivery struct {
+   Message protobuf.Message
 }
 
 type Apk func() protobuf.Message
@@ -96,12 +81,23 @@ func (o Obb) Field1() uint64 {
 
 type Obb func() protobuf.Message
 
+func (a Apk) Url() string {
+   data, _ := a().GetBytes(5)()
+   return string(data)
+}
+
+func (g GoogleDelivery) Apk() func() (Apk, bool) {
+   values := g.Message.Get(15)
+   return func() (Apk, bool) {
+      value, ok := values()
+      return Apk{value}, ok
+   }
+}
+
 func (g GoogleDelivery) Obb() func() (Obb, bool) {
-   values := g().Get(4)
+   values := g.Message.Get(4)
    return func() (Obb, bool) {
       value, ok := values()
-      return func() protobuf.Message {
-         return value
-      }, ok
+      return Obb{value}, ok
    }
 }
