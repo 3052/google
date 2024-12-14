@@ -44,6 +44,10 @@ type GoogleToken struct {
    Values Values
 }
 
+type GoogleAuth struct {
+   Values Values
+}
+
 func (g *GoogleToken) Unmarshal(data []byte) error {
    g.Values = Values{}
    g.Values.Set(string(data))
@@ -52,14 +56,6 @@ func (g *GoogleToken) Unmarshal(data []byte) error {
 
 func (g GoogleToken) token() string {
    return g.Values["Token"]
-}
-
-type GoogleAuth struct {
-   Values Values
-}
-
-func (g GoogleAuth) auth() string {
-   return g.Values["Auth"]
 }
 
 func (g GoogleToken) Auth() (*GoogleAuth, error) {
@@ -88,4 +84,8 @@ func (g GoogleToken) Auth() (*GoogleAuth, error) {
    auth.Values = Values{}
    auth.Values.Set(string(data))
    return &auth, nil
+}
+
+func (g GoogleAuth) auth() string {
+   return g.Values["Auth"]
 }

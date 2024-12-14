@@ -39,5 +39,5 @@ func TestDelivery(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   fmt.Printf("%#v\n", deliver())
+   fmt.Printf("%#v\n", deliver.Message)
 }

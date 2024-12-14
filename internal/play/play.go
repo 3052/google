@@ -9,7 +9,7 @@ import (
 )
 
 func (f *flags) do_auth() error {
-   data, err := play.GoogleToken(nil).Marshal(f.token)
+   data, err := play.GoogleToken{}.Marshal(f.token)
    if err != nil {
       return err
    }
@@ -21,7 +21,7 @@ func (f *flags) do_checkin() error {
    if f.leanback {
       play.Device.Feature = append(play.Device.Feature, play.Leanback)
    }
-   data, err := play.GoogleCheckin(nil).Marshal(&play.Device)
+   data, err := play.GoogleCheckin{}.Marshal(&play.Device)
    if err != nil {
       return err
    }
@@ -108,7 +108,7 @@ func (f *flags) device_path() string {
    return b.String()
 }
 
-func (f *flags) client(checkin *play.GoogleCheckin) (play.GoogleAuth, error) {
+func (f *flags) client(checkin *play.GoogleCheckin) (*play.GoogleAuth, error) {
    data, err := os.ReadFile(f.home + "/token.txt")
    if err != nil {
       return nil, err
@@ -153,7 +153,7 @@ func download(address, name string) error {
    return nil
 }
 
-func (f *flags) do_details() (play.GoogleDetails, error) {
+func (f *flags) do_details() (*play.GoogleDetails, error) {
    var checkin play.GoogleCheckin
    auth, err := f.client(&checkin)
    if err != nil {

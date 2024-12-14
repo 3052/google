@@ -10,7 +10,7 @@ import (
 
 func (a acquire_error) Error() string {
    var out []byte
-   messages := protobuf.Message(a).Get(1)
+   messages := a.Message.Get(1)
    for {
       message, ok := messages()
       if !ok {
@@ -27,7 +27,9 @@ func (a acquire_error) Error() string {
    return string(out)
 }
 
-type acquire_error protobuf.Message
+type acquire_error struct {
+   Message protobuf.Message
+}
 
 func (g GoogleAuth) Acquire(checkin GoogleCheckin, id string) error {
    message := protobuf.Message{
@@ -83,7 +85,7 @@ func (g GoogleAuth) Acquire(checkin GoogleCheckin, id string) error {
    message, _ = message.Get(2)()
    message, ok := message.Get(147291249)()
    if ok {
-      return acquire_error(message)
+      return acquire_error{message}
    }
    return nil
 }

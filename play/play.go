@@ -71,20 +71,20 @@ var Device = GoogleDevice{
 
 func user_agent(req *http.Request, single bool) {
    // `sdk` is needed for `/fdfe/delivery`
-   b := []byte("Android-Finsky (sdk=")
+   data := []byte("Android-Finsky (sdk=")
    // with `/fdfe/acquire`, requests will be rejected with certain apps, if the
    // device was created with too low a version here:
-   b = strconv.AppendInt(b, android_api, 10)
-   b = append(b, ",versionCode="...)
+   data = strconv.AppendInt(data, android_api, 10)
+   data = append(data, ",versionCode="...)
    // for multiple APKs just tell the truth. for single APK we have to lie.
    // below value is the last version that works.
    if single {
-      b = strconv.AppendInt(b, 80919999, 10)
+      data = strconv.AppendInt(data, 80919999, 10)
    } else {
-      b = strconv.AppendInt(b, google_play_store, 10)
+      data = strconv.AppendInt(data, google_play_store, 10)
    }
-   b = append(b, ')')
-   req.Header.Set("user-agent", string(b))
+   data = append(data, ')')
+   req.Header.Set("user-agent", string(data))
 }
 
 const google_play_store = 82941300
@@ -117,29 +117,29 @@ func authorization(req *http.Request, auth GoogleAuth) {
 }
 
 func (s *StoreApp) Apk(value string) string {
-   b := []byte(s.Id)
-   b = append(b, '-')
+   data := []byte(s.Id)
+   data = append(data, '-')
    if value != "" {
-      b = append(b, value...)
-      b = append(b, '-')
+      data = append(data, value...)
+      data = append(data, '-')
    }
-   b = strconv.AppendUint(b, s.Version, 10)
-   b = append(b, ".apk"...)
-   return string(b)
+   data = strconv.AppendUint(data, s.Version, 10)
+   data = append(data, ".apk"...)
+   return string(data)
 }
 
 func (s *StoreApp) Obb(value uint64) string {
-   var b []byte
+   var data []byte
    if value >= 1 {
-      b = append(b, "patch."...)
+      data = append(data, "patch."...)
    } else {
-      b = append(b, "main."...)
+      data = append(data, "main."...)
    }
-   b = strconv.AppendUint(b, s.Version, 10)
-   b = append(b, '.')
-   b = append(b, s.Id...)
-   b = append(b, ".obb"...)
-   return string(b)
+   data = strconv.AppendUint(data, s.Version, 10)
+   data = append(data, '.')
+   data = append(data, s.Id...)
+   data = append(data, ".obb"...)
+   return string(data)
 }
 
 // play.google.com/store/apps/details?id=com.google.android.apps.youtube.unplugged
