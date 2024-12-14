@@ -12,7 +12,7 @@ import (
 
 func (g GoogleAuth) Details(
    check GoogleCheckin, doc string, single bool,
-) (GoogleDetails, error) {
+) (*GoogleDetails, error) {
    req, err := http.NewRequest("", "https://android.clients.google.com", nil)
    if err != nil {
       return nil, err
@@ -36,31 +36,100 @@ func (g GoogleAuth) Details(
    if err != nil {
       return nil, err
    }
-   message := protobuf.Message{}
-   err = message.Unmarshal(data)
+   value := protobuf.Message{}
+   err = value.Unmarshal(data)
    if err != nil {
       return nil, err
    }
-   message, _ = message.Get(1)()
-   message, _ = message.Get(2)()
-   message, _ = message.Get(4)()
-   return func() protobuf.Message {
-      return message
-   }, nil
+   value, _ = value.Get(1)()
+   value, _ = value.Get(2)()
+   value, _ = value.Get(4)()
+   return &GoogleDetails{value}, nil
 }
 
-type GoogleDetails func() protobuf.Message
+type GoogleDetails struct {
+   Message protobuf.Message
+}
+
+func (g GoogleDetails) field_13_1_17() func() (uint64, bool) {
+   value, _ := g.Message.Get(13)()
+   value, _ = value.Get(1)()
+   values := value.Get(17)
+   return func() (uint64, bool) {
+      value, _ = values()
+      data, ok := value.GetVarint(1)()
+      return uint64(data), ok
+   }
+}
+
+///
 
 func (g GoogleDetails) Downloads() uint64 {
-   data, _ := g().Get(13)()
-   data, _ = data.Get(1)()
-   value, _ := data.GetVarint(70)()
-   return uint64(value)
+   alfa, _ := g.Message.Get(13)()
+   alfa, _ = alfa.Get(1)()
+   bravo, _ := alfa.GetVarint(70)()
+   return uint64(bravo)
 }
 
 func (g GoogleDetails) Name() string {
-   data, _ := g().GetBytes(5)()
-   return string(data)
+   bravo, _ := g.Message.GetBytes(5)()
+   return string(bravo)
+}
+
+func (g GoogleDetails) field_8_1() float64 {
+   alfa, _ := g.Message.Get(8)()
+   bravo, _ := alfa.GetVarint(1)()
+   return float64(bravo) / 1_000_000
+}
+
+func (g GoogleDetails) field_8_2() string {
+   alfa, _ := g.Message.Get(8)()
+   bravo, _ := alfa.GetBytes(2)()
+   return string(bravo)
+}
+
+func (g GoogleDetails) field_13_1_4() string {
+   alfa, _ := g.Message.Get(13)()
+   alfa, _ = alfa.Get(1)()
+   bravo, _ := alfa.GetBytes(4)()
+   return string(bravo)
+}
+
+func (g GoogleDetails) field_13_1_16() string {
+   alfa, _ := g.Message.Get(13)()
+   alfa, _ = alfa.Get(1)()
+   bravo, _ := alfa.GetBytes(16)()
+   return string(bravo)
+}
+
+func (g GoogleDetails) field_13_1_82_1_1() string {
+   alfa, _ := g.Message.Get(13)()
+   alfa, _ = alfa.Get(1)()
+   alfa, _ = alfa.Get(82)()
+   alfa, _ = alfa.Get(1)()
+   bravo, _ := alfa.GetBytes(1)()
+   return string(bravo)
+}
+
+func (g GoogleDetails) size() uint64 {
+   alfa, _ := g.Message.Get(13)()
+   alfa, _ = alfa.Get(1)()
+   bravo, _ := alfa.GetVarint(9)()
+   return uint64(bravo)
+}
+
+func (g GoogleDetails) version_code() uint64 {
+   alfa, _ := g.Message.Get(13)()
+   alfa, _ = alfa.Get(1)()
+   bravo, _ := alfa.GetVarint(3)()
+   return uint64(bravo)
+}
+
+// com.google.android.youtube.tvkids
+func (g GoogleDetails) field_15_18() string {
+   alfa, _ := g.Message.Get(15)()
+   bravo, _ := alfa.GetBytes(18)()
+   return string(bravo)
 }
 
 func (g GoogleDetails) String() string {
@@ -93,71 +162,4 @@ func (g GoogleDetails) String() string {
    )
    data = fmt.Append(data, "version code = ", g.version_code())
    return string(data)
-}
-
-func (g GoogleDetails) field_8_1() float64 {
-   data, _ := g().Get(8)()
-   value, _ := data.GetVarint(1)()
-   return float64(value) / 1_000_000
-}
-
-func (g GoogleDetails) field_8_2() string {
-   data, _ := g().Get(8)()
-   value, _ := data.GetBytes(2)()
-   return string(value)
-}
-
-func (g GoogleDetails) field_13_1_4() string {
-   data, _ := g().Get(13)()
-   data, _ = data.Get(1)()
-   value, _ := data.GetBytes(4)()
-   return string(value)
-}
-
-func (g GoogleDetails) field_13_1_16() string {
-   data, _ := g().Get(13)()
-   data, _ = data.Get(1)()
-   value, _ := data.GetBytes(16)()
-   return string(value)
-}
-
-func (g GoogleDetails) field_13_1_17() func() (uint64, bool) {
-   value, _ := g().Get(13)()
-   value, _ = value.Get(1)()
-   values := value.Get(17)
-   return func() (uint64, bool) {
-      value, _ = values()
-      data, ok := value.GetVarint(1)()
-      return uint64(data), ok
-   }
-}
-
-func (g GoogleDetails) field_13_1_82_1_1() string {
-   data, _ := g().Get(13)()
-   data, _ = data.Get(1)()
-   data, _ = data.Get(82)()
-   data, _ = data.Get(1)()
-   value, _ := data.GetBytes(1)()
-   return string(value)
-}
-
-// com.google.android.youtube.tvkids
-func (g GoogleDetails) field_15_18() string {
-   data, _ := g().Get(15)()
-   value, _ := data.GetBytes(18)()
-   return string(value)
-}
-
-func (g GoogleDetails) size() uint64 {
-   data, _ := g().Get(13)()
-   data, _ = data.Get(1)()
-   value, _ := data.GetVarint(9)()
-   return uint64(value)
-}
-
-func (g GoogleDetails) version_code() uint64 {
-   data, _ := g().Get(13)()
-   data, _ = data.Get(1)()
-   value, _ := data.GetVarint(3)()
-   return uint64(value)
 }

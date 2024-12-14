@@ -62,28 +62,18 @@ type GoogleDelivery struct {
    Message protobuf.Message
 }
 
-type Apk func() protobuf.Message
-
 func (a Apk) Field1() string {
-   data, _ := a().GetBytes(1)()
-   return string(data)
+   value, _ := a.Message.GetBytes(1)()
+   return string(value)
 }
-
-func (o Obb) Url() string {
-   data, _ := o().GetBytes(4)()
-   return string(data)
-}
-
-func (o Obb) Field1() uint64 {
-   data, _ := o().GetVarint(1)()
-   return uint64(data)
-}
-
-type Obb func() protobuf.Message
 
 func (a Apk) Url() string {
-   data, _ := a().GetBytes(5)()
-   return string(data)
+   value, _ := a.Message.GetBytes(5)()
+   return string(value)
+}
+
+type Apk struct {
+   Message protobuf.Message
 }
 
 func (g GoogleDelivery) Apk() func() (Apk, bool) {
@@ -92,6 +82,20 @@ func (g GoogleDelivery) Apk() func() (Apk, bool) {
       value, ok := values()
       return Apk{value}, ok
    }
+}
+
+func (o Obb) Field1() uint64 {
+   value, _ := o.Message.GetVarint(1)()
+   return uint64(value)
+}
+
+func (o Obb) Url() string {
+   value, _ := o.Message.GetBytes(4)()
+   return string(value)
+}
+
+type Obb struct {
+   Message protobuf.Message
 }
 
 func (g GoogleDelivery) Obb() func() (Obb, bool) {
