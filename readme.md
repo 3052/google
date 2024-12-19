@@ -63,28 +63,23 @@ downloaded:
 play -i com.google.android.youtube -v 1548869056
 ~~~
 
-## goals
+## money
 
-1. [Pixel 6](//wikipedia.org/wiki/Pixel_6) (2021)
-2. [Android 12](//wikipedia.org/wiki/Android_12) (2021)
-3. [Google Play](//wikipedia.org/wiki/Google_Play) 29 (2022)
+I am offering bounty 1000 USD for email/password login. up to
+Android 4.4 (2013), the login is protected with TLS fingerprinting, which is
+difficult but possible to bypass. since Android 5 (2014), Google uses bot-guard
+via JavaScript to protect the login. If you know about this contact me. I also
+offer a finders fee if you know someone
 
-non goals:
-
-email/password login. up to Android 4.4 (2013), the login is protected with TLS
-fingerprinting, which is difficult but possible to bypass. since Android 5
-(2014), Google uses bot-guard via JavaScript to protect the login. I do not
-know how to reverse that, and I did not find any implementations online.
-
-## license
+---------------------------------------------------------------------------------
 
 software is not licensed for commercial use. if you wish to purchase a
 commercial license, contact me
 
-## support
+---------------------------------------------------------------------------------
 
-because of repeated abuse, as of november 5 2023, I no longer offer free
-discussion of this software. if you are interested in paid support, contact me
+as of november 5 2023, I no longer offer free discussion of this software. if
+you are interested in paid support, contact me
 
 <dl>
    <dt>email</dt>
@@ -95,3 +90,9 @@ discussion of this software. if you are interested in paid support, contact me
    <dt>PayPal</dt>
       <dd>https://paypal.com/donate?hosted_button_id=UEJBQQTU3VYDY</dd>
 </dl>
+
+## goals
+
+1. [Pixel 6](//wikipedia.org/wiki/Pixel_6) (2021)
+2. [Android 12](//wikipedia.org/wiki/Android_12) (2021)
+3. [Google Play](//wikipedia.org/wiki/Google_Play) 29 (2022)
