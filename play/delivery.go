@@ -76,14 +76,6 @@ type Apk struct {
    Message protobuf.Message
 }
 
-func (g GoogleDelivery) Apk() func() (Apk, bool) {
-   values := g.Message.Get(15)
-   return func() (Apk, bool) {
-      value, ok := values()
-      return Apk{value}, ok
-   }
-}
-
 func (o Obb) Field1() uint64 {
    value, _ := o.Message.GetVarint(1)()
    return uint64(value)
@@ -103,5 +95,13 @@ func (g GoogleDelivery) Obb() func() (Obb, bool) {
    return func() (Obb, bool) {
       value, ok := values()
       return Obb{value}, ok
+   }
+}
+
+func (g GoogleDelivery) Apk() func() (Apk, bool) {
+   values := g.Message.Get(15)
+   return func() (Apk, bool) {
+      value, ok := values()
+      return Apk{value}, ok
    }
 }
