@@ -8,42 +8,6 @@ import (
    "strings"
 )
 
-func (f *flags) do_auth() error {
-   data, err := play.GoogleToken{}.Marshal(f.token)
-   if err != nil {
-      return err
-   }
-   os.Mkdir(f.home, os.ModePerm)
-   return os.WriteFile(f.home + "/token.txt", data, os.ModePerm)
-}
-
-func (f *flags) do_checkin() error {
-   if f.leanback {
-      play.Device.Feature = append(play.Device.Feature, play.Leanback)
-   }
-   data, err := play.GoogleCheckin{}.Marshal(&play.Device)
-   if err != nil {
-      return err
-   }
-   return os.WriteFile(f.device_path(), data, os.ModePerm)
-}
-
-func (f *flags) do_sync() error {
-   data, err := os.ReadFile(f.device_path())
-   if err != nil {
-      return err
-   }
-   var checkin play.GoogleCheckin
-   err = checkin.Unmarshal(data)
-   if err != nil {
-      return err
-   }
-   if f.leanback {
-      play.Device.Feature = append(play.Device.Feature, play.Leanback)
-   }
-   return play.Device.Sync(checkin)
-}
-
 func (f *flags) do_delivery() error {
    var checkin play.GoogleCheckin
    auth, err := f.client(&checkin)
@@ -54,19 +18,6 @@ func (f *flags) do_delivery() error {
    if err != nil {
       return err
    }
-   apks := deliver.Apk()
-   for {
-      apk, ok := apks()
-      if !ok {
-         break
-      }
-      err := download(
-         apk.Url(), f.app.Apk(apk.Field1()),
-      )
-      if err != nil {
-         return err
-      }
-   }
    obbs := deliver.Obb()
    for {
       obb, ok := obbs()
@@ -75,6 +26,19 @@ func (f *flags) do_delivery() error {
       }
       err := download(
          obb.Url(), f.app.Obb(obb.Field1()),
+      )
+      if err != nil {
+         return err
+      }
+   }
+   apks := deliver.Apk()
+   for {
+      apk, ok := apks()
+      if !ok {
+         break
+      }
+      err := download(
+         apk.Url(), f.app.Apk(apk.Field1()),
       )
       if err != nil {
          return err
@@ -160,4 +124,39 @@ func (f *flags) do_details() (*play.GoogleDetails, error) {
       return nil, err
    }
    return auth.Details(checkin, f.app.Id, f.single)
+}
+func (f *flags) do_auth() error {
+   data, err := play.GoogleToken{}.Marshal(f.token)
+   if err != nil {
+      return err
+   }
+   os.Mkdir(f.home, os.ModePerm)
+   return os.WriteFile(f.home + "/token.txt", data, os.ModePerm)
+}
+
+func (f *flags) do_checkin() error {
+   if f.leanback {
+      play.Device.Feature = append(play.Device.Feature, play.Leanback)
+   }
+   data, err := play.GoogleCheckin{}.Marshal(&play.Device)
+   if err != nil {
+      return err
+   }
+   return os.WriteFile(f.device_path(), data, os.ModePerm)
+}
+
+func (f *flags) do_sync() error {
+   data, err := os.ReadFile(f.device_path())
+   if err != nil {
+      return err
+   }
+   var checkin play.GoogleCheckin
+   err = checkin.Unmarshal(data)
+   if err != nil {
+      return err
+   }
+   if f.leanback {
+      play.Device.Feature = append(play.Device.Feature, play.Leanback)
+   }
+   return play.Device.Sync(checkin)
 }
