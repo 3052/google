@@ -83,9 +83,10 @@ you are interested in paid support, contact me
 
 <dl>
    <dt>email</dt>
-      <dd>srpen6@gmail.com</dd>
-   <dt>Discord</dt>
-      <dd>srpen6</dd>
+      <dd>spen@protonmail.com</dd>
+   <dt>Discord username</dt>
+      <dd>10308</dd>
+   <dt>Discord invite</dt>
       <dd>https://discord.com/invite/rMFzDRQhSx</dd>
    <dt>PayPal</dt>
       <dd>https://paypal.com/donate?hosted_button_id=UEJBQQTU3VYDY</dd>
