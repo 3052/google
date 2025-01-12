@@ -10,6 +10,14 @@ import (
    "strconv"
 )
 
+// com.roku.web.trc
+const Leanback = "android.software.leanback"
+
+// the device actually uses 0x30000, but some apps require a higher version:
+// com.netflix.ninja
+// so lets lie for now
+const gl_es_version = 0x30002
+
 var Device = GoogleDevice{
    Feature: []string{
       // app.source.getcontact
@@ -29,6 +37,8 @@ var Device = GoogleDevice{
       "android.hardware.wifi",
       // com.madhead.tos.zh
       "android.hardware.sensor.accelerometer",
+      // com.netflix.ninja
+      "nrdp.modelgroup",
       // com.pinterest
       "android.hardware.camera",
       "android.hardware.location",
@@ -60,14 +70,6 @@ var Device = GoogleDevice{
       "GL_KHR_texture_compression_astc_ldr",
    },
 }
-
-// com.roku.web.trc
-const Leanback = "android.software.leanback"
-
-// the device actually uses 0x30000, but some apps require a higher version:
-// com.axis.drawingdesk.v3
-// so lets lie for now
-const gl_es_version = 0x30001
 
 func user_agent(req *http.Request, single bool) {
    // `sdk` is needed for `/fdfe/delivery`
