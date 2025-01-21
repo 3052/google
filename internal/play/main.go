@@ -2,13 +2,21 @@ package main
 
 import (
    "41.neocities.org/google/play"
-   "41.neocities.org/text"
    "flag"
    "fmt"
+   "log"
+   "net/http"
    "os"
    "path/filepath"
    "strings"
 )
+
+func (transport) RoundTrip(req *http.Request) (*http.Response, error) {
+   log.Print(req.URL)
+   return http.DefaultTransport.RoundTrip(req)
+}
+
+type transport struct{}
 
 func main() {
    var f flags
@@ -30,7 +38,7 @@ func main() {
    )
    flag.Uint64Var(&f.app.Version, "v", 0, "version code")
    flag.Parse()
-   text.Transport{}.Set(true)
+   http.DefaultClient.Transport = transport{}
    switch {
    case f.app.Id != "":
       switch {

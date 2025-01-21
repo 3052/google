@@ -1,6 +1,6 @@
 41.neocities.org/protobuf v1.4.1 h1:Y1/Prbg/lNRjWeGhpkDa1IxjbcYuCzX8oiuOGHhzKEs=
 41.neocities.org/protobuf v1.4.1/go.mod h1:IHtGh5d1ujJcJczvVJ70V3JRkUJc252uaNFkht2Il7Q=
-41.neocities.org/text v1.3.5 h1:0PwqWXKIgJghFO0Ft21Dd+esyThTwwBgmO0H+zWHgrQ=
-41.neocities.org/text v1.3.5/go.mod h1:0y7K0Lgi+FZD0UwnyS5+G4njXypzm/b98GU52s32KH0=
+41.neocities.org/text v1.3.6 h1:pq1ek3TnawxsRusSE2Y5C6X9Fr2B/OKSwBk99wEZev8=
+41.neocities.org/text v1.3.6/go.mod h1:0y7K0Lgi+FZD0UwnyS5+G4njXypzm/b98GU52s32KH0=
 google.golang.org/protobuf v1.36.3 h1:82DV7MYdb8anAVi3qge1wSnMDrnKK7ebr+I0hHRN1BU=
 google.golang.org/protobuf v1.36.3/go.mod h1:9fA7Ob0pmnwhb644+1+CVWFRbNajQ6iRojtC/QF5bRE=
