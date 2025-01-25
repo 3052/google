@@ -2,7 +2,7 @@ package main
 
 import (
    "41.neocities.org/google/play"
-   "41.neocities.org/text"
+   "41.neocities.org/log"
    "net/http"
    "os"
    "strings"
@@ -108,7 +108,7 @@ func download(address, name string) error {
       return err
    }
    defer resp.Body.Close()
-   var meter text.ProgressMeter
+   var meter log.ProgressMeter
    meter.Set(1)
    _, err = dst.ReadFrom(meter.Reader(resp))
    if err != nil {
