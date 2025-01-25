@@ -2,7 +2,7 @@ package play
 
 import (
    "41.neocities.org/protobuf"
-   "41.neocities.org/text"
+   "41.neocities.org/x/strconv"
    "errors"
    "fmt"
    "io"
@@ -152,11 +152,11 @@ func (g GoogleDetails) String() string {
    data = fmt.Appendln(data, "details[13][1][82][1][1] =", g.field_13_1_82_1_1())
    data = fmt.Appendln(data, "details[15][18] =", g.field_15_18())
    data = fmt.Appendln(
-      data, "downloads =", text.Cardinal(g.Downloads()),
+      data, "downloads =", strconv.Cardinal(g.Downloads()),
    )
    data = fmt.Appendln(data, "name =", g.Name())
    data = fmt.Appendln(
-      data, "size =", text.Size(g.size()),
+      data, "size =", strconv.Size(g.size()),
    )
    data = fmt.Append(data, "version code = ", g.version_code())
    return string(data)

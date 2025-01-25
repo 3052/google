@@ -2,11 +2,31 @@ package main
 
 import (
    "41.neocities.org/google/play"
-   "41.neocities.org/text"
    "net/http"
    "os"
    "strings"
+   xhttp "41.neocities.org/x/http"
 )
+
+func download(address, name string) error {
+   file, err := os.Create(name)
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+   resp, err := http.Get(address)
+   if err != nil {
+      return err
+   }
+   defer resp.Body.Close()
+   var progress xhttp.ProgressBytes
+   progress.Reset(resp)
+   _, err = file.ReadFrom(&progress)
+   if err != nil {
+      return err
+   }
+   return nil
+}
 
 func (f *flags) do_delivery() error {
    var checkin play.GoogleCheckin
@@ -95,26 +115,6 @@ func (f *flags) client(checkin *play.GoogleCheckin) (*play.GoogleAuth, error) {
       return nil, err
    }
    return auth, nil
-}
-
-func download(address, name string) error {
-   dst, err := os.Create(name)
-   if err != nil {
-      return err
-   }
-   defer dst.Close()
-   resp, err := http.Get(address)
-   if err != nil {
-      return err
-   }
-   defer resp.Body.Close()
-   var meter text.ProgressMeter
-   meter.Set(1)
-   _, err = dst.ReadFrom(meter.Reader(resp))
-   if err != nil {
-      return err
-   }
-   return nil
 }
 
 func (f *flags) do_details() (*play.GoogleDetails, error) {

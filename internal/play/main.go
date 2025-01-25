@@ -5,20 +5,16 @@ import (
    "flag"
    "fmt"
    "log"
-   "net/http"
    "os"
+   "net/http"
    "path/filepath"
    "strings"
+   xhttp "41.neocities.org/x/http"
 )
 
-func (transport) RoundTrip(req *http.Request) (*http.Response, error) {
-   log.Print(req.URL)
-   return http.DefaultTransport.RoundTrip(req)
-}
-
-type transport struct{}
-
 func main() {
+   http.DefaultClient.Transport = &xhttp.Transport{}
+   log.SetFlags(log.Ltime)
    var f flags
    err := f.New()
    if err != nil {
@@ -38,7 +34,6 @@ func main() {
    )
    flag.Uint64Var(&f.app.Version, "v", 0, "version code")
    flag.Parse()
-   http.DefaultClient.Transport = transport{}
    switch {
    case f.app.Id != "":
       switch {
