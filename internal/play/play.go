@@ -20,7 +20,7 @@ func download(address, name string) error {
    }
    defer resp.Body.Close()
    var progress xhttp.ProgressBytes
-   progress.Reset(resp)
+   progress.Set(resp)
    _, err = file.ReadFrom(&progress)
    if err != nil {
       return err

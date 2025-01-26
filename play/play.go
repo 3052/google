@@ -47,6 +47,8 @@ var Device = GoogleDevice{
       "android.hardware.screen.landscape",
       // com.sygic.aura
       "android.hardware.location.network",
+      // com.wakdev.wdnfc
+      "android.hardware.nfc",
       // com.xiaomi.smarthome
       "android.hardware.bluetooth",
       "android.hardware.bluetooth_le",

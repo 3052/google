@@ -2,18 +2,17 @@ package main
 
 import (
    "41.neocities.org/google/play"
+   "41.neocities.org/x/http"
    "flag"
    "fmt"
    "log"
    "os"
-   "net/http"
    "path/filepath"
    "strings"
-   xhttp "41.neocities.org/x/http"
 )
 
 func main() {
-   http.DefaultClient.Transport = &xhttp.Transport{}
+   http.Transport{}.Set()
    log.SetFlags(log.Ltime)
    var f flags
    err := f.New()
