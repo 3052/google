@@ -54,9 +54,88 @@ func compress_gzip(in []byte) ([]byte, error) {
    return out.Bytes(), nil
 }
 
-///
+func (a *App) Obb(value uint64) string {
+   var data []byte
+   if value >= 1 {
+      data = append(data, "patch."...)
+   } else {
+      data = append(data, "main."...)
+   }
+   data = strconv.AppendUint(data, a.Version, 10)
+   data = append(data, '.')
+   data = append(data, a.Id...)
+   data = append(data, ".obb"...)
+   return string(data)
+}
 
-var Device = GoogleDevice{
+// developer.android.com/ndk/guides/abis
+var Abis = []string{
+   // com.google.android.youtube
+   "x86",
+   "x86_64",
+   // com.sygic.aura
+   "armeabi-v7a",
+   // com.kakaogames.twodin
+   "arm64-v8a",
+}
+
+func x_ps_rh(req *http.Request, check GoogleCheckin) error {
+   id := strconv.FormatUint(check.field_7(), 10)
+   now := strconv.FormatInt(time.Now().UnixMicro(), 10)
+   message := protobuf.Message{
+      1: {protobuf.Message{
+         1: {protobuf.Message{
+            3: {protobuf.Message{
+               1: {protobuf.Bytes(id)},
+               2: {protobuf.Message{
+                  1: {protobuf.Bytes(now)},
+               }},
+            }},
+         }},
+      }},
+   }
+   data, err := compress_gzip(message.Marshal())
+   if err != nil {
+      return err
+   }
+   req.Header.Set("x-ps-rh", base64.URLEncoding.EncodeToString(data))
+   return nil
+}
+
+func x_dfe_device_id(req *http.Request, check GoogleCheckin) {
+   req.Header.Set("x-dfe-device-id", strconv.FormatUint(check.field_7(), 16))
+}
+
+func authorization(req *http.Request, auth GoogleAuth) {
+   req.Header.Set("authorization", "Bearer "+auth.auth())
+}
+
+func (a *App) Apk(value string) string {
+   data := []byte(a.Id)
+   data = append(data, '-')
+   if value != "" {
+      data = append(data, value...)
+      data = append(data, '-')
+   }
+   data = strconv.AppendUint(data, a.Version, 10)
+   data = append(data, ".apk"...)
+   return string(data)
+}
+
+// play.google.com/store/apps/details?id=com.google.android.apps.youtube.unplugged
+type App struct {
+   Id      string
+   Version uint64
+}
+
+type Device struct {
+   Abi     string
+   Feature []string
+   Library []string
+   Texture []string
+}
+
+var Device0 = Device{
    Feature: []string{
       // app.source.getcontact
       "android.hardware.location.gps",
@@ -109,85 +188,4 @@ var Device = GoogleDevice{
       // com.kakaogames.twodin
       "GL_KHR_texture_compression_astc_ldr",
    },
-}
-
-type GoogleDevice struct {
-   Abi     string
-   Feature []string
-   Library []string
-   Texture []string
-}
-
-func authorization(req *http.Request, auth GoogleAuth) {
-   req.Header.Set("authorization", "Bearer "+auth.auth())
-}
-
-func (s *StoreApp) Apk(value string) string {
-   data := []byte(s.Id)
-   data = append(data, '-')
-   if value != "" {
-      data = append(data, value...)
-      data = append(data, '-')
-   }
-   data = strconv.AppendUint(data, s.Version, 10)
-   data = append(data, ".apk"...)
-   return string(data)
-}
-
-func (s *StoreApp) Obb(value uint64) string {
-   var data []byte
-   if value >= 1 {
-      data = append(data, "patch."...)
-   } else {
-      data = append(data, "main."...)
-   }
-   data = strconv.AppendUint(data, s.Version, 10)
-   data = append(data, '.')
-   data = append(data, s.Id...)
-   data = append(data, ".obb"...)
-   return string(data)
-}
-
-// play.google.com/store/apps/details?id=com.google.android.apps.youtube.unplugged
-type StoreApp struct {
-   Id      string
-   Version uint64
-}
-
-func x_dfe_device_id(req *http.Request, check GoogleCheckin) {
-   req.Header.Set("x-dfe-device-id", strconv.FormatUint(check.field_7(), 16))
-}
-
-func x_ps_rh(req *http.Request, check GoogleCheckin) error {
-   id := strconv.FormatUint(check.field_7(), 10)
-   now := strconv.FormatInt(time.Now().UnixMicro(), 10)
-   message := protobuf.Message{
-      1: {protobuf.Message{
-         1: {protobuf.Message{
-            3: {protobuf.Message{
-               1: {protobuf.Bytes(id)},
-               2: {protobuf.Message{
-                  1: {protobuf.Bytes(now)},
-               }},
-            }},
-         }},
-      }},
-   }
-   data, err := compress_gzip(message.Marshal())
-   if err != nil {
-      return err
-   }
-   req.Header.Set("x-ps-rh", base64.URLEncoding.EncodeToString(data))
-   return nil
-}
-
-// developer.android.com/ndk/guides/abis
-var Abis = []string{
-   // com.google.android.youtube
-   "x86",
-   "x86_64",
-   // com.sygic.aura
-   "armeabi-v7a",
-   // com.kakaogames.twodin
-   "arm64-v8a",
 }

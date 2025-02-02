@@ -8,7 +8,7 @@ import (
    "net/http"
 )
 
-func (GoogleCheckin) Marshal(device *GoogleDevice) ([]byte, error) {
+func (GoogleCheckin) Marshal(d *Device) ([]byte, error) {
    message := protobuf.Message{}
    message.Add(4, func(m protobuf.Message) {
       m.Add(1, func(m protobuf.Message) {
@@ -25,14 +25,14 @@ func (GoogleCheckin) Marshal(device *GoogleDevice) ([]byte, error) {
       m.AddVarint(6, 1)
       m.AddVarint(7, 420)
       m.AddVarint(8, gl_es_version)
-      for _, library := range device.Library {
+      for _, library := range d.Library {
          m.AddBytes(9, []byte(library))
       }
-      m.AddBytes(11, []byte(device.Abi))
-      for _, texture := range device.Texture {
+      m.AddBytes(11, []byte(d.Abi))
+      for _, texture := range d.Texture {
          m.AddBytes(15, []byte(texture))
       }
-      for _, feature := range device.Feature {
+      for _, feature := range d.Feature {
          // this line needs to be in the loop:
          m.Add(26, func(m protobuf.Message) {
             m.AddBytes(1, []byte(feature))

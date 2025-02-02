@@ -10,7 +10,7 @@ import (
 )
 
 func (g GoogleAuth) Delivery(
-   check GoogleCheckin, app *StoreApp, single bool,
+   check GoogleCheckin, app0 *App, single bool,
 ) (*GoogleDelivery, error) {
    req, err := http.NewRequest("", "https://android.clients.google.com", nil)
    if err != nil {
@@ -18,8 +18,8 @@ func (g GoogleAuth) Delivery(
    }
    req.URL.Path = "/fdfe/delivery"
    req.URL.RawQuery = url.Values{
-      "doc": {app.Id},
-      "vc":  {strconv.FormatUint(app.Version, 10)},
+      "doc": {app0.Id},
+      "vc":  {strconv.FormatUint(app0.Version, 10)},
    }.Encode()
    authorization(req, g)
    user_agent(req, single)

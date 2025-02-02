@@ -7,26 +7,26 @@ import (
    "net/http"
 )
 
-func (g *GoogleDevice) Sync(check GoogleCheckin) error {
+func (d *Device) Sync(check GoogleCheckin) error {
    message := protobuf.Message{}
    message.Add(1, func(m protobuf.Message) {
       m.Add(10, func(m protobuf.Message) {
-         for _, value := range g.Feature {
+         for _, value := range d.Feature {
             m.Add(1, func(m protobuf.Message) {
                m.AddBytes(1, []byte(value))
             })
          }
-         for _, value := range g.Library {
+         for _, value := range d.Library {
             m.AddBytes(2, []byte(value))
          }
-         for _, value := range g.Texture {
+         for _, value := range d.Texture {
             m.AddBytes(4, []byte(value))
          }
       })
    })
    message.Add(1, func(m protobuf.Message) {
       m.Add(15, func(m protobuf.Message) {
-         m.AddBytes(4, []byte(g.Abi))
+         m.AddBytes(4, []byte(d.Abi))
       })
    })
    message.Add(1, func(m protobuf.Message) {

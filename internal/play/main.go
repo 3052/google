@@ -74,14 +74,14 @@ func main() {
 }
 
 type flags struct {
-   acquire bool
-   app play.StoreApp
-   checkin bool
-   home string
+   acquire  bool
+   app      play.StoreApp
+   checkin  bool
+   home     string
    leanback bool
-   single bool
-   sync bool
-   token string
+   single   bool
+   sync     bool
+   token    string
 }
 
 func (f *flags) New() error {

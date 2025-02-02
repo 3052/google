@@ -2,10 +2,10 @@ package main
 
 import (
    "41.neocities.org/google/play"
+   xhttp "41.neocities.org/x/http"
    "net/http"
    "os"
    "strings"
-   xhttp "41.neocities.org/x/http"
 )
 
 func download(address, name string) error {
@@ -131,7 +131,7 @@ func (f *flags) do_auth() error {
       return err
    }
    os.Mkdir(f.home, os.ModePerm)
-   return os.WriteFile(f.home + "/token.txt", data, os.ModePerm)
+   return os.WriteFile(f.home+"/token.txt", data, os.ModePerm)
 }
 
 func (f *flags) do_checkin() error {
