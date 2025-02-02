@@ -31,7 +31,7 @@ type acquire_error struct {
    m protobuf.Message
 }
 
-func (g GoogleAuth) Acquire(checkin GoogleCheckin, id string) error {
+func (a Auth) Acquire(check Checkin, id string) error {
    message := protobuf.Message{
       1: {protobuf.Message{
          1: {protobuf.Message{
@@ -50,13 +50,13 @@ func (g GoogleAuth) Acquire(checkin GoogleCheckin, id string) error {
    if err != nil {
       return err
    }
-   authorization(req, g)
-   x_dfe_device_id(req, checkin)
+   authorization(req, a)
+   x_dfe_device_id(req, check)
    // with a new device, this needs to be included in the first request to
    // /fdfe/acquire, or you get:
    // Please open my apps to establish a connection with the server.
    // on following requests you can omit it
-   err = x_ps_rh(req, checkin)
+   err = x_ps_rh(req, check)
    if err != nil {
       return err
    }
@@ -66,9 +66,9 @@ func (g GoogleAuth) Acquire(checkin GoogleCheckin, id string) error {
    }
    defer resp.Body.Close()
    if resp.StatusCode != http.StatusOK {
-      var b bytes.Buffer
-      resp.Write(&b)
-      return errors.New(b.String())
+      var data bytes.Buffer
+      resp.Write(&data)
+      return errors.New(data.String())
    }
    data, err := io.ReadAll(resp.Body)
    if err != nil {

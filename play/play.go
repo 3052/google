@@ -10,6 +10,10 @@ import (
    "strconv"
 )
 
+func authorization(req *http.Request, auth0 Auth) {
+   req.Header.Set("authorization", "Bearer "+auth0.auth())
+}
+
 // com.roku.web.trc
 const Leanback = "android.software.leanback"
 
@@ -79,7 +83,7 @@ var Abis = []string{
    "arm64-v8a",
 }
 
-func x_ps_rh(req *http.Request, check GoogleCheckin) error {
+func x_ps_rh(req *http.Request, check Checkin) error {
    id := strconv.FormatUint(check.field_7(), 10)
    now := strconv.FormatInt(time.Now().UnixMicro(), 10)
    message := protobuf.Message{
@@ -102,12 +106,8 @@ func x_ps_rh(req *http.Request, check GoogleCheckin) error {
    return nil
 }
 
-func x_dfe_device_id(req *http.Request, check GoogleCheckin) {
+func x_dfe_device_id(req *http.Request, check Checkin) {
    req.Header.Set("x-dfe-device-id", strconv.FormatUint(check.field_7(), 16))
-}
-
-func authorization(req *http.Request, auth GoogleAuth) {
-   req.Header.Set("authorization", "Bearer "+auth.auth())
 }
 
 func (a *App) Apk(value string) string {

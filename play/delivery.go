@@ -9,19 +9,16 @@ import (
    "strconv"
 )
 
-func (g GoogleAuth) Delivery(
-   check GoogleCheckin, app0 *App, single bool,
-) (*GoogleDelivery, error) {
-   req, err := http.NewRequest("", "https://android.clients.google.com", nil)
-   if err != nil {
-      return nil, err
-   }
+func (a Auth) Delivery(
+   check Checkin, app0 *App, single bool,
+) (*Delivery, error) {
+   req, _ := http.NewRequest("", "https://android.clients.google.com", nil)
    req.URL.Path = "/fdfe/delivery"
    req.URL.RawQuery = url.Values{
       "doc": {app0.Id},
       "vc":  {strconv.FormatUint(app0.Version, 10)},
    }.Encode()
-   authorization(req, g)
+   authorization(req, a)
    user_agent(req, single)
    x_dfe_device_id(req, check)
    resp, err := http.DefaultClient.Do(req)
@@ -50,15 +47,15 @@ func (g GoogleAuth) Delivery(
       return nil, errors.New("acquire")
    }
    message, _ = message.Get(2)()
-   return &GoogleDelivery{message}, nil
+   return &Delivery{message}, nil
 }
 
-func (g GoogleDelivery) Url() string {
-   value, _ := g.Message.GetBytes(3)()
+func (d Delivery) Url() string {
+   value, _ := d.Message.GetBytes(3)()
    return string(value)
 }
 
-type GoogleDelivery struct {
+type Delivery struct {
    Message protobuf.Message
 }
 
@@ -76,6 +73,10 @@ type Apk struct {
    Message protobuf.Message
 }
 
+type Obb struct {
+   Message protobuf.Message
+}
+
 func (o Obb) Field1() uint64 {
    value, _ := o.Message.GetVarint(1)()
    return uint64(value)
@@ -86,20 +87,16 @@ func (o Obb) Url() string {
    return string(value)
 }
 
-type Obb struct {
-   Message protobuf.Message
-}
-
-func (g GoogleDelivery) Obb() func() (Obb, bool) {
-   values := g.Message.Get(4)
+func (d Delivery) Obb() func() (Obb, bool) {
+   values := d.Message.Get(4)
    return func() (Obb, bool) {
       value, ok := values()
       return Obb{value}, ok
    }
 }
 
-func (g GoogleDelivery) Apk() func() (Apk, bool) {
-   values := g.Message.Get(15)
+func (d Delivery) Apk() func() (Apk, bool) {
+   values := d.Message.Get(15)
    return func() (Apk, bool) {
       value, ok := values()
       return Apk{value}, ok

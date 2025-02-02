@@ -10,21 +10,25 @@ import (
 
 type Values map[string]string
 
-func (v Values) Set(query string) error {
-   for query != "" {
+func (v Values) Set(data string) error {
+   for data != "" {
       var key string
-      key, query, _ = strings.Cut(query, "\n")
+      key, data, _ = strings.Cut(data, "\n")
       key, value, _ := strings.Cut(key, "=")
       v[key] = value
    }
    return nil
 }
 
-func (GoogleToken) Marshal(token string) ([]byte, error) {
+type Token struct {
+   Values Values
+}
+
+func (Token) Marshal(oauth_token string) ([]byte, error) {
    resp, err := http.PostForm(
       "https://android.googleapis.com/auth", url.Values{
          "ACCESS_TOKEN": {"1"},
-         "Token":        {token},
+         "Token":        {oauth_token},
          "service":      {"ac2dm"},
       },
    )
@@ -33,35 +37,35 @@ func (GoogleToken) Marshal(token string) ([]byte, error) {
    }
    defer resp.Body.Close()
    if resp.StatusCode != http.StatusOK {
-      var b strings.Builder
-      resp.Write(&b)
-      return nil, errors.New(b.String())
+      var data strings.Builder
+      resp.Write(&data)
+      return nil, errors.New(data.String())
    }
    return io.ReadAll(resp.Body)
 }
 
-type GoogleToken struct {
-   Values Values
-}
-
-type GoogleAuth struct {
-   Values Values
-}
-
-func (g *GoogleToken) Unmarshal(data []byte) error {
-   g.Values = Values{}
-   g.Values.Set(string(data))
+func (t *Token) Unmarshal(data []byte) error {
+   t.Values = Values{}
+   t.Values.Set(string(data))
    return nil
 }
 
-func (g GoogleToken) token() string {
-   return g.Values["Token"]
+func (a Auth) auth() string {
+   return a.Values["Auth"]
 }
 
-func (g GoogleToken) Auth() (*GoogleAuth, error) {
+func (t Token) token() string {
+   return t.Values["Token"]
+}
+
+type Auth struct {
+   Values Values
+}
+
+func (t Token) Auth() (*Auth, error) {
    resp, err := http.PostForm(
       "https://android.googleapis.com/auth", url.Values{
-         "Token":      {g.token()},
+         "Token":      {t.token()},
          "app":        {"com.android.vending"},
          "client_sig": {"38918a453d07199354f8b19af05ec6562ced5788"},
          "service":    {"oauth2:https://www.googleapis.com/auth/googleplay"},
@@ -72,20 +76,15 @@ func (g GoogleToken) Auth() (*GoogleAuth, error) {
    }
    defer resp.Body.Close()
    if resp.StatusCode != http.StatusOK {
-      var b strings.Builder
-      resp.Write(&b)
-      return nil, errors.New(b.String())
+      var data strings.Builder
+      resp.Write(&data)
+      return nil, errors.New(data.String())
    }
    data, err := io.ReadAll(resp.Body)
    if err != nil {
       return nil, err
    }
-   var auth GoogleAuth
-   auth.Values = Values{}
-   auth.Values.Set(string(data))
-   return &auth, nil
-}
-
-func (g GoogleAuth) auth() string {
-   return g.Values["Auth"]
+   value := Values{}
+   value.Set(string(data))
+   return &Auth{value}, nil
 }
