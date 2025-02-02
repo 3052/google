@@ -10,7 +10,7 @@ import (
 
 func main() {
    var f struct {
-      name string
+      name    string
       verbose bool
    }
    flag.StringVar(&f.name, "i", "", "input file")
@@ -29,13 +29,13 @@ func main() {
       })
       for _, line := range lines {
          if f.verbose ||
-         strings.HasPrefix(line, "  uses-feature:") ||
-         strings.HasPrefix(line, "  uses-gl-es:") ||
-         strings.HasPrefix(line, "native-code:") ||
-         strings.HasPrefix(line, "package:") ||
-         strings.HasPrefix(line, "sdkVersion:") ||
-         strings.HasPrefix(line, "supports-gl-texture:") ||
-         strings.HasPrefix(line, "uses-library:") {
+            strings.HasPrefix(line, "  uses-feature:") ||
+            strings.HasPrefix(line, "  uses-gl-es:") ||
+            strings.HasPrefix(line, "native-code:") ||
+            strings.HasPrefix(line, "package:") ||
+            strings.HasPrefix(line, "sdkVersion:") ||
+            strings.HasPrefix(line, "supports-gl-texture:") ||
+            strings.HasPrefix(line, "uses-library:") {
             fmt.Println(line)
          }
       }

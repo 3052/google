@@ -6,8 +6,8 @@ import (
    "compress/gzip"
    "encoding/base64"
    "net/http"
-   "time"
    "strconv"
+   "time"
 )
 
 func authorization(req *http.Request, auth0 Auth) {

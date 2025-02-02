@@ -2,47 +2,23 @@ package main
 
 import (
    "41.neocities.org/google/play"
+   xhttp "41.neocities.org/x/http"
    "net/http"
    "os"
    "strings"
-   xhttp "41.neocities.org/x/http"
 )
 
-func (f *flags) client(checkin *play.GoogleCheckin) (*play.GoogleAuth, error) {
-   data, err := os.ReadFile(f.home + "/token.txt")
-   if err != nil {
-      return nil, err
-   }
-   var token play.GoogleToken
-   err = token.Unmarshal(data)
-   if err != nil {
-      return nil, err
-   }
-   auth, err := token.Auth()
-   if err != nil {
-      return nil, err
-   }
-   data, err = os.ReadFile(f.device_path())
-   if err != nil {
-      return nil, err
-   }
-   err = checkin.Unmarshal(data)
-   if err != nil {
-      return nil, err
-   }
-   return auth, nil
-}
-
-func (f *flags) do_details() (*play.GoogleDetails, error) {
-   var checkin play.GoogleCheckin
+func (f *flags) do_details() (*play.Details, error) {
+   var checkin play.Checkin
    auth, err := f.client(&checkin)
    if err != nil {
       return nil, err
    }
    return auth.Details(checkin, f.app.Id, f.single)
 }
+
 func (f *flags) do_auth() error {
-   data, err := play.GoogleToken{}.Marshal(f.token)
+   data, err := play.Token{}.Marshal(f.token)
    if err != nil {
       return err
    }
@@ -56,7 +32,7 @@ func (f *flags) do_checkin() error {
          play.DefaultDevice.Feature, play.Leanback,
       )
    }
-   data, err := play.GoogleCheckin{}.Marshal(&play.DefaultDevice)
+   data, err := play.Checkin{}.Marshal(&play.DefaultDevice)
    if err != nil {
       return err
    }
@@ -68,7 +44,7 @@ func (f *flags) do_sync() error {
    if err != nil {
       return err
    }
-   var checkin play.GoogleCheckin
+   var checkin play.Checkin
    err = checkin.Unmarshal(data)
    if err != nil {
       return err
@@ -102,7 +78,7 @@ func download(address, name string) error {
 }
 
 func (f *flags) do_delivery() error {
-   var checkin play.GoogleCheckin
+   var checkin play.Checkin
    auth, err := f.client(&checkin)
    if err != nil {
       return err
@@ -145,13 +121,14 @@ func (f *flags) do_delivery() error {
 }
 
 func (f *flags) do_acquire() error {
-   var checkin play.GoogleCheckin
+   var checkin play.Checkin
    auth, err := f.client(&checkin)
    if err != nil {
       return err
    }
    return auth.Acquire(checkin, f.app.Id)
 }
+
 func (f *flags) device_path() string {
    var data strings.Builder
    data.WriteString(f.home)
@@ -162,4 +139,28 @@ func (f *flags) device_path() string {
    }
    data.WriteString(".txt")
    return data.String()
+}
+func (f *flags) client(checkin *play.Checkin) (*play.Auth, error) {
+   data, err := os.ReadFile(f.home + "/token.txt")
+   if err != nil {
+      return nil, err
+   }
+   var token play.Token
+   err = token.Unmarshal(data)
+   if err != nil {
+      return nil, err
+   }
+   auth, err := token.Auth()
+   if err != nil {
+      return nil, err
+   }
+   data, err = os.ReadFile(f.device_path())
+   if err != nil {
+      return nil, err
+   }
+   err = checkin.Unmarshal(data)
+   if err != nil {
+      return nil, err
+   }
+   return auth, nil
 }
