@@ -18,6 +18,44 @@ const Leanback = "android.software.leanback"
 // so lets lie for now
 const gl_es_version = 0x30002
 
+func user_agent(req *http.Request, single bool) {
+   // `sdk` is needed for `/fdfe/delivery`
+   data := []byte("Android-Finsky (sdk=")
+   // with `/fdfe/acquire`, requests will be rejected with certain apps, if the
+   // device was created with too low a version here:
+   data = strconv.AppendInt(data, android_api, 10)
+   data = append(data, ",versionCode="...)
+   // for multiple APKs just tell the truth. for single APK we have to lie.
+   // below value is the last version that works.
+   if single {
+      data = strconv.AppendInt(data, 80919999, 10)
+   } else {
+      data = strconv.AppendInt(data, google_play_store, 10)
+   }
+   data = append(data, ')')
+   req.Header.Set("user-agent", string(data))
+}
+
+const google_play_store = 82941300
+
+const android_api = 31
+
+func compress_gzip(in []byte) ([]byte, error) {
+   var out bytes.Buffer
+   w := gzip.NewWriter(&out)
+   _, err := w.Write(in)
+   if err != nil {
+      return nil, err
+   }
+   err = w.Close()
+   if err != nil {
+      return nil, err
+   }
+   return out.Bytes(), nil
+}
+
+///
+
 var Device = GoogleDevice{
    Feature: []string{
       // app.source.getcontact
@@ -71,42 +109,6 @@ var Device = GoogleDevice{
       // com.kakaogames.twodin
       "GL_KHR_texture_compression_astc_ldr",
    },
-}
-
-func user_agent(req *http.Request, single bool) {
-   // `sdk` is needed for `/fdfe/delivery`
-   data := []byte("Android-Finsky (sdk=")
-   // with `/fdfe/acquire`, requests will be rejected with certain apps, if the
-   // device was created with too low a version here:
-   data = strconv.AppendInt(data, android_api, 10)
-   data = append(data, ",versionCode="...)
-   // for multiple APKs just tell the truth. for single APK we have to lie.
-   // below value is the last version that works.
-   if single {
-      data = strconv.AppendInt(data, 80919999, 10)
-   } else {
-      data = strconv.AppendInt(data, google_play_store, 10)
-   }
-   data = append(data, ')')
-   req.Header.Set("user-agent", string(data))
-}
-
-const google_play_store = 82941300
-
-const android_api = 31
-
-func compress_gzip(in []byte) ([]byte, error) {
-   var out bytes.Buffer
-   w := gzip.NewWriter(&out)
-   _, err := w.Write(in)
-   if err != nil {
-      return nil, err
-   }
-   err = w.Close()
-   if err != nil {
-      return nil, err
-   }
-   return out.Bytes(), nil
 }
 
 type GoogleDevice struct {

@@ -9,7 +9,7 @@ import (
 )
 
 func (a acquire_error) Error() string {
-   var out []byte
+   var data []byte
    messages := a.m.Get(1)
    for {
       message, ok := messages()
@@ -18,13 +18,13 @@ func (a acquire_error) Error() string {
       }
       message, _ = message.Get(10)()
       message, _ = message.Get(1)()
-      in, _ := message.GetBytes(1)()
-      if out != nil {
-         out = append(out, '\n')
+      data1, _ := message.GetBytes(1)()
+      if data != nil {
+         data = append(data, '\n')
       }
-      out = append(out, in...)
+      data = append(data, data1...)
    }
-   return string(out)
+   return string(data)
 }
 
 type acquire_error struct {
