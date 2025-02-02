@@ -2,23 +2,11 @@ package main
 
 import (
    "41.neocities.org/google/play"
-   xhttp "41.neocities.org/x/http"
    "net/http"
    "os"
    "strings"
+   xhttp "41.neocities.org/x/http"
 )
-
-func (f *flags) device_path() string {
-   var data strings.Builder
-   data.WriteString(f.home)
-   data.WriteByte('/')
-   data.WriteString(play.DefaultDevice.Abi)
-   if f.leanback {
-      data.WriteString("-leanback")
-   }
-   data.WriteString(".txt")
-   return data.String()
-}
 
 func (f *flags) client(checkin *play.GoogleCheckin) (*play.GoogleAuth, error) {
    data, err := os.ReadFile(f.home + "/token.txt")
@@ -163,4 +151,15 @@ func (f *flags) do_acquire() error {
       return err
    }
    return auth.Acquire(checkin, f.app.Id)
+}
+func (f *flags) device_path() string {
+   var data strings.Builder
+   data.WriteString(f.home)
+   data.WriteByte('/')
+   data.WriteString(play.DefaultDevice.Abi)
+   if f.leanback {
+      data.WriteString("-leanback")
+   }
+   data.WriteString(".txt")
+   return data.String()
 }

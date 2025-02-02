@@ -44,18 +44,18 @@ const google_play_store = 82941300
 
 const android_api = 31
 
-func compress_gzip(in []byte) ([]byte, error) {
-   var out bytes.Buffer
-   w := gzip.NewWriter(&out)
-   _, err := w.Write(in)
+func compress_gzip(data []byte) ([]byte, error) {
+   var buf bytes.Buffer
+   wc := gzip.NewWriter(&buf)
+   _, err := wc.Write(data)
    if err != nil {
       return nil, err
    }
-   err = w.Close()
+   err = wc.Close()
    if err != nil {
       return nil, err
    }
-   return out.Bytes(), nil
+   return buf.Bytes(), nil
 }
 
 func (a *App) Obb(value uint64) string {

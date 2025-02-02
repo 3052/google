@@ -10,9 +10,7 @@ import (
    "strings"
 )
 
-func (a Auth) Details(
-   check Checkin, doc string, single bool,
-) (*Details, error) {
+func (a Auth) Details(check Checkin, doc string, single bool) (*Details, error) {
    req, _ := http.NewRequest("", "https://android.clients.google.com", nil)
    req.URL.Path = "/fdfe/details"
    req.URL.RawQuery = "doc=" + doc
@@ -25,106 +23,27 @@ func (a Auth) Details(
    }
    defer resp.Body.Close()
    if resp.StatusCode != http.StatusOK {
-      var b strings.Builder
-      resp.Write(&b)
-      return nil, errors.New(b.String())
+      var data strings.Builder
+      resp.Write(&data)
+      return nil, errors.New(data.String())
    }
    data, err := io.ReadAll(resp.Body)
    if err != nil {
       return nil, err
    }
-   value := protobuf.Message{}
-   err = value.Unmarshal(data)
+   message := protobuf.Message{}
+   err = message.Unmarshal(data)
    if err != nil {
       return nil, err
    }
-   value, _ = value.Get(1)()
-   value, _ = value.Get(2)()
-   value, _ = value.Get(4)()
-   return &Details{value}, nil
+   message, _ = message.Get(1)()
+   message, _ = message.Get(2)()
+   message, _ = message.Get(4)()
+   return &Details{message}, nil
 }
 
 type Details struct {
    Message protobuf.Message
-}
-
-func (d Details) field_13_1_17() func() (uint64, bool) {
-   value, _ := d.Message.Get(13)()
-   value, _ = value.Get(1)()
-   values := value.Get(17)
-   return func() (uint64, bool) {
-      value, _ = values()
-      data, ok := value.GetVarint(1)()
-      return uint64(data), ok
-   }
-}
-
-func (d Details) Downloads() uint64 {
-   value, _ := d.Message.Get(13)()
-   value, _ = value.Get(1)()
-   data, _ := value.GetVarint(70)()
-   return uint64(data)
-}
-
-func (d Details) Name() string {
-   data, _ := d.Message.GetBytes(5)()
-   return string(data)
-}
-
-func (d Details) field_8_1() float64 {
-   value, _ := d.Message.Get(8)()
-   data, _ := value.GetVarint(1)()
-   return float64(data) / 1_000_000
-}
-
-func (d Details) field_8_2() string {
-   value, _ := d.Message.Get(8)()
-   data, _ := value.GetBytes(2)()
-   return string(data)
-}
-
-func (d Details) field_13_1_4() string {
-   value, _ := d.Message.Get(13)()
-   value, _ = value.Get(1)()
-   data, _ := value.GetBytes(4)()
-   return string(data)
-}
-
-func (d Details) field_13_1_16() string {
-   value, _ := d.Message.Get(13)()
-   value, _ = value.Get(1)()
-   data, _ := value.GetBytes(16)()
-   return string(data)
-}
-
-func (d Details) field_13_1_82_1_1() string {
-   value, _ := d.Message.Get(13)()
-   value, _ = value.Get(1)()
-   value, _ = value.Get(82)()
-   value, _ = value.Get(1)()
-   data, _ := value.GetBytes(1)()
-   return string(data)
-}
-
-func (d Details) size() uint64 {
-   value, _ := d.Message.Get(13)()
-   value, _ = value.Get(1)()
-   data, _ := value.GetVarint(9)()
-   return uint64(data)
-}
-
-func (d Details) version_code() uint64 {
-   value, _ := d.Message.Get(13)()
-   value, _ = value.Get(1)()
-   data, _ := value.GetVarint(3)()
-   return uint64(data)
-}
-
-// com.google.android.youtube.tvkids
-func (d Details) field_15_18() string {
-   value, _ := d.Message.Get(15)()
-   data, _ := value.GetBytes(18)()
-   return string(data)
 }
 
 func (d Details) String() string {
@@ -133,9 +52,9 @@ func (d Details) String() string {
    b = fmt.Appendln(b, "details[13][1][4] =", d.field_13_1_4())
    b = fmt.Appendln(b, "details[13][1][16] =", d.field_13_1_16())
    b = append(b, "details[13][1][17] ="...)
-   values := d.field_13_1_17()
+   next := d.field_13_1_17()
    for {
-      value, ok := values()
+      value, ok := next()
       if !ok {
          break
       }
@@ -157,4 +76,83 @@ func (d Details) String() string {
    )
    b = fmt.Append(b, "version code = ", d.version_code())
    return string(b)
+}
+
+func (d Details) Name() string {
+   value, _ := d.Message.GetBytes(5)()
+   return string(value)
+}
+
+func (d Details) Downloads() uint64 {
+   m, _ := d.Message.Get(13)()
+   m, _ = m.Get(1)()
+   value, _ := m.GetVarint(70)()
+   return uint64(value)
+}
+
+func (d Details) field_8_1() float64 {
+   m, _ := d.Message.Get(8)()
+   value, _ := m.GetVarint(1)()
+   return float64(value) / 1_000_000
+}
+
+func (d Details) field_8_2() string {
+   m, _ := d.Message.Get(8)()
+   value, _ := m.GetBytes(2)()
+   return string(value)
+}
+
+func (d Details) field_13_1_4() string {
+   m, _ := d.Message.Get(13)()
+   m, _ = m.Get(1)()
+   value, _ := m.GetBytes(4)()
+   return string(value)
+}
+
+func (d Details) field_13_1_16() string {
+   m, _ := d.Message.Get(13)()
+   m, _ = m.Get(1)()
+   value, _ := m.GetBytes(16)()
+   return string(value)
+}
+
+func (d Details) field_13_1_82_1_1() string {
+   m, _ := d.Message.Get(13)()
+   m, _ = m.Get(1)()
+   m, _ = m.Get(82)()
+   m, _ = m.Get(1)()
+   value, _ := m.GetBytes(1)()
+   return string(value)
+}
+
+func (d Details) size() uint64 {
+   m, _ := d.Message.Get(13)()
+   m, _ = m.Get(1)()
+   value, _ := m.GetVarint(9)()
+   return uint64(value)
+}
+
+func (d Details) version_code() uint64 {
+   m, _ := d.Message.Get(13)()
+   m, _ = m.Get(1)()
+   value, _ := m.GetVarint(3)()
+   return uint64(value)
+}
+
+func (d Details) field_13_1_17() func() (uint64, bool) {
+   m, _ := d.Message.Get(13)()
+   m, _ = m.Get(1)()
+   next := m.Get(17)
+   return func() (uint64, bool) {
+      m, _ = next()
+      value, ok := m.GetVarint(1)()
+      return uint64(value), ok
+   }
+}
+
+// com.google.android.youtube.tvkids
+func (d Details) field_15_18() string {
+   m, _ := d.Message.Get(15)()
+   value, _ := m.GetBytes(18)()
+   return string(value)
 }
