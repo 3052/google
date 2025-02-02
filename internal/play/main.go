@@ -11,6 +11,17 @@ import (
    "strings"
 )
 
+type flags struct {
+   acquire  bool
+   checkin  bool
+   home     string
+   leanback bool
+   single   bool
+   sync     bool
+   token    string
+   app      play.App
+}
+
 func main() {
    http.Transport{}.DefaultClient()
    log.SetFlags(log.Ltime)
@@ -21,7 +32,10 @@ func main() {
    }
    flag.BoolVar(&f.acquire, "a", false, "acquire")
    flag.StringVar(
-      &play.Device.Abi, "abi", play.Abis[0], strings.Join(play.Abis[1:], " "),
+      &play.DefaultDevice.Abi,
+      "abi",
+      play.Abis[0],
+      strings.Join(play.Abis[1:], " "),
    )
    flag.BoolVar(&f.checkin, "checkin", false, "checkin request")
    flag.StringVar(&f.app.Id, "i", "", "ID")
@@ -71,17 +85,6 @@ func main() {
    default:
       flag.Usage()
    }
-}
-
-type flags struct {
-   acquire  bool
-   app      play.StoreApp
-   checkin  bool
-   home     string
-   leanback bool
-   single   bool
-   sync     bool
-   token    string
 }
 
 func (f *flags) New() error {

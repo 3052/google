@@ -135,7 +135,7 @@ type Device struct {
    Texture []string
 }
 
-var Device0 = Device{
+var DefaultDevice = Device{
    Feature: []string{
       // app.source.getcontact
       "android.hardware.location.gps",
