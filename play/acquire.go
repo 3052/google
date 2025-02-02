@@ -10,7 +10,7 @@ import (
 
 func (a acquire_error) Error() string {
    var out []byte
-   messages := a.Message.Get(1)
+   messages := a.m.Get(1)
    for {
       message, ok := messages()
       if !ok {
@@ -28,7 +28,7 @@ func (a acquire_error) Error() string {
 }
 
 type acquire_error struct {
-   Message protobuf.Message
+   m protobuf.Message
 }
 
 func (g GoogleAuth) Acquire(checkin GoogleCheckin, id string) error {
