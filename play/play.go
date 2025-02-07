@@ -106,10 +106,6 @@ func x_ps_rh(req *http.Request, check Checkin) error {
    return nil
 }
 
-func x_dfe_device_id(req *http.Request, check Checkin) {
-   req.Header.Set("x-dfe-device-id", strconv.FormatUint(check.field_7(), 16))
-}
-
 func (a *App) Apk(value string) string {
    data := []byte(a.Id)
    data = append(data, '-')
@@ -188,4 +184,8 @@ var DefaultDevice = Device{
       // com.kakaogames.twodin
       "GL_KHR_texture_compression_astc_ldr",
    },
+}
+
+func x_dfe_device_id(req *http.Request, check Checkin) {
+   req.Header.Set("x-dfe-device-id", strconv.FormatUint(check.field_7(), 16))
 }

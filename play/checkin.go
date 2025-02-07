@@ -8,6 +8,18 @@ import (
    "net/http"
 )
 
+func (c *Checkin) Unmarshal(data []byte) error {
+   (*c)[0] = protobuf.Message{}
+   return (*c)[0].Unmarshal(data)
+}
+
+func (c Checkin) field_7() uint64 {
+   value, _ := c[0].GetFixed64(7)()
+   return uint64(value)
+}
+
+type Checkin [1]protobuf.Message
+
 func (Checkin) Marshal(device0 *Device) ([]byte, error) {
    message := protobuf.Message{}
    message.Add(4, func(m protobuf.Message) {
@@ -52,18 +64,4 @@ func (Checkin) Marshal(device0 *Device) ([]byte, error) {
       return nil, errors.New(resp.Status)
    }
    return io.ReadAll(resp.Body)
-}
-
-type Checkin struct {
-   Message protobuf.Message
-}
-
-func (c *Checkin) Unmarshal(data []byte) error {
-   c.Message = protobuf.Message{}
-   return c.Message.Unmarshal(data)
-}
-
-func (c Checkin) field_7() uint64 {
-   value, _ := c.Message.GetFixed64(7)()
-   return uint64(value)
 }

@@ -4,6 +4,7 @@ import (
    "41.neocities.org/protobuf"
    "bytes"
    "errors"
+   "io"
    "net/http"
 )
 
@@ -11,16 +12,16 @@ func (d *Device) Sync(check Checkin) error {
    message := protobuf.Message{}
    message.Add(1, func(m protobuf.Message) {
       m.Add(10, func(m protobuf.Message) {
-         for _, value := range d.Feature {
+         for _, feature := range d.Feature {
             m.Add(1, func(m protobuf.Message) {
-               m.AddBytes(1, []byte(value))
+               m.AddBytes(1, []byte(feature))
             })
          }
-         for _, value := range d.Library {
-            m.AddBytes(2, []byte(value))
+         for _, library := range d.Library {
+            m.AddBytes(2, []byte(library))
          }
-         for _, value := range d.Texture {
-            m.AddBytes(4, []byte(value))
+         for _, texture := range d.Texture {
+            m.AddBytes(4, []byte(texture))
          }
       })
    })
@@ -59,6 +60,10 @@ func (d *Device) Sync(check Checkin) error {
    defer resp.Body.Close()
    if resp.StatusCode != http.StatusOK {
       return errors.New(resp.Status)
+   }
+   _, err = io.Copy(io.Discard, resp.Body)
+   if err != nil {
+      return err
    }
    return nil
 }

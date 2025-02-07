@@ -10,7 +10,7 @@ import (
 
 func (a acquire_error) Error() string {
    var data []byte
-   messages := a.m.Get(1)
+   messages := a[0].Get(1)
    for {
       message, ok := messages()
       if !ok {
@@ -25,10 +25,6 @@ func (a acquire_error) Error() string {
       data = append(data, data1...)
    }
    return string(data)
-}
-
-type acquire_error struct {
-   m protobuf.Message
 }
 
 func (a Auth) Acquire(check Checkin, id string) error {
@@ -89,3 +85,5 @@ func (a Auth) Acquire(check Checkin, id string) error {
    }
    return nil
 }
+
+type acquire_error [1]protobuf.Message

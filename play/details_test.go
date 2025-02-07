@@ -48,7 +48,7 @@ func TestDetails(t *testing.T) {
          t.Fatal("name")
       }
       {
-         message, _ := detail.Message.Get(8)()
+         message, _ := detail[0].Get(8)()
          _, ok := message.GetVarint(1)()
          if !ok {
             t.Fatal("field 8 1")

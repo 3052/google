@@ -20,10 +20,6 @@ func (v Values) Set(data string) error {
    return nil
 }
 
-type Token struct {
-   Values Values
-}
-
 func (Token) Marshal(oauth_token string) ([]byte, error) {
    resp, err := http.PostForm(
       "https://android.googleapis.com/auth", url.Values{
@@ -44,23 +40,23 @@ func (Token) Marshal(oauth_token string) ([]byte, error) {
    return io.ReadAll(resp.Body)
 }
 
-func (t *Token) Unmarshal(data []byte) error {
-   t.Values = Values{}
-   t.Values.Set(string(data))
-   return nil
-}
-
 func (a Auth) auth() string {
-   return a.Values["Auth"]
+   return a[0]["Auth"]
 }
 
 func (t Token) token() string {
-   return t.Values["Token"]
+   return t[0]["Token"]
 }
 
-type Auth struct {
-   Values Values
+func (t *Token) Unmarshal(data []byte) error {
+   (*t)[0] = Values{}
+   (*t)[0].Set(string(data))
+   return nil
 }
+
+type Token [1]Values
+
+type Auth [1]Values
 
 func (t Token) Auth() (*Auth, error) {
    resp, err := http.PostForm(

@@ -2,5 +2,5 @@
 41.neocities.org/protobuf v1.4.1/go.mod h1:IHtGh5d1ujJcJczvVJ70V3JRkUJc252uaNFkht2Il7Q=
 41.neocities.org/x v1.4.5 h1:4PSGA6ZVix6bAakpVx4lr09YuJbk21gF24WXrnGKzrA=
 41.neocities.org/x v1.4.5/go.mod h1:W914QR0V7rkZGunkjXoKFF97FiObrEdozhJj26qo+f0=
-google.golang.org/protobuf v1.36.4 h1:6A3ZDJHn/eNqc1i+IdefRzy/9PokBTPvcqMySR7NNIM=
-google.golang.org/protobuf v1.36.4/go.mod h1:9fA7Ob0pmnwhb644+1+CVWFRbNajQ6iRojtC/QF5bRE=
+google.golang.org/protobuf v1.36.5 h1:tPhr+woSbjfYvY6/GPufUoYizxw1cF/yFoxJ2fmpwlM=
+google.golang.org/protobuf v1.36.5/go.mod h1:9fA7Ob0pmnwhb644+1+CVWFRbNajQ6iRojtC/QF5bRE=

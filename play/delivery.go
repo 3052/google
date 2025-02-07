@@ -9,6 +9,31 @@ import (
    "strconv"
 )
 
+func (d Delivery) Url() string {
+   value, _ := d[0].GetBytes(3)()
+   return string(value)
+}
+
+func (a Apk) Field1() string {
+   value, _ := a[0].GetBytes(1)()
+   return string(value)
+}
+
+func (a Apk) Url() string {
+   value, _ := a[0].GetBytes(5)()
+   return string(value)
+}
+
+func (o Obb) Field1() uint64 {
+   value, _ := o[0].GetVarint(1)()
+   return uint64(value)
+}
+
+func (o Obb) Url() string {
+   value, _ := o[0].GetBytes(4)()
+   return string(value)
+}
+
 func (a Auth) Delivery(
    check Checkin, app0 *App, single bool,
 ) (*Delivery, error) {
@@ -50,55 +75,24 @@ func (a Auth) Delivery(
    return &Delivery{message}, nil
 }
 
-func (d Delivery) Url() string {
-   value, _ := d.Message.GetBytes(3)()
-   return string(value)
-}
+type Delivery [1]protobuf.Message
 
-type Delivery struct {
-   Message protobuf.Message
-}
+type Apk [1]protobuf.Message
 
-func (a Apk) Field1() string {
-   value, _ := a.Message.GetBytes(1)()
-   return string(value)
-}
-
-func (a Apk) Url() string {
-   value, _ := a.Message.GetBytes(5)()
-   return string(value)
-}
-
-type Apk struct {
-   Message protobuf.Message
-}
-
-type Obb struct {
-   Message protobuf.Message
-}
-
-func (o Obb) Field1() uint64 {
-   value, _ := o.Message.GetVarint(1)()
-   return uint64(value)
-}
-
-func (o Obb) Url() string {
-   value, _ := o.Message.GetBytes(4)()
-   return string(value)
-}
+type Obb [1]protobuf.Message
 
 func (d Delivery) Obb() func() (Obb, bool) {
-   values := d.Message.Get(4)
+   next := d[0].Get(4)
    return func() (Obb, bool) {
-      value, ok := values()
-      return Obb{value}, ok
+      message, ok := next()
+      return Obb{message}, ok
    }
 }
 
 func (d Delivery) Apk() func() (Apk, bool) {
-   values := d.Message.Get(15)
+   next := d[0].Get(15)
    return func() (Apk, bool) {
-      value, ok := values()
-      return Apk{value}, ok
+      message, ok := next()
+      return Apk{message}, ok
    }
 }
