@@ -140,6 +140,7 @@ func (f *flags) device_path() string {
    data.WriteString(".txt")
    return data.String()
 }
+
 func (f *flags) client(checkin *play.Checkin) (*play.Auth, error) {
    data, err := os.ReadFile(f.home + "/token.txt")
    if err != nil {
