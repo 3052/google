@@ -8,36 +8,17 @@ import (
    "net/http"
 )
 
-func (a acquire_error) Error() string {
-   var data []byte
-   messages := a[0].Get(1)
-   for {
-      message, ok := messages()
-      if !ok {
-         break
-      }
-      message, _ = message.Get(10)()
-      message, _ = message.Get(1)()
-      data1, _ := message.GetBytes(1)()
-      if data != nil {
-         data = append(data, '\n')
-      }
-      data = append(data, data1...)
-   }
-   return string(data)
-}
-
 func (a Auth) Acquire(check Checkin, id string) error {
    message := protobuf.Message{
       1: {protobuf.Message{
          1: {protobuf.Message{
             1: {protobuf.Bytes(id)},
-            2: {protobuf.Varint(1)},
-            3: {protobuf.Varint(3)},
+            2: {protobuf.Varint{1}},
+            3: {protobuf.Varint{3}},
          }},
-         2: {protobuf.Varint(1)},
+         2: {protobuf.Varint{1}},
       }},
-      13: {protobuf.Varint(1)},
+      13: {protobuf.Varint{1}},
    }
    req, err := http.NewRequest(
       "POST", "https://android.clients.google.com/fdfe/acquire",
@@ -87,3 +68,21 @@ func (a Auth) Acquire(check Checkin, id string) error {
 }
 
 type acquire_error [1]protobuf.Message
+func (a acquire_error) Error() string {
+   var data []byte
+   messages := a[0].Get(1)
+   for {
+      message, ok := messages()
+      if !ok {
+         break
+      }
+      message, _ = message.Get(10)()
+      message, _ = message.Get(1)()
+      data1, _ := message.GetBytes(1)()
+      if data != nil {
+         data = append(data, '\n')
+      }
+      data = append(data, data1...)
+   }
+   return string(data)
+}
