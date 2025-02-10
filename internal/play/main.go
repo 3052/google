@@ -11,20 +11,11 @@ import (
    "strings"
 )
 
-type flags struct {
-   acquire  bool
-   checkin  bool
-   home     string
-   leanback bool
-   single   bool
-   sync     bool
-   token    string
-   app      play.App
-}
-
 func main() {
-   http.Transport{}.DefaultClient()
    log.SetFlags(log.Ltime)
+   var port http.Transport
+   port.ProxyFromEnvironment()
+   port.DefaultClient()
    var f flags
    err := f.New()
    if err != nil {
@@ -95,4 +86,14 @@ func (f *flags) New() error {
    }
    f.home = filepath.ToSlash(f.home) + "/google-play"
    return nil
+}
+type flags struct {
+   acquire  bool
+   checkin  bool
+   home     string
+   leanback bool
+   single   bool
+   sync     bool
+   token    string
+   app      play.App
 }

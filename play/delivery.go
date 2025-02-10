@@ -26,7 +26,7 @@ func (a Apk) Url() string {
 
 func (o Obb) Field1() uint64 {
    value, _ := o[0].GetVarint(1)()
-   return uint64(value)
+   return value[0]
 }
 
 func (o Obb) Url() string {
@@ -65,7 +65,7 @@ func (a Auth) Delivery(
    }
    message, _ = message.Get(1)()
    message, _ = message.Get(21)()
-   switch err, _ := message.GetVarint(1)(); err {
+   switch err, _ := message.GetVarint(1)(); err[0] {
    case 2:
       return nil, errors.New("version")
    case 3:
