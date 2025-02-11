@@ -87,12 +87,12 @@ func x_ps_rh(req *http.Request, check Checkin) error {
    id := strconv.FormatUint(check.field_7(), 10)
    now := strconv.FormatInt(time.Now().UnixMicro(), 10)
    message := protobuf.Message{
-      1: {protobuf.Message{
-         1: {protobuf.Message{
-            3: {protobuf.Message{
-               1: {protobuf.Bytes(id)},
-               2: {protobuf.Message{
-                  1: {protobuf.Bytes(now)},
+      {1, protobuf.Message{
+         {1, protobuf.Message{
+            {3, protobuf.Message{
+               {1, protobuf.Bytes(id)},
+               {2, protobuf.Message{
+                  {1, protobuf.Bytes(now)},
                }},
             }},
          }},

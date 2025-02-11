@@ -26,7 +26,7 @@ func (a Apk) Url() string {
 
 func (o Obb) Field1() uint64 {
    value, _ := o[0].GetVarint(1)()
-   return value[0]
+   return uint64(value)
 }
 
 func (o Obb) Url() string {
@@ -58,21 +58,21 @@ func (a Auth) Delivery(
    if err != nil {
       return nil, err
    }
-   message := protobuf.Message{}
-   err = message.Unmarshal(data)
+   var value protobuf.Message
+   err = value.Unmarshal(data)
    if err != nil {
       return nil, err
    }
-   message, _ = message.Get(1)()
-   message, _ = message.Get(21)()
-   switch err, _ := message.GetVarint(1)(); err[0] {
+   value, _ = value.Get(1)()
+   value, _ = value.Get(21)()
+   switch err, _ := value.GetVarint(1)(); err {
    case 2:
       return nil, errors.New("version")
    case 3:
       return nil, errors.New("acquire")
    }
-   message, _ = message.Get(2)()
-   return &Delivery{message}, nil
+   value, _ = value.Get(2)()
+   return &Delivery{value}, nil
 }
 
 type Delivery [1]protobuf.Message

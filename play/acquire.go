@@ -9,20 +9,20 @@ import (
 )
 
 func (a Auth) Acquire(check Checkin, id string) error {
-   message := protobuf.Message{
-      1: {protobuf.Message{
-         1: {protobuf.Message{
-            1: {protobuf.Bytes(id)},
-            2: {protobuf.Varint{1}},
-            3: {protobuf.Varint{3}},
+   value := protobuf.Message{
+      {1, protobuf.Message{
+         {1, protobuf.Message{
+            {1, protobuf.Bytes(id)},
+            {2, protobuf.Varint(1)},
+            {3, protobuf.Varint(3)},
          }},
-         2: {protobuf.Varint{1}},
+         {2, protobuf.Varint(1)},
       }},
-      13: {protobuf.Varint{1}},
+      {13, protobuf.Varint(1)},
    }
    req, err := http.NewRequest(
       "POST", "https://android.clients.google.com/fdfe/acquire",
-      bytes.NewReader(message.Marshal()),
+      bytes.NewReader(value.Marshal()),
    )
    if err != nil {
       return err
@@ -51,23 +51,24 @@ func (a Auth) Acquire(check Checkin, id string) error {
    if err != nil {
       return err
    }
-   message = protobuf.Message{}
-   err = message.Unmarshal(data)
+   value = nil
+   err = value.Unmarshal(data)
    if err != nil {
       return err
    }
-   message, _ = message.Get(1)()
-   message, _ = message.Get(94)()
-   message, _ = message.Get(1)()
-   message, _ = message.Get(2)()
-   message, ok := message.Get(147291249)()
+   value, _ = value.Get(1)()
+   value, _ = value.Get(94)()
+   value, _ = value.Get(1)()
+   value, _ = value.Get(2)()
+   value, ok := value.Get(147291249)()
    if ok {
-      return acquire_error{message}
+      return acquire_error{value}
    }
    return nil
 }
 
 type acquire_error [1]protobuf.Message
+
 func (a acquire_error) Error() string {
    var data []byte
    messages := a[0].Get(1)

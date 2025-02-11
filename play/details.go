@@ -31,15 +31,15 @@ func (a Auth) Details(check Checkin, doc string, single bool) (*Details, error) 
    if err != nil {
       return nil, err
    }
-   data1 := protobuf.Message{}
-   err = data1.Unmarshal(data)
+   var value protobuf.Message
+   err = value.Unmarshal(data)
    if err != nil {
       return nil, err
    }
-   data1, _ = data1.Get(1)()
-   data1, _ = data1.Get(2)()
-   data1, _ = data1.Get(4)()
-   return &Details{data1}, nil
+   value, _ = value.Get(1)()
+   value, _ = value.Get(2)()
+   value, _ = value.Get(4)()
+   return &Details{value}, nil
 }
 
 func (d Details) Name() string {
@@ -51,13 +51,13 @@ func (d Details) Downloads() uint64 {
    data, _ := d[0].Get(13)()
    data, _ = data.Get(1)()
    value, _ := data.GetVarint(70)()
-   return value[0]
+   return uint64(value)
 }
 
 func (d Details) field_8_1() float64 {
    data, _ := d[0].Get(8)()
    value, _ := data.GetVarint(1)()
-   return float64(value[0]) / 1_000_000
+   return float64(value) / 1_000_000
 }
 
 func (d Details) field_8_2() string {
@@ -95,14 +95,14 @@ func (d Details) size() uint64 {
    data, _ := d[0].Get(13)()
    data, _ = data.Get(1)()
    value, _ := data.GetVarint(9)()
-   return value[0]
+   return uint64(value)
 }
 
 func (d Details) version_code() uint64 {
    data, _ := d[0].Get(13)()
    data, _ = data.Get(1)()
    value, _ := data.GetVarint(3)()
-   return value[0]
+   return uint64(value)
 }
 
 // com.google.android.youtube.tvkids
@@ -151,6 +151,6 @@ func (d Details) field_13_1_17() func() (uint64, bool) {
    return func() (uint64, bool) {
       data, _ = next()
       value, ok := data.GetVarint(1)()
-      return value[0], ok
+      return uint64(value), ok
    }
 }

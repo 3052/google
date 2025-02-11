@@ -9,11 +9,11 @@ import (
 )
 
 func (d *Device) Sync(check Checkin) error {
-   message := protobuf.Message{}
-   message.Add(1, func(m protobuf.Message) {
-      m.Add(10, func(m protobuf.Message) {
+   var value protobuf.Message
+   value.Add(1, func(m *protobuf.Message) {
+      m.Add(10, func(m *protobuf.Message) {
          for _, feature := range d.Feature {
-            m.Add(1, func(m protobuf.Message) {
+            m.Add(1, func(m *protobuf.Message) {
                m.AddBytes(1, []byte(feature))
             })
          }
@@ -25,29 +25,29 @@ func (d *Device) Sync(check Checkin) error {
          }
       })
    })
-   message.Add(1, func(m protobuf.Message) {
-      m.Add(15, func(m protobuf.Message) {
+   value.Add(1, func(m *protobuf.Message) {
+      m.Add(15, func(m *protobuf.Message) {
          m.AddBytes(4, []byte(d.Abi))
       })
    })
-   message.Add(1, func(m protobuf.Message) {
-      m.Add(18, func(m protobuf.Message) {
+   value.Add(1, func(m *protobuf.Message) {
+      m.Add(18, func(m *protobuf.Message) {
          m.AddBytes(1, []byte("am-unknown")) // X-DFE-Client-Id
       })
    })
-   message.Add(1, func(m protobuf.Message) {
-      m.Add(19, func(m protobuf.Message) {
+   value.Add(1, func(m *protobuf.Message) {
+      m.Add(19, func(m *protobuf.Message) {
          m.AddVarint(2, google_play_store)
       })
    })
-   message.Add(1, func(m protobuf.Message) {
-      m.Add(21, func(m protobuf.Message) {
+   value.Add(1, func(m *protobuf.Message) {
+      m.Add(21, func(m *protobuf.Message) {
          m.AddVarint(6, gl_es_version)
       })
    })
    req, err := http.NewRequest(
       "POST", "https://android.clients.google.com/fdfe/sync",
-      bytes.NewReader(message.Marshal()),
+      bytes.NewReader(value.Marshal()),
    )
    if err != nil {
       return err
