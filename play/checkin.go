@@ -55,7 +55,6 @@ func (Checkin) Marshal(device0 *Device) ([]byte, error) {
 }
 
 func (c *Checkin) Unmarshal(data []byte) error {
-   (*c)[0] = protobuf.Message{}
    return (*c)[0].Unmarshal(data)
 }
 
