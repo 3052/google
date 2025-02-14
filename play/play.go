@@ -10,8 +10,8 @@ import (
    "time"
 )
 
-func authorization(req *http.Request, auth0 Auth) {
-   req.Header.Set("authorization", "Bearer "+auth0.auth())
+func authorization(req *http.Request, auth1 Auth) {
+   req.Header.Set("authorization", "Bearer "+auth1.auth())
 }
 
 // com.roku.web.trc

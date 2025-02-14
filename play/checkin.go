@@ -8,7 +8,7 @@ import (
    "net/http"
 )
 
-func (Checkin) Marshal(device0 *Device) ([]byte, error) {
+func (Checkin) Marshal(device1 *Device) ([]byte, error) {
    var value protobuf.Message
    value.Add(4, func(m *protobuf.Message) {
       m.Add(1, func(m *protobuf.Message) {
@@ -25,14 +25,14 @@ func (Checkin) Marshal(device0 *Device) ([]byte, error) {
       m.AddVarint(6, 1)
       m.AddVarint(7, 420)
       m.AddVarint(8, gl_es_version)
-      for _, library := range device0.Library {
+      for _, library := range device1.Library {
          m.AddBytes(9, []byte(library))
       }
-      m.AddBytes(11, []byte(device0.Abi))
-      for _, texture := range device0.Texture {
+      m.AddBytes(11, []byte(device1.Abi))
+      for _, texture := range device1.Texture {
          m.AddBytes(15, []byte(texture))
       }
-      for _, feature := range device0.Feature {
+      for _, feature := range device1.Feature {
          // this line needs to be in the loop:
          m.Add(26, func(m *protobuf.Message) {
             m.AddBytes(1, []byte(feature))

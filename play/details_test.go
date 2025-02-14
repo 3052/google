@@ -18,17 +18,17 @@ func TestDetails(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   var token0 Token
-   err = token0.Unmarshal(data)
+   var token1 Token
+   err = token1.Unmarshal(data)
    if err != nil {
       t.Fatal(err)
    }
-   auth0, err := token0.Auth()
+   auth1, err := token1.Auth()
    if err != nil {
       t.Fatal(err)
    }
-   for _, app0 := range apps {
-      data, err = os.ReadFile(home + "/" + app0.abi + ".txt")
+   for _, app1 := range apps {
+      data, err = os.ReadFile(home + "/" + app1.abi + ".txt")
       if err != nil {
          t.Fatal(err)
       }
@@ -37,7 +37,7 @@ func TestDetails(t *testing.T) {
       if err != nil {
          t.Fatal(err)
       }
-      detail, err := auth0.Details(check, app0.id, false)
+      detail, err := auth1.Details(check, app1.id, false)
       if err != nil {
          t.Fatal(err)
       }
@@ -60,12 +60,12 @@ func TestDetails(t *testing.T) {
       if detail.field_13_1_4() == "" {
          t.Fatal("field 13 1 4")
       }
-      app0.date = func() string {
-         time0, err := time.Parse("Jan 2, 2006", detail.field_13_1_16())
+      app1.date = func() string {
+         time1, err := time.Parse("Jan 2, 2006", detail.field_13_1_16())
          if err != nil {
             t.Fatal(err)
          }
-         return time0.Format("2006-01-02")
+         return time1.Format("2006-01-02")
       }()
       if _, ok := detail.field_13_1_17()(); !ok {
          t.Fatal("field 13 1 17")
@@ -82,7 +82,7 @@ func TestDetails(t *testing.T) {
       if detail.version_code() == 0 {
          t.Fatal("version code")
       }
-      fmt.Printf("%#v,\n", app0)
+      fmt.Printf("%#v,\n", app1)
       time.Sleep(99 * time.Millisecond)
    }
 }

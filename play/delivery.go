@@ -35,13 +35,13 @@ func (o Obb) Url() string {
 }
 
 func (a Auth) Delivery(
-   check Checkin, app0 *App, single bool,
+   check Checkin, app1 *App, single bool,
 ) (*Delivery, error) {
    req, _ := http.NewRequest("", "https://android.clients.google.com", nil)
    req.URL.Path = "/fdfe/delivery"
    req.URL.RawQuery = url.Values{
-      "doc": {app0.Id},
-      "vc":  {strconv.FormatUint(app0.Version, 10)},
+      "doc": {app1.Id},
+      "vc":  {strconv.FormatUint(app1.Version, 10)},
    }.Encode()
    authorization(req, a)
    user_agent(req, single)
