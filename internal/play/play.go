@@ -130,15 +130,15 @@ func (f *flags) do_acquire() error {
 }
 
 func (f *flags) device_path() string {
-   var data strings.Builder
-   data.WriteString(f.home)
-   data.WriteByte('/')
-   data.WriteString(play.DefaultDevice.Abi)
+   var b strings.Builder
+   b.WriteString(f.home)
+   b.WriteByte('/')
+   b.WriteString(play.DefaultDevice.Abi)
    if f.leanback {
-      data.WriteString("-leanback")
+      b.WriteString("-leanback")
    }
-   data.WriteString(".txt")
-   return data.String()
+   b.WriteString(".txt")
+   return b.String()
 }
 
 func (f *flags) client(checkin *play.Checkin) (*play.Auth, error) {
