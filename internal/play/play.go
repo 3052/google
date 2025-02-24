@@ -2,10 +2,10 @@ package main
 
 import (
    "41.neocities.org/google/play"
-   xhttp "41.neocities.org/x/http"
    "net/http"
    "os"
    "strings"
+   xhttp "41.neocities.org/x/http"
 )
 
 func (f *flags) do_details() (*play.Details, error) {

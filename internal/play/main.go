@@ -2,20 +2,25 @@ package main
 
 import (
    "41.neocities.org/google/play"
-   "41.neocities.org/x/http"
    "flag"
    "fmt"
    "log"
+   "net/http"
    "os"
    "path/filepath"
    "strings"
 )
 
+func (transport) RoundTrip(req *http.Request) (*http.Response, error) {
+   log.Println(req.Method, req.URL)
+   return http.DefaultTransport.RoundTrip(req)
+}
+
+type transport struct{}
+
 func main() {
    log.SetFlags(log.Ltime)
-   var port http.Transport
-   port.ProxyFromEnvironment()
-   port.DefaultClient()
+   http.DefaultClient.Transport = transport{}
    var f flags
    err := f.New()
    if err != nil {
