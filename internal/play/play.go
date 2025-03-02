@@ -5,7 +5,6 @@ import (
    "net/http"
    "os"
    "strings"
-   xhttp "41.neocities.org/x/http"
 )
 
 func (f *flags) do_details() (*play.Details, error) {
