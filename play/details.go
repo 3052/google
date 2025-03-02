@@ -2,6 +2,7 @@ package play
 
 import (
    "41.neocities.org/protobuf"
+   "41.neocities.org/x/stringer"
    "errors"
    "fmt"
    "io"
@@ -133,11 +134,11 @@ func (d Details) String() string {
    b = fmt.Appendln(b, "details[13][1][82][1][1] =", d.field_13_1_82_1_1())
    b = fmt.Appendln(b, "details[15][18] =", d.field_15_18())
    b = fmt.Appendln(
-      b, "downloads =", strconv.Cardinal(d.Downloads()),
+      b, "downloads =", stringer.Cardinal(d.Downloads()),
    )
    b = fmt.Appendln(b, "name =", d.Name())
    b = fmt.Appendln(
-      b, "size =", strconv.Size(d.size()),
+      b, "size =", stringer.Size(d.size()),
    )
    b = fmt.Append(b, "version code = ", d.version_code())
    return string(b)

@@ -2,6 +2,7 @@ package main
 
 import (
    "41.neocities.org/google/play"
+   "41.neocities.org/x/progress"
    "net/http"
    "os"
    "strings"
@@ -67,9 +68,9 @@ func download(address, name string) error {
       return err
    }
    defer resp.Body.Close()
-   var progress xhttp.ProgressBytes
-   progress.Set(resp)
-   _, err = file.ReadFrom(&progress)
+   var bytes progress.Bytes
+   bytes.Set(resp)
+   _, err = file.ReadFrom(&bytes)
    if err != nil {
       return err
    }
