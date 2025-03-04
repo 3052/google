@@ -65,11 +65,10 @@ play -i com.google.android.youtube -v 1548869056
 
 ## money
 
-I am offering bounty 1000 USD for email/password login. up to
-Android 4.4 (2013), the login is protected with TLS fingerprinting, which is
-difficult but possible to bypass. since Android 5 (2014), Google uses bot-guard
-via JavaScript to protect the login. If you know about this contact me. I also
-offer a finders fee if you know someone
+up to Android 4.4 (2013), the login is protected with TLS fingerprinting, which
+is difficult but possible to bypass. since Android 5 (2014), Google uses
+bot-guard via JavaScript to protect the login. If you know about this contact
+me
 
 ---------------------------------------------------------------------------------
 
