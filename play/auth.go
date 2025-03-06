@@ -20,38 +20,12 @@ func (v Values) Set(data string) error {
    return nil
 }
 
-func (Token) Marshal(oauth_token string) ([]byte, error) {
-   resp, err := http.PostForm(
-      "https://android.googleapis.com/auth", url.Values{
-         "ACCESS_TOKEN": {"1"},
-         "Token":        {oauth_token},
-         "service":      {"ac2dm"},
-      },
-   )
-   if err != nil {
-      return nil, err
-   }
-   defer resp.Body.Close()
-   if resp.StatusCode != http.StatusOK {
-      var data strings.Builder
-      resp.Write(&data)
-      return nil, errors.New(data.String())
-   }
-   return io.ReadAll(resp.Body)
-}
-
 func (a Auth) auth() string {
    return a[0]["Auth"]
 }
 
 func (t Token) token() string {
    return t[0]["Token"]
-}
-
-func (t *Token) Unmarshal(data []byte) error {
-   (*t)[0] = Values{}
-   (*t)[0].Set(string(data))
-   return nil
 }
 
 type Token [1]Values
@@ -83,4 +57,32 @@ func (t Token) Auth() (*Auth, error) {
    value := Values{}
    value.Set(string(data))
    return &Auth{value}, nil
+}
+
+type Byte[T any] []byte
+
+func NewToken(oauth_token string) (Byte[Token], error) {
+   resp, err := http.PostForm(
+      "https://android.googleapis.com/auth", url.Values{
+         "ACCESS_TOKEN": {"1"},
+         "Token":        {oauth_token},
+         "service":      {"ac2dm"},
+      },
+   )
+   if err != nil {
+      return nil, err
+   }
+   defer resp.Body.Close()
+   if resp.StatusCode != http.StatusOK {
+      var data strings.Builder
+      resp.Write(&data)
+      return nil, errors.New(data.String())
+   }
+   return io.ReadAll(resp.Body)
+}
+
+func (t *Token) Unmarshal(data Byte[Token]) error {
+   (*t)[0] = Values{}
+   (*t)[0].Set(string(data))
+   return nil
 }
