@@ -10,6 +10,11 @@ import (
    "time"
 )
 
+// device is 31, but some apps require a higher version:
+// com.mwilky.androidenhanced
+// so lets lie for now
+const android_api = 34
+
 func authorization(req *http.Request, auth1 Auth) {
    req.Header.Set("authorization", "Bearer "+auth1.auth())
 }
@@ -41,8 +46,6 @@ func user_agent(req *http.Request, single bool) {
 }
 
 const google_play_store = 82941300
-
-const android_api = 31
 
 func compress_gzip(data []byte) ([]byte, error) {
    var buf bytes.Buffer
