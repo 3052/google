@@ -47,12 +47,14 @@ func TestDetails(t *testing.T) {
       if detail.Name() == "" {
          t.Fatal("name")
       }
-      {
-         message, _ := detail[0].Get(8)()
-         _, ok := message.GetVarint(1)()
-         if !ok {
-            t.Fatal("field 8 1")
+      var ok bool
+      for data := range detail[0].Get(8) {
+         for range data.GetVarint(1) {
+            ok = true
          }
+      }
+      if !ok {
+         t.Fatal("field 8 1")
       }
       if detail.field_8_2() == "" {
          t.Fatal("field 8 2")
@@ -67,7 +69,11 @@ func TestDetails(t *testing.T) {
          }
          return time1.Format("2006-01-02")
       }()
-      if _, ok := detail.field_13_1_17()(); !ok {
+      ok = false
+      for range detail.field_13_1_17() {
+         ok = true
+      }
+      if !ok {
          t.Fatal("field 13 1 17")
       }
       if detail.field_13_1_82_1_1() == "" {

@@ -3,11 +3,23 @@ package play
 import (
    "errors"
    "io"
-   "iter"
    "net/http"
    "net/url"
    "strings"
 )
+
+type Values map[string]string
+
+func (v Values) Set(data string) error {
+   for data != "" {
+      var key string
+      key, data, _ = strings.Cut(data, "=")
+      var value string
+      value, data, _ = strings.Cut(data, "\n")
+      v[key] = value
+   }
+   return nil
+}
 
 type Byte[T any] []byte
 
@@ -34,43 +46,19 @@ func NewToken(oauth_token string) (Byte[Token], error) {
 type Token [1]Values
 
 func (t *Token) Unmarshal(data Byte[Token]) error {
-   (*t)[0].New(string(data))
+   (*t)[0] = Values{}
+   (*t)[0].Set(string(data))
    return nil
 }
 
 type Auth [1]Values
 
 func (t Token) Token() string {
-   return t[0].Get("Token")
+   return t[0]["Token"]
 }
 
 func (a Auth) Auth() string {
-   return a[0].Get("Auth")
-}
-
-type Values iter.Seq2[string, string]
-
-func (v *Values) New(data string) {
-   *v = func(yield func(string, string) bool) {
-      for data != "" {
-         var key string
-         key, data, _ = strings.Cut(data, "=")
-         var value string
-         value, data, _ = strings.Cut(data, "\n")
-         if !yield(key, value) {
-            return 
-         }
-      }
-   }
-}
-
-func (v Values) Get(key string) string {
-   for key1, value := range v {
-      if key1 == key {
-         return value
-      }
-   }
-   return ""
+   return a[0]["Auth"]
 }
 
 func (t Token) Auth() (*Auth, error) {
@@ -95,7 +83,7 @@ func (t Token) Auth() (*Auth, error) {
    if err != nil {
       return nil, err
    }
-   var value Values
-   value.New(string(data))
+   value := Values{}
+   value.Set(string(data))
    return &Auth{value}, nil
 }

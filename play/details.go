@@ -11,6 +11,48 @@ import (
    "strings"
 )
 
+func (d Details) field_13_1_17() iter.Seq[uint64] {
+   return func(yield func(uint64) bool) {
+      for data := range d[0].Get(13) {
+         for data := range data.Get(1) {
+            for data := range data.Get(17) {
+               for data := range data.GetVarint(1) {
+                  if !yield(uint64(data)) {
+                     return
+                  }
+               }
+            }
+         }
+      }
+   }
+}
+
+func (d Details) String() string {
+   var b []byte
+   b = fmt.Appendln(b, "details[8] =", d.field_8_1(), d.field_8_2())
+   b = fmt.Appendln(b, "details[13][1][4] =", d.field_13_1_4())
+   b = fmt.Appendln(b, "details[13][1][16] =", d.field_13_1_16())
+   b = append(b, "details[13][1][17] ="...)
+   for data := range d.field_13_1_17() {
+      if data >= 1 {
+         b = append(b, " OBB"...)
+      } else {
+         b = append(b, " APK"...)
+      }
+   }
+   b = append(b, '\n')
+   b = fmt.Appendln(b, "details[13][1][82][1][1] =", d.field_13_1_82_1_1())
+   b = fmt.Appendln(b, "details[15][18] =", d.field_15_18())
+   b = fmt.Appendln(
+      b, "downloads =", stringer.Cardinal(d.Downloads()),
+   )
+   b = fmt.Appendln(b, "name =", d.Name())
+   b = fmt.Appendln(
+      b, "size =", stringer.Size(d.size()),
+   )
+   b = fmt.Append(b, "version code = ", d.version_code())
+   return string(b)
+}
 func (a Auth) Details(check Checkin, doc string, single bool) (*Details, error) {
    req, _ := http.NewRequest("", "https://android.clients.google.com", nil)
    req.URL.Path = "/fdfe/details"
@@ -152,47 +194,4 @@ func (d Details) field_13_1_82_1_1() string {
       }
    }
    return ""
-}
-
-func (d Details) field_13_1_17() iter.Seq[uint64] {
-   return func(yield func(uint64) bool) {
-      for data := range d[0].Get(13) {
-         for data := range data.Get(1) {
-            for data := range data.Get(17) {
-               for data := range data.GetVarint(1) {
-                  if !yield(uint64(data)) {
-                     return
-                  }
-               }
-            }
-         }
-      }
-   }
-}
-
-func (d Details) String() string {
-   var b []byte
-   b = fmt.Appendln(b, "details[8] =", d.field_8_1(), d.field_8_2())
-   b = fmt.Appendln(b, "details[13][1][4] =", d.field_13_1_4())
-   b = fmt.Appendln(b, "details[13][1][16] =", d.field_13_1_16())
-   b = append(b, "details[13][1][17] ="...)
-   for data := range d.field_13_1_17() {
-      if data >= 1 {
-         b = append(b, " OBB"...)
-      } else {
-         b = append(b, " APK"...)
-      }
-   }
-   b = append(b, '\n')
-   b = fmt.Appendln(b, "details[13][1][82][1][1] =", d.field_13_1_82_1_1())
-   b = fmt.Appendln(b, "details[15][18] =", d.field_15_18())
-   b = fmt.Appendln(
-      b, "downloads =", stringer.Cardinal(d.Downloads()),
-   )
-   b = fmt.Appendln(b, "name =", d.Name())
-   b = fmt.Appendln(
-      b, "size =", stringer.Size(d.size()),
-   )
-   b = fmt.Append(b, "version code = ", d.version_code())
-   return string(b)
 }

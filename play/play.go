@@ -10,14 +10,14 @@ import (
    "time"
 )
 
+func authorization(req *http.Request, auth1 Auth) {
+   req.Header.Set("authorization", "Bearer "+auth1.Auth())
+}
+
 // device is 31, but some apps require a higher version:
 // com.mwilky.androidenhanced
 // so lets lie for now
 const android_api = 34
-
-func authorization(req *http.Request, auth1 Auth) {
-   req.Header.Set("authorization", "Bearer "+auth1.Auth())
-}
 
 // com.roku.web.trc
 const Leanback = "android.software.leanback"

@@ -12,6 +12,83 @@ import (
    "strings"
 )
 
+func (f *flags) do_delivery() error {
+   var checkin play.Checkin
+   auth, err := f.client(&checkin)
+   if err != nil {
+      return err
+   }
+   deliver, err := auth.Delivery(checkin, &f.app, f.single)
+   if err != nil {
+      return err
+   }
+   for obb := range deliver.Obb() {
+      err := download(
+         obb.Url(), f.app.Obb(obb.Field1()),
+      )
+      if err != nil {
+         return err
+      }
+   }
+   for apk := range deliver.Apk() {
+      err := download(
+         apk.Url(), f.app.Apk(apk.Field1()),
+      )
+      if err != nil {
+         return err
+      }
+   }
+   err = download(deliver.Url(), f.app.Apk(""))
+   if err != nil {
+      return err
+   }
+   return nil
+}
+
+func (f *flags) do_acquire() error {
+   var checkin play.Checkin
+   auth, err := f.client(&checkin)
+   if err != nil {
+      return err
+   }
+   return auth.Acquire(checkin, f.app.Id)
+}
+
+func (f *flags) device_path() string {
+   var b strings.Builder
+   b.WriteString(f.home)
+   b.WriteByte('/')
+   b.WriteString(play.DefaultDevice.Abi)
+   if f.leanback {
+      b.WriteString("-leanback")
+   }
+   return b.String()
+}
+
+func (f *flags) client(checkin *play.Checkin) (*play.Auth, error) {
+   data, err := os.ReadFile(f.home + "/Token")
+   if err != nil {
+      return nil, err
+   }
+   var token play.Token
+   err = token.Unmarshal(data)
+   if err != nil {
+      return nil, err
+   }
+   auth, err := token.Auth()
+   if err != nil {
+      return nil, err
+   }
+   data, err = os.ReadFile(f.device_path())
+   if err != nil {
+      return nil, err
+   }
+   err = checkin.Unmarshal(data)
+   if err != nil {
+      return nil, err
+   }
+   return auth, nil
+}
 func (transport) RoundTrip(req *http.Request) (*http.Response, error) {
    log.Println(req.Method, req.URL)
    return http.DefaultTransport.RoundTrip(req)
@@ -176,92 +253,4 @@ func download(address, name string) error {
       return err
    }
    return nil
-}
-
-func (f *flags) do_delivery() error {
-   var checkin play.Checkin
-   auth, err := f.client(&checkin)
-   if err != nil {
-      return err
-   }
-   deliver, err := auth.Delivery(checkin, &f.app, f.single)
-   if err != nil {
-      return err
-   }
-   obbs := deliver.Obb()
-   for {
-      obb, ok := obbs()
-      if !ok {
-         break
-      }
-      err := download(
-         obb.Url(), f.app.Obb(obb.Field1()),
-      )
-      if err != nil {
-         return err
-      }
-   }
-   apks := deliver.Apk()
-   for {
-      apk, ok := apks()
-      if !ok {
-         break
-      }
-      err := download(
-         apk.Url(), f.app.Apk(apk.Field1()),
-      )
-      if err != nil {
-         return err
-      }
-   }
-   err = download(deliver.Url(), f.app.Apk(""))
-   if err != nil {
-      return err
-   }
-   return nil
-}
-
-func (f *flags) do_acquire() error {
-   var checkin play.Checkin
-   auth, err := f.client(&checkin)
-   if err != nil {
-      return err
-   }
-   return auth.Acquire(checkin, f.app.Id)
-}
-
-func (f *flags) device_path() string {
-   var b strings.Builder
-   b.WriteString(f.home)
-   b.WriteByte('/')
-   b.WriteString(play.DefaultDevice.Abi)
-   if f.leanback {
-      b.WriteString("-leanback")
-   }
-   return b.String()
-}
-
-func (f *flags) client(checkin *play.Checkin) (*play.Auth, error) {
-   data, err := os.ReadFile(f.home + "/Token")
-   if err != nil {
-      return nil, err
-   }
-   var token play.Token
-   err = token.Unmarshal(data)
-   if err != nil {
-      return nil, err
-   }
-   auth, err := token.Auth()
-   if err != nil {
-      return nil, err
-   }
-   data, err = os.ReadFile(f.device_path())
-   if err != nil {
-      return nil, err
-   }
-   err = checkin.Unmarshal(data)
-   if err != nil {
-      return nil, err
-   }
-   return auth, nil
 }
