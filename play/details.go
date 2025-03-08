@@ -6,6 +6,7 @@ import (
    "errors"
    "fmt"
    "io"
+   "iter"
    "net/http"
    "strings"
 )
@@ -46,74 +47,127 @@ func (a Auth) Details(check Checkin, doc string, single bool) (*Details, error) 
    return nil, errors.New(req.URL.Path)
 }
 
-func (d Details) Name() string {
-   value, _ := d[0].GetBytes(5)()
-   return string(value)
-}
-
-func (d Details) Downloads() uint64 {
-   data, _ := d[0].Get(13)()
-   data, _ = data.Get(1)()
-   value, _ := data.GetVarint(70)()
-   return uint64(value)
-}
-
-func (d Details) field_8_1() float64 {
-   data, _ := d[0].Get(8)()
-   value, _ := data.GetVarint(1)()
-   return float64(value) / 1_000_000
-}
-
-func (d Details) field_8_2() string {
-   data, _ := d[0].Get(8)()
-   value, _ := data.GetBytes(2)()
-   return string(value)
-}
-
-func (d Details) field_13_1_4() string {
-   data, _ := d[0].Get(13)()
-   data, _ = data.Get(1)()
-   value, _ := data.GetBytes(4)()
-   return string(value)
-}
-
 type Details [1]protobuf.Message
 
-func (d Details) field_13_1_16() string {
-   data, _ := d[0].Get(13)()
-   data, _ = data.Get(1)()
-   value, _ := data.GetBytes(16)()
-   return string(value)
-}
-
-func (d Details) field_13_1_82_1_1() string {
-   data, _ := d[0].Get(13)()
-   data, _ = data.Get(1)()
-   data, _ = data.Get(82)()
-   data, _ = data.Get(1)()
-   value, _ := data.GetBytes(1)()
-   return string(value)
-}
-
-func (d Details) size() uint64 {
-   data, _ := d[0].Get(13)()
-   data, _ = data.Get(1)()
-   value, _ := data.GetVarint(9)()
-   return uint64(value)
-}
-
-func (d Details) version_code() uint64 {
-   data, _ := d[0].Get(13)()
-   data, _ = data.Get(1)()
-   value, _ := data.GetVarint(3)()
-   return uint64(value)
+func (d Details) Name() string {
+   for data := range d[0].GetBytes(5) {
+      return string(data)
+   }
+   return ""
 }
 
 // com.google.android.youtube.tvkids
 func (d Details) field_15_18() string {
-   data, _ := d[0].Get(15)()
-   value, _ := data.GetBytes(18)()
-   return string(value)
+   for data := range d[0].Get(15) {
+      for data := range data.GetBytes(18) {
+         return string(data)
+      }
+   }
+   return ""
+}
+
+func (d Details) field_8_1() float64 {
+   for data := range d[0].Get(8) {
+      for data := range data.GetVarint(1) {
+         return float64(data) / 1_000_000
+      }
+   }
+   return 0
+}
+
+func (d Details) field_8_2() string {
+   for data := range d[0].Get(8) {
+      for data := range data.GetBytes(2) {
+         return string(data)
+      }
+   }
+   return ""
+}
+
+func (d Details) Downloads() uint64 {
+   for data := range d[0].Get(13) {
+      for data := range data.Get(1) {
+         for data := range data.GetVarint(70) {
+            return uint64(data)
+         }
+      }
+   }
+   return 0
+}
+
+func (d Details) field_13_1_4() string {
+   for data := range d[0].Get(13) {
+      for data := range data.Get(1) {
+         for data := range data.GetBytes(4) {
+            return string(data)
+         }
+      }
+   }
+   return ""
+}
+
+func (d Details) field_13_1_16() string {
+   for data := range d[0].Get(13) {
+      for data := range data.Get(1) {
+         for data := range data.GetBytes(16) {
+            return string(data)
+         }
+      }
+   }
+   return ""
+}
+
+func (d Details) size() uint64 {
+   for data := range d[0].Get(13) {
+      for data := range data.Get(1) {
+         for data := range data.GetVarint(9) {
+            return uint64(data)
+         }
+      }
+   }
+   return 0
+}
+
+func (d Details) version_code() uint64 {
+   for data := range d[0].Get(13) {
+      for data := range data.Get(1) {
+         for data := range data.GetVarint(3) {
+            return uint64(data)
+         }
+      }
+   }
+   return 0
+}
+
+func (d Details) field_13_1_82_1_1() string {
+   for data := range d[0].Get(13) {
+      for data := range data.Get(1) {
+         for data := range data.Get(82) {
+            for data := range data.Get(1) {
+               for data := range data.GetBytes(1) {
+                  return string(data)
+               }
+            }
+         }
+      }
+   }
+   return ""
+}
+
+func (d Details) field_13_1_17() iter.Seq[uint64] {
+   return func(yield func(uint64) bool) {
+      for data := range d[0].Get(13) {
+         for data := range data.Get(1) {
+            for data := range data.Get(17) {
+               for data := range data.GetVarint(1) {
+                  if !yield(uint64(data)) {
+                     return
+                  }
+               }
+            }
+         }
+      }
+   }
 }
 
 func (d Details) String() string {
@@ -122,13 +176,8 @@ func (d Details) String() string {
    b = fmt.Appendln(b, "details[13][1][4] =", d.field_13_1_4())
    b = fmt.Appendln(b, "details[13][1][16] =", d.field_13_1_16())
    b = append(b, "details[13][1][17] ="...)
-   next := d.field_13_1_17()
-   for {
-      value, ok := next()
-      if !ok {
-         break
-      }
-      if value >= 1 {
+   for data := range d.field_13_1_17() {
+      if data >= 1 {
          b = append(b, " OBB"...)
       } else {
          b = append(b, " APK"...)
@@ -146,15 +195,4 @@ func (d Details) String() string {
    )
    b = fmt.Append(b, "version code = ", d.version_code())
    return string(b)
-}
-
-func (d Details) field_13_1_17() func() (uint64, bool) {
-   data, _ := d[0].Get(13)()
-   data, _ = data.Get(1)()
-   next := data.Get(17)
-   return func() (uint64, bool) {
-      data, _ = next()
-      value, ok := data.GetVarint(1)()
-      return uint64(value), ok
-   }
 }
