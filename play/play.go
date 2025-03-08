@@ -16,7 +16,7 @@ import (
 const android_api = 34
 
 func authorization(req *http.Request, auth1 Auth) {
-   req.Header.Set("authorization", "Bearer "+auth1.auth())
+   req.Header.Set("authorization", "Bearer "+auth1.Auth())
 }
 
 // com.roku.web.trc

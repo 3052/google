@@ -30,36 +30,57 @@ func NewToken(oauth_token string) (Byte[Token], error) {
    return io.ReadAll(resp.Body)
 }
 
-///
+type Token [1]Values
 
-type Values map[string]string
+func (t *Token) Unmarshal(data Byte[Token]) error {
+   (*t)[0].Set(string(data))
+   return nil
+}
 
-func (v Values) Set(data string) error {
-   for data != "" {
-      var key string
-      key, data, _ = strings.Cut(data, "\n")
-      key, value, _ := strings.Cut(key, "=")
-      v[key] = value
+type Auth [1]Values
+
+func (v *Values) Set(data string) error {
+   *v = func() ([2]string, bool) {
+      var (
+         v1 [2]string
+         ok bool
+      )
+      v1[0], data, ok = strings.Cut(data, "=")
+      if ok {
+         v1[1], data, _ = strings.Cut(data, "\n")
+         return v1, true
+      }
+      return v1, false
    }
    return nil
 }
 
-func (a Auth) auth() string {
-   return a[0]["Auth"]
+func (v Values) Get(key string) string {
+   for {
+      v1, ok := v()
+      if !ok {
+         return ""
+      }
+      if v1[0] == key {
+         return v1[1]
+      }
+   }
 }
 
-func (t Token) token() string {
-   return t[0]["Token"]
+type Values func() ([2]string, bool)
+
+func (t Token) Token() string {
+   return t[0].Get("Token")
 }
 
-type Token [1]Values
-
-type Auth [1]Values
+func (a Auth) Auth() string {
+   return a[0].Get("Auth")
+}
 
 func (t Token) Auth() (*Auth, error) {
    resp, err := http.PostForm(
       "https://android.googleapis.com/auth", url.Values{
-         "Token":      {t.token()},
+         "Token":      {t.Token()},
          "app":        {"com.android.vending"},
          "client_sig": {"38918a453d07199354f8b19af05ec6562ced5788"},
          "service":    {"oauth2:https://www.googleapis.com/auth/googleplay"},
@@ -70,21 +91,15 @@ func (t Token) Auth() (*Auth, error) {
    }
    defer resp.Body.Close()
    if resp.StatusCode != http.StatusOK {
-      var data strings.Builder
-      resp.Write(&data)
-      return nil, errors.New(data.String())
+      var b strings.Builder
+      resp.Write(&b)
+      return nil, errors.New(b.String())
    }
    data, err := io.ReadAll(resp.Body)
    if err != nil {
       return nil, err
    }
-   value := Values{}
+   var value Values
    value.Set(string(data))
    return &Auth{value}, nil
-}
-
-func (t *Token) Unmarshal(data Byte[Token]) error {
-   (*t)[0] = Values{}
-   (*t)[0].Set(string(data))
-   return nil
 }

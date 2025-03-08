@@ -25,7 +25,7 @@ func (f *flags) New() error {
    if err != nil {
       return err
    }
-   f.home = filepath.ToSlash(f.home) + "/google-play"
+   f.home = filepath.ToSlash(f.home) + "/google/play"
    return nil
 }
 

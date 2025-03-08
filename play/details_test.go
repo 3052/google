@@ -13,8 +13,8 @@ func TestDetails(t *testing.T) {
    if err != nil {
       t.Fatal(err)
    }
-   home = filepath.ToSlash(home) + "/google-play"
-   data, err := os.ReadFile(home + "/token.txt")
+   home = filepath.ToSlash(home) + "/google/play"
+   data, err := os.ReadFile(home + "/Token")
    if err != nil {
       t.Fatal(err)
    }
@@ -28,7 +28,7 @@ func TestDetails(t *testing.T) {
       t.Fatal(err)
    }
    for _, app1 := range apps {
-      data, err = os.ReadFile(home + "/" + app1.abi + ".txt")
+      data, err = os.ReadFile(home + "/" + app1.abi)
       if err != nil {
          t.Fatal(err)
       }
