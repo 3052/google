@@ -6,7 +6,25 @@ import (
    "errors"
    "io"
    "net/http"
+   "strings"
 )
+
+func (a acquire_error) Error() string {
+   var data strings.Builder
+   for m := range a[0].Get(1) {
+      for m := range m.Get(10) {
+         for m := range m.Get(1) {
+            for b := range m.GetBytes(1) {
+               if data.Len() >= 1 {
+                  data.WriteByte('\n')
+               }
+               data.Write(b)
+            }
+         }
+      }
+   }
+   return data.String()
+}
 
 func (a Auth) Acquire(check Checkin, id string) error {
    value := protobuf.Message{
@@ -71,22 +89,3 @@ func (a Auth) Acquire(check Checkin, id string) error {
 }
 
 type acquire_error [1]protobuf.Message
-
-func (a acquire_error) Error() string {
-   var data []byte
-   messages := a[0].Get(1)
-   for {
-      message, ok := messages()
-      if !ok {
-         break
-      }
-      message, _ = message.Get(10)()
-      message, _ = message.Get(1)()
-      data1, _ := message.GetBytes(1)()
-      if data != nil {
-         data = append(data, '\n')
-      }
-      data = append(data, data1...)
-   }
-   return string(data)
-}

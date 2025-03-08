@@ -54,13 +54,15 @@ func (d *Device) Checkin() (Byte[Checkin], error) {
    return io.ReadAll(resp.Body)
 }
 
-func (c Checkin) field_7() uint64 {
-   value, _ := c[0].GetI64(7)()
-   return uint64(value)
-}
-
 type Checkin [1]protobuf.Message
 
 func (c *Checkin) Unmarshal(data Byte[Checkin]) error {
    return (*c)[0].Unmarshal(data)
+}
+
+func (c Checkin) field_7() uint64 {
+   for value := range c[0].GetI64(7) {
+      return uint64(value)
+   }
+   return 0
 }

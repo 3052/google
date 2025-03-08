@@ -23,9 +23,9 @@ func (a Auth) Details(check Checkin, doc string, single bool) (*Details, error) 
    }
    defer resp.Body.Close()
    if resp.StatusCode != http.StatusOK {
-      var data strings.Builder
-      resp.Write(&data)
-      return nil, errors.New(data.String())
+      var b strings.Builder
+      resp.Write(&b)
+      return nil, errors.New(b.String())
    }
    data, err := io.ReadAll(resp.Body)
    if err != nil {
@@ -36,10 +36,14 @@ func (a Auth) Details(check Checkin, doc string, single bool) (*Details, error) 
    if err != nil {
       return nil, err
    }
-   value, _ = value.Get(1)()
-   value, _ = value.Get(2)()
-   value, _ = value.Get(4)()
-   return &Details{value}, nil
+   for value := range value.Get(1) {
+      for value := range value.Get(2) {
+         for value := range value.Get(4) {
+            return &Details{value}, nil
+         }
+      }
+   }
+   return nil, errors.New(req.URL.Path)
 }
 
 func (d Details) Name() string {
