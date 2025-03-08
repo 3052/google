@@ -3,6 +3,7 @@ package play
 import (
    "errors"
    "io"
+   "iter"
    "net/http"
    "net/url"
    "strings"
@@ -33,41 +34,11 @@ func NewToken(oauth_token string) (Byte[Token], error) {
 type Token [1]Values
 
 func (t *Token) Unmarshal(data Byte[Token]) error {
-   (*t)[0].Set(string(data))
+   (*t)[0].New(string(data))
    return nil
 }
 
 type Auth [1]Values
-
-func (v *Values) Set(data string) error {
-   *v = func() ([2]string, bool) {
-      var (
-         v1 [2]string
-         ok bool
-      )
-      v1[0], data, ok = strings.Cut(data, "=")
-      if ok {
-         v1[1], data, _ = strings.Cut(data, "\n")
-         return v1, true
-      }
-      return v1, false
-   }
-   return nil
-}
-
-func (v Values) Get(key string) string {
-   for {
-      v1, ok := v()
-      if !ok {
-         return ""
-      }
-      if v1[0] == key {
-         return v1[1]
-      }
-   }
-}
-
-type Values func() ([2]string, bool)
 
 func (t Token) Token() string {
    return t[0].Get("Token")
@@ -75,6 +46,31 @@ func (t Token) Token() string {
 
 func (a Auth) Auth() string {
    return a[0].Get("Auth")
+}
+
+type Values iter.Seq2[string, string]
+
+func (v *Values) New(data string) {
+   *v = func(yield func(string, string) bool) {
+      for data != "" {
+         var key string
+         key, data, _ = strings.Cut(data, "=")
+         var value string
+         value, data, _ = strings.Cut(data, "\n")
+         if !yield(key, value) {
+            return 
+         }
+      }
+   }
+}
+
+func (v Values) Get(key string) string {
+   for key1, value := range v {
+      if key1 == key {
+         return value
+      }
+   }
+   return ""
 }
 
 func (t Token) Auth() (*Auth, error) {
@@ -100,6 +96,6 @@ func (t Token) Auth() (*Auth, error) {
       return nil, err
    }
    var value Values
-   value.Set(string(data))
+   value.New(string(data))
    return &Auth{value}, nil
 }

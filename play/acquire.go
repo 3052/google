@@ -43,9 +43,9 @@ func (a Auth) Acquire(check Checkin, id string) error {
    }
    defer resp.Body.Close()
    if resp.StatusCode != http.StatusOK {
-      var data bytes.Buffer
-      resp.Write(&data)
-      return errors.New(data.String())
+      var b bytes.Buffer
+      resp.Write(&b)
+      return errors.New(b.String())
    }
    data, err := io.ReadAll(resp.Body)
    if err != nil {
@@ -56,13 +56,16 @@ func (a Auth) Acquire(check Checkin, id string) error {
    if err != nil {
       return err
    }
-   value, _ = value.Get(1)()
-   value, _ = value.Get(94)()
-   value, _ = value.Get(1)()
-   value, _ = value.Get(2)()
-   value, ok := value.Get(147291249)()
-   if ok {
-      return acquire_error{value}
+   for value := range value.Get(1) {
+      for value := range value.Get(94) {
+         for value := range value.Get(1) {
+            for value := range value.Get(2) {
+               for value := range value.Get(147291249) {
+                  return acquire_error{value}
+               }
+            }
+         }
+      }
    }
    return nil
 }
