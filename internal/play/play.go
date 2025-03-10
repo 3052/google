@@ -89,6 +89,7 @@ func (f *flags) client(checkin *play.Checkin) (*play.Auth, error) {
    }
    return auth, nil
 }
+
 func (transport) RoundTrip(req *http.Request) (*http.Response, error) {
    log.Println(req.Method, req.URL)
    return http.DefaultTransport.RoundTrip(req)
