@@ -9,23 +9,6 @@ import (
    "strings"
 )
 
-func (a acquire_error) Error() string {
-   var data strings.Builder
-   for m := range a[0].Get(1) {
-      for m := range m.Get(10) {
-         for m := range m.Get(1) {
-            for b := range m.GetBytes(1) {
-               if data.Len() >= 1 {
-                  data.WriteByte('\n')
-               }
-               data.Write(b)
-            }
-         }
-      }
-   }
-   return data.String()
-}
-
 func (a Auth) Acquire(check Checkin, id string) error {
    value := protobuf.Message{
       {1, protobuf.Message{
@@ -86,6 +69,23 @@ func (a Auth) Acquire(check Checkin, id string) error {
       }
    }
    return nil
+}
+
+func (a acquire_error) Error() string {
+   var data strings.Builder
+   for m := range a[0].Get(1) {
+      for m := range m.Get(10) {
+         for m := range m.Get(1) {
+            for b := range m.GetBytes(1) {
+               if data.Len() >= 1 {
+                  data.WriteByte('\n')
+               }
+               data.Write(b)
+            }
+         }
+      }
+   }
+   return data.String()
 }
 
 type acquire_error [1]protobuf.Message
