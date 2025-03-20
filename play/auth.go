@@ -8,6 +8,8 @@ import (
    "strings"
 )
 
+type Byte[T any] []byte
+
 type Values map[string]string
 
 func (v Values) Set(data string) error {
@@ -21,7 +23,7 @@ func (v Values) Set(data string) error {
    return nil
 }
 
-type Byte[T any] []byte
+///
 
 func NewToken(oauth_token string) (Byte[Token], error) {
    resp, err := http.PostForm(
