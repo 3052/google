@@ -10,21 +10,6 @@ import (
 
 type Byte[T any] []byte
 
-type Values map[string]string
-
-func (v Values) Set(data string) error {
-   for data != "" {
-      var key string
-      key, data, _ = strings.Cut(data, "=")
-      var value string
-      value, data, _ = strings.Cut(data, "\n")
-      v[key] = value
-   }
-   return nil
-}
-
-///
-
 func NewToken(oauth_token string) (Byte[Token], error) {
    resp, err := http.PostForm(
       "https://android.googleapis.com/auth", url.Values{
@@ -52,6 +37,21 @@ func (t *Token) Unmarshal(data Byte[Token]) error {
    (*t)[0].Set(string(data))
    return nil
 }
+
+type Values map[string]string
+
+func (v Values) Set(data string) error {
+   for data != "" {
+      var key string
+      key, data, _ = strings.Cut(data, "=")
+      var value string
+      value, data, _ = strings.Cut(data, "\n")
+      v[key] = value
+   }
+   return nil
+}
+
+///
 
 type Auth [1]Values
 
