@@ -7,4 +7,4 @@ require (
 	41.neocities.org/x v1.5.8
 )
 
-require google.golang.org/protobuf v1.36.5 // indirect
+require google.golang.org/protobuf v1.36.6 // indirect
