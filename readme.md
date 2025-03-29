@@ -63,14 +63,18 @@ downloaded:
 play -i com.google.android.youtube -v 1548869056
 ~~~
 
-## money
+## goals
+
+1. [Pixel 6](//wikipedia.org/wiki/Pixel_6) (2021)
+2. [Android 12](//wikipedia.org/wiki/Android_12) (2021)
+3. [Google Play](//wikipedia.org/wiki/Google_Play) 29 (2022)
 
 up to Android 4.4 (2013), the login is protected with TLS fingerprinting, which
 is difficult but possible to bypass. since Android 5 (2014), Google uses
 bot-guard via JavaScript to protect the login. If you know about this contact
 me
 
----------------------------------------------------------------------------------
+## money
 
 software is not licensed for commercial use. if you wish to purchase a
 commercial license, contact me
@@ -90,9 +94,3 @@ you are interested in paid support, contact me
    <dt>PayPal</dt>
       <dd>https://paypal.com/donate?hosted_button_id=UEJBQQTU3VYDY</dd>
 </dl>
-
-## goals
-
-1. [Pixel 6](//wikipedia.org/wiki/Pixel_6) (2021)
-2. [Android 12](//wikipedia.org/wiki/Android_12) (2021)
-3. [Google Play](//wikipedia.org/wiki/Google_Play) 29 (2022)
