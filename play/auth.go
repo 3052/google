@@ -8,13 +8,13 @@ import (
    "strings"
 )
 
-type Token [1]Values
-
 func (t *Token) Unmarshal(data Byte[Token]) error {
-   (*t)[0] = Values{}
-   (*t)[0].Set(string(data))
+   t[0] = Values{}
+   t[0].Set(string(data))
    return nil
 }
+
+type Token [1]Values
 
 type Byte[T any] []byte
 

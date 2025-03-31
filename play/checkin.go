@@ -8,6 +8,12 @@ import (
    "net/http"
 )
 
+type Checkin [1]protobuf.Message
+
+func (c *Checkin) Unmarshal(data Byte[Checkin]) error {
+   return c[0].Unmarshal(data)
+}
+
 func (d *Device) Checkin() (Byte[Checkin], error) {
    var value protobuf.Message
    value.Add(4, func(m *protobuf.Message) {
@@ -52,12 +58,6 @@ func (d *Device) Checkin() (Byte[Checkin], error) {
       return nil, errors.New(resp.Status)
    }
    return io.ReadAll(resp.Body)
-}
-
-type Checkin [1]protobuf.Message
-
-func (c *Checkin) Unmarshal(data Byte[Checkin]) error {
-   return (*c)[0].Unmarshal(data)
 }
 
 func (c Checkin) field_7() uint64 {
