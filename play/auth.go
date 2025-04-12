@@ -8,14 +8,6 @@ import (
    "strings"
 )
 
-func (t *Token) Unmarshal(data Byte[Token]) error {
-   t[0] = Values{}
-   t[0].Set(string(data))
-   return nil
-}
-
-type Token [1]Values
-
 type Byte[T any] []byte
 
 func NewToken(oauth_token string) (Byte[Token], error) {
@@ -37,6 +29,16 @@ func NewToken(oauth_token string) (Byte[Token], error) {
    }
    return io.ReadAll(resp.Body)
 }
+
+func (t *Token) Unmarshal(data Byte[Token]) error {
+   t[0] = Values{}
+   t[0].Set(string(data))
+   return nil
+}
+
+type Token [1]Values
+
+///
 
 type Values map[string]string
 
