@@ -53,8 +53,6 @@ func (v Values) Set(data string) error {
    return nil
 }
 
-///
-
 type Auth [1]Values
 
 func (t Token) Token() string {
