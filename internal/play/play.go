@@ -247,9 +247,9 @@ func download(address, name string) error {
       return err
    }
    defer resp.Body.Close()
-   var bytes progress.Bytes
-   bytes.Set(resp)
-   _, err = file.ReadFrom(&bytes)
+   var progress1 progress.Byte
+   progress1.Set(resp)
+   _, err = file.ReadFrom(&progress1)
    if err != nil {
       return err
    }
